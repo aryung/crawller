@@ -1,0 +1,66 @@
+{
+  "url": "https://www.moneydj.com/Z/ZH/ZHA/ZHA.djhtm",
+  "selectors": {
+    "allLinks": {
+      "selector": "a",
+      "multiple": true,
+      "extract": {
+        "text": "text",
+        "href": {
+          "attribute": "href"
+        },
+        "isIndustryLink": {
+          "attribute": "href",
+          "transform": "matchRegex"
+        }
+      }
+    },
+    "industryLinks": {
+      "selector": "a[href*='/z/zh/zha/zh'][href*='?a=C']",
+      "multiple": true,
+      "extract": {
+        "industryName": "text",
+        "fullUrl": {
+          "attribute": "href",
+          "transform": "absoluteUrl"
+        },
+        "industryCode": {
+          "attribute": "href",
+          "transform": "extractIndustryCode"
+        },
+        "category": {
+          "attribute": "href",
+          "transform": "extractIndustryCategory"
+        }
+      }
+    }
+  },
+  "headers": {
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+    "Accept-Language": "zh-TW,zh;q=0.9,en;q=0.8",
+    "Accept-Encoding": "gzip, deflate, br",
+    "Cache-Control": "no-cache",
+    "Pragma": "no-cache"
+  },
+  "options": {
+    "waitFor": 4000,
+    "timeout": 45000,
+    "retries": 3,
+    "headless": true,
+    "screenshot": true,
+    "delay": 2000,
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+  },
+  "transforms": {
+    "extractIndustryCategory": "const match = value.match(/zh(\\d+)\\.djhtm/); if (!match) return null; const code = match[1]; if (code.startsWith('01')) return '原物料'; if (code.startsWith('02')) return '電子'; if (code.startsWith('03')) return '通訊'; if (code.startsWith('04')) return '半導體'; if (code.startsWith('05')) return '光電'; if (code.startsWith('06')) return '生技'; return '其他';",
+    "cleanIndustryName": "return value.trim().replace(/\\s+/g, ' ').replace(/[\\r\\n]/g, '');"
+  },
+  "export": {
+    "formats": ["json", "csv", "xlsx"],
+    "filename": "moneydj_complete_industries",
+    "separate": true
+  },
+  "variables": {
+    "baseUrl": "https://www.moneydj.com"
+  }
+}

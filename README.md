@@ -1,154 +1,297 @@
-# Crawller - 無狀態爬蟲系統
+# Universal Web Crawler
 
-一個支援現代網站（React/SPA）的結構化資料提取爬蟲系統，提供 CLI 工具和 HTTP API 介面。
+一個功能強大、易於使用的通用網頁爬蟲工具，支援靈活的 URL、選擇器、標頭配置，以及 Cookie 管理功能。
 
-## ✨ 特色
+## 特色功能
 
-- 🚀 **現代網站支援** - 處理 React、Vue、Angular 等 SPA 網站
-- 📊 **智能解析** - 自動表格偵測和結構化資料提取  
-- 🧹 **資料清理** - 自動標準化格式（"---" → null, "0.00" → 0）
-- ⚙️ **配置驅動** - 靈活的選擇器和清理規則配置
-- 🎯 **無狀態設計** - 適合微服務和容器化部署
-- 💻 **雙軌介面** - CLI 工具 + HTTP API
-- 📁 **多種格式** - 支援 JSON、CSV 輸出
+- 🚀 **雙引擎支援**: Puppeteer 和 Playwright 可選
+- 🍪 **智慧 Cookie 管理**: 支援 Cookie 字串和自動登入
+- ⚙️ **靈活配置**: JSON 配置檔案管理
+- 📊 **多格式匯出**: JSON、CSV、Excel 支援
+- 🔄 **重試機制**: 自動處理網路錯誤
+- 📸 **截圖功能**: 可選的頁面截圖
+- 🎯 **進階選擇器**: 支援複雜的資料提取
+- 📈 **統計報告**: 自動生成爬蟲結果報告
 
-## 🚀 快速開始
+## 快速開始
 
 ### 安裝
 
 ```bash
-# 本地開發
-git clone <repository>
-cd crawller
 npm install
-npm run build
-
-# 全域安裝 (如果發布到 npm)
-npm install -g crawller
 ```
 
-### CLI 使用
+### 基本使用
 
-```bash
-# 基本爬取
-crawller crawl --url "https://example.com" --selector "table td"
+```typescript
+import { UniversalCrawler } from './src';
 
-# 使用配置檔案
-crawller crawl --config examples/basic-config.json --output result.json
+const crawler = new UniversalCrawler();
 
-# 動態網站支援
-crawller crawl --url "https://spa-site.com" --wait ".data-table" --normalize
-
-# 產生範例配置
-crawller example --file my-config.json
-```
-
-### API 服務
-
-```bash
-# 啟動 API 服務器
-npm run server
-
-# 執行爬取請求
-curl -X POST http://localhost:3000/crawl \
-  -H "Content-Type: application/json" \
-  -d '{
-    "url": "https://example.com",
-    "selectors": {"data": ["td"]},
-    "cleaning": {"normalize": true}
-  }'
-```
-
-### 程式庫整合
-
-```javascript
-import { Crawller } from 'crawller';
-
-const crawler = new Crawller();
+// 基本爬蟲
 const result = await crawler.crawl({
   url: 'https://example.com',
-  selectors: { data: ['td'] },
-  cleaning: { normalize: true }
+  selectors: {
+    title: 'h1',
+    description: 'meta[name="description"]',
+    links: 'a:multiple'
+  },
+  options: {
+    waitFor: 2000,
+    screenshot: true
+  }
 });
 
-console.log(`抓取到 ${result.data.length} 筆資料`);
-await crawler.close();
+console.log(result);
+await crawler.cleanup();
 ```
 
-## 📋 配置範例
+## 進階配置
 
-### 基本表格爬取
-```json
-{
-  "url": "https://example.com/data",
-  "selectors": {
-    "container": "table",
-    "data": ["td"],
-    "headers": ["th"]
+### Cookie 管理
+
+```typescript
+// 使用 Cookie 字串
+const result = await crawler.crawl({
+  url: 'https://protected-site.com',
+  cookies: {
+    enabled: true,
+    cookieString: 'sessionId=abc123; userId=456'
   },
-  "cleaning": {
-    "normalize": true
+  selectors: {
+    userInfo: '.user-profile'
   }
+});
+
+// 自動登入
+const result = await crawler.crawl({
+  url: 'https://site.com/dashboard',
+  cookies: {
+    enabled: true,
+    loginUrl: 'https://site.com/login',
+    loginSelectors: {
+      username: 'input[name="username"]',
+      password: 'input[name="password"]',
+      submit: 'button[type="submit"]'
+    },
+    credentials: {
+      username: 'your_username',
+      password: 'your_password'
+    }
+  }
+});
+```
+
+### 進階選擇器
+
+```typescript
+const result = await crawler.crawl({
+  url: 'https://blog.example.com/post/123',
+  selectors: {
+    // 基本文字
+    title: 'h1.post-title',
+    
+    // 屬性提取
+    canonicalUrl: {
+      selector: 'link[rel="canonical"]',
+      attribute: 'href'
+    },
+    
+    // 多個元素
+    tags: {
+      selector: '.tag:multiple',
+      transform: (values: string[]) => values.map(tag => tag.trim())
+    },
+    
+    // 複雜轉換
+    publishDate: {
+      selector: '.publish-date',
+      attribute: 'datetime',
+      transform: (value: string) => new Date(value)
+    }
+  }
+});
+```
+
+### 配置檔案管理
+
+```typescript
+// 儲存配置
+await crawler.saveConfig('my-site', {
+  url: 'https://example.com',
+  selectors: { /* ... */ }
+});
+
+// 使用配置
+const result = await crawler.crawl('my-site');
+
+// 列出所有配置
+const configs = await crawler.listConfigs();
+```
+
+### 批量爬蟲
+
+```typescript
+const results = await crawler.crawlMultiple([
+  'https://site1.com',
+  'https://site2.com',
+  'config-name'
+], 3); // 併發數量
+
+// 匯出結果
+await crawler.export(results, {
+  format: 'xlsx',
+  filename: 'crawl_results'
+});
+```
+
+## 引擎切換
+
+### Puppeteer (預設)
+```typescript
+const crawler = new UniversalCrawler({ usePlaywright: false });
+```
+
+### Playwright
+```typescript
+const crawler = new UniversalCrawler({ usePlaywright: true });
+
+// 需要安裝 Playwright
+// npm install playwright
+// npx playwright install
+```
+
+### 動態切換
+```typescript
+const crawler = new UniversalCrawler();
+
+// 嘗試 Puppeteer
+crawler.setEngine(false);
+let result = await crawler.crawl(config);
+
+if (!result.success) {
+  // 切換到 Playwright
+  crawler.setEngine(true);
+  result = await crawler.crawl(config);
 }
 ```
 
-### 動態網站支援
-```json
-{
-  "url": "https://spa-site.com/data",
-  "selectors": {
-    "data": [".item-title", ".item-price"]
-  },
-  "waitOptions": {
-    "selector": ".data-loaded",
-    "timeout": 15000
-  },
-  "cleaning": {
-    "normalize": true,
-    "prefix": ["/^\\s*\\$\\s*/"],
-    "suffix": ["/\\s*USD\\s*$/"]
+## 常見問題解決
+
+### WebSocket Hang Up 問題
+
+本爬蟲已內建多種解決方案：
+
+1. **--no-sandbox 參數**: 已自動加入
+2. **重試機制**: 失敗時自動重試
+3. **引擎切換**: Puppeteer 失敗時可切換到 Playwright
+4. **資源攔截**: 停用不必要的資源載入
+
+### 效能優化
+
+```typescript
+const crawler = new UniversalCrawler();
+
+// 配置效能選項
+const result = await crawler.crawl({
+  url: 'https://example.com',
+  options: {
+    headless: true,        // 無頭模式
+    timeout: 30000,        // 30秒超時
+    waitFor: 1000,         // 減少等待時間
+    screenshot: false      // 停用截圖
   }
+});
+```
+
+## API 參考
+
+### UniversalCrawler
+
+主要的爬蟲類別。
+
+#### 建構子選項
+```typescript
+new UniversalCrawler({
+  usePlaywright?: boolean;  // 使用 Playwright 引擎
+  configPath?: string;      // 配置檔案路徑
+  outputDir?: string;       // 輸出目錄
+})
+```
+
+#### 主要方法
+
+- `crawl(config)`: 單一頁面爬蟲
+- `crawlMultiple(configs, concurrent)`: 批量爬蟲
+- `export(results, options)`: 匯出結果
+- `saveConfig(name, config)`: 儲存配置
+- `loadConfig(name)`: 載入配置
+- `cleanup()`: 清理資源
+
+### 配置選項
+
+```typescript
+interface CrawlerConfig {
+  url: string;                    // 目標 URL
+  selectors?: SelectorConfig;     // 選擇器配置
+  headers?: Record<string, string>; // HTTP 標頭
+  cookies?: CookieConfig;         // Cookie 設定
+  options?: CrawlerOptions;       // 爬蟲選項
 }
 ```
 
-## 📚 詳細文檔
+詳細的型別定義請參考 `src/types/index.ts`。
 
-- **[使用指南](docs/USAGE.md)** - 完整的使用說明和範例
-- **[API 文檔](docs/API.md)** - HTTP API 詳細文檔  
-- **[架構設計](docs/ARCHITECTURE.md)** - 系統架構和設計理念
-- **[範例集合](docs/EXAMPLES.md)** - 各種實際使用場景範例
+## 範例
 
-## 🔧 開發指令
+查看 `examples/` 目錄獲得更多使用範例：
+
+- `basic-usage.ts` - 基本使用
+- `multiple-sites.ts` - 批量爬蟲
+- `cookie-login.ts` - Cookie 和登入
+- `config-management.ts` - 配置管理
+- `advanced-selectors.ts` - 進階選擇器
+- `playwright-vs-puppeteer.ts` - 引擎比較
+
+## 腳本命令
 
 ```bash
-npm run build          # 編譯 TypeScript
-npm run cli            # 執行 CLI（開發模式）
-npm run server         # 啟動 API 服務器
-npm test              # 執行測試
-npm run lint          # 程式碼檢查
+npm run build      # 編譯 TypeScript
+npm run dev        # 開發模式執行
+npm run test       # 執行測試
+npm run lint       # 程式碼檢查
+npm run typecheck  # 型別檢查
 ```
 
-## 🎯 主要特性
+## 輸出結構
 
-### 支援的網站類型
-- ✅ 靜態 HTML 網站
-- ✅ React/Vue/Angular SPA 應用
-- ✅ 動態載入內容的網站
-- ✅ 需要等待的異步內容
+```
+output/
+├── *.json          # JSON 匯出檔案
+├── *.csv           # CSV 匯出檔案
+├── *.xlsx          # Excel 匯出檔案
+├── screenshots/    # 截圖檔案
+└── *.md           # 統計報告
 
-### 資料清理功能
-- **自動標準化**: `"123"` → `123`, `"---"` → `null`
-- **格式清理**: 移除貨幣符號、百分比符號等
-- **空值處理**: 統一處理各種空值表示
+configs/
+└── *.json         # 配置檔案
 
-### 輸出格式
-- **JSON**: 結構化資料，適合程式處理
-- **CSV**: 表格格式，適合數據分析
+logs/
+├── error.log      # 錯誤日誌
+└── combined.log   # 完整日誌
+```
 
-## 📄 授權
+## 注意事項
+
+1. **合法使用**: 請遵守目標網站的 robots.txt 和使用條款
+2. **速率限制**: 大量爬蟲時請加入適當延遲
+3. **資源管理**: 使用完畢後請呼叫 `cleanup()` 方法
+4. **敏感資訊**: 不要在配置檔案中儲存明文密碼
+
+## 貢獻
+
+歡迎提交 Issue 和 Pull Request！
+
+## 授權
 
 MIT License
-
-## 🤝 貢獻
-
-歡迎提交 Issue 和 Pull Request！請參考 [ARCHITECTURE.md](docs/ARCHITECTURE.md) 了解系統設計。
