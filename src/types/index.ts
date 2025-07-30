@@ -43,6 +43,7 @@ export interface CrawlerOptions {
   headless?: boolean;
   screenshot?: boolean;
   delay?: number;
+  domainDelay?: number; // 對同一網域的請求間隔時間（毫秒），預防 DDoS 誤判
   encoding?: string; // 支援指定編碼：utf-8, big5, gb2312 等
   viewport?: {
     width: number;

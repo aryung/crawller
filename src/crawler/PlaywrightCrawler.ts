@@ -2,6 +2,7 @@ import { chromium, Browser, Page } from 'playwright';
 import { CrawlerConfig, CrawlerResult, CrawlerOptions } from '../types';
 import { DataExtractor } from './DataExtractor';
 import { logger, delay, validateCrawlerConfig } from '../utils';
+import { builtinTransforms, getTransformFunction } from '../transforms';
 
 export class PlaywrightCrawler {
   private browser: Browser | null = null;
@@ -97,8 +98,8 @@ export class PlaywrightCrawler {
         await page.waitForTimeout(options.waitFor);
       }
 
-      // 提取資料 - 需要適配 Playwright
-      const data = await this.extractDataPlaywright(page, config.selectors || {});
+      // 提取資料 - 支援 Enhanced Selectors
+      const data = await this.extractDataWithEnhancedSelectors(page, config.selectors || {}, config);
 
       // 截圖
       let screenshot: Buffer | undefined;
@@ -121,24 +122,203 @@ export class PlaywrightCrawler {
     }
   }
 
-  private async extractDataPlaywright(page: Page, selectors: any): Promise<Record<string, any>> {
+  private async extractDataWithEnhancedSelectors(page: Page, selectors: any, config: any): Promise<Record<string, any>> {
     const data: Record<string, any> = {};
 
     for (const [key, selector] of Object.entries(selectors)) {
       try {
         if (typeof selector === 'string') {
-          const element = await page.$(selector);
-          if (element) {
-            data[key] = await element.textContent() || '';
+          // 簡單字符串選擇器
+          if (selector.includes(':multiple')) {
+            const cleanSelector = selector.replace(':multiple', '');
+            const elements = await page.$$(cleanSelector);
+            const values = [];
+            for (const element of elements) {
+              const text = await element.textContent();
+              if (text) values.push(text.trim());
+            }
+            data[key] = values;
+          } else {
+            const element = await page.$(selector);
+            data[key] = element ? (await element.textContent() || '').trim() : '';
+          }
+        } else if (typeof selector === 'object' && selector !== null) {
+          // Enhanced Selector 對象
+          const selectorObj = selector as any;
+          
+          if (selectorObj.selector || selectorObj.extract) {
+            // 這是 EnhancedSelectorItem 格式或有 extract 配置
+            data[key] = await this.processEnhancedSelectorPlaywright(page, selectorObj, config);
           }
         }
-      } catch (error) {
-        logger.warn(`Failed to extract ${key}:`, error);
+      } catch (selectorError) {
+        logger.warn(`Failed to extract ${key}:`, selectorError);
         data[key] = null;
       }
     }
 
     return data;
+  }
+
+  private async processEnhancedSelectorPlaywright(page: Page, selectorObj: any, config: any): Promise<any> {
+    const { selector, multiple, extract, attribute, transform } = selectorObj;
+    
+    if (extract) {
+      // 有 extract 配置 - 提取多個屬性
+      const cleanSelector = selector ? selector.replace(':multiple', '') : '';
+      const isMultiple = multiple || (selector && selector.includes(':multiple'));
+      return await this.processExtractConfigPlaywright(page, { selector: cleanSelector, multiple: isMultiple, extract }, config);
+    }
+    
+    if (!selector) {
+      logger.warn('Enhanced selector missing selector property');
+      return null;
+    }
+
+    const cleanSelector = selector.replace(':multiple', '');
+    const isMultiple = multiple || selector.includes(':multiple');
+
+    if (attribute) {
+      // 提取特定屬性
+      let values;
+      if (isMultiple) {
+        const elements = await page.$$(cleanSelector);
+        values = [];
+        for (const element of elements) {
+          const attrValue = await element.getAttribute(attribute);
+          if (attrValue) values.push(attrValue);
+        }
+      } else {
+        const element = await page.$(cleanSelector);
+        values = element ? await element.getAttribute(attribute) : null;
+      }
+
+      // 應用轉換
+      if (transform) {
+        values = await this.applyTransformPlaywright(values, transform, config);
+      }
+
+      return values;
+    } else {
+      // 提取文本
+      let values;
+      if (isMultiple) {
+        const elements = await page.$$(cleanSelector);
+        values = [];
+        for (const element of elements) {
+          const text = await element.textContent();
+          if (text) values.push(text.trim());
+        }
+      } else {
+        const element = await page.$(cleanSelector);
+        values = element ? (await element.textContent() || '').trim() : '';
+      }
+
+      // 應用轉換
+      if (transform) {
+        values = await this.applyTransformPlaywright(values, transform, config);
+      }
+
+      return values;
+    }
+  }
+
+  private async processExtractConfigPlaywright(page: Page, selectorConfig: any, config: any): Promise<any> {
+    const { selector, multiple, extract } = selectorConfig;
+    const isMultiple = multiple || selector.includes(':multiple');
+    const cleanSelector = selector.replace(':multiple', '');
+
+    // Check if selector matches any elements
+    const matchedElements = await page.$$(cleanSelector);
+    if (matchedElements.length === 0) {
+      logger.debug(`Selector "${cleanSelector}" matched no elements`);
+      return isMultiple ? [] : null;
+    }
+
+    if (isMultiple) {
+      // 多元素提取
+      const results: any[] = [];
+      for (const element of matchedElements) {
+        const result: any = {};
+        for (const [key, extractConfig] of Object.entries(extract)) {
+          result[key] = await this.extractSingleValuePlaywright(page, element, extractConfig, config);
+        }
+        results.push(result);
+      }
+      return results;
+    } else {
+      // 單元素提取
+      const element = matchedElements[0];
+      if (!element) return null;
+
+      const result: any = {};
+      for (const [key, extractConfig] of Object.entries(extract)) {
+        result[key] = await this.extractSingleValuePlaywright(page, element, extractConfig, config);
+      }
+      return result;
+    }
+  }
+
+  private async extractSingleValuePlaywright(page: Page, element: any, extractConfig: any, config: any): Promise<any> {
+    let value: any;
+
+    if (typeof extractConfig === 'string') {
+      // 直接提取文本或屬性
+      if (extractConfig === 'text') {
+        value = (await element.textContent() || '').trim();
+      } else {
+        value = await element.getAttribute(extractConfig);
+      }
+    } else if (typeof extractConfig === 'object' && extractConfig !== null) {
+      // 對象配置
+      const { attribute, transform } = extractConfig;
+      
+      if (attribute) {
+        value = await element.getAttribute(attribute);
+      } else {
+        value = (await element.textContent() || '').trim();
+      }
+
+      // 應用轉換
+      if (transform) {
+        value = await this.applyTransformPlaywright(value, transform, config);
+      }
+    }
+
+    return value;
+  }
+
+  private async applyTransformPlaywright(value: any, transformName: string, config: any): Promise<any> {
+    try {
+      // 檢查是否為內建轉換函數
+      const transformFn = getTransformFunction(transformName);
+      if (transformFn) {
+        const context = {
+          url: config.url,
+          baseUrl: config.variables?.baseUrl || config.url
+        };
+        return transformFn(value, context);
+      }
+
+      // 檢查是否為配置中定義的自定義轉換
+      if (config.transforms && config.transforms[transformName]) {
+        const customTransformCode = config.transforms[transformName];
+        // 創建函數並執行
+        const fn = new Function('value', 'context', customTransformCode);
+        const context = {
+          url: config.url,
+          baseUrl: config.variables?.baseUrl || config.url
+        };
+        return fn(value, context);
+      }
+
+      // 如果沒有找到轉換函數，返回原值
+      logger.warn(`Transform function '${transformName}' not found`);
+      return value;
+    } catch (error) {
+      logger.warn(`Error applying transform '${transformName}':`, error);
+      return value;
+    }
   }
 
   private parseCookies(cookieString: string, url: string) {

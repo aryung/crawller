@@ -5,3 +5,4 @@ export * from './DataExporter';
 export * from './BrowserDetector';
 export * from './EncodingHelper';
 export * from './CurlParser';
+export * from './DomainRateLimiter';

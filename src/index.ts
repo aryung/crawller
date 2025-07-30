@@ -1,7 +1,8 @@
 import { WebCrawler, PlaywrightCrawler, PuppeteerCoreWebCrawler } from './crawler';
 import { ConfigManager, EnhancedConfigManager } from './config';
-import { DataExporter, logger, BrowserDetector } from './utils';
+import { DataExporter, logger, BrowserDetector, DomainRateLimiter } from './utils';
 import { CrawlerConfig, CrawlerResult, ExportOptions } from './types';
+import { builtinTransforms, getTransformFunction } from './transforms';
 
 export * from './crawler';
 export * from './config';
@@ -15,6 +16,7 @@ export class UniversalCrawler {
   private playwrightCrawler: PlaywrightCrawler;
   private configManager: EnhancedConfigManager;
   private dataExporter: DataExporter;
+  private domainRateLimiter: DomainRateLimiter;
   private usePlaywright: boolean;
   private usePuppeteerCore: boolean;
 
@@ -23,26 +25,39 @@ export class UniversalCrawler {
     usePuppeteerCore?: boolean;
     configPath?: string;
     outputDir?: string;
+    defaultDomainDelay?: number;
   }) {
     this.webCrawler = new WebCrawler();
     this.puppeteerCoreWebCrawler = new PuppeteerCoreWebCrawler();
     this.playwrightCrawler = new PlaywrightCrawler();
     this.configManager = new EnhancedConfigManager(options?.configPath);
     this.dataExporter = new DataExporter(options?.outputDir);
+    this.domainRateLimiter = new DomainRateLimiter(options?.defaultDomainDelay || 2000);
     this.usePlaywright = options?.usePlaywright || false;
     this.usePuppeteerCore = options?.usePuppeteerCore ?? true; // 預設使用 puppeteer-core
   }
 
   async crawl(config: CrawlerConfig | string): Promise<CrawlerResult> {
-    const crawlerConfig = typeof config === 'string' 
-      ? await this.configManager.loadConfig(config)
-      : config;
+    let crawlerConfig: CrawlerConfig;
+    let enhancedConfig: any = null;
 
-    // 智能引擎選擇
-    return await this.crawlWithFallback(crawlerConfig);
+    if (typeof config === 'string') {
+      // 嘗試直接獲取增強配置，如果失敗則使用標準配置
+      try {
+        enhancedConfig = await this.configManager.loadEnhancedConfig(config);
+        crawlerConfig = await this.configManager.loadConfig(config);
+      } catch (error) {
+        crawlerConfig = await this.configManager.loadConfig(config);
+      }
+    } else {
+      crawlerConfig = config;
+    }
+
+    // 智能引擎選擇，優先使用增強配置
+    return await this.crawlWithFallback(crawlerConfig, enhancedConfig);
   }
 
-  private async crawlWithFallback(config: CrawlerConfig): Promise<CrawlerResult> {
+  private async crawlWithFallback(config: CrawlerConfig, enhancedConfig?: any): Promise<CrawlerResult> {
     const errors: string[] = [];
     const startTime = Date.now();
 
@@ -50,7 +65,7 @@ export class UniversalCrawler {
     if (this.isHttpCompatible(config)) {
       try {
         logger.info('Trying HTTP mode first (static site detected)...');
-        const result = await this.crawlWithHttpMode(config);
+        const result = await this.crawlWithHttpMode(enhancedConfig || config);
         const duration = Date.now() - startTime;
         logger.info(`HTTP mode successful in ${duration}ms`);
         return result;
@@ -65,7 +80,7 @@ export class UniversalCrawler {
     if (this.usePlaywright) {
       try {
         logger.info('Trying Playwright engine...');
-        const result = await this.playwrightCrawler.crawl(config);
+        const result = await this.playwrightCrawler.crawl(enhancedConfig || config);
         const duration = Date.now() - startTime;
         logger.info(`Playwright successful in ${duration}ms`);
         return result;
@@ -77,7 +92,7 @@ export class UniversalCrawler {
     } else if (this.usePuppeteerCore) {
       try {
         logger.info('Trying Puppeteer-Core engine...');
-        const result = await this.puppeteerCoreWebCrawler.crawl(config);
+        const result = await this.puppeteerCoreWebCrawler.crawl(enhancedConfig || config);
         const duration = Date.now() - startTime;
         logger.info(`Puppeteer-Core successful in ${duration}ms`);
         return result;
@@ -89,7 +104,7 @@ export class UniversalCrawler {
     } else {
       try {
         logger.info('Trying Puppeteer engine...');
-        const result = await this.webCrawler.crawl(config);
+        const result = await this.webCrawler.crawl(enhancedConfig || config);
         const duration = Date.now() - startTime;
         logger.info(`Puppeteer successful in ${duration}ms`);
         return result;
@@ -105,7 +120,7 @@ export class UniversalCrawler {
       // 從 Playwright 回退到 Puppeteer-Core
       try {
         logger.info('Falling back to Puppeteer-Core engine...');
-        const result = await this.puppeteerCoreWebCrawler.crawl(config);
+        const result = await this.puppeteerCoreWebCrawler.crawl(enhancedConfig || config);
         const duration = Date.now() - startTime;
         logger.info(`Puppeteer-Core fallback successful in ${duration}ms`);
         return result;
@@ -118,7 +133,7 @@ export class UniversalCrawler {
       // 從 Puppeteer-Core 回退到 Playwright
       try {
         logger.info('Falling back to Playwright engine...');
-        const result = await this.playwrightCrawler.crawl(config);
+        const result = await this.playwrightCrawler.crawl(enhancedConfig || config);
         const duration = Date.now() - startTime;
         logger.info(`Playwright fallback successful in ${duration}ms`);
         return result;
@@ -131,7 +146,7 @@ export class UniversalCrawler {
       // 從 Puppeteer 回退到 Puppeteer-Core
       try {
         logger.info('Falling back to Puppeteer-Core engine...');
-        const result = await this.puppeteerCoreWebCrawler.crawl(config);
+        const result = await this.puppeteerCoreWebCrawler.crawl(enhancedConfig || config);
         const duration = Date.now() - startTime;
         logger.info(`Puppeteer-Core fallback successful in ${duration}ms`);
         return result;
@@ -150,7 +165,7 @@ export class UniversalCrawler {
     }
     
     try {
-      const result = await this.crawlWithHttpMode(config);
+      const result = await this.crawlWithHttpMode(enhancedConfig || config);
       const duration = Date.now() - startTime;
       logger.info(`HTTP fallback successful in ${duration}ms`);
       return result;
@@ -228,32 +243,10 @@ export class UniversalCrawler {
       }
 
       const $ = cheerio.load(htmlContent);
-      const data: Record<string, any> = {};
+      let data: Record<string, any> = {};
 
       if (config.selectors) {
-        for (const [key, selector] of Object.entries(config.selectors)) {
-          try {
-            if (typeof selector === 'string') {
-              // 檢查是否為多元素選擇器
-              if (selector.includes(':multiple')) {
-                const cleanSelector = selector.replace(':multiple', '');
-                data[key] = $(cleanSelector).map((_, el) => $(el).text().trim()).get();
-              } else {
-                data[key] = $(selector).text().trim();
-              }
-            } else if (selector.attribute) {
-              const cleanSelector = selector.selector.replace(':multiple', '');
-              if (selector.selector.includes(':multiple')) {
-                data[key] = $(cleanSelector).map((_, el) => $(el).attr(selector.attribute!)).get();
-              } else {
-                data[key] = $(cleanSelector).attr(selector.attribute);
-              }
-            }
-          } catch (selectorError) {
-            logger.warn(`Failed to extract ${key}:`, selectorError);
-            data[key] = null;
-          }
-        }
+        data = await this.extractDataWithEnhancedSelectors($, config.selectors, config);
       }
 
       logger.info(`HTTP mode crawl successful for ${config.url}`);
@@ -272,21 +265,252 @@ export class UniversalCrawler {
   async crawlMultiple(configs: (CrawlerConfig | string)[], concurrent = 3): Promise<CrawlerResult[]> {
     const results: CrawlerResult[] = [];
     
-    for (let i = 0; i < configs.length; i += concurrent) {
-      const batch = configs.slice(i, i + concurrent);
-      const batchResults = await Promise.all(
-        batch.map(config => this.crawl(config).catch(error => ({
-          url: typeof config === 'string' ? config : config.url,
-          data: {},
-          timestamp: new Date(),
-          success: false,
-          error: error.message
-        })))
-      );
-      results.push(...batchResults);
+    // 將配置按域名分組
+    const configsByDomain = new Map<string, (CrawlerConfig | string)[]>();
+    
+    for (const config of configs) {
+      const crawlerConfig = typeof config === 'string' 
+        ? await this.configManager.loadConfig(config)
+        : config;
+      
+      const domain = this.extractDomain(crawlerConfig.url);
+      if (!configsByDomain.has(domain)) {
+        configsByDomain.set(domain, []);
+      }
+      configsByDomain.get(domain)!.push(config);
     }
 
+    // 並行處理不同域名，但同域名內的請求序列化處理
+    const domainTasks = Array.from(configsByDomain.entries()).map(async ([domain, domainConfigs]) => {
+      const domainResults: CrawlerResult[] = [];
+      
+      // 同域名的請求序列化處理（應用速率限制）
+      for (const config of domainConfigs) {
+        try {
+          // 解析配置以獲取 URL 和域名延遲設定
+          const crawlerConfig = typeof config === 'string' 
+            ? await this.configManager.loadConfig(config)
+            : config;
+
+          // 應用域名速率限制
+          const domainDelay = crawlerConfig.options?.domainDelay;
+          await this.domainRateLimiter.waitForDomain(crawlerConfig.url, domainDelay);
+
+          // 執行爬取（使用原始配置，讓 crawl 方法處理增強配置）
+          const result = await this.crawl(config);
+          domainResults.push(result);
+          
+        } catch (error) {
+          domainResults.push({
+            url: typeof config === 'string' ? config : config.url,
+            data: {},
+            timestamp: new Date(),
+            success: false,
+            error: error.message
+          });
+        }
+      }
+      
+      return domainResults;
+    });
+
+    // 等待所有域名的處理完成
+    const allDomainResults = await Promise.all(domainTasks);
+    
+    // 扁平化結果
+    for (const domainResults of allDomainResults) {
+      results.push(...domainResults);
+    }
+    
+    // 清理速率限制器
+    this.domainRateLimiter.cleanup();
+
     return results;
+  }
+
+  private extractDomain(url: string): string {
+    try {
+      const urlObj = new URL(url);
+      return urlObj.hostname;
+    } catch (error) {
+      logger.warn(`Failed to extract domain from URL: ${url}`, error);
+      return url;
+    }
+  }
+
+  private async extractDataWithEnhancedSelectors($: any, selectors: any, config: any): Promise<Record<string, any>> {
+    const data: Record<string, any> = {};
+
+    for (const [key, selector] of Object.entries(selectors)) {
+      try {
+        if (typeof selector === 'string') {
+          // 簡單字符串選擇器
+          if (selector.includes(':multiple')) {
+            const cleanSelector = selector.replace(':multiple', '');
+            data[key] = $(cleanSelector).map((_, el) => $(el).text().trim()).get();
+          } else {
+            data[key] = $(selector).text().trim();
+          }
+        } else if (typeof selector === 'object' && selector !== null) {
+          // Enhanced Selector 對象
+          const selectorObj = selector as any;
+          
+          if (selectorObj.selector || selectorObj.extract) {
+            // 這是 EnhancedSelectorItem 格式或有 extract 配置
+            data[key] = await this.processEnhancedSelector($, selectorObj, config);
+          }
+        }
+      } catch (selectorError) {
+        logger.warn(`Failed to extract ${key}:`, selectorError);
+        data[key] = null;
+      }
+    }
+
+    return data;
+  }
+
+  private async processEnhancedSelector($: any, selectorObj: any, config: any): Promise<any> {
+    const { selector, multiple, extract, attribute, transform } = selectorObj;
+    
+    if (extract) {
+      // 有 extract 配置 - 提取多個屬性
+      const cleanSelector = selector ? selector.replace(':multiple', '') : '';
+      const isMultiple = multiple || (selector && selector.includes(':multiple'));
+      return await this.processExtractConfig($, { selector: cleanSelector, multiple: isMultiple, extract }, config);
+    }
+    
+    if (!selector) {
+      logger.warn('Enhanced selector missing selector property');
+      return null;
+    }
+
+    const cleanSelector = selector.replace(':multiple', '');
+    const isMultiple = multiple || selector.includes(':multiple');
+
+    if (attribute) {
+      // 提取特定屬性
+      let values = isMultiple
+        ? $(cleanSelector).map((_, el) => $(el).attr(attribute)).get()
+        : $(cleanSelector).attr(attribute);
+
+      // 應用轉換
+      if (transform) {
+        values = await this.applyTransform(values, transform, config);
+      }
+
+      return values;
+    } else {
+      // 提取文本
+      let values = isMultiple
+        ? $(cleanSelector).map((_, el) => $(el).text().trim()).get()
+        : $(cleanSelector).text().trim();
+
+      // 應用轉換
+      if (transform) {
+        values = await this.applyTransform(values, transform, config);
+      }
+
+      return values;
+    }
+  }
+
+  private async processExtractConfig($: any, selectorConfig: any, config: any): Promise<any> {
+    const { selector, multiple, extract } = selectorConfig;
+    const isMultiple = multiple || selector.includes(':multiple');
+    const cleanSelector = selector.replace(':multiple', '');
+
+    // Check if selector matches any elements
+    const matchedElements = $(cleanSelector);
+    if (matchedElements.length === 0) {
+      logger.debug(`Selector "${cleanSelector}" matched no elements`);
+      return isMultiple ? [] : null;
+    }
+
+    if (isMultiple) {
+      // 多元素提取
+      const results: any[] = [];
+      for (let i = 0; i < $(cleanSelector).length; i++) {
+        const element = $(cleanSelector).eq(i);
+        const result: any = {};
+        for (const [key, extractConfig] of Object.entries(extract)) {
+          result[key] = await this.extractSingleValue($, element, extractConfig, config);
+        }
+        results.push(result);
+      }
+      return results;
+    } else {
+      // 單元素提取
+      const element = $(cleanSelector).first();
+      if (element.length === 0) return null;
+
+      const result: any = {};
+      for (const [key, extractConfig] of Object.entries(extract)) {
+        result[key] = await this.extractSingleValue($, element, extractConfig, config);
+      }
+      return result;
+    }
+  }
+
+  private async extractSingleValue($: any, element: any, extractConfig: any, config: any): Promise<any> {
+    let value: any;
+
+    if (typeof extractConfig === 'string') {
+      // 直接提取文本或屬性
+      if (extractConfig === 'text') {
+        value = $(element).text().trim();
+      } else {
+        value = $(element).attr(extractConfig);
+      }
+    } else if (typeof extractConfig === 'object' && extractConfig !== null) {
+      // 對象配置
+      const { attribute, transform } = extractConfig;
+      
+      if (attribute) {
+        value = $(element).attr(attribute);
+      } else {
+        value = $(element).text().trim();
+      }
+
+      // 應用轉換
+      if (transform) {
+        value = await this.applyTransform(value, transform, config);
+      }
+    }
+
+    return value;
+  }
+
+  private async applyTransform(value: any, transformName: string, config: any): Promise<any> {
+    try {
+      // 檢查是否為內建轉換函數
+      const transformFn = getTransformFunction(transformName);
+      if (transformFn) {
+        const context = {
+          url: config.url,
+          baseUrl: config.variables?.baseUrl || config.url
+        };
+        return transformFn(value, context);
+      }
+
+      // 檢查是否為配置中定義的自定義轉換
+      if (config.transforms && config.transforms[transformName]) {
+        const customTransformCode = config.transforms[transformName];
+        // 創建函數並執行
+        const fn = new Function('value', 'context', customTransformCode);
+        const context = {
+          url: config.url,
+          baseUrl: config.variables?.baseUrl || config.url
+        };
+        return fn(value, context);
+      }
+
+      // 如果沒有找到轉換函數，返回原值
+      logger.warn(`Transform function '${transformName}' not found`);
+      return value;
+    } catch (error) {
+      logger.warn(`Error applying transform '${transformName}':`, error);
+      return value;
+    }
   }
 
   async export(results: CrawlerResult[], options: ExportOptions): Promise<string> {
