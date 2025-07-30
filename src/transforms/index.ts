@@ -88,54 +88,10 @@ export const builtinTransforms: TransformRegistry = {
       .trim();
   },
   
-  // 通用提取函式
-  
-  extractStockCode: (value: string) => {
-    const match = value?.toString().match(/(\d{4,6})/);
-    return match ? match[1] : null;
-  },
-  
-  parsePrice: (value: string) => {
+  // 通用數值處理
+  parseNumber: (value: string) => {
     const cleaned = value?.toString().replace(/[^\d.-]/g, '');
     return parseFloat(cleaned) || 0;
-  },
-  
-  parsePercentage: (value: string) => {
-    const match = value?.toString().match(/([-+]?\d*\.?\d+)%/);
-    return match ? parseFloat(match[1]) : 0;
-  },
-  
-  parseVolume: (value: string) => {
-    const str = value?.toString().replace(/,/g, '');
-    const match = str.match(/([\d.]+)([萬億千百十]?)/);
-    if (!match) return 0;
-    
-    const num = parseFloat(match[1]);
-    const unit = match[2];
-    
-    const multipliers: Record<string, number> = {
-      '十': 10,
-      '百': 100,
-      '千': 1000,
-      '萬': 10000,
-      '億': 100000000
-    };
-    
-    return num * (multipliers[unit] || 1);
-  },
-  
-  // 財經相關
-  formatCurrency: (value: number, currency: string = 'TWD') => {
-    const formatter = new Intl.NumberFormat('zh-TW', {
-      style: 'currency',
-      currency: currency
-    });
-    return formatter.format(value);
-  },
-  
-  calculateChange: (current: number, previous: number) => {
-    if (!previous) return 0;
-    return ((current - previous) / previous * 100);
   },
   
   // 條件轉換
@@ -189,13 +145,7 @@ export const builtinTransforms: TransformRegistry = {
 
 // 獲取轉換函式 (支援網站特定轉換)
 export function getTransformFunction(name: string, context?: any): Function | null {
-  // 首先檢查內建轉換
-  const builtinFn = builtinTransforms[name];
-  if (builtinFn) {
-    return builtinFn;
-  }
-  
-  // 如果有 context 且包含 URL，嘗試獲取網站特定轉換
+  // 優先檢查網站特定轉換
   if (context?.url) {
     const siteName = detectSiteFromUrl(context.url);
     if (siteName) {
@@ -204,6 +154,12 @@ export function getTransformFunction(name: string, context?: any): Function | nu
         return siteFn;
       }
     }
+  }
+  
+  // 再檢查內建轉換
+  const builtinFn = builtinTransforms[name];
+  if (builtinFn) {
+    return builtinFn;
   }
   
   return null;

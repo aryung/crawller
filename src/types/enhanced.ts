@@ -10,9 +10,17 @@ export interface EnhancedCrawlerConfig extends Omit<CrawlerConfig, 'selectors'> 
 }
 
 export interface DataDrivenConfig {
-  source: string;
-  jsonPath: string;
-  variable: string;
+  // 新版格式
+  enabled?: boolean;
+  sourceConfig?: string;
+  sourceSelector?: string;
+  urlTemplate?: string;
+  templateVars?: Record<string, string>;
+  
+  // 舊版格式（向後兼容）
+  source?: string;
+  jsonPath?: string;
+  variable?: string;
 }
 
 export interface EnhancedSelectorConfig {

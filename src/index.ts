@@ -174,7 +174,7 @@ export class UniversalCrawler {
     }
   }
 
-  async crawlMultiple(configs: (CrawlerConfig | EnhancedCrawlerConfig | string)[], concurrent = 3): Promise<CrawlerResult[]> {
+  async crawlMultiple(configs: (CrawlerConfig | EnhancedCrawlerConfig | string)[], concurrent = 1, onProgress?: (completed: number, total: number) => void): Promise<CrawlerResult[]> {
     const results: CrawlerResult[] = [];
     const configsByDomain = new Map<string, (CrawlerConfig | EnhancedCrawlerConfig | string)[]>();
 
@@ -189,6 +189,9 @@ export class UniversalCrawler {
       }
       configsByDomain.get(domain)!.push(config);
     }
+
+    let completedCount = 0;
+    const totalCount = configs.length;
 
     const domainTasks = Array.from(configsByDomain.entries()).map(async ([, domainConfigs]) => {
       const domainResults: CrawlerResult[] = [];
@@ -214,6 +217,12 @@ export class UniversalCrawler {
             success: false,
             error: (error as Error).message
           });
+        }
+
+        // 更新進度
+        completedCount++;
+        if (onProgress) {
+          onProgress(completedCount, totalCount);
         }
       }
 

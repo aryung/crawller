@@ -20,6 +20,8 @@ interface CLIOptions {
   encoding?: string;
   keepCookies?: boolean;
   selectors?: string;
+  batchSize?: number;
+  startFrom?: number;
 }
 
 async function main() {
@@ -34,7 +36,9 @@ async function main() {
     .option('-c, --config <path>', '配置檔案目錄', 'configs')
     .option('-o, --output <path>', '輸出目錄', 'output')
     .option('-f, --format <format>', '匯出格式 (json|csv|xlsx)', 'json')
-    .option('--concurrent <number>', '同時處理的配置檔案數量（非引擎併發）', '3')
+    .option('--concurrent <number>', '同時處理的配置檔案數量（非引擎併發）', '1')
+    .option('--batch-size <number>', '數據驅動配置的批次大小', '50')
+    .option('--start-from <number>', '從第幾個配置開始執行', '0')
     .option('-v, --verbose', '詳細日誌')
     .action(async (configs: string[], options: CLIOptions) => {
       if (options.verbose) {
@@ -182,9 +186,31 @@ async function runCrawler(configNames: string[], options: CLIOptions) {
       return;
     }
 
-    const allConfigs = (await Promise.all(configNames.map(name => 
-      crawler.configManager.expandDataDrivenConfigs?.(name, options.output || 'output') || Promise.resolve([name])
-    ))).flat();
+    // 處理數據驅動配置擴展
+    const allConfigsToRun: (string | EnhancedCrawlerConfig)[] = [];
+    for (const name of configNames) {
+      try {
+        const expandedConfigs = await crawler.configManager.expandDataDrivenConfigs(name, options.output || 'output');
+        if (expandedConfigs.length === 1 && !expandedConfigs[0].dataDriven) {
+          // 非數據驅動配置，使用原始名稱
+          allConfigsToRun.push(name);
+        } else {
+          // 數據驅動配置，應用批次大小和起始位置限制
+          const batchSize = Number(options.batchSize) || 50;
+          const startFrom = Number(options.startFrom) || 0;
+          const endAt = Math.min(startFrom + batchSize, expandedConfigs.length);
+          
+          console.log(`🔢 數據驅動配置擴展: ${expandedConfigs.length} 個配置`);
+          console.log(`📊 批次處理: 第 ${startFrom + 1} - ${endAt} 個 (批次大小: ${batchSize})`);
+          
+          const batchConfigs = expandedConfigs.slice(startFrom, endAt);
+          allConfigsToRun.push(...batchConfigs);
+        }
+      } catch (error) {
+        logger.warn(`Failed to expand data-driven configs for ${name}:`, error);
+        allConfigsToRun.push(name);
+      }
+    }
 
 
     const totalTimeout = 10 * 60 * 1000;
@@ -194,7 +220,9 @@ async function runCrawler(configNames: string[], options: CLIOptions) {
     console.log('💡 按 Ctrl+C 可隨時中斷\n');
 
     let completedCount = 0;
-    const totalCount = allConfigs.length;
+    const totalCount = allConfigsToRun.length;
+
+    console.log(`📊 將執行 ${totalCount} 個配置任務`);
 
     const progressInterval = setInterval(() => {
       if (!isShuttingDown) {
@@ -204,8 +232,11 @@ async function runCrawler(configNames: string[], options: CLIOptions) {
     }, 1000);
 
     const crawlPromise = crawler.crawlMultiple(
-      allConfigs,
+      allConfigsToRun,
       Number(options.concurrent) || 3,
+      (completed, total) => {
+        completedCount = completed;
+      }
     ).then(results => {
       clearInterval(progressInterval);
       process.stdout.write('\r');

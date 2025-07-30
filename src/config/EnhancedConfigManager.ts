@@ -333,9 +333,111 @@ export class EnhancedConfigManager {
       return [config];
     }
 
-    const { source, jsonPath, variable } = config.dataDriven;
+    // 支持新版本的 dataDriven 格式
+    if (config.dataDriven.enabled && config.dataDriven.sourceConfig) {
+      return await this.expandNewDataDrivenConfigs(config, outputDir);
+    }
+
+    // 支持舊版本的 dataDriven 格式
+    return await this.expandLegacyDataDrivenConfigs(config, outputDir);
+  }
+
+  private async expandNewDataDrivenConfigs(config: EnhancedCrawlerConfig, outputDir: string): Promise<EnhancedCrawlerConfig[]> {
+    const { sourceConfig, sourceSelector, urlTemplate, templateVars } = config.dataDriven!;
+    
+    if (!sourceConfig) {
+      throw new Error('Data-driven config missing required "sourceConfig" field');
+    }
+    
+    if (!sourceSelector) {
+      throw new Error('Data-driven config missing required "sourceSelector" field');
+    }
+    
+    logger.info(`Expanding data-driven config using source: ${sourceConfig}`);
+
+    // 查找源配置的輸出文件
     const sourceFiles = await fs.readdir(outputDir);
-    const matchingFiles = sourceFiles.filter(file => file.startsWith(source.split('*')[0]) && file.endsWith(source.split('*')[1]));
+    const sourcePattern = `${sourceConfig}*_crawl_results_*.json`;
+    const matchingFiles = sourceFiles.filter(file => 
+      file.startsWith(sourceConfig) && 
+      file.includes('_crawl_results_') && 
+      file.endsWith('.json')
+    );
+
+    if (matchingFiles.length === 0) {
+      throw new Error(`Data source file not found for source config: ${sourceConfig}. Expected pattern: ${sourcePattern}`);
+    }
+
+    const latestFile = matchingFiles.sort().reverse()[0];
+    const sourceFile = path.join(outputDir, latestFile);
+    
+    logger.info(`Using data source file: ${latestFile}`);
+
+    if (!await fs.pathExists(sourceFile)) {
+      throw new Error(`Data source file not found: ${sourceFile}`);
+    }
+
+    const sourceData = await fs.readJson(sourceFile);
+    
+    // 從 results 數組中提取數據
+    let dataArray = [];
+    if (sourceData.results && Array.isArray(sourceData.results) && sourceData.results.length > 0) {
+      const firstResult = sourceData.results[0];
+      if (firstResult.data && firstResult.data[sourceSelector]) {
+        dataArray = firstResult.data[sourceSelector];
+      }
+    }
+
+    if (!Array.isArray(dataArray)) {
+      throw new Error(`Source selector '${sourceSelector}' did not return an array. Got: ${typeof dataArray}`);
+    }
+
+    logger.info(`Found ${dataArray.length} items from source selector '${sourceSelector}'`);
+
+    if (dataArray.length === 0) {
+      logger.warn(`No data found in source selector '${sourceSelector}', returning empty config array`);
+      return [];
+    }
+
+    // 為每個數據項生成新的配置
+    const configs = dataArray.map((item: any) => {
+      const newConfig = { ...config };
+      
+      // 替換 URL 模板
+      let newUrl = urlTemplate || config.url;
+      newUrl = this.replaceTemplateVariables(newUrl, item);
+      
+      // 設置變量
+      const newVariables = { ...config.variables };
+      if (templateVars) {
+        for (const [varName, template] of Object.entries(templateVars)) {
+          newVariables[varName] = this.replaceTemplateVariables(template as string, item);
+        }
+      }
+
+      newConfig.url = newUrl;
+      newConfig.variables = newVariables;
+      delete newConfig.dataDriven; // 移除 dataDriven 配置，避免無限遞歸
+
+      return newConfig;
+    });
+
+    logger.info(`Generated ${configs.length} data-driven configurations`);
+    return configs;
+  }
+
+  private async expandLegacyDataDrivenConfigs(config: EnhancedCrawlerConfig, outputDir: string): Promise<EnhancedCrawlerConfig[]> {
+    const { source, jsonPath, variable } = config.dataDriven!;
+    
+    if (!source) {
+      throw new Error('Data-driven config missing required "source" field');
+    }
+
+    const sourceFiles = await fs.readdir(outputDir);
+    const [prefix, suffix] = source.includes('*') ? source.split('*') : [source, ''];
+    const matchingFiles = sourceFiles.filter(file => 
+      file.startsWith(prefix) && file.endsWith(suffix)
+    );
 
     if (matchingFiles.length === 0) {
       throw new Error(`Data source file not found for pattern: ${source}`);
@@ -349,7 +451,7 @@ export class EnhancedConfigManager {
     }
 
     const sourceData = await fs.readJson(sourceFile);
-    const values = JSONPath({ path: jsonPath, json: sourceData });
+    const values = JSONPath({ path: jsonPath!, json: sourceData });
 
     if (!Array.isArray(values)) {
       throw new Error(`JSONPath expression did not return an array: ${jsonPath}`);
@@ -357,10 +459,18 @@ export class EnhancedConfigManager {
 
     const configs = await Promise.all(values.map(async (value) => {
       const newConfig = { ...config };
-      newConfig.variables = { ...newConfig.variables, [variable]: value };
+      newConfig.variables = { ...newConfig.variables, [variable!]: value };
       return await this.processVariables(newConfig);
     }));
 
     return configs;
+  }
+
+  private replaceTemplateVariables(template: string, item: any): string {
+    return template.replace(/\{\{item\.(\w+)\}\}/g, (match, key) => {
+      return item[key] || match;
+    }).replace(/\{\{(\w+)\}\}/g, (match, key) => {
+      return item[key] || match;
+    });
   }
 }
