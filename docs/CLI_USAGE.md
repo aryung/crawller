@@ -4,21 +4,32 @@
 
 ### 1. 查看可用配置
 ```bash
-npm run crawler list
+npm run list          # 簡短版本
+# 或
+npm run crawler list  # 完整版本
 ```
 
 ### 2. 執行 MoneyDJ 爬蟲
 ```bash
-# 基本版本
+# 方法 1: 使用 crawl 命令
 npm run crawl moneydj
+
+# 方法 2: 使用 crawler 命令 (新功能!)
+npm run crawler moneydj
 
 # 完整版本
 npm run crawl moneydj-links
+npm run crawler moneydj-links  # 兩種方式都可以
 ```
 
 ### 3. 建立新配置
 ```bash
 npm run crawler create my-site
+```
+
+### 4. 從 curl 命令建立配置
+```bash
+npm run curl2config "curl 'https://example.com' -H 'accept: text/html'"
 ```
 
 ## 🛡️ 安全功能
@@ -42,13 +53,29 @@ npm run crawler create my-site
 
 ## 🔧 常用命令
 
+### 🔥 **統一命令** (推薦)
 ```bash
-# 列出所有配置
-npm run crawler list
+# 執行爬蟲 - 兩種方式都可以！
+npm run crawler moneydj         # 新功能: 直接執行
+npm run crawl moneydj           # 傳統方式
 
-# 驗證配置
-npm run crawler validate moneydj
+# 管理命令
+npm run crawler list            # 列出配置
+npm run crawler doctor          # 系統診斷
+npm run crawler validate config # 驗證配置
+npm run crawler create new-site # 建立配置
+npm run curl2config "curl..."   # curl 轉換
+```
 
+### 📋 **簡化命令**
+```bash
+npm run list                    # 快速列出配置
+npm run doctor                  # 快速診斷
+npm run validate config         # 快速驗證
+```
+
+### ⚙️ **進階選項**
+```bash
 # 指定輸出格式
 npm run crawl moneydj --format xlsx
 
@@ -111,3 +138,16 @@ npm run crawl moneydj
 ```
 
 系統會自動選擇最適合的引擎，即使瀏覽器無法啟動也能正常工作！
+
+## 📚 **命令快速參考**
+
+| 功能 | 統一命令 | 簡化命令 | 說明 |
+|------|----------|----------|------|
+| **執行爬蟲** | `npm run crawler moneydj` | `npm run crawl moneydj` | 兩種方式都可以 ✨ |
+| **列出配置** | `npm run crawler list` | `npm run list` | 顯示所有配置 |
+| **系統診斷** | `npm run crawler doctor` | `npm run doctor` | 檢查系統狀態 |
+| **驗證配置** | `npm run crawler validate config` | `npm run validate config` | 檢查配置正確性 |
+| **建立配置** | `npm run crawler create name` | - | 新建配置檔案 |
+| **curl轉換** | `npm run crawler curl2config "..."` | `npm run curl2config "..."` | 從 curl 建立配置 |
+
+> **💡 提示**: 現在 `npm run crawler moneydj` 和 `npm run crawl moneydj` 完全相同！

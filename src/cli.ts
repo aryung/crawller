@@ -28,7 +28,7 @@ async function main() {
     .option('-c, --config <path>', '配置檔案目錄', 'configs')
     .option('-o, --output <path>', '輸出目錄', 'output')
     .option('-f, --format <format>', '匯出格式 (json|csv|xlsx)', 'json')
-    .option('--concurrent <number>', '併發數量', '3')
+    .option('--concurrent <number>', '同時處理的配置檔案數量（非引擎併發）', '3')
     .option('--engine <engine>', '爬蟲引擎 (puppeteer|playwright)', 'puppeteer')
     .option('-v, --verbose', '詳細日誌')
     .action(async (configs: string[], options: CLIOptions) => {
@@ -77,11 +77,56 @@ async function main() {
     });
 
   program
+    .command('curl2config <curl-command>')
+    .description('將 curl 命令轉換為配置檔案')
+    .option('-c, --config <path>', '配置檔案目錄', 'configs')
+    .option('-n, --name <name>', '配置檔案名稱（自動生成如果未指定）')
+    .option('-e, --encoding <encoding>', '指定編碼 (utf-8|big5|gb2312)')
+    .option('--keep-cookies', '保留所有 cookies（預設會移除敏感 cookies）')
+    .option('--selectors <selectors>', '自定義選擇器 JSON 字串')
+    .action(async (curlCommand: string, options: CLIOptions & { 
+      name?: string; 
+      encoding?: string; 
+      keepCookies?: boolean;
+      selectors?: string;
+    }) => {
+      await curl2config(curlCommand, options);
+    });
+
+  program
     .command('doctor')
     .description('診斷系統環境和依賴')
     .action(async () => {
       await runDiagnostics();
     });
+
+  // 處理未知命令的特殊邏輯
+  const args = process.argv.slice(2);
+  if (args.length > 0) {
+    const firstArg = args[0];
+    const knownCommands = ['crawl', 'list', 'create', 'validate', 'doctor', 'curl2config', '--help', '-h', '--version', '-V'];
+    
+    // 如果第一個參數不是已知命令，當作配置名稱執行
+    if (!knownCommands.includes(firstArg) && !firstArg.startsWith('-')) {
+      try {
+        console.log('🔄 檢測到配置名稱，執行爬蟲任務...');
+        const options: CLIOptions = {
+          config: 'configs',
+          output: 'output',
+          format: 'json',
+          concurrent: 3,
+          engine: 'puppeteer'
+        };
+        await runCrawler([firstArg], options);
+        return;
+      } catch (error) {
+        console.error('❌ 執行配置失敗:', (error as Error).message);
+        console.log('💡 可用命令: crawl, list, create, validate, doctor, curl2config');
+        console.log('💡 或是配置名稱: moneydj, moneydj-links 等');
+        process.exit(1);
+      }
+    }
+  }
 
   await program.parseAsync();
 }
@@ -513,7 +558,29 @@ async function runDiagnostics() {
     console.log(`   ❌ 檔案權限: 異常 - ${(error as Error).message}`);
   }
 
-  // 6. 建議
+  // 6. 編碼支援測試
+  console.log('\n🔤 編碼支援測試:');
+  try {
+    const { EncodingHelper } = await import('./utils');
+    const supportedEncodings = EncodingHelper.getSupportedEncodings();
+    console.log(`   ✅ 支援的編碼: ${supportedEncodings.join(', ')}`);
+    
+    // 測試 BIG5 編碼轉換
+    const testText = '測試中文編碼';
+    const iconv = await import('iconv-lite');
+    const big5Buffer = iconv.default.encode(testText, 'big5');
+    const converted = EncodingHelper.convertToUtf8(big5Buffer, 'big5');
+    
+    if (converted === testText) {
+      console.log('   ✅ BIG5 編碼轉換: 正常');
+    } else {
+      console.log('   ❌ BIG5 編碼轉換: 異常');
+    }
+  } catch (error) {
+    console.log(`   ❌ 編碼支援: 異常 - ${(error as Error).message}`);
+  }
+
+  // 7. 建議
   console.log('\n💡 建議:');
   if (process.platform === 'darwin') {
     console.log('   • macOS 用戶建議安裝 Xcode Command Line Tools');
@@ -523,6 +590,93 @@ async function runDiagnostics() {
   console.log('   • 使用 --engine http 參數強制使用 HTTP 模式');
 
   console.log('\n✅ 診斷完成');
+}
+
+async function curl2config(
+  curlCommand: string, 
+  options: CLIOptions & { 
+    name?: string; 
+    encoding?: string; 
+    keepCookies?: boolean;
+    selectors?: string;
+  }
+) {
+  try {
+    const { CurlParser } = await import('./utils');
+    
+    console.log('🔄 解析 curl 命令...');
+    
+    // 解析 curl 命令
+    const parsedCurl = CurlParser.parseCurlCommand(curlCommand);
+    if (!parsedCurl) {
+      console.error('❌ 無法解析 curl 命令');
+      console.log('💡 請確保命令格式正確，例如：');
+      console.log("   curl 'https://example.com' -H 'accept: text/html'");
+      process.exit(1);
+    }
+
+    console.log(`✅ 成功解析 URL: ${parsedCurl.url}`);
+    console.log(`📋 找到 ${Object.keys(parsedCurl.headers).length} 個 headers`);
+    console.log(`🍪 找到 ${parsedCurl.cookies.length} 個 cookies`);
+
+    // 處理選擇器
+    let selectors: Record<string, string>;
+    if (options.selectors) {
+      try {
+        selectors = JSON.parse(options.selectors);
+      } catch {
+        console.error('❌ 選擇器 JSON 格式錯誤');
+        process.exit(1);
+      }
+    } else {
+      selectors = CurlParser.createExampleSelectors(parsedCurl.url);
+    }
+
+    // 生成配置
+    const config = CurlParser.curlToConfig(parsedCurl, selectors, {
+      encoding: options.encoding,
+      removeSensitiveCookies: !options.keepCookies
+    });
+
+    // 生成檔案名稱
+    const configName = options.name || CurlParser.generateConfigName(parsedCurl.url);
+    
+    // 保存配置檔案
+    const configDir = path.resolve(options.config || 'configs');
+    const configFile = path.join(configDir, `${configName}.json`);
+
+    if (await fs.pathExists(configFile)) {
+      console.error(`❌ 配置檔案已存在: ${configName}.json`);
+      console.log('💡 使用 -n 選項指定不同的名稱');
+      process.exit(1);
+    }
+
+    await fs.ensureDir(configDir);
+    await fs.writeJson(configFile, config, { spaces: 2 });
+
+    console.log(`\n✅ 配置檔案已建立: ${configName}.json`);
+    console.log(`📁 位置: ${configFile}`);
+    
+    // 顯示配置摘要
+    console.log('\n📋 配置摘要:');
+    console.log(`   🌐 URL: ${config.url}`);
+    console.log(`   📊 選擇器: ${Object.keys(config.selectors || {}).length} 個`);
+    console.log(`   🔤 編碼: ${config.options?.encoding || '自動檢測'}`);
+    console.log(`   🍪 Cookies: ${config.cookies?.enabled ? '啟用' : '停用'}`);
+    
+    if (!options.keepCookies && parsedCurl.cookies.length > 0) {
+      console.log('   ⚠️  敏感 cookies 已被移除');
+    }
+
+    console.log('\n💡 下一步:');
+    console.log(`   1. 編輯選擇器: ${configFile}`);
+    console.log(`   2. 執行爬蟲: npm run crawl ${configName}`);
+    console.log(`   3. 驗證配置: npm run crawler validate ${configName}`);
+
+  } catch (error) {
+    console.error('❌ 轉換失敗:', (error as Error).message);
+    process.exit(1);
+  }
 }
 
 // 處理未捕獲的錯誤

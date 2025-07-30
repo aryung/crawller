@@ -198,6 +198,7 @@ export class UniversalCrawler {
   private async crawlWithHttpMode(config: CrawlerConfig): Promise<CrawlerResult> {
     const axios = await import('axios');
     const cheerio = await import('cheerio');
+    const { EncodingHelper } = await import('./utils');
 
     try {
       const response = await axios.default.get(config.url, {
@@ -206,10 +207,27 @@ export class UniversalCrawler {
           ...config.headers
         },
         timeout: config.options?.timeout || 30000,
-        maxRedirects: 5
+        maxRedirects: 5,
+        responseType: 'arraybuffer' // 獲取原始 buffer 以處理編碼
       });
 
-      const $ = cheerio.load(response.data);
+      // 處理編碼轉換
+      let htmlContent: string;
+      const buffer = Buffer.from(response.data);
+      const contentType = response.headers['content-type'] as string;
+      
+      if (config.options?.encoding) {
+        // 使用指定編碼
+        htmlContent = EncodingHelper.convertToUtf8(buffer, config.options.encoding);
+        logger.info(`Using specified encoding: ${config.options.encoding}`);
+      } else {
+        // 自動檢測編碼
+        const detectedEncoding = EncodingHelper.detectEncoding(buffer, contentType);
+        htmlContent = EncodingHelper.convertToUtf8(buffer, detectedEncoding);
+        logger.info(`Auto-detected encoding: ${detectedEncoding}`);
+      }
+
+      const $ = cheerio.load(htmlContent);
       const data: Record<string, any> = {};
 
       if (config.selectors) {

@@ -43,6 +43,7 @@ export interface CrawlerOptions {
   headless?: boolean;
   screenshot?: boolean;
   delay?: number;
+  encoding?: string; // 支援指定編碼：utf-8, big5, gb2312 等
   viewport?: {
     width: number;
     height: number;
