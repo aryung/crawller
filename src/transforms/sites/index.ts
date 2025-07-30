@@ -4,6 +4,7 @@
  */
 
 import { moneydjTransforms, registerMoneyDJTransforms } from './moneydj';
+import { yahooFinanceJPTransforms, registerYahooFinanceJPTransforms } from './yahoo-finance-jp';
 
 export interface SiteTransforms {
   [transformName: string]: (value: any, context?: any) => any;
@@ -17,7 +18,8 @@ export interface SiteTransformRegistry {
  * 網站特定轉換註冊表
  */
 export const siteTransforms: SiteTransformRegistry = {
-  moneydj: moneydjTransforms as any
+  moneydj: moneydjTransforms as any,
+  'yahoo-finance-jp': yahooFinanceJPTransforms as any
 };
 
 /**
@@ -30,6 +32,10 @@ export function detectSiteFromUrl(url: string): string | null {
     
     if (hostname.includes('moneydj.com')) {
       return 'moneydj';
+    }
+    
+    if (hostname.includes('finance.yahoo.co.jp')) {
+      return 'yahoo-finance-jp';
     }
     
     // 可以在這裡添加其他網站的檢測邏輯

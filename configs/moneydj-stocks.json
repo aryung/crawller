@@ -1,10 +1,27 @@
 {
-  "url": "https://www.moneydj.com/z/zh/zha/zh00.djhtm?a=C011010",
-  "_note": "This config is for industry detail pages. Change the 'a' parameter to target different industries (e.g., C011010, C011011, etc.)",
+  "url": "https://www.moneydj.com/z/zh/zha/zh00.djhtm?a={{industryCode}}",
+  "_note": "This config extracts stock symbols from industry detail pages. Use with industry codes from moneydj-industries config.",
+  "dataDriven": {
+    "enabled": true,
+    "sourceConfig": "moneydj-industries",
+    "urlTemplate": "https://www.moneydj.com/z/zh/zha/zh00.djhtm?a={{item.industryCode}}",
+    "sourceSelector": "allSubIndustries",
+    "templateVars": {
+      "industryCode": "{{item.industryCode}}",
+      "industryName": "{{item.name}}"
+    }
+  },
   "selectors": {
     "industryInfo": {
       "selector": "title",
       "transform": "cleanIndustryName"
+    },
+    "industryContext": {
+      "static": {
+        "industryCode": "{{industryCode}}",
+        "industryName": "{{industryName}}",
+        "extractedAt": "{{timestamp}}"
+      }
     },
     "allLinks": {
       "selector": "a",
@@ -17,27 +34,42 @@
       }
     },
     "stockLinks": {
-      "selector": "a[href*='/kd/zh/']",
+      "selector": "table tr td:first-child a[href*='Link2Stk']",
       "multiple": true,
       "extract": {
-        "fullText": "text",
-        "stockInfo": {
-          "transform": "parseStockInfo"
-        },
-        "symbolCode": {
+        "stockCode": "text",
+        "detailUrl": {
+          "attribute": "href"
+        }
+      }
+    },
+    "companyInfo": {
+      "selector": "table tr",
+      "multiple": true,
+      "extract": {
+        "stockCode": {
+          "selector": "td:first-child a",
           "transform": "extractStockCode"
         },
         "companyName": {
-          "transform": "cleanStockName"
+          "selector": "td:nth-child(2)"
         },
-        "detailUrl": {
-          "attribute": "href",
-          "transform": "absoluteUrl"
+        "lastUpdate": {
+          "selector": "td:nth-child(3)"
+        },
+        "closingPrice": {
+          "selector": "td:nth-child(4)"
+        },
+        "priceChange": {
+          "selector": "td:nth-child(5)"
+        },
+        "changePercent": {
+          "selector": "td:nth-child(6)"
         }
       }
     },
     "allStockCodes": {
-      "selector": "a:contains('1')",
+      "selector": "table tr td:first-child a[href*='Link2Stk']",
       "multiple": true,
       "transform": "extractStockCode"
     },
@@ -53,20 +85,21 @@
     "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
   },
   "options": {
-    "timeout": 30000,
-    "retries": 3,
+    "timeout": 45000,
+    "retries": 5,
     "headless": true,
-    "screenshot": true,
+    "screenshot": false,
     "encoding": "big5",
-    "domainDelay": 3000,
-    "waitFor": 5000
+    "domainDelay": 8000,
+    "waitFor": 3000
   },
   "variables": {
     "baseUrl": "https://www.moneydj.com",
-    "industryCode": "C011010"
+    "industryCode": "{{industryCode}}",
+    "industryName": "{{industryName}}"
   },
   "export": {
     "formats": ["json", "csv"],
-    "filename": "industry_stocks"
+    "filename": "stocks_{{industryCode}}_{{industryName}}"
   }
 }

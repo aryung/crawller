@@ -115,4 +115,110 @@ export class DataExtractor {
       throw error;
     }
   }
+
+  async extractStructuredTable(page: Page, tableSelector: string, transforms?: Record<string, Function>): Promise<any[]> {
+    try {
+      const content = await page.content();
+      const $ = load(content);
+      
+      // 嘗試找到表格或包含表格內容的元素
+      let tableElement = $(tableSelector);
+      
+      if (!tableElement.length) {
+        // 如果找不到特定表格，嘗試尋找包含財務數據的區域
+        tableElement = $('[class*="performance"], [class*="Performance"], table').first();
+      }
+      
+      if (!tableElement.length) {
+        logger.warn(`No table found with selector: ${tableSelector}`);
+        return [];
+      }
+
+      const tableText = tableElement.text() || tableElement.html() || '';
+      
+      // 如果有提供轉換函數，使用它來結構化數據
+      if (transforms && transforms.structureFinancialData) {
+        logger.info('Using structured financial data transform');
+        return transforms.structureFinancialData(tableText);
+      }
+      
+      // 使用傳統的表格提取方法作為備用
+      return this.parseTraditionalTable($, tableElement);
+      
+    } catch (error) {
+      logger.error('Failed to extract structured table data:', error);
+      return [];
+    }
+  }
+
+  private parseTraditionalTable($: CheerioAPI, tableElement: any): any[] {
+    try {
+      const rows: Record<string, string>[] = [];
+      
+      // 嘗試提取標題
+      const headers = tableElement.find('thead tr th, thead tr td, tr:first th, tr:first td').map((_: any, el: any) => 
+        $(el).text().trim()
+      ).get();
+      
+      // 提取數據行
+      const dataRows = tableElement.find('tbody tr, tr:not(:first)');
+      
+      dataRows.each((_: any, row: any) => {
+        const cells = $(row).find('td, th').map((_: any, cell: any) => 
+          $(cell).text().trim()
+        ).get();
+        
+        if (cells.length > 0) {
+          const rowData: Record<string, string> = {};
+          
+          if (headers.length > 0) {
+            headers.forEach((header: string, index: number) => {
+              rowData[header || `column_${index}`] = cells[index] || '';
+            });
+          } else {
+            cells.forEach((cell: string, index: number) => {
+              rowData[`column_${index}`] = cell;
+            });
+          }
+          
+          rows.push(rowData);
+        }
+      });
+      
+      logger.info(`Extracted ${rows.length} rows using traditional table parsing`);
+      return rows;
+      
+    } catch (error) {
+      logger.error('Failed to parse traditional table:', error);
+      return [];
+    }
+  }
+
+  async extractFinancialPerformanceData(page: Page, options?: {
+    tableSelector?: string;
+    transforms?: Record<string, Function>;
+  }): Promise<any[]> {
+    try {
+      const tableSelector = options?.tableSelector || 'table, [class*="performance"], [class*="Performance"]';
+      const transforms = options?.transforms;
+      
+      logger.info('Extracting financial performance data...');
+      
+      // 首先嘗試結構化提取
+      const structuredData = await this.extractStructuredTable(page, tableSelector, transforms);
+      
+      if (structuredData && structuredData.length > 0) {
+        logger.info(`Successfully extracted ${structuredData.length} structured financial records`);
+        return structuredData;
+      }
+      
+      // 如果結構化提取失敗，嘗試傳統表格提取
+      logger.warn('Structured extraction failed, trying traditional table extraction');
+      return await this.extractTableData(page, tableSelector);
+      
+    } catch (error) {
+      logger.error('Failed to extract financial performance data:', error);
+      return [];
+    }
+  }
 }
