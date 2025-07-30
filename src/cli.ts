@@ -5,14 +5,21 @@ import { UniversalCrawler } from './index';
 import { logger } from './utils';
 import * as path from 'path';
 import * as fs from 'fs-extra';
+import { EnhancedCrawlerConfig, ExportOptions } from './types';
 
 interface CLIOptions {
   config?: string;
   output?: string;
-  format?: string;
+  format?: ExportOptions['format'];
   concurrent?: number;
   list?: boolean;
   verbose?: boolean;
+  engine?: string;
+  template?: string;
+  name?: string;
+  encoding?: string;
+  keepCookies?: boolean;
+  selectors?: string;
 }
 
 async function main() {
@@ -62,7 +69,7 @@ async function main() {
     .description('建立新的配置檔案')
     .option('-c, --config <path>', '配置檔案目錄', 'configs')
     .option('-t, --template <template>', '使用模板 (news|ecommerce|social|table|api)')
-    .action(async (name: string, options: CLIOptions & { template?: string }) => {
+    .action(async (name: string, options: CLIOptions) => {
       await createConfig(name, options);
     });
 
@@ -82,12 +89,7 @@ async function main() {
     .option('-e, --encoding <encoding>', '指定編碼 (utf-8|big5|gb2312)')
     .option('--keep-cookies', '保留所有 cookies（預設會移除敏感 cookies）')
     .option('--selectors <selectors>', '自定義選擇器 JSON 字串')
-    .action(async (curlCommand: string, options: CLIOptions & { 
-      name?: string; 
-      encoding?: string; 
-      keepCookies?: boolean;
-      selectors?: string;
-    }) => {
+    .action(async (curlCommand: string, options: CLIOptions) => {
       await curl2config(curlCommand, options);
     });
 
@@ -98,13 +100,11 @@ async function main() {
       await runDiagnostics();
     });
 
-  // 處理未知命令的特殊邏輯
   const args = process.argv.slice(2);
   if (args.length > 0) {
     const firstArg = args[0];
     const knownCommands = ['crawl', 'list', 'create', 'validate', 'doctor', 'curl2config', '--help', '-h', '--version', '-V'];
     
-    // 如果第一個參數不是已知命令，當作配置名稱執行
     if (!knownCommands.includes(firstArg) && !firstArg.startsWith('-')) {
       try {
         console.log('🔄 檢測到配置名稱，執行爬蟲任務...');
@@ -128,7 +128,6 @@ async function main() {
   await program.parseAsync();
 }
 
-// 全域變數用於優雅關閉
 let globalCrawler: UniversalCrawler | null = null;
 let isShuttingDown = false;
 
@@ -140,7 +139,6 @@ async function runCrawler(configNames: string[], options: CLIOptions) {
 
   globalCrawler = crawler;
 
-  // 設定信號處理器
   const handleShutdown = async (signal: string) => {
     if (isShuttingDown) {
       console.log('\n🚨 強制終止...');
@@ -174,7 +172,6 @@ async function runCrawler(configNames: string[], options: CLIOptions) {
     console.log(`📋 配置列表: ${configNames.join(', ')}`);
     console.log('='.repeat(50));
 
-    // 驗證配置檔案是否存在
     const availableConfigs = await crawler.listConfigs();
     const missingConfigs = configNames.filter(name => !availableConfigs.includes(name));
 
@@ -185,18 +182,20 @@ async function runCrawler(configNames: string[], options: CLIOptions) {
       return;
     }
 
-    // 設定總體超時（預設 10 分鐘）
-    const totalTimeout = 10 * 60 * 1000; // 10 分鐘
+    const allConfigs = (await Promise.all(configNames.map(name => 
+      (crawler.configManager as any).expandDataDrivenConfigs(name, options.output || 'output')
+    ))).flat();
+
+
+    const totalTimeout = 10 * 60 * 1000;
     const startTime = Date.now();
 
     console.log(`⏱️  總體超時: ${totalTimeout / 1000} 秒`);
     console.log('💡 按 Ctrl+C 可隨時中斷\n');
 
-    // 進度追蹤
     let completedCount = 0;
-    const totalCount = configNames.length;
+    const totalCount = allConfigs.length;
 
-    // 簡單的進度顯示
     const progressInterval = setInterval(() => {
       if (!isShuttingDown) {
         const elapsed = Math.round((Date.now() - startTime) / 1000);
@@ -205,11 +204,11 @@ async function runCrawler(configNames: string[], options: CLIOptions) {
     }, 1000);
 
     const crawlPromise = crawler.crawlMultiple(
-      configNames,
-      options.concurrent || 3,
+      allConfigs,
+      Number(options.concurrent) || 3,
     ).then(results => {
       clearInterval(progressInterval);
-      process.stdout.write('\r'); // 清除進度行
+      process.stdout.write('\r');
       return results;
     });
 
@@ -220,14 +219,13 @@ async function runCrawler(configNames: string[], options: CLIOptions) {
     });
 
     const results = await Promise.race([crawlPromise, timeoutPromise]);
-    const executionTime = Math.round((Date.now() - startTime) / 1000);
 
-    // 確保 results 是陣列
     if (!Array.isArray(results)) {
       throw new Error('爬蟲執行返回的結果格式異常');
     }
-
-    // 統計結果
+    
+    completedCount = results.length;
+    const executionTime = Math.round((Date.now() - startTime) / 1000);
     const successful = results.filter(r => r && r.success);
     const failed = results.filter(r => r && !r.success);
 
@@ -243,12 +241,10 @@ async function runCrawler(configNames: string[], options: CLIOptions) {
       });
     }
 
-    // 匯出結果
     if (successful.length > 0) {
       const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
       const filename = `crawl_results_${timestamp}`;
       
-      // 使用第一個配置名稱作為主要配置名稱，如果有多個配置則使用 "multiple"
       const configName = configNames.length === 1 
         ? configNames[0] 
         : configNames.length > 1 
@@ -256,18 +252,16 @@ async function runCrawler(configNames: string[], options: CLIOptions) {
           : undefined;
 
       const exportPath = await crawler.export(successful, {
-        format: (options.format as any) || 'json',
+        format: options.format || 'json',
         filename,
         configName
       });
 
       console.log(`📄 結果已匯出: ${exportPath}`);
 
-      // 生成報告
       const reportPath = await crawler.generateReport(results);
       console.log(`📊 報告已生成: ${reportPath}`);
 
-      // 保存截圖
       const screenshotResults = results.filter(r => r.screenshot);
       if (screenshotResults.length > 0) {
         const screenshotPaths = await crawler.saveScreenshots(screenshotResults);
@@ -292,15 +286,10 @@ async function runCrawler(configNames: string[], options: CLIOptions) {
       try {
         await crawler.cleanup();
         console.log('✅ 爬蟲已完成，正在關閉...');
-        // 確保程式正確退出
-        setTimeout(() => {
-          process.exit(0);
-        }, 1000);
+        setTimeout(() => process.exit(0), 1000);
       } catch (cleanupError) {
         console.warn('⚠️  清理過程中發生錯誤:', cleanupError);
-        setTimeout(() => {
-          process.exit(1);
-        }, 1000);
+        setTimeout(() => process.exit(1), 1000);
       }
     }
   }
@@ -330,10 +319,10 @@ async function listConfigs(configPath: string) {
 
     for (const file of configFiles) {
       const configName = path.basename(file, '.json');
-      const configPath = path.join(configDir, file);
+      const configFilePath = path.join(configDir, file);
 
       try {
-        const config = await fs.readJson(configPath);
+        const config = await fs.readJson(configFilePath) as EnhancedCrawlerConfig;
         const url = config.url || '未設定 URL';
         const selectorsCount = config.selectors ? Object.keys(config.selectors).length : 0;
 
@@ -355,7 +344,7 @@ async function listConfigs(configPath: string) {
   }
 }
 
-async function createConfig(name: string, options: CLIOptions & { template?: string }) {
+async function createConfig(name: string, options: CLIOptions) {
   try {
     const configDir = path.resolve(options.config || 'configs');
     const configFile = path.join(configDir, `${name}.json`);
@@ -367,7 +356,7 @@ async function createConfig(name: string, options: CLIOptions & { template?: str
 
     await fs.ensureDir(configDir);
 
-    let template: any = {
+    let template: EnhancedCrawlerConfig = {
       url: 'https://example.com',
       selectors: {
         title: 'h1',
@@ -378,14 +367,17 @@ async function createConfig(name: string, options: CLIOptions & { template?: str
         timeout: 30000,
         retries: 3,
         headless: true
+      },
+      export: {
+        formats: ['json'],
+        filename: name
       }
     };
 
-    // 使用預設模板
     if (options.template) {
       const { getPresetConfig } = await import('./config/defaultConfigs');
       try {
-        template = getPresetConfig(options.template as any);
+        template = getPresetConfig(options.template);
       } catch (error) {
         console.warn(`⚠️  未知模板: ${options.template}，使用預設模板`);
       }
@@ -427,41 +419,13 @@ async function runDiagnostics() {
   console.log('🏥 Universal Web Crawler - 系統診斷');
   console.log('='.repeat(50));
 
-  // 1. 系統資訊
   console.log('\n📋 系統資訊:');
   console.log(`   作業系統: ${process.platform} ${process.arch}`);
   console.log(`   Node.js: ${process.version}`);
   console.log(`   記憶體: ${Math.round(process.memoryUsage().heapUsed / 1024 / 1024)}MB / ${Math.round(process.memoryUsage().heapTotal / 1024 / 1024)}MB`);
 
-  // 2. 依賴檢查
   console.log('\n📦 依賴檢查:');
-
-  // 檢查 Puppeteer
-  try {
-    await import('puppeteer');
-    console.log(`   ✅ Puppeteer: installed`);
-  } catch (error) {
-    console.log(`   ⚠️  Puppeteer: Not installed (using puppeteer-core instead)`);
-  }
-
-  // 檢查 Puppeteer-Core
-  try {
-    await import('puppeteer-core');
-    console.log(`   ✅ Puppeteer-Core: installed`);
-  } catch (error) {
-    console.log(`   ❌ Puppeteer-Core: Not installed`);
-  }
-
-  // 檢查 Playwright
-  try {
-    await import('playwright');
-    console.log(`   ✅ Playwright: installed`);
-  } catch (error) {
-    console.log(`   ⚠️  Playwright: Not installed (optional)`);
-  }
-
-  // 檢查其他依賴
-  const dependencies = ['axios', 'cheerio', 'winston', 'fs-extra'];
+  const dependencies = ['puppeteer', 'puppeteer-core', 'playwright', 'axios', 'cheerio', 'winston', 'fs-extra'];
   for (const dep of dependencies) {
     try {
       await import(dep);
@@ -471,9 +435,7 @@ async function runDiagnostics() {
     }
   }
 
-  // 3. 瀏覽器檢測
   console.log('\n🔍 系統瀏覽器檢測:');
-  
   try {
     const { BrowserDetector } = await import('./utils');
     const report = await BrowserDetector.generateDiagnosticReport();
@@ -482,148 +444,51 @@ async function runDiagnostics() {
     console.log(`   ❌ 瀏覽器檢測失敗: ${(error as Error).message}`);
   }
 
-  // 4. 瀏覽器引擎測試
   console.log('\n🌐 瀏覽器引擎測試:');
-
-  // 測試 Puppeteer-Core
   try {
     const puppeteerCore = await import('puppeteer-core');
     const { BrowserDetector } = await import('./utils');
-    
     console.log('   🔄 測試 Puppeteer-Core 瀏覽器啟動...');
-    
     const browserPath = await BrowserDetector.getBestBrowserPath();
     if (!browserPath) {
       console.log('   ❌ Puppeteer-Core: 未找到可用瀏覽器');
     } else {
-      const browser = await Promise.race([
-        puppeteerCore.default.launch({
-          executablePath: browserPath,
-          headless: true,
-          args: ['--no-sandbox', '--disable-setuid-sandbox'],
-          timeout: 8000  // 8秒超時
-        }),
-        new Promise((_, reject) =>
-          setTimeout(() => reject(new Error('啟動超時')), 8000)
-        )
-      ]);
-
-      await (browser as any).close();
+      const browser = await puppeteerCore.default.launch({ executablePath: browserPath, headless: true, args: ['--no-sandbox'] });
+      await browser.close();
       console.log('   ✅ Puppeteer-Core: 可以啟動瀏覽器');
     }
   } catch (error) {
-    const errorMsg = (error as Error).message;
-    console.log(`   ❌ Puppeteer-Core: 無法啟動瀏覽器 - ${errorMsg}`);
+    console.log(`   ❌ Puppeteer-Core: 無法啟動瀏覽器 - ${(error as Error).message}`);
   }
 
-  // 測試 Playwright
-  try {
-    const { chromium } = await import('playwright');
-    console.log('   🔄 測試 Playwright 瀏覽器啟動...');
-
-    const browser = await Promise.race([
-      chromium.launch({
-        headless: true,
-        timeout: 8000
-      }),
-      new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('啟動超時')), 8000)
-      )
-    ]);
-
-    await (browser as any).close();
-    console.log('   ✅ Playwright: 可以啟動瀏覽器');
-  } catch (error) {
-    const errorMsg = (error as Error).message;
-    console.log(`   ⚠️  Playwright: 無法啟動瀏覽器 - ${errorMsg}`);
-  }
-
-  // 4. HTTP 測試
   console.log('\n🌍 網路連線測試:');
   try {
-    const axios = await import('axios');
-    const response = await axios.default.get('https://httpbin.org/get', { timeout: 5000 });
+    const axios = (await import('axios')).default;
+    const response = await axios.get('https://httpbin.org/get', { timeout: 5000 });
     console.log(`   ✅ HTTP 請求: 正常 (${response.status})`);
   } catch (error) {
     console.log(`   ❌ HTTP 請求: 失敗 - ${(error as Error).message}`);
   }
 
-  // 5. 檔案權限測試
-  console.log('\n📁 檔案系統測試:');
-  try {
-    const fs = await import('fs-extra');
-    const testDir = './test-crawler-permissions';
-    await fs.default.ensureDir(testDir);
-    await fs.default.writeFile(`${testDir}/test.txt`, 'test');
-    await fs.default.remove(testDir);
-    console.log('   ✅ 檔案權限: 正常');
-  } catch (error) {
-    console.log(`   ❌ 檔案權限: 異常 - ${(error as Error).message}`);
-  }
-
-  // 6. 編碼支援測試
-  console.log('\n🔤 編碼支援測試:');
-  try {
-    const { EncodingHelper } = await import('./utils');
-    const supportedEncodings = EncodingHelper.getSupportedEncodings();
-    console.log(`   ✅ 支援的編碼: ${supportedEncodings.join(', ')}`);
-    
-    // 測試 BIG5 編碼轉換
-    const testText = '測試中文編碼';
-    const iconv = await import('iconv-lite');
-    const big5Buffer = iconv.default.encode(testText, 'big5');
-    const converted = EncodingHelper.convertToUtf8(big5Buffer, 'big5');
-    
-    if (converted === testText) {
-      console.log('   ✅ BIG5 編碼轉換: 正常');
-    } else {
-      console.log('   ❌ BIG5 編碼轉換: 異常');
-    }
-  } catch (error) {
-    console.log(`   ❌ 編碼支援: 異常 - ${(error as Error).message}`);
-  }
-
-  // 7. 建議
   console.log('\n💡 建議:');
-  if (process.platform === 'darwin') {
-    console.log('   • macOS 用戶建議安裝 Xcode Command Line Tools');
-    console.log('   • 執行: xcode-select --install');
-  }
-  console.log('   • 如果瀏覽器無法啟動，嘗試使用 HTTP 模式');
-  console.log('   • 使用 --engine http 參數強制使用 HTTP 模式');
-
+  console.log('   • 如果瀏覽器無法啟動，嘗試使用 --engine http 參數');
   console.log('\n✅ 診斷完成');
 }
 
-async function curl2config(
-  curlCommand: string, 
-  options: CLIOptions & { 
-    name?: string; 
-    encoding?: string; 
-    keepCookies?: boolean;
-    selectors?: string;
-  }
-) {
+async function curl2config(curlCommand: string, options: CLIOptions) {
   try {
     const { CurlParser } = await import('./utils');
     
     console.log('🔄 解析 curl 命令...');
-    
-    // 解析 curl 命令
     const parsedCurl = CurlParser.parseCurlCommand(curlCommand);
     if (!parsedCurl) {
       console.error('❌ 無法解析 curl 命令');
-      console.log('💡 請確保命令格式正確，例如：');
-      console.log("   curl 'https://example.com' -H 'accept: text/html'");
       process.exit(1);
     }
 
     console.log(`✅ 成功解析 URL: ${parsedCurl.url}`);
-    console.log(`📋 找到 ${Object.keys(parsedCurl.headers).length} 個 headers`);
-    console.log(`🍪 找到 ${parsedCurl.cookies.length} 個 cookies`);
-
-    // 處理選擇器
-    let selectors: Record<string, string>;
+    
+    let selectors: Record<string, string> = {};
     if (options.selectors) {
       try {
         selectors = JSON.parse(options.selectors);
@@ -635,22 +500,17 @@ async function curl2config(
       selectors = CurlParser.createExampleSelectors(parsedCurl.url);
     }
 
-    // 生成配置
     const config = CurlParser.curlToConfig(parsedCurl, selectors, {
       encoding: options.encoding,
       removeSensitiveCookies: !options.keepCookies
     });
 
-    // 生成檔案名稱
     const configName = options.name || CurlParser.generateConfigName(parsedCurl.url);
-    
-    // 保存配置檔案
     const configDir = path.resolve(options.config || 'configs');
     const configFile = path.join(configDir, `${configName}.json`);
 
     if (await fs.pathExists(configFile)) {
       console.error(`❌ 配置檔案已存在: ${configName}.json`);
-      console.log('💡 使用 -n 選項指定不同的名稱');
       process.exit(1);
     }
 
@@ -660,29 +520,12 @@ async function curl2config(
     console.log(`\n✅ 配置檔案已建立: ${configName}.json`);
     console.log(`📁 位置: ${configFile}`);
     
-    // 顯示配置摘要
-    console.log('\n📋 配置摘要:');
-    console.log(`   🌐 URL: ${config.url}`);
-    console.log(`   📊 選擇器: ${Object.keys(config.selectors || {}).length} 個`);
-    console.log(`   🔤 編碼: ${config.options?.encoding || '自動檢測'}`);
-    console.log(`   🍪 Cookies: ${config.cookies?.enabled ? '啟用' : '停用'}`);
-    
-    if (!options.keepCookies && parsedCurl.cookies.length > 0) {
-      console.log('   ⚠️  敏感 cookies 已被移除');
-    }
-
-    console.log('\n💡 下一步:');
-    console.log(`   1. 編輯選擇器: ${configFile}`);
-    console.log(`   2. 執行爬蟲: npm run crawl ${configName}`);
-    console.log(`   3. 驗證配置: npm run crawler validate ${configName}`);
-
   } catch (error) {
     console.error('❌ 轉換失敗:', (error as Error).message);
     process.exit(1);
   }
 }
 
-// 處理未捕獲的錯誤
 process.on('uncaughtException', (error) => {
   logger.error('Uncaught Exception:', error);
   process.exit(1);

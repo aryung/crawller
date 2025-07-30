@@ -3,6 +3,7 @@ import * as path from 'path';
 import { EnhancedCrawlerConfig, CrawlerConfig } from '../types';
 import { logger, validateCrawlerConfig } from '../utils';
 import { getTransformFunction } from '../transforms';
+import { JSONPath } from 'jsonpath-plus';
 
 export class EnhancedConfigManager {
   private configPath: string;
@@ -22,7 +23,7 @@ export class EnhancedConfigManager {
     }
   }
 
-  private async loadEnhancedConfig(name: string): Promise<EnhancedCrawlerConfig> {
+  async loadEnhancedConfig(name: string): Promise<EnhancedCrawlerConfig> {
     if (this.configCache.has(name)) {
       return this.configCache.get(name)!;
     }
@@ -35,16 +36,13 @@ export class EnhancedConfigManager {
 
     let config: EnhancedCrawlerConfig = await fs.readJson(configFile);
     
-    // 處理繼承
     if (config.inherits) {
       const baseConfig = await this.loadEnhancedConfig(config.inherits);
       config = this.mergeConfigs(baseConfig, config);
     }
 
-    // 處理變數替換
     config = await this.processVariables(config);
 
-    // 快取配置
     this.configCache.set(name, config);
     
     logger.info(`Enhanced config "${name}" loaded successfully`);
@@ -59,7 +57,6 @@ export class EnhancedConfigManager {
       options: enhancedConfig.options
     };
 
-    // 轉換選擇器
     if (enhancedConfig.selectors) {
       standardConfig.selectors = {};
       
@@ -67,7 +64,6 @@ export class EnhancedConfigManager {
         if (typeof selectorConfig === 'string') {
           standardConfig.selectors[key] = selectorConfig;
         } else {
-          // 處理增強選擇器
           const selector = selectorConfig.selector;
           const multiple = selectorConfig.multiple ? ':multiple' : '';
           
@@ -77,7 +73,6 @@ export class EnhancedConfigManager {
             transform: await this.buildTransformFunction(selectorConfig, enhancedConfig)
           };
 
-          // 處理 extract 配置
           if (selectorConfig.extract) {
             standardConfig.selectors[key] = {
               selector: selector + multiple,
@@ -88,7 +83,6 @@ export class EnhancedConfigManager {
       }
     }
 
-    // 驗證轉換後的配置
     const errors = validateCrawlerConfig(standardConfig);
     if (errors.length > 0) {
       throw new Error(`Invalid converted config: ${errors.join(', ')}`);
@@ -110,7 +104,6 @@ export class EnhancedConfigManager {
     }
 
     if (typeof selectorConfig.transform === 'string') {
-      // 嘗試從轉換函式庫獲取
       try {
         const transformFn = getTransformFunction(selectorConfig.transform);
         if (transformFn) {
@@ -120,7 +113,6 @@ export class EnhancedConfigManager {
         logger.warn(`Transform function "${selectorConfig.transform}" not found in built-in library`);
       }
 
-      // 嘗試從配置的自定義轉換獲取
       if (enhancedConfig.transforms && enhancedConfig.transforms[selectorConfig.transform]) {
         try {
           const transformCode = enhancedConfig.transforms[selectorConfig.transform];
@@ -131,7 +123,6 @@ export class EnhancedConfigManager {
         }
       }
 
-      // 直接執行 JavaScript 程式碼（簡單表達式）
       try {
         return new Function('value', 'context', `return ${selectorConfig.transform}`);
       } catch (error) {
@@ -157,7 +148,6 @@ export class EnhancedConfigManager {
         
         for (const [key, config] of Object.entries(extractConfig)) {
           if (typeof config === 'string') {
-            // 簡單的屬性提取
             if (config === 'text') {
               result[key] = element.textContent?.trim();
             } else if (config === 'html') {
@@ -166,7 +156,6 @@ export class EnhancedConfigManager {
               result[key] = element.getAttribute(config);
             }
           } else if (typeof config === 'object') {
-            // 複雜的提取配置
             let value: any;
             
             if (config.attribute) {
@@ -175,7 +164,6 @@ export class EnhancedConfigManager {
               value = element.textContent?.trim();
             }
 
-            // 應用轉換
             if (config.transform) {
               try {
                 const transformFn = getTransformFunction(config.transform as string);
@@ -213,23 +201,20 @@ export class EnhancedConfigManager {
   }
 
   private async processVariables(config: EnhancedCrawlerConfig): Promise<EnhancedCrawlerConfig> {
-    const configStr = JSON.stringify(config);
-    let processedStr = configStr;
+    let configStr = JSON.stringify(config);
 
-    // 處理環境變數
-    processedStr = processedStr.replace(/\$\{env\.(\w+)\}/g, (match, varName) => {
+    configStr = configStr.replace(/\$\{env\.(\w+)\}/g, (match, varName) => {
       return process.env[varName] || match;
     });
 
-    // 處理配置變數
     if (config.variables) {
       for (const [key, value] of Object.entries(config.variables)) {
-        const regex = new RegExp(`\\$\\{${key}\\}`, 'g');
-        processedStr = processedStr.replace(regex, String(value));
+        const regex = new RegExp(`\\\$\\{${key}\\}`, 'g');
+        configStr = configStr.replace(regex, String(value));
       }
     }
 
-    return JSON.parse(processedStr);
+    return JSON.parse(configStr);
   }
 
   async saveEnhancedConfig(name: string, config: EnhancedCrawlerConfig): Promise<void> {
@@ -246,9 +231,7 @@ export class EnhancedConfigManager {
     }
   }
 
-  // 與原有 ConfigManager 相容的方法
   async saveConfig(name: string, config: CrawlerConfig): Promise<void> {
-    // 將標準配置轉換為增強配置
     const enhancedConfig: EnhancedCrawlerConfig = {
       ...config,
       export: {
@@ -320,7 +303,6 @@ export class EnhancedConfigManager {
     const enhancedConfig = this.configCache.get(name);
     if (!enhancedConfig) return undefined;
     
-    // 同步轉換 - 這裡簡化處理
     try {
       return {
         url: enhancedConfig.url,
@@ -341,5 +323,43 @@ export class EnhancedConfigManager {
   clearCache(): void {
     this.configCache.clear();
     logger.info('Enhanced config cache cleared');
+  }
+
+  async expandDataDrivenConfigs(configName: string, outputDir: string): Promise<EnhancedCrawlerConfig[]> {
+    const config = await this.loadEnhancedConfig(configName);
+
+    if (!config.dataDriven) {
+      return [config];
+    }
+
+    const { source, jsonPath, variable } = config.dataDriven;
+    const sourceFiles = await fs.readdir(outputDir);
+    const matchingFiles = sourceFiles.filter(file => file.startsWith(source.split('*')[0]) && file.endsWith(source.split('*')[1]));
+
+    if (matchingFiles.length === 0) {
+      throw new Error(`Data source file not found for pattern: ${source}`);
+    }
+
+    const latestFile = matchingFiles.sort().reverse()[0];
+    const sourceFile = path.join(outputDir, latestFile);
+
+    if (!await fs.pathExists(sourceFile)) {
+      throw new Error(`Data source file not found: ${sourceFile}`);
+    }
+
+    const sourceData = await fs.readJson(sourceFile);
+    const values = JSONPath({ path: jsonPath, json: sourceData });
+
+    if (!Array.isArray(values)) {
+      throw new Error(`JSONPath expression did not return an array: ${jsonPath}`);
+    }
+
+    const configs = await Promise.all(values.map(async (value) => {
+      const newConfig = { ...config };
+      newConfig.variables = { ...newConfig.variables, [variable]: value };
+      return await this.processVariables(newConfig);
+    }));
+
+    return configs;
   }
 }

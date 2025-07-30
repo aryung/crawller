@@ -8,6 +8,13 @@ export interface EnhancedCrawlerConfig {
   transforms?: Record<string, string>;
   inherits?: string;  // 繼承其他配置
   variables?: Record<string, any>;  // 配置變數
+  dataDriven?: DataDrivenConfig; // 數據驅動配置
+}
+
+export interface DataDrivenConfig {
+  source: string;
+  jsonPath: string;
+  variable: string;
 }
 
 export interface EnhancedSelectorConfig {
