@@ -1,13 +1,11 @@
-export interface EnhancedCrawlerConfig {
-  url: string;
+import { CrawlerConfig, SelectorConfig, SelectorItem } from './index';
+
+export interface EnhancedCrawlerConfig extends Omit<CrawlerConfig, 'selectors'> {
   selectors?: EnhancedSelectorConfig;
-  headers?: Record<string, string>;
-  cookies?: CookieConfig;
-  options?: CrawlerOptions;
   export?: ExportConfig;
   transforms?: Record<string, string>;
   inherits?: string;  // 繼承其他配置
-  variables?: Record<string, any>;  // 配置變數
+  variables?: Record<string, unknown>;  // 配置變數
   dataDriven?: DataDrivenConfig; // 數據驅動配置
 }
 
@@ -18,13 +16,13 @@ export interface DataDrivenConfig {
 }
 
 export interface EnhancedSelectorConfig {
-  [key: string]: string | EnhancedSelectorItem;
+  [key: string]: string | EnhancedSelectorItem | SelectorItem;
 }
 
 export interface EnhancedSelectorItem {
   selector: string;
   attribute?: string;
-  transform?: string | TransformFunction;
+  transform?: string | TransformFunction | ((value: string) => unknown);
   extract?: ExtractConfig;
   multiple?: boolean;
   waitFor?: number;
@@ -34,7 +32,7 @@ export interface EnhancedSelectorItem {
 export interface ExtractConfig {
   [key: string]: string | {
     attribute?: string;
-    transform?: string | TransformFunction;
+    transform?: string | TransformFunction | ((value: string) => unknown);
   };
 }
 
@@ -46,44 +44,14 @@ export interface ExportConfig {
 }
 
 export interface TransformFunction {
-  (value: any, context?: TransformContext): any;
+  (value: unknown, context?: TransformContext): unknown;
 }
 
 export interface TransformContext {
   url: string;
   selector: string;
-  element?: any;
-  page?: any;
+  element?: unknown;
+  page?: unknown;
   config?: EnhancedCrawlerConfig;
 }
 
-export interface CookieConfig {
-  enabled: boolean;
-  domain?: string;
-  cookieString?: string;
-  loginUrl?: string;
-  loginSelectors?: {
-    username: string;
-    password: string;
-    submit: string;
-  };
-  credentials?: {
-    username: string;
-    password: string;
-  };
-  waitAfterLogin?: number;
-}
-
-export interface CrawlerOptions {
-  waitFor?: number;
-  timeout?: number;
-  retries?: number;
-  userAgent?: string;
-  headless?: boolean;
-  screenshot?: boolean;
-  delay?: number;
-  viewport?: {
-    width: number;
-    height: number;
-  };
-}

@@ -6,6 +6,8 @@ export interface TransformRegistry {
 
 // 內建轉換函式
 export const builtinTransforms: TransformRegistry = {
+  // 基本轉換
+  identity: (value: any) => value,
   // 文字處理
   trim: (value: string) => value?.toString().trim(),
   toLowerCase: (value: string) => value?.toString().toLowerCase(),
@@ -137,7 +139,10 @@ export const builtinTransforms: TransformRegistry = {
   },
   
   // 條件轉換
-  conditional: (value: any, condition: string, trueValue: any, falseValue: any) => {
+  conditional: (value: any, context?: any) => {
+    const condition = context?.condition || 'exists';
+    const trueValue = context?.trueValue || true;
+    const falseValue = context?.falseValue || false;
     // 簡單的條件判斷，可以擴展
     switch (condition) {
       case 'exists':
@@ -152,8 +157,10 @@ export const builtinTransforms: TransformRegistry = {
   },
   
   // 進階文字處理
-  extractBetween: (value: string, start: string, end: string) => {
-    const str = value?.toString();
+  extractBetween: (value: any, context?: any) => {
+    const start = context?.start || '';
+    const end = context?.end || '';
+    const str = value?.toString() || '';
     const startIndex = str.indexOf(start);
     if (startIndex === -1) return '';
     
@@ -163,7 +170,9 @@ export const builtinTransforms: TransformRegistry = {
     return str.substring(startIndex + start.length, endIndex);
   },
   
-  replaceAll: (value: string, search: string, replace: string) => {
+  replaceAll: (value: any, context?: any) => {
+    const search = context?.search || '';
+    const replace = context?.replace || '';
     return value?.toString().split(search).join(replace);
   },
   
@@ -201,7 +210,7 @@ export function getTransformFunction(name: string, context?: any): Function | nu
 }
 
 // 註冊自定義轉換函式
-export function registerTransform(name: string, fn: Function): void {
+export function registerTransform(name: string, fn: (value: any, context?: any) => any): void {
   builtinTransforms[name] = fn;
 }
 

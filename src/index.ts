@@ -1,9 +1,9 @@
 import { PlaywrightCrawler } from './crawler';
 import { EnhancedConfigManager } from './config';
 import { DataExporter, logger, DomainRateLimiter } from './utils';
-import { CrawlerConfig, CrawlerResult, ExportOptions, EnhancedCrawlerConfig, EnhancedSelectorConfig, EnhancedSelectorItem, ExtractConfig } from './types';
+import { CrawlerConfig, CrawlerResult, ExportOptions, EnhancedCrawlerConfig, EnhancedSelectorConfig, EnhancedSelectorItem, ExtractConfig, SelectorConfig, TransformFunction } from './types';
 import { getTransformFunction } from './transforms';
-import { CheerioAPI, Element as CheerioElement } from 'cheerio';
+import { CheerioAPI } from 'cheerio';
 
 export * from './crawler';
 export * from './config';
@@ -11,9 +11,13 @@ export * from './utils';
 export * from './types';
 export * from './transforms';
 
+function isEnhancedConfig(config: CrawlerConfig | EnhancedCrawlerConfig): config is EnhancedCrawlerConfig {
+  return 'transforms' in config || 'variables' in config || 'dataDriven' in config || 'export' in config;
+}
+
 export class UniversalCrawler {
   private playwrightCrawler: PlaywrightCrawler;
-  private configManager: EnhancedConfigManager;
+  public configManager: EnhancedConfigManager;  // Made public for CLI access
   private dataExporter: DataExporter;
   private domainRateLimiter: DomainRateLimiter;
 
@@ -28,7 +32,7 @@ export class UniversalCrawler {
     this.domainRateLimiter = new DomainRateLimiter(options?.defaultDomainDelay || 2000);
   }
 
-  async crawl(config: CrawlerConfig | string): Promise<CrawlerResult> {
+  async crawl(config: CrawlerConfig | EnhancedCrawlerConfig | string): Promise<CrawlerResult> {
     let crawlerConfig: CrawlerConfig;
     let enhancedConfig: EnhancedCrawlerConfig | null = null;
 
@@ -116,7 +120,7 @@ export class UniversalCrawler {
     return true;
   }
 
-  private async crawlWithHttpMode(config: CrawlerConfig): Promise<CrawlerResult> {
+  private async crawlWithHttpMode(config: CrawlerConfig | EnhancedCrawlerConfig): Promise<CrawlerResult> {
     const axios = (await import('axios')).default;
     const cheerio = (await import('cheerio')).load;
     const { EncodingHelper } = await import('./utils');
@@ -146,10 +150,15 @@ export class UniversalCrawler {
       }
 
       const $ = cheerio(htmlContent);
-      let data: Record<string, any> = {};
+      let data: Record<string, unknown> = {};
 
       if (config.selectors) {
-        data = await this.extractDataWithEnhancedSelectors($, config.selectors as EnhancedSelectorConfig, config as EnhancedCrawlerConfig);
+        if (isEnhancedConfig(config)) {
+          data = await this.extractDataWithEnhancedSelectors($, config.selectors as EnhancedSelectorConfig, config);
+        } else {
+          // Handle basic config selectors
+          data = this.extractBasicSelectors($, config.selectors);
+        }
       }
 
       logger.info(`HTTP mode crawl successful for ${config.url}`);
@@ -165,14 +174,14 @@ export class UniversalCrawler {
     }
   }
 
-  async crawlMultiple(configs: (CrawlerConfig | string)[], concurrent = 3): Promise<CrawlerResult[]> {
+  async crawlMultiple(configs: (CrawlerConfig | EnhancedCrawlerConfig | string)[], concurrent = 3): Promise<CrawlerResult[]> {
     const results: CrawlerResult[] = [];
-    const configsByDomain = new Map<string, (CrawlerConfig | string)[]>();
+    const configsByDomain = new Map<string, (CrawlerConfig | EnhancedCrawlerConfig | string)[]>();
 
     for (const config of configs) {
       const crawlerConfig = typeof config === 'string'
         ? await this.configManager.loadConfig(config)
-        : config;
+        : config as CrawlerConfig;
 
       const domain = this.extractDomain(crawlerConfig.url);
       if (!configsByDomain.has(domain)) {
@@ -188,7 +197,7 @@ export class UniversalCrawler {
         try {
           const crawlerConfig = typeof config === 'string'
             ? await this.configManager.loadConfig(config)
-            : config;
+            : config as CrawlerConfig;
 
           const domainDelay = crawlerConfig.options?.domainDelay;
           await this.domainRateLimiter.waitForDomain(crawlerConfig.url, domainDelay);
@@ -218,6 +227,31 @@ export class UniversalCrawler {
     return results;
   }
 
+  private extractBasicSelectors($: CheerioAPI, selectors: SelectorConfig): Record<string, unknown> {
+    const data: Record<string, unknown> = {};
+    
+    for (const [key, selector] of Object.entries(selectors)) {
+      try {
+        if (typeof selector === 'string') {
+          if (selector.includes(':multiple')) {
+            const cleanSelector = selector.replace(':multiple', '');
+            data[key] = $(cleanSelector).map((_, el) => $(el).text().trim()).get();
+          } else {
+            data[key] = $(selector).text().trim();
+          }
+        } else if (typeof selector === 'object' && selector !== null) {
+          const value = selector.attribute ? $(selector.selector).attr(selector.attribute) : $(selector.selector).text().trim();
+          data[key] = (typeof selector.transform === 'function') ? selector.transform(value || '') : value;
+        }
+      } catch (error) {
+        logger.warn(`Failed to extract ${key}:`, error);
+        data[key] = null;
+      }
+    }
+    
+    return data;
+  }
+
   private extractDomain(url: string): string {
     try {
       return new URL(url).hostname;
@@ -227,15 +261,15 @@ export class UniversalCrawler {
     }
   }
 
-  private async extractDataWithEnhancedSelectors($: CheerioAPI, selectors: EnhancedSelectorConfig, config: EnhancedCrawlerConfig): Promise<Record<string, any>> {
-    const data: Record<string, any> = {};
+  private async extractDataWithEnhancedSelectors($: CheerioAPI, selectors: EnhancedSelectorConfig, config: EnhancedCrawlerConfig): Promise<Record<string, unknown>> {
+    const data: Record<string, unknown> = {};
 
     for (const [key, selector] of Object.entries(selectors)) {
       try {
         if (typeof selector === 'string') {
           if (selector.includes(':multiple')) {
             const cleanSelector = selector.replace(':multiple', '');
-            data[key] = $(cleanSelector).map((_: number, el: CheerioElement) => $(el).text().trim()).get();
+            data[key] = $(cleanSelector).map((_, el) => $(el).text().trim()).get();
           } else {
             data[key] = $(selector).text().trim();
           }
@@ -254,12 +288,12 @@ export class UniversalCrawler {
     return data;
   }
 
-  private async processEnhancedSelector($: CheerioAPI, selectorObj: EnhancedSelectorItem, config: EnhancedCrawlerConfig): Promise<any> {
+  private async processEnhancedSelector($: CheerioAPI, selectorObj: EnhancedSelectorItem, config: EnhancedCrawlerConfig): Promise<unknown> {
     const { selector, multiple, extract, attribute, transform } = selectorObj;
 
     if (extract) {
       const cleanSelector = selector ? selector.replace(':multiple', '') : '';
-      const isMultiple = multiple || (selector && selector.includes(':multiple'));
+      const isMultiple = Boolean(multiple || (selector && selector.includes(':multiple')));
       return await this.processExtractConfig($, { selector: cleanSelector, multiple: isMultiple, extract }, config);
     }
 
@@ -277,7 +311,7 @@ export class UniversalCrawler {
         : $(cleanSelector).attr(attribute);
 
       if (transform) {
-        values = await this.applyTransform(values, transform as string, config);
+        values = await this.applyTransform(values, transform as string, config) as string | string[] | undefined;
       }
       return values;
     } else {
@@ -286,13 +320,13 @@ export class UniversalCrawler {
         : $(cleanSelector).text().trim();
 
       if (transform) {
-        values = await this.applyTransform(values, transform as string, config);
+        values = await this.applyTransform(values, transform as string, config) as string | string[];
       }
       return values;
     }
   }
 
-  private async processExtractConfig($: CheerioAPI, selectorConfig: { selector: string; multiple: boolean; extract: ExtractConfig }, config: EnhancedCrawlerConfig): Promise<any> {
+  private async processExtractConfig($: CheerioAPI, selectorConfig: { selector: string; multiple: boolean; extract: ExtractConfig }, config: EnhancedCrawlerConfig): Promise<unknown> {
     const { selector, multiple, extract } = selectorConfig;
     const matchedElements = $(selector);
 
@@ -302,10 +336,10 @@ export class UniversalCrawler {
     }
 
     if (multiple) {
-      const results: any[] = [];
+      const results: unknown[] = [];
       for (let i = 0; i < matchedElements.length; i++) {
         const element = matchedElements.eq(i);
-        const result: any = {};
+        const result: Record<string, unknown> = {};
         for (const [key, extractConfig] of Object.entries(extract)) {
           result[key] = await this.extractSingleValue($, element, extractConfig, config);
         }
@@ -316,7 +350,7 @@ export class UniversalCrawler {
       const element = matchedElements.first();
       if (element.length === 0) return null;
 
-      const result: any = {};
+      const result: Record<string, unknown> = {};
       for (const [key, extractConfig] of Object.entries(extract)) {
         result[key] = await this.extractSingleValue($, element, extractConfig, config);
       }
@@ -324,8 +358,8 @@ export class UniversalCrawler {
     }
   }
 
-  private async extractSingleValue($: CheerioAPI, element: CheerioElement, extractConfig: string | { attribute?: string; transform?: string }, config: EnhancedCrawlerConfig): Promise<any> {
-    let value: any;
+  private async extractSingleValue($: CheerioAPI, element: ReturnType<CheerioAPI>, extractConfig: string | { attribute?: string; transform?: string | TransformFunction | ((value: string) => unknown) }, config: EnhancedCrawlerConfig): Promise<unknown> {
+    let value: unknown;
 
     if (typeof extractConfig === 'string') {
       if (extractConfig === 'text') {
@@ -342,14 +376,14 @@ export class UniversalCrawler {
       }
 
       if (transform) {
-        value = await this.applyTransform(value, transform, config);
+        value = await this.applyTransform(value, typeof transform === 'string' ? transform : 'identity', config);
       }
     }
 
     return value;
   }
 
-  private async applyTransform(value: any, transformName: string, config: EnhancedCrawlerConfig): Promise<any> {
+  private async applyTransform(value: unknown, transformName: string, config: EnhancedCrawlerConfig): Promise<unknown> {
     try {
       const context = {
         url: config.url,

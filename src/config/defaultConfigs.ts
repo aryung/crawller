@@ -13,7 +13,7 @@ export const DEFAULT_NEWS_CONFIG: CrawlerConfig = {
     },
     tags: {
       selector: '.tag:multiple',
-      transform: (values: string[]) => values.map(tag => tag.trim())
+      transform: (value: string) => value.split(',').map(tag => tag.trim())
     }
   },
   headers: {

@@ -1,4 +1,4 @@
-import { Page } from 'puppeteer';
+import { Page } from 'playwright';
 import { CookieConfig } from '../types';
 import { logger, delay } from '../utils';
 
@@ -26,7 +26,7 @@ export class CookieManager {
 
     try {
       const cookies = this.parseCookieString(this.config.cookieString);
-      await page.setCookie(...cookies);
+      await page.context().addCookies(cookies);
       logger.info('Cookies set from string');
     } catch (error) {
       logger.error('Failed to set cookies from string:', error);
@@ -41,16 +41,16 @@ export class CookieManager {
 
     try {
       logger.info(`Navigating to login page: ${this.config.loginUrl}`);
-      await page.goto(this.config.loginUrl, { waitUntil: 'networkidle2' });
+      await page.goto(this.config.loginUrl, { waitUntil: 'networkidle' });
 
       await page.waitForSelector(this.config.loginSelectors.username);
-      await page.type(this.config.loginSelectors.username, this.config.credentials.username);
-      await page.type(this.config.loginSelectors.password, this.config.credentials.password);
+      await page.fill(this.config.loginSelectors.username, this.config.credentials.username);
+      await page.fill(this.config.loginSelectors.password, this.config.credentials.password);
 
       await delay(1000);
 
       await Promise.all([
-        page.waitForNavigation({ waitUntil: 'networkidle2' }),
+        page.waitForNavigation({ waitUntil: 'networkidle' }),
         page.click(this.config.loginSelectors.submit)
       ]);
 
@@ -67,13 +67,14 @@ export class CookieManager {
       return {
         name: name.trim(),
         value: value?.trim() || '',
-        domain: this.config.domain || undefined
+        domain: this.config.domain || undefined,
+        url: this.config.domain ? `https://${this.config.domain}` : undefined
       };
     });
   }
 
-  async getCookies(page: Page): Promise<any[]> {
-    return await page.cookies();
+  async getCookies(page: Page): Promise<unknown[]> {
+    return await page.context().cookies();
   }
 
   async saveCookiesToFile(page: Page, filepath: string): Promise<void> {
@@ -87,7 +88,7 @@ export class CookieManager {
     const fs = await import('fs-extra');
     try {
       const cookies = await fs.readJson(filepath);
-      await page.setCookie(...cookies);
+      await page.context().addCookies(cookies);
       logger.info(`Cookies loaded from ${filepath}`);
     } catch (error) {
       logger.warn(`Could not load cookies from ${filepath}:`, error);

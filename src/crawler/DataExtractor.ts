@@ -1,11 +1,11 @@
-import { Page } from 'puppeteer';
-import { load } from 'cheerio';
+import { Page } from 'playwright';
+import { load, CheerioAPI } from 'cheerio';
 import { SelectorConfig, SelectorItem } from '../types';
 import { parseSelector, logger } from '../utils';
 
 export class DataExtractor {
-  async extractData(page: Page, selectors: SelectorConfig = {}): Promise<Record<string, any>> {
-    const data: Record<string, any> = {};
+  async extractData(page: Page, selectors: SelectorConfig = {}): Promise<Record<string, unknown>> {
+    const data: Record<string, unknown> = {};
 
     try {
       const content = await page.content();
@@ -25,7 +25,7 @@ export class DataExtractor {
   }
 
   private async extractSingleValue(
-    $: cheerio.CheerioAPI, 
+    $: CheerioAPI, 
     selectorItem: SelectorItem, 
     page: Page
   ): Promise<any> {
@@ -94,7 +94,8 @@ export class DataExtractor {
         $(el).text().trim()
       ).get();
 
-      const rows = table.find('tbody tr, tr:not(thead tr)').map((_, row) => {
+      const rows: Record<string, string>[] = [];
+      table.find('tbody tr, tr:not(thead tr)').each((_, row) => {
         const cells = $(row).find('td, th').map((_, cell) => 
           $(cell).text().trim()
         ).get();
@@ -104,8 +105,8 @@ export class DataExtractor {
           rowData[header || `column_${index}`] = cells[index] || '';
         });
         
-        return rowData;
-      }).get();
+        rows.push(rowData);
+      });
 
       logger.info(`Extracted ${rows.length} rows from table`);
       return rows;

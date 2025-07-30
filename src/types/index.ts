@@ -16,11 +16,13 @@ export interface SelectorConfig {
 export interface SelectorItem {
   selector: string;
   attribute?: string;
-  transform?: (value: string) => any;
+  transform?: string | ((value: string) => unknown);
+  multiple?: boolean;  // Add enhanced properties as optional
+  extract?: Record<string, unknown>;  // Simplified extract for compatibility
 }
 
 export interface CookieConfig {
-  enabled: boolean;
+  enabled?: boolean;
   domain?: string;
   cookieString?: string;
   loginUrl?: string;
@@ -53,7 +55,7 @@ export interface CrawlerOptions {
 
 export interface CrawlerResult {
   url: string;
-  data: Record<string, any>;
+  data: Record<string, unknown>;
   timestamp: Date;
   success: boolean;
   error?: string;

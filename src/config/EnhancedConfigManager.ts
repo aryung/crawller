@@ -94,7 +94,7 @@ export class EnhancedConfigManager {
   private async buildTransformFunction(
     selectorConfig: any, 
     enhancedConfig: EnhancedCrawlerConfig
-  ): Promise<Function | undefined> {
+  ): Promise<((value: string) => unknown) | undefined> {
     if (!selectorConfig.transform) {
       return undefined;
     }
@@ -107,7 +107,7 @@ export class EnhancedConfigManager {
       try {
         const transformFn = getTransformFunction(selectorConfig.transform);
         if (transformFn) {
-          return transformFn;
+          return transformFn as (value: string) => unknown;
         }
       } catch (error) {
         logger.warn(`Transform function "${selectorConfig.transform}" not found in built-in library`);
@@ -116,7 +116,7 @@ export class EnhancedConfigManager {
       if (enhancedConfig.transforms && enhancedConfig.transforms[selectorConfig.transform]) {
         try {
           const transformCode = enhancedConfig.transforms[selectorConfig.transform];
-          return new Function('value', 'context', transformCode);
+          return new Function('value', 'context', transformCode) as (value: string) => unknown;
         } catch (error) {
           logger.error(`Failed to create custom transform function: ${error}`);
           return undefined;
@@ -124,7 +124,7 @@ export class EnhancedConfigManager {
       }
 
       try {
-        return new Function('value', 'context', `return ${selectorConfig.transform}`);
+        return new Function('value', 'context', `return ${selectorConfig.transform}`) as (value: string) => unknown;
       } catch (error) {
         logger.error(`Failed to create transform function from expression: ${error}`);
         return undefined;
@@ -137,13 +137,13 @@ export class EnhancedConfigManager {
   private async buildExtractFunction(
     extractConfig: any,
     enhancedConfig: EnhancedCrawlerConfig
-  ): Promise<Function> {
-    return (elements: any[]) => {
+  ): Promise<(value: any) => unknown> {
+    return (elements: any) => {
       if (!Array.isArray(elements)) {
         elements = [elements];
       }
 
-      return elements.map(element => {
+      return elements.map((element: any) => {
         const result: any = {};
         
         for (const [key, config] of Object.entries(extractConfig)) {
@@ -155,23 +155,24 @@ export class EnhancedConfigManager {
             } else {
               result[key] = element.getAttribute(config);
             }
-          } else if (typeof config === 'object') {
-            let value: any;
+          } else if (typeof config === 'object' && config !== null && 'attribute' in config) {
+            let value: unknown;
+            const configObj = config as { attribute?: string; transform?: string };
             
-            if (config.attribute) {
-              value = element.getAttribute(config.attribute);
+            if (configObj.attribute) {
+              value = element.getAttribute(configObj.attribute);
             } else {
               value = element.textContent?.trim();
             }
 
-            if (config.transform) {
+            if (configObj.transform) {
               try {
-                const transformFn = getTransformFunction(config.transform as string);
+                const transformFn = getTransformFunction(configObj.transform);
                 if (transformFn) {
                   value = transformFn(value);
                 }
               } catch (error) {
-                logger.warn(`Transform function "${config.transform}" failed:`, error);
+                logger.warn(`Transform function "${configObj.transform}" failed:`, error);
               }
             }
 
@@ -280,7 +281,7 @@ export class EnhancedConfigManager {
     }
   }
 
-  async mergeConfigs(baseConfigName: string, overrideConfig: Partial<CrawlerConfig>): Promise<CrawlerConfig> {
+  async mergeConfigsWithBase(baseConfigName: string, overrideConfig: Partial<CrawlerConfig>): Promise<CrawlerConfig> {
     try {
       const baseConfig = await this.loadEnhancedConfig(baseConfigName);
       const mergedEnhancedConfig = {

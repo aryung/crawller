@@ -1,5 +1,5 @@
 import { chromium, Browser, Page } from 'playwright';
-import { CrawlerConfig, CrawlerResult, CrawlerOptions } from '../types';
+import { CrawlerConfig, CrawlerResult, CrawlerOptions, EnhancedCrawlerConfig } from '../types';
 import { DataExtractor } from './DataExtractor';
 import { logger, delay, validateCrawlerConfig } from '../utils';
 import { builtinTransforms, getTransformFunction } from '../transforms';
@@ -20,7 +20,7 @@ export class PlaywrightCrawler {
     this.dataExtractor = new DataExtractor();
   }
 
-  async crawl(config: CrawlerConfig): Promise<CrawlerResult> {
+  async crawl(config: CrawlerConfig | EnhancedCrawlerConfig): Promise<CrawlerResult> {
     const errors = validateCrawlerConfig(config);
     if (errors.length > 0) {
       throw new Error(`Configuration errors: ${errors.join(', ')}`);
@@ -56,7 +56,7 @@ export class PlaywrightCrawler {
     };
   }
 
-  private async crawlWithPlaywright(config: CrawlerConfig, options: CrawlerOptions): Promise<CrawlerResult> {
+  private async crawlWithPlaywright(config: CrawlerConfig | EnhancedCrawlerConfig, options: CrawlerOptions): Promise<CrawlerResult> {
     let page: Page | null = null;
     
     try {

@@ -167,7 +167,7 @@ async function runCrawler(configNames: string[], options: CLIOptions) {
     console.log('='.repeat(50));
     console.log(`📁 配置目錄: ${options.config || 'configs'}`);
     console.log(`📂 輸出目錄: ${options.output || 'output'}`);
-    console.log(`⚡ 引擎: ${options.engine || 'puppeteer'}`);
+    console.log(`⚡ 引擎: ${options.engine || 'playwright'}`);
     console.log(`🔢 併發數: ${options.concurrent || '3'}`);
     console.log(`📋 配置列表: ${configNames.join(', ')}`);
     console.log('='.repeat(50));
@@ -183,7 +183,7 @@ async function runCrawler(configNames: string[], options: CLIOptions) {
     }
 
     const allConfigs = (await Promise.all(configNames.map(name => 
-      (crawler.configManager as any).expandDataDrivenConfigs(name, options.output || 'output')
+      crawler.configManager.expandDataDrivenConfigs?.(name, options.output || 'output') || Promise.resolve([name])
     ))).flat();
 
 
@@ -377,7 +377,7 @@ async function createConfig(name: string, options: CLIOptions) {
     if (options.template) {
       const { getPresetConfig } = await import('./config/defaultConfigs');
       try {
-        template = getPresetConfig(options.template);
+        template = getPresetConfig(options.template as 'news' | 'ecommerce' | 'social' | 'table' | 'api');
       } catch (error) {
         console.warn(`⚠️  未知模板: ${options.template}，使用預設模板`);
       }
@@ -425,7 +425,7 @@ async function runDiagnostics() {
   console.log(`   記憶體: ${Math.round(process.memoryUsage().heapUsed / 1024 / 1024)}MB / ${Math.round(process.memoryUsage().heapTotal / 1024 / 1024)}MB`);
 
   console.log('\n📦 依賴檢查:');
-  const dependencies = ['puppeteer', 'puppeteer-core', 'playwright', 'axios', 'cheerio', 'winston', 'fs-extra'];
+  const dependencies = ['playwright', 'axios', 'cheerio', 'winston', 'fs-extra'];
   for (const dep of dependencies) {
     try {
       await import(dep);
@@ -446,19 +446,13 @@ async function runDiagnostics() {
 
   console.log('\n🌐 瀏覽器引擎測試:');
   try {
-    const puppeteerCore = await import('puppeteer-core');
-    const { BrowserDetector } = await import('./utils');
-    console.log('   🔄 測試 Puppeteer-Core 瀏覽器啟動...');
-    const browserPath = await BrowserDetector.getBestBrowserPath();
-    if (!browserPath) {
-      console.log('   ❌ Puppeteer-Core: 未找到可用瀏覽器');
-    } else {
-      const browser = await puppeteerCore.default.launch({ executablePath: browserPath, headless: true, args: ['--no-sandbox'] });
-      await browser.close();
-      console.log('   ✅ Puppeteer-Core: 可以啟動瀏覽器');
-    }
+    const playwright = await import('playwright');
+    console.log('   🔄 測試 Playwright 瀏覽器啟動...');
+    const browser = await playwright.chromium.launch({ headless: true });
+    await browser.close();
+    console.log('   ✅ Playwright: 可以啟動瀏覽器');
   } catch (error) {
-    console.log(`   ❌ Puppeteer-Core: 無法啟動瀏覽器 - ${(error as Error).message}`);
+    console.log(`   ❌ Playwright: 無法啟動瀏覽器 - ${(error as Error).message}`);
   }
 
   console.log('\n🌍 網路連線測試:');
