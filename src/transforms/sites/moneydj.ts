@@ -7,6 +7,9 @@ export interface MoneyDJTransforms {
   extractIndustryCode: (value: string) => string | null;
   extractIndustryCategory: (value: string) => string;
   cleanIndustryName: (value: string) => string;
+  extractStockCode: (value: string) => string | null;
+  cleanStockName: (value: string) => string;
+  parseStockInfo: (value: string) => { symbolCode: string; companyName: string } | null;
 }
 
 /**
@@ -49,6 +52,40 @@ export const moneydjTransforms: MoneyDJTransforms = {
    */
   cleanIndustryName: (value: string): string => {
     return value?.toString().trim().replace(/\s+/g, ' ').replace(/[\r\n]/g, '');
+  },
+
+  /**
+   * 從 MoneyDJ 股票資訊中提取股票代碼
+   * 例如：從 "1101台泥" 或 "1101　台泥" 提取 "1101"
+   */
+  extractStockCode: (value: string): string | null => {
+    const match = value?.toString().match(/^(\d{4,6})/);
+    return match ? match[1] : null;
+  },
+
+  /**
+   * 清理 MoneyDJ 股票名稱
+   * 移除股票代碼，只保留公司名稱
+   * 例如：從 "1101台泥" 提取 "台泥"
+   */
+  cleanStockName: (value: string): string => {
+    const cleaned = value?.toString().replace(/^\d{4,6}[\s　]*/, '').trim();
+    return cleaned || value?.toString().trim() || '';
+  },
+
+  /**
+   * 解析 MoneyDJ 股票資訊
+   * 將 "1101台泥" 格式解析為 { symbolCode: "1101", companyName: "台泥" }
+   */
+  parseStockInfo: (value: string): { symbolCode: string; companyName: string } | null => {
+    const match = value?.toString().match(/^(\d{4,6})[\s　]*(.+)/);
+    if (match) {
+      return {
+        symbolCode: match[1],
+        companyName: match[2].trim()
+      };
+    }
+    return null;
   }
 };
 

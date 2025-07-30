@@ -64,4 +64,5 @@ export interface ExportOptions {
   format: 'json' | 'csv' | 'xlsx';
   filename?: string;
   path?: string;
+  configName?: string;
 }

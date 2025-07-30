@@ -247,10 +247,18 @@ async function runCrawler(configNames: string[], options: CLIOptions) {
     if (successful.length > 0) {
       const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
       const filename = `crawl_results_${timestamp}`;
+      
+      // 使用第一個配置名稱作為主要配置名稱，如果有多個配置則使用 "multiple"
+      const configName = configNames.length === 1 
+        ? configNames[0] 
+        : configNames.length > 1 
+          ? `multiple-${configNames.slice(0, 2).join('-')}` 
+          : undefined;
 
       const exportPath = await crawler.export(successful, {
         format: (options.format as any) || 'json',
-        filename
+        filename,
+        configName
       });
 
       console.log(`📄 結果已匯出: ${exportPath}`);

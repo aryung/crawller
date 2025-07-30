@@ -1,0 +1,72 @@
+{
+  "url": "https://www.moneydj.com/z/zh/zha/zh00.djhtm?a=C011010",
+  "_note": "This config is for industry detail pages. Change the 'a' parameter to target different industries (e.g., C011010, C011011, etc.)",
+  "selectors": {
+    "industryInfo": {
+      "selector": "title",
+      "transform": "cleanIndustryName"
+    },
+    "allLinks": {
+      "selector": "a",
+      "multiple": true,
+      "extract": {
+        "text": "text",
+        "href": {
+          "attribute": "href"
+        }
+      }
+    },
+    "stockLinks": {
+      "selector": "a[href*='/kd/zh/']",
+      "multiple": true,
+      "extract": {
+        "fullText": "text",
+        "stockInfo": {
+          "transform": "parseStockInfo"
+        },
+        "symbolCode": {
+          "transform": "extractStockCode"
+        },
+        "companyName": {
+          "transform": "cleanStockName"
+        },
+        "detailUrl": {
+          "attribute": "href",
+          "transform": "absoluteUrl"
+        }
+      }
+    },
+    "allStockCodes": {
+      "selector": "a:contains('1')",
+      "multiple": true,
+      "transform": "extractStockCode"
+    },
+    "tableData": {
+      "selector": "table td",
+      "multiple": true
+    }
+  },
+  "headers": {
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+    "Accept-Language": "zh-TW,zh;q=0.9,en;q=0.8",
+    "Cache-Control": "no-cache",
+    "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+  },
+  "options": {
+    "timeout": 30000,
+    "retries": 3,
+    "headless": true,
+    "screenshot": true,
+    "encoding": "big5",
+    "domainDelay": 3000,
+    "waitFor": 5000
+  },
+  "variables": {
+    "baseUrl": "https://www.moneydj.com",
+    "industryCode": "C011010"
+  },
+  "export": {
+    "formats": ["json", "csv"],
+    "filename": "industry_stocks"
+  }
+}

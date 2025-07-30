@@ -187,13 +187,27 @@ export class DataExporter {
 
   private generateFilename(options: ExportOptions): string {
     if (options.filename) {
-      return options.filename.endsWith(`.${options.format}`) 
-        ? options.filename 
-        : `${options.filename}.${options.format}`;
+      const baseFilename = options.filename.endsWith(`.${options.format}`) 
+        ? options.filename.replace(`.${options.format}`, '')
+        : options.filename;
+      
+      // Add config name prefix if available
+      const finalFilename = options.configName 
+        ? `${options.configName}_${baseFilename}`
+        : baseFilename;
+      
+      return `${finalFilename}.${options.format}`;
     }
     
     const timestamp = formatTimestamp();
-    return `crawl_results_${timestamp}.${options.format}`;
+    const baseFilename = `crawl_results_${timestamp}`;
+    
+    // Add config name prefix if available
+    const finalFilename = options.configName 
+      ? `${options.configName}_${baseFilename}`
+      : baseFilename;
+    
+    return `${finalFilename}.${options.format}`;
   }
 
   async saveScreenshots(results: CrawlerResult[]): Promise<string[]> {
