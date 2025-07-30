@@ -1,3 +1,5 @@
+import { detectSiteFromUrl, getSiteTransform, mergeSiteTransformsToGlobal } from './sites';
+
 export interface TransformRegistry {
   [key: string]: (value: any, context?: any) => any;
 }
@@ -84,11 +86,7 @@ export const builtinTransforms: TransformRegistry = {
       .trim();
   },
   
-  // 專用轉換函式
-  extractIndustryCode: (value: string) => {
-    const match = value?.toString().match(/[?&]a=([^&]+)/);
-    return match ? match[1] : null;
-  },
+  // 通用提取函式
   
   extractStockCode: (value: string) => {
     const match = value?.toString().match(/(\d{4,6})/);
@@ -180,9 +178,26 @@ export const builtinTransforms: TransformRegistry = {
   }
 };
 
-// 獲取轉換函式
-export function getTransformFunction(name: string): Function | null {
-  return builtinTransforms[name] || null;
+// 獲取轉換函式 (支援網站特定轉換)
+export function getTransformFunction(name: string, context?: any): Function | null {
+  // 首先檢查內建轉換
+  const builtinFn = builtinTransforms[name];
+  if (builtinFn) {
+    return builtinFn;
+  }
+  
+  // 如果有 context 且包含 URL，嘗試獲取網站特定轉換
+  if (context?.url) {
+    const siteName = detectSiteFromUrl(context.url);
+    if (siteName) {
+      const siteFn = getSiteTransform(siteName, name);
+      if (siteFn) {
+        return siteFn;
+      }
+    }
+  }
+  
+  return null;
 }
 
 // 註冊自定義轉換函式
@@ -193,6 +208,24 @@ export function registerTransform(name: string, fn: Function): void {
 // 列出所有可用的轉換函式
 export function listTransforms(): string[] {
   return Object.keys(builtinTransforms);
+}
+
+// 創建包含網站特定轉換的完整註冊表
+export function createExtendedTransformRegistry(url?: string): TransformRegistry {
+  const registry = { ...builtinTransforms };
+  
+  if (url) {
+    // 只加載特定網站的轉換
+    const siteName = detectSiteFromUrl(url);
+    if (siteName) {
+      mergeSiteTransformsToGlobal(registry, siteName);
+    }
+  } else {
+    // 加載所有網站轉換
+    mergeSiteTransformsToGlobal(registry);
+  }
+  
+  return registry;
 }
 
 // 複合轉換函式（鏈式調用）

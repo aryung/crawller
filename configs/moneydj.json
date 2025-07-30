@@ -14,7 +14,8 @@
     "retries": 3,
     "headless": true,
     "screenshot": false,
-    "encoding": "big5"
+    "encoding": "big5",
+    "domainDelay": 2000
   },
   "export": {
     "formats": ["json", "csv"],

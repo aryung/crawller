@@ -290,13 +290,15 @@ export class PlaywrightCrawler {
 
   private async applyTransformPlaywright(value: any, transformName: string, config: any): Promise<any> {
     try {
-      // 檢查是否為內建轉換函數
-      const transformFn = getTransformFunction(transformName);
+      // 創建 context 用於轉換函數
+      const context = {
+        url: config.url,
+        baseUrl: config.variables?.baseUrl || config.url
+      };
+      
+      // 檢查是否為內建轉換函數或網站特定轉換函數
+      const transformFn = getTransformFunction(transformName, context);
       if (transformFn) {
-        const context = {
-          url: config.url,
-          baseUrl: config.variables?.baseUrl || config.url
-        };
         return transformFn(value, context);
       }
 

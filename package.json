@@ -35,12 +35,8 @@
     "commander": "^11.1.0",
     "fs-extra": "^11.2.0",
     "iconv-lite": "^0.6.3",
-    "puppeteer": "^21.5.2",
-    "puppeteer-core": "^24.15.0",
-    "winston": "^3.11.0"
-  },
-  "optionalDependencies": {
     "playwright": "^1.54.1",
+    "winston": "^3.11.0",
     "xlsx": "^0.18.5"
   },
   "devDependencies": {

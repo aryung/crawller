@@ -11,7 +11,6 @@ interface CLIOptions {
   output?: string;
   format?: string;
   concurrent?: number;
-  engine?: 'puppeteer' | 'playwright';
   list?: boolean;
   verbose?: boolean;
 }
@@ -29,7 +28,6 @@ async function main() {
     .option('-o, --output <path>', '輸出目錄', 'output')
     .option('-f, --format <format>', '匯出格式 (json|csv|xlsx)', 'json')
     .option('--concurrent <number>', '同時處理的配置檔案數量（非引擎併發）', '3')
-    .option('--engine <engine>', '爬蟲引擎 (puppeteer|playwright)', 'puppeteer')
     .option('-v, --verbose', '詳細日誌')
     .action(async (configs: string[], options: CLIOptions) => {
       if (options.verbose) {
@@ -114,8 +112,7 @@ async function main() {
           config: 'configs',
           output: 'output',
           format: 'json',
-          concurrent: 3,
-          engine: 'puppeteer'
+          concurrent: 3
         };
         await runCrawler([firstArg], options);
         return;
@@ -137,8 +134,6 @@ let isShuttingDown = false;
 
 async function runCrawler(configNames: string[], options: CLIOptions) {
   const crawler = new UniversalCrawler({
-    usePlaywright: options.engine === 'playwright',
-    usePuppeteerCore: options.engine !== 'playwright', // 預設使用 puppeteer-core
     configPath: options.config,
     outputDir: options.output
   });

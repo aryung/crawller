@@ -1,4 +1,4 @@
-import { WebCrawler, PlaywrightCrawler, PuppeteerCoreWebCrawler } from './crawler';
+import { PlaywrightCrawler } from './crawler';
 import { ConfigManager, EnhancedConfigManager } from './config';
 import { DataExporter, logger, BrowserDetector, DomainRateLimiter } from './utils';
 import { CrawlerConfig, CrawlerResult, ExportOptions } from './types';
@@ -11,30 +11,20 @@ export * from './types';
 export * from './transforms';
 
 export class UniversalCrawler {
-  private webCrawler: WebCrawler;
-  private puppeteerCoreWebCrawler: PuppeteerCoreWebCrawler;
   private playwrightCrawler: PlaywrightCrawler;
   private configManager: EnhancedConfigManager;
   private dataExporter: DataExporter;
   private domainRateLimiter: DomainRateLimiter;
-  private usePlaywright: boolean;
-  private usePuppeteerCore: boolean;
 
   constructor(options?: {
-    usePlaywright?: boolean;
-    usePuppeteerCore?: boolean;
     configPath?: string;
     outputDir?: string;
     defaultDomainDelay?: number;
   }) {
-    this.webCrawler = new WebCrawler();
-    this.puppeteerCoreWebCrawler = new PuppeteerCoreWebCrawler();
     this.playwrightCrawler = new PlaywrightCrawler();
     this.configManager = new EnhancedConfigManager(options?.configPath);
     this.dataExporter = new DataExporter(options?.outputDir);
     this.domainRateLimiter = new DomainRateLimiter(options?.defaultDomainDelay || 2000);
-    this.usePlaywright = options?.usePlaywright || false;
-    this.usePuppeteerCore = options?.usePuppeteerCore ?? true; // 預設使用 puppeteer-core
   }
 
   async crawl(config: CrawlerConfig | string): Promise<CrawlerResult> {
@@ -76,103 +66,33 @@ export class UniversalCrawler {
       }
     }
 
-    // 1. 嘗試用戶指定的引擎
-    if (this.usePlaywright) {
-      try {
-        logger.info('Trying Playwright engine...');
-        const result = await this.playwrightCrawler.crawl(enhancedConfig || config);
-        const duration = Date.now() - startTime;
-        logger.info(`Playwright successful in ${duration}ms`);
-        return result;
-      } catch (error) {
-        const errorMsg = `Playwright failed: ${(error as Error).message}`;
-        logger.warn(errorMsg);
-        errors.push(errorMsg);
-      }
-    } else if (this.usePuppeteerCore) {
-      try {
-        logger.info('Trying Puppeteer-Core engine...');
-        const result = await this.puppeteerCoreWebCrawler.crawl(enhancedConfig || config);
-        const duration = Date.now() - startTime;
-        logger.info(`Puppeteer-Core successful in ${duration}ms`);
-        return result;
-      } catch (error) {
-        const errorMsg = `Puppeteer-Core failed: ${(error as Error).message}`;
-        logger.warn(errorMsg);
-        errors.push(errorMsg);
-      }
-    } else {
-      try {
-        logger.info('Trying Puppeteer engine...');
-        const result = await this.webCrawler.crawl(enhancedConfig || config);
-        const duration = Date.now() - startTime;
-        logger.info(`Puppeteer successful in ${duration}ms`);
-        return result;
-      } catch (error) {
-        const errorMsg = `Puppeteer failed: ${(error as Error).message}`;
-        logger.warn(errorMsg);
-        errors.push(errorMsg);
-      }
-    }
-
-    // 2. 嘗試另一個瀏覽器引擎
-    if (this.usePlaywright) {
-      // 從 Playwright 回退到 Puppeteer-Core
-      try {
-        logger.info('Falling back to Puppeteer-Core engine...');
-        const result = await this.puppeteerCoreWebCrawler.crawl(enhancedConfig || config);
-        const duration = Date.now() - startTime;
-        logger.info(`Puppeteer-Core fallback successful in ${duration}ms`);
-        return result;
-      } catch (error) {
-        const errorMsg = `Puppeteer-Core fallback failed: ${(error as Error).message}`;
-        logger.warn(errorMsg);
-        errors.push(errorMsg);
-      }
-    } else if (this.usePuppeteerCore) {
-      // 從 Puppeteer-Core 回退到 Playwright
-      try {
-        logger.info('Falling back to Playwright engine...');
-        const result = await this.playwrightCrawler.crawl(enhancedConfig || config);
-        const duration = Date.now() - startTime;
-        logger.info(`Playwright fallback successful in ${duration}ms`);
-        return result;
-      } catch (error) {
-        const errorMsg = `Playwright fallback failed: ${(error as Error).message}`;
-        logger.warn(errorMsg);
-        errors.push(errorMsg);
-      }
-    } else {
-      // 從 Puppeteer 回退到 Puppeteer-Core
-      try {
-        logger.info('Falling back to Puppeteer-Core engine...');
-        const result = await this.puppeteerCoreWebCrawler.crawl(enhancedConfig || config);
-        const duration = Date.now() - startTime;
-        logger.info(`Puppeteer-Core fallback successful in ${duration}ms`);
-        return result;
-      } catch (error) {
-        const errorMsg = `Puppeteer-Core fallback failed: ${(error as Error).message}`;
-        logger.warn(errorMsg);
-        errors.push(errorMsg);
-      }
-    }
-
-    // 3. 最後嘗試 HTTP 模式（如果還沒試過）
-    if (!this.isHttpCompatible(config)) {
-      logger.info('Forcing HTTP mode as last resort...');
-    } else if (errors.length > 0) {
-      logger.info('Retrying HTTP mode as fallback...');
-    }
-    
+    // 嘗試 Playwright 引擎
     try {
-      const result = await this.crawlWithHttpMode(enhancedConfig || config);
+      logger.info('Trying Playwright engine...');
+      const result = await this.playwrightCrawler.crawl(enhancedConfig || config);
       const duration = Date.now() - startTime;
-      logger.info(`HTTP fallback successful in ${duration}ms`);
+      logger.info(`Playwright successful in ${duration}ms`);
       return result;
     } catch (error) {
-      const errorMsg = `HTTP fallback failed: ${(error as Error).message}`;
+      const errorMsg = `Playwright failed: ${(error as Error).message}`;
       logger.warn(errorMsg);
       errors.push(errorMsg);
+    }
+
+    // 最後嘗試 HTTP 模式（如果還沒試過）
+    if (!this.isHttpCompatible(config)) {
+      logger.info('Forcing HTTP mode as last resort...');
+      
+      try {
+        const result = await this.crawlWithHttpMode(enhancedConfig || config);
+        const duration = Date.now() - startTime;
+        logger.info(`HTTP fallback successful in ${duration}ms`);
+        return result;
+      } catch (error) {
+        const errorMsg = `HTTP fallback failed: ${(error as Error).message}`;
+        logger.warn(errorMsg);
+        errors.push(errorMsg);
+      }
     }
 
     // 所有方法都失敗
@@ -482,13 +402,15 @@ export class UniversalCrawler {
 
   private async applyTransform(value: any, transformName: string, config: any): Promise<any> {
     try {
-      // 檢查是否為內建轉換函數
-      const transformFn = getTransformFunction(transformName);
+      // 創建 context 用於轉換函數
+      const context = {
+        url: config.url,
+        baseUrl: config.variables?.baseUrl || config.url
+      };
+      
+      // 檢查是否為內建轉換函數或網站特定轉換函數
+      const transformFn = getTransformFunction(transformName, context);
       if (transformFn) {
-        const context = {
-          url: config.url,
-          baseUrl: config.variables?.baseUrl || config.url
-        };
         return transformFn(value, context);
       }
 
@@ -540,16 +462,7 @@ export class UniversalCrawler {
 
   // 清理資源
   async cleanup(): Promise<void> {
-    await Promise.all([
-      this.webCrawler.cleanup(),
-      this.puppeteerCoreWebCrawler.cleanup(),
-      this.playwrightCrawler.cleanup()
-    ]);
+    await this.playwrightCrawler.cleanup();
   }
 
-  // 切換爬蟲引擎
-  setEngine(usePlaywright: boolean): void {
-    this.usePlaywright = usePlaywright;
-    logger.info(`Switched to ${usePlaywright ? 'Playwright' : 'Puppeteer'} engine`);
-  }
 }
