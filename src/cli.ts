@@ -3,6 +3,7 @@
 import { program } from 'commander';
 import { UniversalCrawler } from './index';
 import { logger } from './utils';
+import { formatTimestamp } from './utils/helpers';
 import * as path from 'path';
 import * as fs from 'fs-extra';
 import { EnhancedCrawlerConfig, ExportOptions } from './types';
@@ -273,8 +274,8 @@ async function runCrawler(configNames: string[], options: CLIOptions) {
     }
 
     if (successful.length > 0) {
-      const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-      const filename = `crawl_results_${timestamp}`;
+      const timestamp = formatTimestamp();
+      const filename = timestamp;
       
       const configName = configNames.length === 1 
         ? configNames[0] 

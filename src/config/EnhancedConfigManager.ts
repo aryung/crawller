@@ -357,10 +357,10 @@ export class EnhancedConfigManager {
 
     // 查找源配置的輸出文件
     const sourceFiles = await fs.readdir(outputDir);
-    const sourcePattern = `${sourceConfig}*_crawl_results_*.json`;
+    const sourcePattern = `${sourceConfig}*_*.json`;
     const matchingFiles = sourceFiles.filter(file => 
       file.startsWith(sourceConfig) && 
-      file.includes('_crawl_results_') && 
+      file.match(/_\d{14}\.json$/) && // 匹配時間戳格式 _yyyymmddhhmmss.json
       file.endsWith('.json')
     );
 

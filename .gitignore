@@ -5,3 +5,7 @@ node_modules/
 dist/
 
 .claude/
+
+output/screenshots/
+output/*.md
+logs/

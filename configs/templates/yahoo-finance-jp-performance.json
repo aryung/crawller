@@ -6,59 +6,10 @@
       "selector": "h1, .symbol",
       "transform": "cleanStockSymbol"
     },
-    "extractedAt": {
-      "static": "{{timestamp}}"
-    },
-    "stockCode": {
-      "static": "{{stockCode}}"
-    },
     "structuredPerformanceData": {
       "selector": "table td, table th",
       "multiple": true,
       "transform": "structureFinancialDataFromAllTableCells"
-    },
-    "performanceTable": {
-      "selector": "table, .performance-table, [class*='performance'], [class*='Performance']",
-      "multiple": true,
-      "extract": {
-        "tableText": "text"
-      }
-    },
-    "performanceTableHeaders": {
-      "selector": "table, [class*='performance'], [class*='Performance']",
-      "transform": "extractTableHeaders"
-    },
-    "performanceData": {
-      "selector": "tr, .performance-row, [class*='row']",
-      "multiple": true,
-      "extract": {
-        "rowText": "text",
-        "cells": {
-          "selector": "td, th, [class*='cell'], [class*='Cell']",
-          "multiple": true,
-          "transform": "cleanFinancialText"
-        }
-      }
-    },
-    "fiscalPeriods": {
-      "selector": "th, td, [class*='period']",
-      "multiple": true,
-      "transform": "extractFiscalPeriod"
-    },
-    "allTableCells": {
-      "selector": "table td, table th",
-      "multiple": true,
-      "transform": "cleanFinancialText"
-    },
-    "allPerformanceContent": {
-      "selector": "[class*='performance'] *, [class*='Performance'] *",
-      "multiple": true,
-      "extract": {
-        "text": "text",
-        "className": {
-          "attribute": "class"
-        }
-      }
     }
   },
   "headers": {
@@ -82,7 +33,7 @@
     }
   },
   "variables": {
-    "stockCode": "143A.T",
+    "stockCode": "7901.T",
     "baseUrl": "https://finance.yahoo.co.jp"
   },
   "export": {

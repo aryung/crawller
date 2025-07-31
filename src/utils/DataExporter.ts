@@ -12,11 +12,11 @@ export class DataExporter {
   }
 
   async exportResults(
-    results: CrawlerResult[], 
+    results: CrawlerResult[],
     options: ExportOptions
   ): Promise<string> {
     await fs.ensureDir(this.outputDir);
-    
+
     const filename = this.generateFilename(options);
     const filePath = path.join(this.outputDir, filename);
 
@@ -73,19 +73,19 @@ export class DataExporter {
   private async exportAsExcel(results: CrawlerResult[], filePath: string): Promise<string> {
     try {
       const XLSX = await import('xlsx');
-      
+
       const workbook = XLSX.utils.book_new();
-      
+
       // 主要資料工作表
       const worksheetData = results.map(result => this.flattenResult(result));
       const worksheet = XLSX.utils.json_to_sheet(worksheetData);
       XLSX.utils.book_append_sheet(workbook, worksheet, 'Crawl Results');
-      
+
       // 統計工作表
       const stats = this.generateStats(results);
       const statsWorksheet = XLSX.utils.json_to_sheet([stats]);
       XLSX.utils.book_append_sheet(workbook, statsWorksheet, 'Statistics');
-      
+
       XLSX.writeFile(workbook, filePath);
       logger.info(`Exported ${results.length} results to Excel: ${filePath}`);
       return filePath;
@@ -97,20 +97,20 @@ export class DataExporter {
 
   private extractHeaders(results: CrawlerResult[]): string[] {
     const headers = new Set(['url', 'success', 'timestamp', 'error']);
-    
+
     results.forEach(result => {
       if (result.data && typeof result.data === 'object') {
         Object.keys(result.data).forEach(key => headers.add(key));
       }
     });
-    
+
     return Array.from(headers);
   }
 
   private resultToCsvRow(result: CrawlerResult, headers: string[]): string {
     return headers.map(header => {
       let value: any;
-      
+
       switch (header) {
         case 'url':
           value = result.url;
@@ -127,7 +127,7 @@ export class DataExporter {
         default:
           value = result.data?.[header] || '';
       }
-      
+
       // CSV 轉義處理
       if (typeof value === 'string') {
         value = value.replace(/"/g, '""');
@@ -135,7 +135,7 @@ export class DataExporter {
           value = `"${value}"`;
         }
       }
-      
+
       return value;
     }).join(',');
   }
@@ -154,13 +154,13 @@ export class DataExporter {
   private generateStats(results: CrawlerResult[]): Record<string, any> {
     const successful = results.filter(r => r.success);
     const failed = results.filter(r => !r.success);
-    
+
     return {
       totalResults: results.length,
       successfulCrawls: successful.length,
       failedCrawls: failed.length,
       successRate: results.length > 0 ? (successful.length / results.length * 100).toFixed(2) + '%' : '0%',
-      averageDataFields: successful.length > 0 
+      averageDataFields: successful.length > 0
         ? (successful.reduce((sum, r) => sum + Object.keys(r.data || {}).length, 0) / successful.length).toFixed(1)
         : '0',
       commonErrors: this.getCommonErrors(failed),
@@ -170,16 +170,16 @@ export class DataExporter {
 
   private getCommonErrors(failedResults: CrawlerResult[]): string {
     const errorCounts: Record<string, number> = {};
-    
+
     failedResults.forEach(result => {
       if (result.error) {
         const errorKey = result.error.substring(0, 100); // 截取前100字符作為錯誤類型
         errorCounts[errorKey] = (errorCounts[errorKey] || 0) + 1;
       }
     });
-    
+
     return Object.entries(errorCounts)
-      .sort(([,a], [,b]) => b - a)
+      .sort(([, a], [, b]) => b - a)
       .slice(0, 3)
       .map(([error, count]) => `${error} (${count}x)`)
       .join('; ');
@@ -187,45 +187,45 @@ export class DataExporter {
 
   private generateFilename(options: ExportOptions): string {
     if (options.filename) {
-      const baseFilename = options.filename.endsWith(`.${options.format}`) 
+      const baseFilename = options.filename.endsWith(`.${options.format}`)
         ? options.filename.replace(`.${options.format}`, '')
         : options.filename;
-      
+
       // Add config name prefix if available
-      const finalFilename = options.configName 
+      const finalFilename = options.configName
         ? `${options.configName}_${baseFilename}`
         : baseFilename;
-      
+
       return `${finalFilename}.${options.format}`;
     }
-    
+
     const timestamp = formatTimestamp();
-    const baseFilename = `crawl_results_${timestamp}`;
-    
+    const baseFilename = timestamp;
+
     // Add config name prefix if available
-    const finalFilename = options.configName 
+    const finalFilename = options.configName
       ? `${options.configName}_${baseFilename}`
       : baseFilename;
-    
+
     return `${finalFilename}.${options.format}`;
   }
 
   async saveScreenshots(results: CrawlerResult[]): Promise<string[]> {
     const screenshotDir = path.join(this.outputDir, 'screenshots');
     await fs.ensureDir(screenshotDir);
-    
+
     const savedPaths: string[] = [];
-    
+
     for (const [index, result] of results.entries()) {
       if (result.screenshot) {
         const filename = `screenshot_${index}_${sanitizeFilename(result.url)}.png`;
         const filepath = path.join(screenshotDir, filename);
-        
+
         await fs.writeFile(filepath, result.screenshot);
         savedPaths.push(filepath);
       }
     }
-    
+
     logger.info(`Saved ${savedPaths.length} screenshots to ${screenshotDir}`);
     return savedPaths;
   }
@@ -233,7 +233,7 @@ export class DataExporter {
   async generateReport(results: CrawlerResult[]): Promise<string> {
     const stats = this.generateStats(results);
     const reportPath = path.join(this.outputDir, `crawl_report_${formatTimestamp()}.md`);
-    
+
     const report = `# 爬蟲結果報告
 
 ## 基本統計
@@ -247,8 +247,8 @@ export class DataExporter {
 ${stats.commonErrors || '無錯誤'}
 
 ## 詳細結果
-${results.map((result, index) => 
-  `### ${index + 1}. ${result.url}
+${results.map((result, index) =>
+      `### ${index + 1}. ${result.url}
 - **狀態**: ${result.success ? '✅ 成功' : '❌ 失敗'}
 - **時間**: ${result.timestamp.toLocaleString('zh-TW')}
 - **資料欄位**: ${Object.keys(result.data || {}).length} 個
@@ -259,7 +259,7 @@ ${result.screenshot ? '- **截圖**: 已保存' : ''}
 ---
 *報告生成時間: ${new Date().toLocaleString('zh-TW')}*
 `;
-    
+
     await fs.writeFile(reportPath, report, 'utf8');
     logger.info(`Generated report: ${reportPath}`);
     return reportPath;

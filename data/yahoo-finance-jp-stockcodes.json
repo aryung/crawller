@@ -1,0 +1,27 @@
+[
+  {
+    "stockCode": "7901.T",
+    "companyName": "(株)マツモト",
+    "sector": "小売業"
+  },
+  {
+    "stockCode": "143A.T", 
+    "companyName": "イシン(株)",
+    "sector": "食料品"
+  },
+  {
+    "stockCode": "7203.T",
+    "companyName": "トヨタ自動車(株)",
+    "sector": "輸送用機器"
+  },
+  {
+    "stockCode": "9984.T",
+    "companyName": "(株)ソフトバンクグループ",
+    "sector": "情報・通信業"
+  },
+  {
+    "stockCode": "6758.T",
+    "companyName": "(株)ソニーグループ",
+    "sector": "電気機器"
+  }
+]
