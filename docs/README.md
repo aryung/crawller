@@ -51,13 +51,13 @@ npm install
 ### 基本使用
 ```bash
 # 查看所有可用配置
-npm run crawler list
+npm run crawl list
 
 # 執行單一配置
 npm run crawl <config-name>
 
 # 查看幫助
-npm run crawler --help
+npm run crawl --help
 ```
 
 ## 詳細文件

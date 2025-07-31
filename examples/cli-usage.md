@@ -13,17 +13,17 @@ npm run crawl moneydj-links
 
 ### 2. 列出所有配置
 ```bash
-npm run crawler list
+npm run crawl list
 ```
 
 ### 3. 建立新配置
 ```bash
 # 建立空白配置
-npm run crawler create my-site
+npm run crawl create my-site
 
 # 使用模板建立配置
-npm run crawler create news-site --template news
-npm run crawler create shop-site --template ecommerce
+npm run crawl create news-site --template news
+npm run crawl create shop-site --template ecommerce
 ```
 
 ### 4. 驗證配置
@@ -140,7 +140,7 @@ npm run crawl moneydj-links --output data --format json
 ```
 
 **解決方案：**
-- 使用 `npm run crawler list` 查看可用配置
+- 使用 `npm run crawl list` 查看可用配置
 - 使用 `npm run crawler create <name>` 建立新配置
 
 ### 2. 網站連線失敗

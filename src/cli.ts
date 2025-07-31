@@ -23,6 +23,9 @@ interface CLIOptions {
   selectors?: string;
   batchSize?: number;
   startFrom?: number;
+  skipReport?: boolean;
+  noReport?: boolean;
+  report?: boolean;  // Added to handle --no-report (creates report: false)
 }
 
 async function main() {
@@ -40,10 +43,17 @@ async function main() {
     .option('--concurrent <number>', '同時處理的配置檔案數量（非引擎併發）', '1')
     .option('--batch-size <number>', '數據驅動配置的批次大小', '50')
     .option('--start-from <number>', '從第幾個配置開始執行', '0')
+    .option('--skip-report', '跳過生成 MD 格式的爬蟲報告')
+    .option('--no-report', '跳過生成 MD 格式的爬蟲報告（--skip-report 的別名）')
     .option('-v, --verbose', '詳細日誌')
     .action(async (configs: string[], options: CLIOptions) => {
       if (options.verbose) {
         process.env.LOG_LEVEL = 'debug';
+      }
+
+      // Handle --no-report (which creates report: false) as an alias for --skip-report
+      if (options.report === false) {
+        options.skipReport = true;
       }
 
       try {
@@ -113,12 +123,28 @@ async function main() {
     if (!knownCommands.includes(firstArg) && !firstArg.startsWith('-')) {
       try {
         console.log('🔄 檢測到配置名稱，執行爬蟲任務...');
+        
+        // Parse CLI arguments for direct config execution
+        const skipReport = args.includes('--skip-report') || args.includes('--no-report');
+        const verboseIndex = args.findIndex(arg => arg === '-v' || arg === '--verbose');
+        const concurrentIndex = args.findIndex(arg => arg === '--concurrent');
+        const formatIndex = args.findIndex(arg => arg === '-f' || arg === '--format');
+        const outputIndex = args.findIndex(arg => arg === '-o' || arg === '--output');
+        const configIndex = args.findIndex(arg => arg === '-c' || arg === '--config');
+        
         const options: CLIOptions = {
-          config: 'configs',
-          output: 'output',
-          format: 'json',
-          concurrent: 3
+          config: configIndex >= 0 && args[configIndex + 1] ? args[configIndex + 1] : 'configs',
+          output: outputIndex >= 0 && args[outputIndex + 1] ? args[outputIndex + 1] : 'output',
+          format: formatIndex >= 0 && args[formatIndex + 1] ? args[formatIndex + 1] as ExportOptions['format'] : 'json',
+          concurrent: concurrentIndex >= 0 && args[concurrentIndex + 1] ? Number(args[concurrentIndex + 1]) : 3,
+          verbose: verboseIndex >= 0,
+          skipReport
         };
+        
+        if (options.verbose) {
+          process.env.LOG_LEVEL = 'debug';
+        }
+        
         await runCrawler([firstArg], options);
         return;
       } catch (error) {
@@ -291,8 +317,13 @@ async function runCrawler(configNames: string[], options: CLIOptions) {
 
       console.log(`📄 結果已匯出: ${exportPath}`);
 
-      const reportPath = await crawler.generateReport(results);
-      console.log(`📊 報告已生成: ${reportPath}`);
+      if (!options.skipReport) {
+        const reportPath = await crawler.generateReport(results);
+        console.log(`📊 報告已生成: ${reportPath}`);
+      } else {
+        const paramUsed = options.report === false ? '--no-report' : '--skip-report';
+        console.log(`📊 已跳過 MD 報告生成（使用 ${paramUsed}）`);
+      }
 
       const screenshotResults = results.filter(r => r.screenshot);
       if (screenshotResults.length > 0) {

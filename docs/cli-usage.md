@@ -57,13 +57,12 @@ npm run curl2config "curl 'https://example.com' -H 'accept: text/html'"
 ```bash
 # 執行爬蟲 - 兩種方式都可以！
 npm run crawler moneydj         # 新功能: 直接執行
-npm run crawl moneydj           # 傳統方式
 
 # 管理命令
-npm run crawler list            # 列出配置
-npm run crawler doctor          # 系統診斷
-npm run crawler validate config # 驗證配置
-npm run crawler create new-site # 建立配置
+npm run crawl list            # 列出配置
+npm run crawl doctor          # 系統診斷
+npm run crawl validate config # 驗證配置
+npm run crawl create new-site # 建立配置
 npm run curl2config "curl..."   # curl 轉換
 ```
 
@@ -84,20 +83,60 @@ npm run crawl moneydj --engine playwright
 
 # 啟用詳細日誌
 npm run crawl moneydj --verbose
+
+# 跳過生成 Markdown 報告（兩種寫法都可以）
+npm run crawl moneydj --skip-report
+npm run crawl moneydj --no-report
+
+# 直接執行方式也支援參數
+npx tsx src/cli.ts moneydj --no-report
+npx tsx src/cli.ts moneydj --skip-report
 ```
 
 ## 📂 輸出檔案
 
 執行後會在 `output/` 目錄產生：
 - JSON/CSV/Excel 資料檔案
-- 統計報告
+- 統計報告（Markdown 格式）
 - 截圖（如果啟用）
+
+### 📊 **報告生成控制**
+
+預設情況下，爬蟲執行完成後會自動生成 Markdown 格式的統計報告 (`crawl_report_*.md`)。如果不需要報告，可以使用以下任一參數：
+
+```bash
+# 方式 1: 使用 --skip-report
+npm run crawl moneydj --skip-report
+npx tsx src/cli.ts crawl moneydj --skip-report
+
+# 方式 2: 使用 --no-report（更直觀）
+npm run crawl moneydj --no-report
+npx tsx src/cli.ts crawl moneydj --no-report
+
+# 方式 3: 直接執行配置也支援
+npx tsx src/cli.ts moneydj --no-report
+npx tsx src/cli.ts moneydj --skip-report
+```
+
+**參數說明：**
+- `--skip-report`: 傳統參數，跳過 MD 報告生成
+- `--no-report`: 新增別名參數，功能相同但更直觀
+- 兩個參數完全等效，可以任選一個使用
+
+**執行結果差異：**
+```bash
+# 生成報告（預設）
+📊 報告已生成: output/crawl_report_20250731172958.md
+
+# 跳過報告
+📊 已跳過 MD 報告生成（使用 --no-report）
+```
 
 ## 🛠️ 診斷工具
 
 ### 系統診斷
 ```bash
-npm run crawler doctor
+npm run crawl doctor
 ```
 檢查：
 - 系統環境和依賴
@@ -108,7 +147,7 @@ npm run crawler doctor
 ## ❌ 故障排除
 
 ### 如果瀏覽器無法啟動
-1. **執行診斷**：`npm run crawler doctor`
+1. **執行診斷**：`npm run crawl doctor`
 2. **檢查依賴**：確認 Puppeteer 正確安裝
 3. **macOS 用戶**：安裝 Xcode Command Line Tools
    ```bash
@@ -121,15 +160,15 @@ npm run crawler doctor
 - **網路超時**：檢查網路連線或增加超時時間
 
 ### 配置問題
-1. 檢查配置檔案：`npm run crawler list`
-2. 驗證配置格式：`npm run crawler validate <config-name>`
+1. 檢查配置檔案：`npm run crawl list`
+2. 驗證配置格式：`npm run crawl validate <config-name>`
 3. 查看詳細日誌：`--verbose` 選項
 
 ## 🚀 現在開始
 
 ```bash
 # 1. 先診斷系統
-npm run crawler doctor
+npm run crawl doctor
 
 # 2. 執行爬蟲
 npm run crawl moneydj
@@ -143,11 +182,24 @@ npm run crawl moneydj
 
 | 功能 | 統一命令 | 簡化命令 | 說明 |
 |------|----------|----------|------|
-| **執行爬蟲** | `npm run crawler moneydj` | `npm run crawl moneydj` | 兩種方式都可以 ✨ |
-| **列出配置** | `npm run crawler list` | `npm run list` | 顯示所有配置 |
-| **系統診斷** | `npm run crawler doctor` | `npm run doctor` | 檢查系統狀態 |
-| **驗證配置** | `npm run crawler validate config` | `npm run validate config` | 檢查配置正確性 |
-| **建立配置** | `npm run crawler create name` | - | 新建配置檔案 |
-| **curl轉換** | `npm run crawler curl2config "..."` | `npm run curl2config "..."` | 從 curl 建立配置 |
+| **執行爬蟲** | `npm run crawl moneydj` | `npm run crawl moneydj` | 兩種方式都可以 ✨ |
+| **跳過報告** | `npm run crawl moneydj --no-report` | `npx tsx src/cli.ts moneydj --no-report` | 不生成 MD 報告 🆕 |
+| **列出配置** | `npm run crawl list` | `npm run list` | 顯示所有配置 |
+| **系統診斷** | `npm run crawl doctor` | `npm run doctor` | 檢查系統狀態 |
+| **驗證配置** | `npm run crawl validate config` | `npm run validate config` | 檢查配置正確性 |
+| **建立配置** | `npm run crawl create name` | - | 新建配置檔案 |
+| **curl轉換** | `npm run crawl curl2config "..."` | `npm run curl2config "..."` | 從 curl 建立配置 |
 
-> **💡 提示**: 現在 `npm run crawler moneydj` 和 `npm run crawl moneydj` 完全相同！
+### 🆕 **CLI 參數支援**
+
+| 參數 | 說明 | 範例 |
+|------|------|------|
+| `--skip-report` | 跳過 MD 報告生成（傳統） | `npm run crawl config --skip-report` |
+| `--no-report` | 跳過 MD 報告生成（新別名）🆕 | `npm run crawl config --no-report` |
+| `--verbose` | 啟用詳細日誌 | `npm run crawl config --verbose` |
+| `--format xlsx` | 指定輸出格式 | `npm run crawl config --format xlsx` |
+| `--concurrent 5` | 設定並發數量 | `npm run crawl config --concurrent 5` |
+
+> **💡 提示**: 
+> - `--skip-report` 和 `--no-report` 功能完全相同，任選一個使用
+> - 直接執行方式 `npx tsx src/cli.ts config --no-report` 也完全支援所有參數
