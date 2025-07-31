@@ -30,10 +30,11 @@
 - 多種輸出格式 (JSON, CSV, Excel)
 
 ### 2. Yahoo Finance Japan 專項功能
-- 日本股票財務數據爬取
-- 智能表格解析
-- 單位自動轉換 (百万円 → 實際金額, % → 小數)
+- 支援 **Financials** 和 **Performance** 兩種數據類型
+- 智能表格解析與數據類型自動檢測
+- 單位自動轉換 (百万円 → 實際金額, % → 小數, 千株 → 實際股數)
 - 批處理多股票代碼
+- 雙重解析引擎架構
 
 ### 3. 批處理架構
 - 配置模板系統
@@ -61,10 +62,15 @@ npm run crawler --help
 
 ## 詳細文件
 
-- [Yahoo Finance Japan 使用指南](./yahoo-finance-japan.md)
-- [配置文件說明](./configuration.md)
-- [批處理系統指南](./batch-processing.md)
-- [故障排除](./troubleshooting.md)
+### 用戶指南
+- [Yahoo Finance Japan 使用指南](./yahoo-finance-japan.md) - 基本使用和配置說明
+- [配置文件說明](./configuration.md) - 配置選項詳解
+- [批處理系統指南](./batch-processing.md) - 批量處理流程
+- [CLI 使用說明](./cli-usage.md) - 命令列工具指南
+
+### 開發者文檔
+- [Yahoo Finance JP 開發指南](./yahoo-finance-jp-development.md) - **新功能開發流程**
+- [故障排除](./troubleshooting.md) - 問題診斷和解決方案
 
 ## 快速導航
 
@@ -77,6 +83,11 @@ npm run crawler --help
 1. 閱讀 [批處理系統指南](./batch-processing.md) 了解批量處理
 2. 查看 [故障排除](./troubleshooting.md) 解決問題
 3. 研究 `src/` 目錄的原始碼
+
+### 開發者流程
+1. 閱讀 [Yahoo Finance JP 開發指南](./yahoo-finance-jp-development.md) 了解系統架構
+2. 學習 Financials 和 Performance 兩種解析引擎
+3. 掌握新數據類型擴展流程
 
 ### 問題解決
 1. 檢查 [故障排除指南](./troubleshooting.md)
@@ -92,11 +103,13 @@ npm run crawler --help
 - 未來版本將在此處記錄重大變更
 
 ### 最新更新 (2025-07-31)
-- ✅ Yahoo Finance Japan 智能表格解析
-- ✅ 批處理架構實現
-- ✅ 檔案命名格式優化 (yyyymmddhhmmss)
-- ✅ 數據結構簡化
-- ✅ 完整文件說明
+- ✅ **雙重解析引擎架構** - 支援 Financials 和 Performance 兩種數據類型
+- ✅ **智能數據類型檢測** - 自動識別並路由到適當的解析器  
+- ✅ **完整單位轉換系統** - 百萬円、百分比、千株等單位正確轉換
+- ✅ **簡化的 Financials 解析** - 基於固定表頭順序的高效解析
+- ✅ **複雜的 Performance 解析** - 動態表頭檢測和數據重組
+- ✅ **檔案命名格式優化** - 統一使用 yyyymmddhhmmss 格式
+- ✅ **完整開發文檔** - 包含架構設計和擴展指南
 
 ## 聯繫信息
 
