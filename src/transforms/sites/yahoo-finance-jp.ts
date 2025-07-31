@@ -7,6 +7,7 @@ import {
   YAHOO_FINANCE_JP_HEADER_ORDER, 
   PERFORMANCE_DATA_FIELD_MAPPING,
   FINANCIALS_DATA_FIELD_MAPPING,
+  CASHFLOW_DATA_FIELD_MAPPING,
   FIELD_MAPPINGS,
   detectDataTypeFromHeaders,
   getUnitMultiplier,
@@ -55,6 +56,11 @@ export interface FinancialData {
   dividendYield?: number | null;
   reductionAmount?: number | null;
   stockCount?: number | null;
+  // Cashflow 數據欄位
+  freeCashFlow?: number | null;
+  operatingCashFlow?: number | null;
+  investingCashFlow?: number | null;
+  financingCashFlow?: number | null;
 }
 
 // 向後兼容的別名
@@ -413,6 +419,8 @@ export const yahooFinanceJPTransforms: YahooFinanceJPTransforms = {
       
       if (dataType === 'financials') {
         return parseFinancialsData(cells);
+      } else if (dataType === 'cashflow') {
+        return parseCashflowData(cells);
       } else {
         return parsePerformanceDataLegacy(cells);
       }
@@ -493,6 +501,71 @@ function parseFinancialsData(cells: string[]): FinancialData[] {
       
       // 移動到下一行 (跳過當前行的所有數據)
       currentIndex += 11; // 1 (年度) + 10 (數據欄位)
+    } else {
+      currentIndex++;
+    }
+  }
+  
+  return results;
+}
+
+/**
+ * 輔助函數：解析 Cashflow 頁面數據
+ * 基於固定的表頭順序：フリーCF, 営業CF, 投資CF, 財務CF
+ */
+function parseCashflowData(cells: string[]): FinancialData[] {
+  const results: FinancialData[] = [];
+  
+  // 根據截圖，Cashflow 表格的固定欄位順序
+  const CASHFLOW_COLUMN_ORDER = [
+    'フリーCF（百万円）',    // 0 - 自由現金流 (百萬円)
+    '営業CF（百万円）',      // 1 - 營業現金流 (百萬円)
+    '投資CF（百万円）',      // 2 - 投資現金流 (百萬円)
+    '財務CF（百万円）'       // 3 - 財務現金流 (百萬円)
+  ];
+  
+  // 找到數據的起始位置 (跳過表頭)
+  let dataStartIndex = -1;
+  for (let i = 0; i < cells.length; i++) {
+    if (cells[i] && yahooFinanceJPTransforms.extractFiscalPeriod(cells[i])) {
+      dataStartIndex = i;
+      break;
+    }
+  }
+  
+  if (dataStartIndex === -1) {
+    console.warn('Could not find fiscal period data in cashflow');
+    return results;
+  }
+  
+  // 按行解析數據
+  let currentIndex = dataStartIndex;
+  while (currentIndex < cells.length) {
+    const fiscalPeriod = yahooFinanceJPTransforms.extractFiscalPeriod(cells[currentIndex]);
+    
+    if (fiscalPeriod) {
+      // 收集這一行的 4 個數據欄位
+      const rowData: string[] = [];
+      for (let col = 1; col <= 4; col++) {
+        if (currentIndex + col < cells.length) {
+          rowData.push(cells[currentIndex + col]);
+        }
+      }
+      
+      if (rowData.length >= 4) {
+        const financialData: FinancialData = {
+          fiscalPeriod: fiscalPeriod,
+          freeCashFlow: parseMillionYenToNumber(rowData[0]),          // フリーCF (百萬円)
+          operatingCashFlow: parseMillionYenToNumber(rowData[1]),     // 営業CF (百萬円)
+          investingCashFlow: parseMillionYenToNumber(rowData[2]),     // 投資CF (百萬円)
+          financingCashFlow: parseMillionYenToNumber(rowData[3])      // 財務CF (百萬円)
+        };
+        
+        results.push(financialData);
+      }
+      
+      // 移動到下一行 (跳過當前行的所有數據)
+      currentIndex += 5; // 1 (年度) + 4 (數據欄位)
     } else {
       currentIndex++;
     }

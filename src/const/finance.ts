@@ -30,6 +30,14 @@ export const YAHOO_FINANCE_JP_FINANCIALS_HEADERS = {
   STOCK_COUNT: '発行済み株式総数（千株）'
 } as const;
 
+// Yahoo Finance Japan Cashflow 頁面表格標題常數 (根據截圖確認的順序)
+export const YAHOO_FINANCE_JP_CASHFLOW_HEADERS = {
+  FREE_CASH_FLOW: 'フリーCF（百万円）',
+  OPERATING_CASH_FLOW: '営業CF（百万円）',
+  INVESTING_CASH_FLOW: '投資CF（百万円）', 
+  FINANCING_CASH_FLOW: '財務CF（百万円）'
+} as const;
+
 // 向後兼容的別名
 export const YAHOO_FINANCE_JP_HEADERS = YAHOO_FINANCE_JP_PERFORMANCE_HEADERS;
 
@@ -77,6 +85,14 @@ export const YAHOO_FINANCE_JP_FINANCIALS_HEADER_ORDER = [
   YAHOO_FINANCE_JP_FINANCIALS_HEADERS.STOCK_COUNT
 ] as const;
 
+// Cashflow 頁面表格標題陣列（按順序）
+export const YAHOO_FINANCE_JP_CASHFLOW_HEADER_ORDER = [
+  YAHOO_FINANCE_JP_CASHFLOW_HEADERS.FREE_CASH_FLOW,
+  YAHOO_FINANCE_JP_CASHFLOW_HEADERS.OPERATING_CASH_FLOW,
+  YAHOO_FINANCE_JP_CASHFLOW_HEADERS.INVESTING_CASH_FLOW,
+  YAHOO_FINANCE_JP_CASHFLOW_HEADERS.FINANCING_CASH_FLOW
+] as const;
+
 // Performance 欄位到表格標題的映射
 export const PERFORMANCE_DATA_FIELD_MAPPING = {
   revenue: YAHOO_FINANCE_JP_PERFORMANCE_HEADERS.REVENUE,
@@ -105,10 +121,19 @@ export const FINANCIALS_DATA_FIELD_MAPPING = {
   stockCount: YAHOO_FINANCE_JP_FINANCIALS_HEADERS.STOCK_COUNT
 } as const;
 
+// Cashflow 欄位到表格標題的映射
+export const CASHFLOW_DATA_FIELD_MAPPING = {
+  freeCashFlow: YAHOO_FINANCE_JP_CASHFLOW_HEADERS.FREE_CASH_FLOW,
+  operatingCashFlow: YAHOO_FINANCE_JP_CASHFLOW_HEADERS.OPERATING_CASH_FLOW,
+  investingCashFlow: YAHOO_FINANCE_JP_CASHFLOW_HEADERS.INVESTING_CASH_FLOW,
+  financingCashFlow: YAHOO_FINANCE_JP_CASHFLOW_HEADERS.FINANCING_CASH_FLOW
+} as const;
+
 // 統一的欄位映射系統
 export const FIELD_MAPPINGS = {
   performance: PERFORMANCE_DATA_FIELD_MAPPING,
-  financials: FINANCIALS_DATA_FIELD_MAPPING
+  financials: FINANCIALS_DATA_FIELD_MAPPING,
+  cashflow: CASHFLOW_DATA_FIELD_MAPPING
 } as const;
 
 // 向後兼容的別名
@@ -152,7 +177,17 @@ export function isDateHeader(header: string): boolean {
 /**
  * 根據實際表格標題動態判斷數據類型
  */
-export function detectDataTypeFromHeaders(headers: string[]): 'performance' | 'financials' {
+export function detectDataTypeFromHeaders(headers: string[]): 'performance' | 'financials' | 'cashflow' {
+  // 檢查是否包含 cashflow 特有的標題
+  const cashflowKeywords = ['フリーCF（百万円）', '営業CF（百万円）', '投資CF（百万円）', '財務CF（百万円）', 'フリーCF', '営業CF', '投資CF', '財務CF'];
+  const hasCashflowHeaders = headers.some(header => 
+    cashflowKeywords.some(keyword => header.includes(keyword))
+  );
+  
+  if (hasCashflowHeaders) {
+    return 'cashflow';
+  }
+  
   // 檢查是否包含 financials 特有的標題 (支援全形和半形括弧)
   const financialsKeywords = ['EPS（円）', 'BPS（円）', 'EPS (円)', 'BPS (円)', 'EPS', 'BPS', 'ROA', 'ROE', '総資産', '自己資本比率'];
   const hasFinancialsHeaders = headers.some(header => 

@@ -111,8 +111,8 @@ export class UniversalCrawler {
 
     // Force browser mode for Yahoo Finance Japan dynamic pages
     const url = config.url.toLowerCase();
-    if (url.includes('finance.yahoo.co.jp') && url.includes('styl=financials')) {
-      logger.debug(`Yahoo Finance Japan financials page detected - forcing browser mode: ${config.url}`);
+    if (url.includes('finance.yahoo.co.jp') && (url.includes('styl=financials') || url.includes('styl=cf'))) {
+      logger.debug(`Yahoo Finance Japan dynamic page detected - forcing browser mode: ${config.url}`);
       return false;
     }
 
