@@ -109,8 +109,14 @@ export class UniversalCrawler {
       return false;
     }
 
-    const staticSites = ['moneydj.com', 'twse.com.tw', 'tpex.org.tw', 'cnyes.com', 'yahoo.com'];
+    // Force browser mode for Yahoo Finance Japan dynamic pages
     const url = config.url.toLowerCase();
+    if (url.includes('finance.yahoo.co.jp') && url.includes('styl=financials')) {
+      logger.debug(`Yahoo Finance Japan financials page detected - forcing browser mode: ${config.url}`);
+      return false;
+    }
+
+    const staticSites = ['moneydj.com', 'twse.com.tw', 'tpex.org.tw', 'cnyes.com', 'yahoo.com'];
     const isStaticSite = staticSites.some(site => url.includes(site));
 
     if (isStaticSite) {
@@ -396,7 +402,8 @@ export class UniversalCrawler {
     try {
       const context = {
         url: config.url,
-        baseUrl: config.variables?.baseUrl || config.url
+        baseUrl: config.variables?.baseUrl || config.url,
+        templateType: (config as any).templateType
       };
 
       const transformFn = getTransformFunction(transformName, context);

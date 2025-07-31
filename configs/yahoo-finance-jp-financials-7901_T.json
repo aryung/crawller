@@ -1,13 +1,13 @@
 {
-  "templateType": "performance",
-  "url": "https://finance.yahoo.co.jp/quote/${stockCode}/performance?styl=performance",
-  "_note": "This config extracts structured financial performance data from Yahoo Finance Japan. The 'structuredPerformanceData' field contains parsed financial metrics in object format for easier processing. Use with Japanese stock codes like 143A.T, 7203.T, etc.",
+  "templateType": "financials",
+  "url": "https://finance.yahoo.co.jp/quote/7901.T/performance?styl=financials",
+  "_note": "Yahoo Finance Japan financials data for (株)マツモト - 7901.T (小売業)",
   "selectors": {
     "stockInfo": {
       "selector": "h1, .symbol",
       "transform": "cleanStockSymbol"
     },
-    "structuredFinancialData": {
+    "structuredPerformanceData": {
       "selector": "table td, table th",
       "multiple": true,
       "transform": "structureFinancialDataFromAllTableCells"
@@ -38,7 +38,15 @@
     "baseUrl": "https://finance.yahoo.co.jp"
   },
   "export": {
-    "formats": ["json", "csv"],
-    "filename": "yahoo_finance_jp_performance_${stockCode}"
+    "formats": [
+      "json",
+      "csv"
+    ],
+    "filename": "yahoo_finance_jp_financials_7901T"
+  },
+  "stockInfo": {
+    "stockCode": "7901.T",
+    "companyName": "(株)マツモト",
+    "sector": "小売業"
   }
 }

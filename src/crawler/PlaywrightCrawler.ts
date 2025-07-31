@@ -293,7 +293,8 @@ export class PlaywrightCrawler {
       // 創建 context 用於轉換函數
       const context = {
         url: config.url,
-        baseUrl: config.variables?.baseUrl || config.url
+        baseUrl: config.variables?.baseUrl || config.url,
+        templateType: config.templateType
       };
       
       // 檢查是否為內建轉換函數或網站特定轉換函數
@@ -309,7 +310,8 @@ export class PlaywrightCrawler {
         const fn = new Function('value', 'context', customTransformCode);
         const context = {
           url: config.url,
-          baseUrl: config.variables?.baseUrl || config.url
+          baseUrl: config.variables?.baseUrl || config.url,
+          templateType: config.templateType
         };
         return fn(value, context);
       }

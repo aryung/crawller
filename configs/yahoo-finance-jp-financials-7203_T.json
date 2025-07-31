@@ -1,13 +1,13 @@
 {
-  "templateType": "performance",
-  "url": "https://finance.yahoo.co.jp/quote/${stockCode}/performance?styl=performance",
-  "_note": "This config extracts structured financial performance data from Yahoo Finance Japan. The 'structuredPerformanceData' field contains parsed financial metrics in object format for easier processing. Use with Japanese stock codes like 143A.T, 7203.T, etc.",
+  "templateType": "financials",
+  "url": "https://finance.yahoo.co.jp/quote/7203.T/performance?styl=financials",
+  "_note": "Yahoo Finance Japan financials data for トヨタ自動車(株) - 7203.T (輸送用機器)",
   "selectors": {
     "stockInfo": {
       "selector": "h1, .symbol",
       "transform": "cleanStockSymbol"
     },
-    "structuredFinancialData": {
+    "structuredPerformanceData": {
       "selector": "table td, table th",
       "multiple": true,
       "transform": "structureFinancialDataFromAllTableCells"
@@ -34,11 +34,19 @@
     }
   },
   "variables": {
-    "stockCode": "7901.T",
+    "stockCode": "7203.T",
     "baseUrl": "https://finance.yahoo.co.jp"
   },
   "export": {
-    "formats": ["json", "csv"],
-    "filename": "yahoo_finance_jp_performance_${stockCode}"
+    "formats": [
+      "json",
+      "csv"
+    ],
+    "filename": "yahoo_finance_jp_financials_7203T"
+  },
+  "stockInfo": {
+    "stockCode": "7203.T",
+    "companyName": "トヨタ自動車(株)",
+    "sector": "輸送用機器"
   }
 }

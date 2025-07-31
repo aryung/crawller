@@ -42,22 +42,22 @@ async function runCrawler(configName) {
 }
 
 async function main() {
-  console.log('🎯 Yahoo Finance Japan Performance 批處理爬蟲');
-  console.log('===============================================');
+  console.log('🎯 Yahoo Finance Japan Financials 批處理爬蟲');
+  console.log('=============================================');
   
-  // 尋找所有 Yahoo Finance Performance 配置文件
+  // 尋找所有 Yahoo Finance Financials 配置文件
   const configsDir = path.join(__dirname, '../configs');
   const configFiles = fs.readdirSync(configsDir)
-    .filter(file => file.startsWith('yahoo-finance-jp-performance-') && file.endsWith('.json'))
+    .filter(file => file.startsWith('yahoo-finance-jp-financials-') && file.endsWith('.json'))
     .map(file => file.replace('.json', ''));
   
   if (configFiles.length === 0) {
-    console.log('❌ 沒有找到 Yahoo Finance Performance 配置文件');
-    console.log('💡 請先執行: node scripts/generate-batch-configs.js --type=performance');
+    console.log('❌ 沒有找到 Yahoo Finance Financials 配置文件');
+    console.log('💡 請先執行: node scripts/generate-batch-configs.js --type=financials');
     process.exit(1);
   }
   
-  console.log(`📋 找到 ${configFiles.length} 個 Performance 配置文件:`);
+  console.log(`📋 找到 ${configFiles.length} 個 Financials 配置文件:`);
   configFiles.forEach((config, index) => {
     console.log(`   ${index + 1}. ${config}`);
   });
@@ -86,8 +86,8 @@ async function main() {
   const duration = Math.round((endTime - startTime) / 1000);
   
   // 結果統計
-  console.log('\n🎉 Performance 批處理完成！');
-  console.log('=============================');
+  console.log('\n🎉 Financials 批處理完成！');
+  console.log('===========================');
   console.log(`⏱️  總執行時間: ${duration} 秒`);
   console.log(`📊 總計: ${results.length} 個任務`);
   console.log(`✅ 成功: ${results.filter(r => r.success).length} 個`);
@@ -102,7 +102,7 @@ async function main() {
   }
   
   console.log('\n📁 輸出文件位置: output/');
-  console.log('💡 可使用 ls output/ | grep performance 查看 Performance 相關文件');
+  console.log('💡 可使用 ls output/ | grep financials 查看 Financials 相關文件');
 }
 
 main().catch(console.error);

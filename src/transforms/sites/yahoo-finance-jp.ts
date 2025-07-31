@@ -6,6 +6,9 @@
 import { 
   YAHOO_FINANCE_JP_HEADER_ORDER, 
   PERFORMANCE_DATA_FIELD_MAPPING,
+  FINANCIALS_DATA_FIELD_MAPPING,
+  FIELD_MAPPINGS,
+  detectDataTypeFromHeaders,
   getUnitMultiplier,
   isAmountHeader,
   isPercentageHeader,
@@ -22,24 +25,40 @@ export interface YahooFinanceJPTransforms {
   cleanFinancialText: (value: string) => string;
   parsePerformanceTable: (value: string) => any[];
   extractTableHeaders: (tableText: string) => string[];
-  structureFinancialData: (tableText: string) => PerformanceData[];
-  structureFinancialDataFromCells: (cells: string[]) => PerformanceData[];
-  structureFinancialDataFromAllTableCells: (cells: string[]) => PerformanceData[];
+  structureFinancialData: (tableText: string, dataType?: 'performance' | 'financials') => FinancialData[];
+  structureFinancialDataFromCells: (cells: string[], dataType?: 'performance' | 'financials') => FinancialData[];
+  structureFinancialDataFromAllTableCells: (cells: string[], context?: any) => FinancialData[];
 }
 
-export interface PerformanceData {
+// 通用財務數據介面，支援多種數據類型
+export interface FinancialData {
   fiscalPeriod: string | null;
-  revenue: number | null;
-  grossProfit: number | null;
-  grossMargin: number | null;
-  operatingProfit: number | null;
-  operatingMargin: number | null;
-  ordinaryProfit: number | null;
-  ordinaryMargin: number | null;
-  netProfit: number | null;
-  accountingMethod: string | null;
-  updateDate: string | null;
+  // Performance 數據欄位
+  revenue?: number | null;
+  grossProfit?: number | null;
+  grossMargin?: number | null;
+  operatingProfit?: number | null;
+  operatingMargin?: number | null;
+  ordinaryProfit?: number | null;
+  ordinaryMargin?: number | null;
+  netProfit?: number | null;
+  accountingMethod?: string | null;
+  updateDate?: string | null;
+  // Financials 數據欄位
+  eps?: number | null;
+  bps?: number | null;
+  roa?: number | null;
+  roe?: number | null;
+  totalAssets?: number | null;
+  equityRatio?: number | null;
+  capital?: number | null;
+  dividendYield?: number | null;
+  reductionAmount?: number | null;
+  stockCount?: number | null;
 }
+
+// 向後兼容的別名
+export interface PerformanceData extends FinancialData {}
 
 /**
  * Yahoo Finance Japan 特定轉換函數
@@ -375,161 +394,28 @@ export const yahooFinanceJPTransforms: YahooFinanceJPTransforms = {
 
   /**
    * 從 allTableCells 字符串中解析結構化財務數據
-   * 使用實際的表格標題作為解析依據，但輸出標準化的 PerformanceData 結構
+   * 根據截圖，使用固定的表頭順序進行解析，支援 performance 和 financials 兩種數據類型
    */
-  structureFinancialDataFromAllTableCells: (cells: string[]): PerformanceData[] => {
+  structureFinancialDataFromAllTableCells: (cells: string[], context?: any): FinancialData[] => {
     if (!cells || !Array.isArray(cells) || cells.length === 0) return [];
     
     try {
-      const results: PerformanceData[] = [];
+      const results: FinancialData[] = [];
       
-      // 找到包含完整數據的字符串
-      let dataString = '';
+      // 從 context 獲取數據類型，如果沒有則自動檢測
+      let dataType: 'performance' | 'financials' = context?.templateType || 'performance';
       
-      // 尋找包含表格標題的 cell
-      for (const cell of cells) {
-        if (typeof cell === 'string' && cell.includes('売上高（百万円）')) {
-          // 確保這個 cell 包含實際數據，而不只是標題
-          if (cell.includes('年3月期') || cell.includes('年度')) {
-            dataString = cell;
-            break;
-          }
-        }
+      if (!context?.templateType) {
+        const allText = cells.join(' ');
+        const headers = allText.split(',').map(h => h.trim());
+        dataType = detectDataTypeFromHeaders(headers);
       }
       
-      if (!dataString) {
-        // 備用方案：組合所有 cells
-        const combined = cells.join(',');
-        if (combined.includes('売上高（百万円）')) {
-          dataString = combined;
-        }
+      if (dataType === 'financials') {
+        return parseFinancialsData(cells);
+      } else {
+        return parsePerformanceDataLegacy(cells);
       }
-      
-      if (!dataString) {
-        console.warn('Could not find financial data string');
-        return [];
-      }
-      
-      // 分割數據為陣列
-      const cellArray = dataString.split(',').map(cell => cell.trim()).filter(cell => cell !== '');
-      
-      // 找到表格標題的起始位置
-      const headerStartIndex = cellArray.findIndex(cell => cell === '売上高（百万円）');
-      if (headerStartIndex === -1) {
-        console.warn('Could not find table headers');
-        return [];
-      }
-      
-      // 使用常數定義的標題順序
-      const headers = [];
-      let headerIndex = headerStartIndex;
-      
-      // 按順序收集實際存在的標題
-      for (const expectedHeader of YAHOO_FINANCE_JP_HEADER_ORDER) {
-        if (headerIndex < cellArray.length && cellArray[headerIndex] === expectedHeader) {
-          headers.push(expectedHeader);
-          headerIndex++;
-        } else {
-          // 嘗試找到下一個預期的標題
-          const foundIndex = cellArray.indexOf(expectedHeader, headerIndex);
-          if (foundIndex !== -1 && foundIndex < headerIndex + 3) { // 允許一些偏移
-            headers.push(expectedHeader);
-            headerIndex = foundIndex + 1;
-          } else {
-            console.warn(`Header not found: ${expectedHeader}`);
-            break;
-          }
-        }
-      }
-      
-      
-      // 從標題後開始解析數據行
-      let currentIndex = headerStartIndex + headers.length;
-      
-      while (currentIndex < cellArray.length) {
-        const cell = cellArray[currentIndex];
-        const fiscalPeriod = yahooFinanceJPTransforms.extractFiscalPeriod(cell);
-        
-        if (fiscalPeriod) {
-          // 找到年度資料，開始收集該行數據
-          const rowStartIndex = currentIndex + 1;
-          const rowData = [];
-          
-          // 收集數值，直到遇到下一個年度或數據結束
-          let collectIndex = rowStartIndex;
-          let numberCollected = 0;
-          
-          while (collectIndex < cellArray.length && numberCollected < headers.length) {
-            const nextCell = cellArray[collectIndex];
-            
-            // 如果遇到下一個年度，停止收集
-            if (yahooFinanceJPTransforms.extractFiscalPeriod(nextCell)) {
-              break;
-            }
-            
-            rowData.push(nextCell);
-            collectIndex++;
-            numberCollected++;
-          }
-          
-          // 確保我們有足夠的數據
-          if (rowData.length >= Math.min(headers.length - 2, 8)) {
-            // 重組被逗號分割的大數字
-            const restructuredData = restructureNumericDataForHeaders(rowData);
-            
-            // 使用表格標題順序來正確映射數據到標準化結構
-            const headerValueMap: { [key: string]: any } = {};
-            
-            // 將重組後的數據與標題配對
-            headers.forEach((header, index) => {
-              if (index < restructuredData.length) {
-                let value = restructuredData[index];
-                
-                // 使用智能轉換函數根據標題類型解析數據
-                if (isAmountHeader(header) || isPercentageHeader(header)) {
-                  value = parseValueByHeader(value, header);
-                } else if (header.includes('会計方式')) {
-                  value = yahooFinanceJPTransforms.cleanAccountingMethod(value || '');
-                } else if (isDateHeader(header)) {
-                  value = yahooFinanceJPTransforms.parseJapaneseDate(value || '');
-                }
-                
-                headerValueMap[header] = value;
-              }
-            });
-            
-            // 使用映射常數映射到標準化的 PerformanceData 結構
-            const performanceData: PerformanceData = {
-              fiscalPeriod: fiscalPeriod,
-              revenue: headerValueMap[PERFORMANCE_DATA_FIELD_MAPPING.revenue] || null,
-              grossProfit: headerValueMap[PERFORMANCE_DATA_FIELD_MAPPING.grossProfit] || null,
-              grossMargin: headerValueMap[PERFORMANCE_DATA_FIELD_MAPPING.grossMargin] || null,
-              operatingProfit: headerValueMap[PERFORMANCE_DATA_FIELD_MAPPING.operatingProfit] || null,
-              operatingMargin: headerValueMap[PERFORMANCE_DATA_FIELD_MAPPING.operatingMargin] || null,
-              ordinaryProfit: headerValueMap[PERFORMANCE_DATA_FIELD_MAPPING.ordinaryProfit] || null,
-              ordinaryMargin: headerValueMap[PERFORMANCE_DATA_FIELD_MAPPING.ordinaryMargin] || null,
-              netProfit: headerValueMap[PERFORMANCE_DATA_FIELD_MAPPING.netProfit] || null,
-              accountingMethod: headerValueMap[PERFORMANCE_DATA_FIELD_MAPPING.accountingMethod] || null,
-              updateDate: headerValueMap[PERFORMANCE_DATA_FIELD_MAPPING.updateDate] || null
-            };
-            
-            // 更嚴格的重複檢測 - 只允許每個會計年度有一條記錄
-            const isDuplicate = results.some(existing => 
-              existing.fiscalPeriod === performanceData.fiscalPeriod
-            );
-            
-            if (!isDuplicate) {
-              results.push(performanceData);
-            }
-          }
-          
-          currentIndex = collectIndex;
-        } else {
-          currentIndex++;
-        }
-      }
-      
-      return results;
       
     } catch (error) {
       console.warn('Failed to structure financial data from all table cells:', error);
@@ -537,6 +423,275 @@ export const yahooFinanceJPTransforms: YahooFinanceJPTransforms = {
     }
   }
 };
+
+/**
+ * 輔助函數：解析 Financials 頁面數據
+ * 基於固定的表頭順序：EPS, BPS, ROA, ROE, 総資産, 自己資本比率, 資本金, 有利子負債, 減価償却費, 発行済み株式総数
+ */
+function parseFinancialsData(cells: string[]): FinancialData[] {
+  const results: FinancialData[] = [];
+  
+  // 根據截圖，Financials 表格的固定欄位順序
+  const FINANCIALS_COLUMN_ORDER = [
+    'EPS（円）',      // 0 - EPS (數字)
+    'BPS（円）',      // 1 - BPS (數字)  
+    'ROA',           // 2 - ROA (百分比)
+    'ROE',           // 3 - ROE (百分比)
+    '総資産（百万円）', // 4 - 總資產 (百萬円)
+    '自己資本比率',    // 5 - 自己資本比率 (百分比)
+    '資本金（百万円）', // 6 - 資本金 (百萬円)
+    '有利子負債（百万円）', // 7 - 有利子負債 (百萬円)  
+    '減価償却費（百万円）', // 8 - 減價償却費 (百萬円)
+    '発行済み株式総数（千株）' // 9 - 發行済股式總數 (千株)
+  ];
+  
+  // 找到數據的起始位置 (跳過表頭)
+  let dataStartIndex = -1;
+  for (let i = 0; i < cells.length; i++) {
+    if (cells[i] && yahooFinanceJPTransforms.extractFiscalPeriod(cells[i])) {
+      dataStartIndex = i;
+      break;
+    }
+  }
+  
+  if (dataStartIndex === -1) {
+    console.warn('Could not find fiscal period data in financials');
+    return results;
+  }
+  
+  // 按行解析數據
+  let currentIndex = dataStartIndex;
+  while (currentIndex < cells.length) {
+    const fiscalPeriod = yahooFinanceJPTransforms.extractFiscalPeriod(cells[currentIndex]);
+    
+    if (fiscalPeriod) {
+      // 收集這一行的 10 個數據欄位
+      const rowData: string[] = [];
+      for (let col = 1; col <= 10; col++) {
+        if (currentIndex + col < cells.length) {
+          rowData.push(cells[currentIndex + col]);
+        }
+      }
+      
+      if (rowData.length >= 10) {
+        const financialData: FinancialData = {
+          fiscalPeriod: fiscalPeriod,
+          eps: parseFloat(rowData[0]) || null,                           // EPS (円)
+          bps: parseFloat(rowData[1]) || null,                           // BPS (円)
+          roa: parsePercentageToDecimal(rowData[2]),                     // ROA (%)
+          roe: parsePercentageToDecimal(rowData[3]),                     // ROE (%)
+          totalAssets: parseMillionYenToNumber(rowData[4]),              // 総資産 (百万円)
+          equityRatio: parsePercentageToDecimal(rowData[5]),             // 自己資本比率 (%)
+          capital: parseMillionYenToNumber(rowData[6]),                  // 資本金 (百万円)
+          dividendYield: parseMillionYenToNumber(rowData[7]),            // 有利子負債 (百万円)
+          reductionAmount: parseMillionYenToNumber(rowData[8]),          // 減價償却費 (百万円)
+          stockCount: parseThousandToNumber(rowData[9])                  // 發行済股式總數 (千株)
+        };
+        
+        results.push(financialData);
+      }
+      
+      // 移動到下一行 (跳過當前行的所有數據)
+      currentIndex += 11; // 1 (年度) + 10 (數據欄位)
+    } else {
+      currentIndex++;
+    }
+  }
+  
+  return results;
+}
+
+/**
+ * 輔助函數：解析 Performance 頁面數據 (保留原有複雜邏輯)
+ */
+function parsePerformanceDataLegacy(cells: string[]): FinancialData[] {
+  // 恢復原來有效的 performance 解析邏輯
+  const results: FinancialData[] = [];
+  
+  // 找到包含完整數據的字符串
+  let dataString = '';
+  
+  // 根據數據類型選擇適當的標題檢測
+  const keyHeaders = ['売上高（百万円）', '営業利益（百万円）'];
+  
+  // 尋找包含表格標題的 cell
+  for (const cell of cells) {
+    if (typeof cell === 'string') {
+      const hasKeyHeader = keyHeaders.some(header => cell.includes(header));
+      if (hasKeyHeader) {
+        // 確保這個 cell 包含實際數據，而不只是標題
+        if (cell.includes('年3月期') || cell.includes('年度')) {
+          dataString = cell;
+          break;
+        }
+      }
+    }
+  }
+  
+  if (!dataString) {
+    // 備用方案：組合所有 cells
+    const combined = cells.join(',');
+    const hasKeyHeader = keyHeaders.some(header => combined.includes(header));
+    if (hasKeyHeader) {
+      dataString = combined;
+    }
+  }
+  
+  if (!dataString) {
+    console.warn('Could not find performance data string');
+    return [];
+  }
+  
+  // 分割數據為陣列
+  const cellArray = dataString.split(',').map(cell => cell.trim()).filter(cell => cell !== '');
+  
+  // 找到表格標題的起始位置
+  const headerStartIndex = cellArray.findIndex(cell => cell === '売上高（百万円）');
+  
+  if (headerStartIndex === -1) {
+    console.warn('Could not find table headers for performance');
+    return [];
+  }
+  
+  // 使用 performance 標題順序
+  const expectedHeaders = YAHOO_FINANCE_JP_HEADER_ORDER;
+  const headers = [];
+  let headerIndex = headerStartIndex;
+  
+  // 按順序收集實際存在的標題
+  for (const expectedHeader of expectedHeaders) {
+    if (headerIndex < cellArray.length && cellArray[headerIndex] === expectedHeader) {
+      headers.push(expectedHeader);
+      headerIndex++;
+    } else {
+      // 嘗試找到下一個預期的標題
+      const foundIndex = cellArray.indexOf(expectedHeader, headerIndex);
+      if (foundIndex !== -1 && foundIndex < headerIndex + 3) { // 允許一些偏移
+        headers.push(expectedHeader);
+        headerIndex = foundIndex + 1;
+      } else {
+        // 對於 performance，某些標題可能不存在，跳過
+        break;
+      }
+    }
+  }
+  
+  // 從標題後開始解析數據行
+  let currentIndex = headerStartIndex + headers.length;
+  
+  while (currentIndex < cellArray.length) {
+    const cell = cellArray[currentIndex];
+    const fiscalPeriod = yahooFinanceJPTransforms.extractFiscalPeriod(cell);
+    
+    if (fiscalPeriod) {
+      // 找到年度資料，開始收集該行數據
+      const rowStartIndex = currentIndex + 1;
+      const rowData = [];
+      
+      // 收集數值，直到遇到下一個年度或數據結束
+      let collectIndex = rowStartIndex;
+      let numberCollected = 0;
+      
+      while (collectIndex < cellArray.length && numberCollected < headers.length) {
+        const nextCell = cellArray[collectIndex];
+        
+        // 如果遇到下一個年度，停止收集
+        if (yahooFinanceJPTransforms.extractFiscalPeriod(nextCell)) {
+          break;
+        }
+        
+        rowData.push(nextCell);
+        collectIndex++;
+        numberCollected++;
+      }
+      
+      // 確保我們有足夠的數據
+      if (rowData.length >= Math.min(headers.length - 2, 8)) {
+        // 重組被逗號分割的大數字
+        const restructuredData = restructureNumericDataForHeaders(rowData);
+        
+        // 使用表格標題順序來正確映射數據到標準化結構
+        const headerValueMap: { [key: string]: any } = {};
+        
+        // 將重組後的數據與標題配對
+        headers.forEach((header, index) => {
+          if (index < restructuredData.length) {
+            let value = restructuredData[index];
+            
+            // 使用智能轉換函數根據標題類型解析數據
+            if (isAmountHeader(header) || isPercentageHeader(header)) {
+              value = parseValueByHeader(value, header);
+            } else if (header.includes('会計方式')) {
+              value = yahooFinanceJPTransforms.cleanAccountingMethod(value || '');
+            } else if (isDateHeader(header)) {
+              value = yahooFinanceJPTransforms.parseJapaneseDate(value || '');
+            }
+            
+            headerValueMap[header] = value;
+          }
+        });
+        
+        // 使用映射常數映射到標準化的 FinancialData 結構
+        const financialData: FinancialData = {
+          fiscalPeriod: fiscalPeriod
+        };
+        
+        // 填充 performance 欄位
+        Object.entries(PERFORMANCE_DATA_FIELD_MAPPING).forEach(([field, header]) => {
+          (financialData as any)[field] = headerValueMap[header] || null;
+        });
+        
+        // 更嚴格的重複檢測 - 只允許每個會計年度有一條記錄
+        const isDuplicate = results.some(existing => 
+          existing.fiscalPeriod === financialData.fiscalPeriod
+        );
+        
+        if (!isDuplicate) {
+          results.push(financialData);
+        }
+      }
+      
+      currentIndex = collectIndex;
+    } else {
+      currentIndex++;
+    }
+  }
+  
+  return results;
+}
+
+/**
+ * 輔助函數：解析百分比為小數
+ */
+function parsePercentageToDecimal(value: string): number | null {
+  if (!value || value === '---' || value === '--') return null;
+  
+  const percentStr = value.replace('%', '').trim();
+  const num = parseFloat(percentStr);
+  return isNaN(num) ? null : num / 100; // 轉換為小數格式
+}
+
+/**
+ * 輔助函數：解析百萬円為數字
+ */
+function parseMillionYenToNumber(value: string): number | null {
+  if (!value || value === '---' || value === '--') return null;
+  
+  const cleanValue = value.replace(/[,\s]/g, '');
+  const num = parseFloat(cleanValue);
+  return isNaN(num) ? null : num * 1000000; // 百萬円轉換為実際円
+}
+
+/**
+ * 輔助函數：解析千株為數字  
+ */
+function parseThousandToNumber(value: string): number | null {
+  if (!value || value === '---' || value === '--') return null;
+  
+  const cleanValue = value.replace(/[,\s]/g, '');
+  const num = parseFloat(cleanValue);
+  return isNaN(num) ? null : num * 1000; // 千株轉換為実際股數
+}
 
 /**
  * 輔助函數：提取財務數值
@@ -591,8 +746,8 @@ function extractUpdateDate(text: string): string | null {
  * 輔助函數：解析替代格式
  * 當正規表達式無法匹配時的備用解析方法
  */
-function parseAlternativeFormat(tableText: string): PerformanceData[] {
-  const results: PerformanceData[] = [];
+function parseAlternativeFormat(tableText: string): FinancialData[] {
+  const results: FinancialData[] = [];
   
   // 簡化的行分割解析
   const lines = tableText.split(/[\r\n]+/).filter(line => line.trim());
@@ -603,7 +758,7 @@ function parseAlternativeFormat(tableText: string): PerformanceData[] {
   
   // 如果有找到數據行，嘗試基本解析
   if (dataLines.length > 0) {
-    const data: PerformanceData = {
+    const data: FinancialData = {
       fiscalPeriod: yahooFinanceJPTransforms.extractFiscalPeriod(tableText),
       revenue: null,
       grossProfit: null,
