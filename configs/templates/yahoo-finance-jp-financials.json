@@ -1,0 +1,44 @@
+{
+  "templateType": "financials",
+  "url": "https://finance.yahoo.co.jp/quote/${stockCode}/performance?styl=financials",
+  "_note": "This config extracts structured financial data from Yahoo Finance Japan financials page. The 'structuredPerformanceData' field contains parsed financial metrics in object format for easier processing. Use with Japanese stock codes like 143A.T, 7203.T, etc.",
+  "selectors": {
+    "stockInfo": {
+      "selector": "h1, .symbol",
+      "transform": "cleanStockSymbol"
+    },
+    "structuredFinancialData": {
+      "selector": "table td, table th",
+      "multiple": true,
+      "transform": "structureFinancialDataFromAllTableCells"
+    }
+  },
+  "headers": {
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
+    "Accept-Language": "ja,en-US;q=0.9,en;q=0.8",
+    "Accept-Encoding": "gzip, deflate, br",
+    "Cache-Control": "no-cache",
+    "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+  },
+  "options": {
+    "timeout": 30000,
+    "retries": 3,
+    "headless": true,
+    "screenshot": false,
+    "encoding": "utf-8",
+    "domainDelay": 5000,
+    "waitFor": 5000,
+    "viewport": {
+      "width": 1920,
+      "height": 1080
+    }
+  },
+  "variables": {
+    "stockCode": "7901.T",
+    "baseUrl": "https://finance.yahoo.co.jp"
+  },
+  "export": {
+    "formats": ["json", "csv"],
+    "filename": "yahoo_finance_jp_financials_${stockCode}"
+  }
+}

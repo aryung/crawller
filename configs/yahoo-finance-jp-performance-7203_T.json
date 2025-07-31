@@ -1,0 +1,52 @@
+{
+  "templateType": "performance",
+  "url": "https://finance.yahoo.co.jp/quote/7203.T/performance?styl=performance",
+  "_note": "Yahoo Finance Japan performance data for トヨタ自動車(株) - 7203.T (輸送用機器)",
+  "selectors": {
+    "stockInfo": {
+      "selector": "h1, .symbol",
+      "transform": "cleanStockSymbol"
+    },
+    "structuredPerformanceData": {
+      "selector": "table td, table th",
+      "multiple": true,
+      "transform": "structureFinancialDataFromAllTableCells"
+    }
+  },
+  "headers": {
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
+    "Accept-Language": "ja,en-US;q=0.9,en;q=0.8",
+    "Accept-Encoding": "gzip, deflate, br",
+    "Cache-Control": "no-cache",
+    "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+  },
+  "options": {
+    "timeout": 30000,
+    "retries": 3,
+    "headless": true,
+    "screenshot": false,
+    "encoding": "utf-8",
+    "domainDelay": 5000,
+    "waitFor": 5000,
+    "viewport": {
+      "width": 1920,
+      "height": 1080
+    }
+  },
+  "variables": {
+    "stockCode": "7203.T",
+    "baseUrl": "https://finance.yahoo.co.jp"
+  },
+  "export": {
+    "formats": [
+      "json",
+      "csv"
+    ],
+    "filename": "yahoo_finance_jp_performance_7203T"
+  },
+  "stockInfo": {
+    "stockCode": "7203.T",
+    "companyName": "トヨタ自動車(株)",
+    "sector": "輸送用機器"
+  }
+}

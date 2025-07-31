@@ -1,0 +1,105 @@
+{
+  "url": "https://www.moneydj.com/z/zh/zha/zh00.djhtm?a={{industryCode}}",
+  "_note": "This config extracts stock symbols from industry detail pages. Use with industry codes from moneydj-industries config.",
+  "dataDriven": {
+    "enabled": true,
+    "sourceConfig": "moneydj-industries",
+    "urlTemplate": "https://www.moneydj.com/z/zh/zha/zh00.djhtm?a={{item.industryCode}}",
+    "sourceSelector": "allSubIndustries",
+    "templateVars": {
+      "industryCode": "{{item.industryCode}}",
+      "industryName": "{{item.name}}"
+    }
+  },
+  "selectors": {
+    "industryInfo": {
+      "selector": "title",
+      "transform": "cleanIndustryName"
+    },
+    "industryContext": {
+      "static": {
+        "industryCode": "{{industryCode}}",
+        "industryName": "{{industryName}}",
+        "extractedAt": "{{timestamp}}"
+      }
+    },
+    "allLinks": {
+      "selector": "a",
+      "multiple": true,
+      "extract": {
+        "text": "text",
+        "href": {
+          "attribute": "href"
+        }
+      }
+    },
+    "stockLinks": {
+      "selector": "table tr td:first-child a[href*='Link2Stk']",
+      "multiple": true,
+      "extract": {
+        "stockCode": "text",
+        "detailUrl": {
+          "attribute": "href"
+        }
+      }
+    },
+    "companyInfo": {
+      "selector": "table tr",
+      "multiple": true,
+      "extract": {
+        "stockCode": {
+          "selector": "td:first-child a",
+          "transform": "extractStockCode"
+        },
+        "companyName": {
+          "selector": "td:nth-child(2)"
+        },
+        "lastUpdate": {
+          "selector": "td:nth-child(3)"
+        },
+        "closingPrice": {
+          "selector": "td:nth-child(4)"
+        },
+        "priceChange": {
+          "selector": "td:nth-child(5)"
+        },
+        "changePercent": {
+          "selector": "td:nth-child(6)"
+        }
+      }
+    },
+    "allStockCodes": {
+      "selector": "table tr td:first-child a[href*='Link2Stk']",
+      "multiple": true,
+      "transform": "extractStockCode"
+    },
+    "tableData": {
+      "selector": "table td",
+      "multiple": true
+    }
+  },
+  "headers": {
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+    "Accept-Language": "zh-TW,zh;q=0.9,en;q=0.8",
+    "Cache-Control": "no-cache",
+    "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+  },
+  "options": {
+    "timeout": 45000,
+    "retries": 5,
+    "headless": true,
+    "screenshot": false,
+    "encoding": "big5",
+    "domainDelay": 8000,
+    "waitFor": 3000
+  },
+  "variables": {
+    "baseUrl": "https://www.moneydj.com",
+    "industryCode": "{{industryCode}}",
+    "industryName": "{{industryName}}"
+  },
+  "export": {
+    "formats": ["json", "csv"],
+    "filename": "stocks_{{industryCode}}_{{industryName}}"
+  }
+}

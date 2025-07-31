@@ -1,0 +1,58 @@
+{
+  "name": "universal-web-crawler",
+  "version": "1.0.0",
+  "description": "A universal web crawler with configurable selectors, headers, and cookie management",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "npx tsc",
+    "dev": "npx tsx src/index.ts",
+    "start": "node dist/index.js",
+    "crawl": "npx tsx src/cli.ts crawl",
+    "doctor": "npx tsx src/cli.ts doctor",
+    "list": "npx tsx src/cli.ts list",
+    "validate": "npx tsx src/cli.ts validate",
+    "curl2config": "npx tsx src/cli.ts curl2config",
+    "clean": "rimraf output dist",
+    "clean:output": "rimraf output",
+    "clean:dist": "rimraf dist",
+    "test": "jest",
+    "lint": "eslint src --ext .ts",
+    "typecheck": "npx tsc --noEmit"
+  },
+  "bin": {
+    "universal-crawler": "dist/cli.js"
+  },
+  "keywords": [
+    "crawler",
+    "scraper",
+    "web-scraping",
+    "nodejs",
+    "typescript"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^1.6.2",
+    "cheerio": "^1.0.0-rc.12",
+    "commander": "^11.1.0",
+    "fs-extra": "^11.2.0",
+    "iconv-lite": "^0.6.3",
+    "jsonpath-plus": "^10.3.0",
+    "playwright": "^1.54.1",
+    "winston": "^3.11.0",
+    "xlsx": "^0.18.5"
+  },
+  "devDependencies": {
+    "@types/commander": "^2.12.2",
+    "@types/fs-extra": "^11.0.4",
+    "@types/jest": "^29.5.8",
+    "@types/node": "^20.10.4",
+    "@typescript-eslint/eslint-plugin": "^6.13.2",
+    "@typescript-eslint/parser": "^6.13.2",
+    "eslint": "^8.56.0",
+    "jest": "^29.7.0",
+    "rimraf": "^5.0.10",
+    "tsx": "^4.6.2",
+    "typescript": "^5.3.3"
+  }
+}
