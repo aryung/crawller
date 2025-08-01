@@ -1,5 +1,5 @@
 import { chromium, Browser, Page } from 'playwright';
-import { CrawlerConfig, CrawlerResult, CrawlerOptions, EnhancedCrawlerConfig } from '../types';
+import { CrawlerConfig, CrawlerResult, CrawlerOptions, EnhancedCrawlerConfig, ActionItem } from '../types';
 import { DataExtractor } from './DataExtractor';
 import { logger, delay, validateCrawlerConfig } from '../utils';
 import { builtinTransforms, getTransformFunction } from '../transforms';
@@ -96,6 +96,11 @@ export class PlaywrightCrawler {
       // 等待指定時間
       if (options.waitFor) {
         await page.waitForTimeout(options.waitFor);
+      }
+
+      // 執行動態操作序列 (如點擊按鈕)
+      if ('actions' in config && config.actions && config.actions.length > 0) {
+        await this.executeActions(page, config.actions);
       }
 
       // 提取資料 - 支援 Enhanced Selectors
@@ -336,6 +341,73 @@ export class PlaywrightCrawler {
         path: '/'
       };
     });
+  }
+
+  private async executeActions(page: Page, actions: ActionItem[]): Promise<void> {
+    logger.info(`Executing ${actions.length} dynamic actions`);
+    
+    for (let i = 0; i < actions.length; i++) {
+      const action = actions[i];
+      logger.debug(`Executing action ${i + 1}/${actions.length}: ${action.type}`, action.description || '');
+      
+      try {
+        switch (action.type) {
+          case 'click':
+            if (action.selector) {
+              await page.waitForSelector(action.selector, { timeout: action.timeout || 10000 });
+              await page.click(action.selector);
+              logger.debug(`Clicked element: ${action.selector}`);
+            }
+            break;
+            
+          case 'type':
+            if (action.selector && action.value) {
+              await page.waitForSelector(action.selector, { timeout: action.timeout || 10000 });
+              await page.fill(action.selector, action.value);
+              logger.debug(`Typed "${action.value}" into: ${action.selector}`);
+            }
+            break;
+            
+          case 'wait':
+            const waitTime = action.timeout || parseInt(action.value || '1000');
+            await page.waitForTimeout(waitTime);
+            logger.debug(`Waited for ${waitTime}ms`);
+            break;
+            
+          case 'scroll':
+            if (action.selector) {
+              await page.waitForSelector(action.selector, { timeout: action.timeout || 10000 });
+              await page.locator(action.selector).scrollIntoViewIfNeeded();
+              logger.debug(`Scrolled to element: ${action.selector}`);
+            } else {
+              // 滾動到頁面底部
+              await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+              logger.debug('Scrolled to bottom of page');
+            }
+            break;
+            
+          case 'select':
+            if (action.selector && action.value) {
+              await page.waitForSelector(action.selector, { timeout: action.timeout || 10000 });
+              await page.selectOption(action.selector, action.value);
+              logger.debug(`Selected "${action.value}" in: ${action.selector}`);
+            }
+            break;
+            
+          default:
+            logger.warn(`Unknown action type: ${action.type}`);
+        }
+        
+        // 每個操作之後稍微等待一下，模擬真實用戶操作
+        await page.waitForTimeout(500);
+        
+      } catch (error) {
+        logger.error(`Error executing action ${i + 1} (${action.type}):`, error);
+        // 繼續執行下一個動作，不中斷流程
+      }
+    }
+    
+    logger.info('All dynamic actions completed');
   }
 
   async cleanup(): Promise<void> {

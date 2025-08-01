@@ -7,6 +7,7 @@ export interface EnhancedCrawlerConfig extends Omit<CrawlerConfig, 'selectors'> 
   inherits?: string;  // 繼承其他配置
   variables?: Record<string, unknown>;  // 配置變數
   dataDriven?: DataDrivenConfig; // 數據驅動配置
+  actions?: ActionItem[]; // 動態操作序列
 }
 
 export interface DataDrivenConfig {
@@ -35,6 +36,14 @@ export interface EnhancedSelectorItem {
   multiple?: boolean;
   waitFor?: number;
   optional?: boolean;
+}
+
+export interface ActionItem {
+  type: 'click' | 'type' | 'wait' | 'scroll' | 'select';
+  selector?: string;
+  value?: string;
+  timeout?: number;
+  description?: string;
 }
 
 export interface ExtractConfig {

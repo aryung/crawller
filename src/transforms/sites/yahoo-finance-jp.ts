@@ -409,7 +409,7 @@ export const yahooFinanceJPTransforms: YahooFinanceJPTransforms = {
       const results: FinancialData[] = [];
       
       // 從 context 獲取數據類型，如果沒有則自動檢測
-      let dataType: 'performance' | 'financials' = context?.templateType || 'performance';
+      let dataType: 'performance' | 'financials' | 'cashflow' = context?.templateType || 'performance';
       
       if (!context?.templateType) {
         const allText = cells.join(' ');
@@ -481,19 +481,20 @@ function parseFinancialsData(cells: string[]): FinancialData[] {
         }
       }
       
-      if (rowData.length >= 10) {
+      // 動態驗證：只要有基本數據就嘗試解析，允許部分欄位缺失
+      if (rowData.length > 0) {
         const financialData: FinancialData = {
           fiscalPeriod: fiscalPeriod,
-          eps: parseFloat(rowData[0]) || null,                           // EPS (円)
-          bps: parseFloat(rowData[1]) || null,                           // BPS (円)
-          roa: parsePercentageToDecimal(rowData[2]),                     // ROA (%)
-          roe: parsePercentageToDecimal(rowData[3]),                     // ROE (%)
-          totalAssets: parseMillionYenToNumber(rowData[4]),              // 総資産 (百万円)
-          equityRatio: parsePercentageToDecimal(rowData[5]),             // 自己資本比率 (%)
-          capital: parseMillionYenToNumber(rowData[6]),                  // 資本金 (百万円)
-          dividendYield: parseMillionYenToNumber(rowData[7]),            // 有利子負債 (百万円)
-          reductionAmount: parseMillionYenToNumber(rowData[8]),          // 減價償却費 (百万円)
-          stockCount: parseThousandToNumber(rowData[9])                  // 發行済股式總數 (千株)
+          eps: rowData[0] ? parseFloat(rowData[0]) || null : null,                           // EPS (円)
+          bps: rowData[1] ? parseFloat(rowData[1]) || null : null,                           // BPS (円)
+          roa: rowData[2] ? parsePercentageToDecimal(rowData[2]) : null,                     // ROA (%)
+          roe: rowData[3] ? parsePercentageToDecimal(rowData[3]) : null,                     // ROE (%)
+          totalAssets: rowData[4] ? parseMillionYenToNumber(rowData[4]) : null,              // 総資産 (百万円)
+          equityRatio: rowData[5] ? parsePercentageToDecimal(rowData[5]) : null,             // 自己資本比率 (%)
+          capital: rowData[6] ? parseMillionYenToNumber(rowData[6]) : null,                  // 資本金 (百万円)
+          dividendYield: rowData[7] ? parseMillionYenToNumber(rowData[7]) : null,            // 有利子負債 (百万円)
+          reductionAmount: rowData[8] ? parseMillionYenToNumber(rowData[8]) : null,          // 減價償却費 (百万円)
+          stockCount: rowData[9] ? parseThousandToNumber(rowData[9]) : null                  // 發行済股式總數 (千株)
         };
         
         results.push(financialData);
@@ -552,13 +553,14 @@ function parseCashflowData(cells: string[]): FinancialData[] {
         }
       }
       
-      if (rowData.length >= 4) {
+      // 動態驗證：只要有基本數據就嘗試解析，允許部分現金流欄位缺失
+      if (rowData.length > 0) {
         const financialData: FinancialData = {
           fiscalPeriod: fiscalPeriod,
-          freeCashFlow: parseMillionYenToNumber(rowData[0]),          // フリーCF (百萬円)
-          operatingCashFlow: parseMillionYenToNumber(rowData[1]),     // 営業CF (百萬円)
-          investingCashFlow: parseMillionYenToNumber(rowData[2]),     // 投資CF (百萬円)
-          financingCashFlow: parseMillionYenToNumber(rowData[3])      // 財務CF (百萬円)
+          freeCashFlow: rowData[0] ? parseMillionYenToNumber(rowData[0]) : null,          // フリーCF (百萬円)
+          operatingCashFlow: rowData[1] ? parseMillionYenToNumber(rowData[1]) : null,     // 営業CF (百萬円)
+          investingCashFlow: rowData[2] ? parseMillionYenToNumber(rowData[2]) : null,     // 投資CF (百萬円)
+          financingCashFlow: rowData[3] ? parseMillionYenToNumber(rowData[3]) : null      // 財務CF (百萬円)
         };
         
         results.push(financialData);
@@ -693,11 +695,13 @@ function parsePerformanceDataLegacy(cells: string[]): FinancialData[] {
             
             // 使用智能轉換函數根據標題類型解析數據
             if (isAmountHeader(header) || isPercentageHeader(header)) {
-              value = parseValueByHeader(value, header);
+              const parsedValue = parseValueByHeader(value, header);
+              value = parsedValue !== null ? parsedValue.toString() : '';
             } else if (header.includes('会計方式')) {
               value = yahooFinanceJPTransforms.cleanAccountingMethod(value || '');
             } else if (isDateHeader(header)) {
-              value = yahooFinanceJPTransforms.parseJapaneseDate(value || '');
+              const parsedDate = yahooFinanceJPTransforms.parseJapaneseDate(value || '');
+              value = parsedDate || '';
             }
             
             headerValueMap[header] = value;
