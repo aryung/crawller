@@ -211,3 +211,65 @@ export function detectDataTypeFromHeaders(headers: string[]): 'performance' | 'f
   // 預設為 performance
   return 'performance';
 }
+
+/**
+ * Yahoo Finance Taiwan 財務數據相關常數定義
+ */
+
+// Yahoo Finance Taiwan Dividend 頁面表格標題常數
+export const YAHOO_FINANCE_TW_DIVIDEND_HEADERS = {
+  CASH_DIVIDEND: '現金股利',
+  STOCK_DIVIDEND: '股票股利', 
+  CASH_YIELD: '現金殖利率',
+  EX_DIVIDEND_DATE: '除息日',
+  EX_RIGHTS_DATE: '除權日',
+  PAYMENT_DATE: '股利發放日'
+} as const;
+
+// 台灣財務單位常數
+export const TW_FINANCIAL_UNITS = {
+  TWD: '元',           // 新台幣
+  PERCENTAGE: '%',     // 百分比
+  DATE: '/',          // 日期分隔符
+  YEAR: '年',         // 年度
+  MONTH: '月',        // 月份
+  DAY: '日'           // 日期
+} as const;
+
+// Dividend 欄位到表格標題的映射
+export const TW_DIVIDEND_DATA_FIELD_MAPPING = {
+  cashDividend: YAHOO_FINANCE_TW_DIVIDEND_HEADERS.CASH_DIVIDEND,
+  stockDividend: YAHOO_FINANCE_TW_DIVIDEND_HEADERS.STOCK_DIVIDEND,
+  cashYield: YAHOO_FINANCE_TW_DIVIDEND_HEADERS.CASH_YIELD,
+  exDividendDate: YAHOO_FINANCE_TW_DIVIDEND_HEADERS.EX_DIVIDEND_DATE,
+  exRightsDate: YAHOO_FINANCE_TW_DIVIDEND_HEADERS.EX_RIGHTS_DATE,
+  paymentDate: YAHOO_FINANCE_TW_DIVIDEND_HEADERS.PAYMENT_DATE
+} as const;
+
+// Yahoo Finance US 財務數據相關常數定義
+export const US_CASHFLOW_HEADERS = {
+  operatingCashFlow: 'Operating Cash Flow',
+  investingCashFlow: 'Investing Cash Flow',
+  financingCashFlow: 'Financing Cash Flow',
+  endCashPosition: 'End Cash Position',
+  capitalExpenditure: 'Capital Expenditure',
+  issuanceOfCapitalStock: 'Issuance of Capital Stock',
+  issuanceOfDebt: 'Issuance of Debt',
+  repaymentOfDebt: 'Repayment of Debt',
+  repurchaseOfCapitalStock: 'Repurchase of Capital Stock',
+  freeCashFlow: 'Free Cash Flow'
+} as const;
+
+export const US_FINANCIALS_HEADERS = {
+  totalRevenue: 'Total Revenue',
+  costOfRevenue: 'Cost of Revenue',
+  grossProfit: 'Gross Profit',
+  operatingExpense: 'Operating Expense',
+  operatingIncome: 'Operating Income',
+  interestExpense: 'Interest Expense',
+  incomeBeforeTax: 'Income Before Tax',
+  incomeTaxExpense: 'Income Tax Expense',
+  netIncome: 'Net Income',
+  basicEPS: 'Basic EPS',
+  dilutedEPS: 'Diluted EPS'
+} as const;

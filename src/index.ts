@@ -111,12 +111,24 @@ export class UniversalCrawler {
 
     // Force browser mode for Yahoo Finance Japan dynamic pages
     const url = config.url.toLowerCase();
-    if (url.includes('finance.yahoo.co.jp') && (url.includes('styl=financials') || url.includes('styl=cf'))) {
-      logger.debug(`Yahoo Finance Japan dynamic page detected - forcing browser mode: ${config.url}`);
+    // if (url.includes('finance.yahoo.co.jp') && (url.includes('styl=financials') || url.includes('styl=cf'))) {
+    //   logger.debug(`Yahoo Finance Japan dynamic page detected - forcing browser mode: ${config.url}`);
+    //   return false;
+    // }
+
+    // Force browser mode for Yahoo Finance Taiwan dynamic pages
+    // if (url.includes('tw.stock.yahoo.com')) {
+    //   logger.debug(`Yahoo Finance Taiwan dynamic page detected - forcing browser mode: ${config.url}`);
+    //   return false;
+    // }
+
+    // Force browser mode for Yahoo Finance US dynamic pages  
+    if (url.includes('finance.yahoo.com')) {
+      logger.debug(`Yahoo Finance US dynamic page detected - forcing browser mode: ${config.url}`);
       return false;
     }
 
-    const staticSites = ['moneydj.com', 'twse.com.tw', 'tpex.org.tw', 'cnyes.com', 'yahoo.com'];
+    const staticSites = ['moneydj.com', 'twse.com.tw', 'tpex.org.tw', 'cnyes.com'];
     const isStaticSite = staticSites.some(site => url.includes(site));
 
     if (isStaticSite) {
@@ -244,7 +256,7 @@ export class UniversalCrawler {
 
   private extractBasicSelectors($: CheerioAPI, selectors: SelectorConfig): Record<string, unknown> {
     const data: Record<string, unknown> = {};
-    
+
     for (const [key, selector] of Object.entries(selectors)) {
       try {
         if (typeof selector === 'string') {
@@ -263,7 +275,7 @@ export class UniversalCrawler {
         data[key] = null;
       }
     }
-    
+
     return data;
   }
 

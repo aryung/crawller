@@ -6,6 +6,7 @@
 import { moneydjTransforms, registerMoneyDJTransforms } from './moneydj';
 import { yahooFinanceJPTransforms, registerYahooFinanceJPTransforms } from './yahoo-finance-jp';
 import { yahooFinanceUSTransforms, registerYahooFinanceUSTransforms } from './yahoo-finance-us';
+import { yahooFinanceTWTransforms } from './yahoo-finance-tw';
 
 export interface SiteTransforms {
   [transformName: string]: (value: any, context?: any) => any;
@@ -21,7 +22,8 @@ export interface SiteTransformRegistry {
 export const siteTransforms: SiteTransformRegistry = {
   moneydj: moneydjTransforms as any,
   'yahoo-finance-jp': yahooFinanceJPTransforms as any,
-  'yahoo-finance-us': yahooFinanceUSTransforms as any
+  'yahoo-finance-us': yahooFinanceUSTransforms as any,
+  'yahoo-finance-tw': yahooFinanceTWTransforms as any
 };
 
 /**
@@ -42,6 +44,10 @@ export function detectSiteFromUrl(url: string): string | null {
     
     if (hostname.includes('finance.yahoo.com')) {
       return 'yahoo-finance-us';
+    }
+    
+    if (hostname.includes('tw.stock.yahoo.com')) {
+      return 'yahoo-finance-tw';
     }
     
     // 可以在這裡添加其他網站的檢測邏輯

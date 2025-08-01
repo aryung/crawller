@@ -247,10 +247,31 @@ export class EnhancedConfigManager {
   async listConfigs(): Promise<string[]> {
     try {
       await fs.ensureDir(this.configPath);
-      const files = await fs.readdir(this.configPath);
-      return files
-        .filter(file => file.endsWith('.json'))
-        .map(file => path.basename(file, '.json'));
+      const configs: string[] = [];
+      
+      // 搜索所有 JSON 配置文件（包括子目錄）
+      const searchDirectory = async (dir: string, basePath: string = '') => {
+        const entries = await fs.readdir(dir, { withFileTypes: true });
+        
+        for (const entry of entries) {
+          const fullPath = path.join(dir, entry.name);
+          const relativePath = basePath ? path.join(basePath, entry.name) : entry.name;
+          
+          if (entry.isDirectory()) {
+            // 遞歸搜索子目錄
+            await searchDirectory(fullPath, relativePath);
+          } else if (entry.isFile() && entry.name.endsWith('.json')) {
+            // 添加配置文件（不包含 .json 擴展名）
+            const configName = basePath 
+              ? path.join(basePath, path.basename(entry.name, '.json'))
+              : path.basename(entry.name, '.json');
+            configs.push(configName.replace(/[\\\/]/g, '/')); // 統一使用 / 分隔符
+          }
+        }
+      };
+      
+      await searchDirectory(this.configPath);
+      return configs.sort();
     } catch (error) {
       logger.error('Failed to list configs:', error);
       return [];

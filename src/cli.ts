@@ -368,8 +368,29 @@ async function listConfigs(configPath: string) {
       return;
     }
 
-    const files = await fs.readdir(configDir);
-    const configFiles = files.filter(file => file.endsWith('.json'));
+    // 遞歸搜索所有 JSON 配置文件（包括子目錄）
+    const configFiles: string[] = [];
+    const searchDirectory = async (dir: string, basePath: string = '') => {
+      const entries = await fs.readdir(dir, { withFileTypes: true });
+      
+      for (const entry of entries) {
+        const fullPath = path.join(dir, entry.name);
+        const relativePath = basePath ? path.join(basePath, entry.name) : entry.name;
+        
+        if (entry.isDirectory()) {
+          // 遞歸搜索子目錄
+          await searchDirectory(fullPath, relativePath);
+        } else if (entry.isFile() && entry.name.endsWith('.json')) {
+          // 添加配置文件
+          const configFile = basePath 
+            ? path.join(basePath, entry.name)
+            : entry.name;
+          configFiles.push(configFile.replace(/[\\]/g, '/')); // 統一使用 / 分隔符
+        }
+      }
+    };
+    
+    await searchDirectory(configDir);
 
     if (configFiles.length === 0) {
       console.log('📂 沒有找到配置檔案');

@@ -1,0 +1,57 @@
+{
+  "templateType": "tw-dividend",
+  "url": "https://tw.stock.yahoo.com/quote/2886.TW/dividend",
+  "_note": "This config extracts structured dividend data from Yahoo Finance Taiwan dividend page. Extracts dividend distribution information including cash dividends, stock dividends, yield rates, and ex-dividend dates. Use with Taiwan stock codes like 2330.TW, 1101.TW, etc.",
+  "actions": [
+    {
+      "type": "wait",
+      "timeout": 5000,
+      "description": "等待頁面初始載入"
+    },
+    {
+      "type": "wait",
+      "timeout": 3000,
+      "description": "等待股利數據完全載入"
+    }
+  ],
+  "selectors": {
+    "stockInfo": {
+      "selector": "h1, .symbol, .stock-name",
+      "transform": "cleanStockSymbol"
+    },
+    "structuredDividendData": {
+      "selector": "body",
+      "multiple": false,
+      "transform": "structureTWDividendDataFromCells"
+    }
+  },
+  "headers": {
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
+    "Accept-Language": "zh-TW,zh;q=0.9,en;q=0.8",
+    "Accept-Encoding": "gzip, deflate, br",
+    "Cache-Control": "no-cache",
+    "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+  },
+  "options": {
+    "timeout": 30000,
+    "retries": 3,
+    "headless": true,
+    "screenshot": false,
+    "encoding": "utf-8",
+    "domainDelay": 5000,
+    "waitFor": 5000
+  },
+  "variables": {
+    "symbolCode": "2886.TW",
+    "baseUrl": "https://tw.stock.yahoo.com",
+    "companyName": "兆豐金融控股股份有限公司",
+    "sector": "金融保險業"
+  },
+  "export": {
+    "formats": [
+      "json",
+      "csv"
+    ],
+    "filename": "yahoo_finance_tw_dividend_2330_TW"
+  }
+}
