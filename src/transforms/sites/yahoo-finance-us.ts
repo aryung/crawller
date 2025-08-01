@@ -11,6 +11,7 @@ export interface YahooFinanceUSTransforms {
   parseUSDate: (value: string) => string | null;
   cleanFinancialText: (value: string) => string;
   structureUSFinancialDataFromCells: (cells: string[] | string, context?: any) => USFinancialData[];
+  structureUSCashFlowDataFromCells: (cells: string[] | string, context?: any) => USCashFlowData[];
 }
 
 // 美國財務數據介面
@@ -57,6 +58,27 @@ export interface USFinancialData {
   taxEffectOfUnusualItems?: number | null;
 }
 
+// 美國現金流數據介面 (基於 Yahoo Finance US Cash Flow 頁面)
+export interface USCashFlowData {
+  fiscalPeriod: string | null;
+  // 營運現金流相關欄位
+  operatingCashFlow?: number | null;
+  // 投資現金流相關欄位
+  investingCashFlow?: number | null;
+  capitalExpenditure?: number | null;
+  // 融資現金流相關欄位
+  financingCashFlow?: number | null;
+  issuanceOfCapitalStock?: number | null;
+  issuanceOfDebt?: number | null;
+  repaymentOfDebt?: number | null;
+  repurchaseOfCapitalStock?: number | null;
+  // 其他現金流欄位
+  endCashPosition?: number | null;
+  incomeTaxPaidSupplemental?: number | null;
+  interestPaidSupplemental?: number | null;
+  freeCashFlow?: number | null;
+}
+
 // 美國財務數據欄位對應表 (根據 Yahoo Finance US 的標準欄位)
 export const US_FINANCIAL_HEADERS = {
   // 收入相關
@@ -100,6 +122,29 @@ export const US_FINANCIAL_HEADERS = {
   'Normalized EBITDA': 'normalizedEBITDA',
   'Tax Rate for Calcs': 'taxRateForCalcs',
   'Tax Effect of Unusual Items': 'taxEffectOfUnusualItems'
+} as const;
+
+// 美國現金流數據欄位對應表 (根據 Yahoo Finance US Cash Flow 頁面的標準欄位)
+export const US_CASHFLOW_HEADERS = {
+  // 營運現金流
+  'Operating Cash Flow': 'operatingCashFlow',
+  
+  // 投資現金流
+  'Investing Cash Flow': 'investingCashFlow',
+  'Capital Expenditure': 'capitalExpenditure',
+  
+  // 融資現金流
+  'Financing Cash Flow': 'financingCashFlow',
+  'Issuance of Capital Stock': 'issuanceOfCapitalStock',
+  'Issuance of Debt': 'issuanceOfDebt',
+  'Repayment of Debt': 'repaymentOfDebt',
+  'Repurchase of Capital Stock': 'repurchaseOfCapitalStock',
+  
+  // 其他現金流
+  'End Cash Position': 'endCashPosition',
+  'Income Tax Paid Supplemental Data': 'incomeTaxPaidSupplemental',
+  'Interest Paid Supplemental Data': 'interestPaidSupplemental',
+  'Free Cash Flow': 'freeCashFlow'
 } as const;
 
 // 基於實際截圖的固定左欄順序 (Yahoo Finance US Financials 頁面)
@@ -244,6 +289,211 @@ export const yahooFinanceUSTransforms: YahooFinanceUSTransforms = {
   cleanFinancialText: (value: string): string => {
     if (!value) return '';
     return value.toString().trim().replace(/\s+/g, ' ');
+  },
+
+  /**
+   * 從表格單元格陣列結構化美國現金流數據
+   * 針對 Yahoo Finance US Cash Flow 頁面的季度數據解析
+   * 注意：Yahoo Finance US 現金流數據單位為千 (thousands)，需要乘以 1000
+   */
+  structureUSCashFlowDataFromCells: (cells: string[] | string, context?: any): USCashFlowData[] => {
+    console.log('Starting US Cash Flow data parsing');
+    console.log('Data type received:', typeof cells);
+    console.log('Data length:', Array.isArray(cells) ? cells.length : (typeof cells === 'string' ? cells.length : 'unknown'));
+
+    if (!cells) {
+      console.warn('No data provided for US cash flow data parsing');
+      return [];
+    }
+
+    // 處理數據可能是字符串或數組的情況
+    let cellsArray: string[] = [];
+    if (typeof cells === 'string') {
+      cellsArray = cells.split(/[\n\r\t]+/).map(s => s.trim()).filter(s => s.length > 0);
+      console.log('Converted string to array with', cellsArray.length, 'elements');
+    } else if (Array.isArray(cells)) {
+      cellsArray = cells;
+    } else {
+      console.warn('Unexpected data type for cells:', typeof cells);
+      return [];
+    }
+
+    // 清理和過濾cells
+    const cleanCells = cellsArray.filter(cell => {
+      if (!cell || typeof cell !== 'string' || cell.trim().length === 0) return false;
+
+      // 過濾掉不相關的內容
+      const irrelevantPatterns = [
+        /window\._nimbus/,
+        /--yb-/,
+        /color-scheme/,
+        /rgba?\(/,
+        /\.yahoo\./,
+        /javascript:/,
+        /data-reactid/,
+        /^if\s*\(/,
+        /^function/,
+        /^window\./
+      ];
+
+      return !irrelevantPatterns.some(pattern => pattern.test(cell));
+    });
+
+    console.log('Filtered to', cleanCells.length, 'relevant cells');
+    console.log('Sample cleaned cells:', cleanCells.slice(0, 10));
+
+    // 動態尋找時間期間
+    const periods = findCashFlowTimePeriods(cleanCells);
+    console.log('Dynamically found periods:', periods);
+
+    if (periods.length === 0) {
+      console.warn('No time periods found in cash flow data');
+      return [];
+    }
+
+    // 動態尋找現金流指標和對應數值
+    const cashFlowData = extractCashFlowMetrics(cleanCells, periods);
+    console.log('Extracted cash flow metrics for', cashFlowData.length, 'periods');
+
+    return cashFlowData;
+
+    // 內部函數：尋找現金流時間期間
+    function findCashFlowTimePeriods(cells: string[]): string[] {
+      const periods: string[] = [];
+
+      for (const cell of cells) {
+        if (!cell || typeof cell !== 'string') continue;
+
+        // 尋找包含時間期間的行 - 支援任意財年模式
+        const periodMatches = cell.match(/\b(TTM|\d{1,2}\/\d{1,2}\/\d{4})\b/g);
+
+        if (periodMatches && periodMatches.length > 0) {
+          periodMatches.forEach(match => {
+            if (!periods.includes(match) && periods.length < 8) {
+              periods.push(match);
+              console.log('Cash flow period detection found:', match);
+            }
+          });
+        }
+      }
+
+      return periods;
+    }
+
+    // 內部函數：提取現金流指標
+    function extractCashFlowMetrics(cells: string[], periods: string[]): USCashFlowData[] {
+      const results: USCashFlowData[] = [];
+
+      // 為每個期間創建數據結構
+      periods.forEach(period => {
+        results.push({
+          fiscalPeriod: period,
+          operatingCashFlow: extractCashFlowMetricValue(cells, 'Operating Cash Flow', period),
+          investingCashFlow: extractCashFlowMetricValue(cells, 'Investing Cash Flow', period),
+          financingCashFlow: extractCashFlowMetricValue(cells, 'Financing Cash Flow', period),
+          endCashPosition: extractCashFlowMetricValue(cells, 'End Cash Position', period),
+          capitalExpenditure: extractCashFlowMetricValue(cells, 'Capital Expenditure', period),
+          issuanceOfCapitalStock: extractCashFlowMetricValue(cells, 'Issuance of Capital Stock', period),
+          issuanceOfDebt: extractCashFlowMetricValue(cells, 'Issuance of Debt', period),
+          repaymentOfDebt: extractCashFlowMetricValue(cells, 'Repayment of Debt', period),
+          repurchaseOfCapitalStock: extractCashFlowMetricValue(cells, 'Repurchase of Capital Stock', period),
+          freeCashFlow: extractCashFlowMetricValue(cells, 'Free Cash Flow', period)
+        });
+      });
+
+      return results;
+    }
+
+    // 內部函數：提取特定現金流指標的數值 - 處理千為單位
+    function extractCashFlowMetricValue(cells: string[], metric: string, period: string): number | null {
+      console.log(`Extracting cash flow metric: ${metric} for period: ${period}`);
+
+      // 首先找到期間標題行，獲取期間的順序
+      let periodOrder: string[] = [];
+      for (const cell of cells) {
+        if (!cell || typeof cell !== 'string') continue;
+        
+        // 尋找包含期間信息的行（通常包含 TTM 和多個日期）
+        if (cell.includes('TTM') && cell.match(/\d{1,2}\/\d{1,2}\/\d{4}/)) {
+          const periodsInCell = cell.match(/\b(TTM|\d{1,2}\/\d{1,2}\/\d{4})\b/g);
+          if (periodsInCell && periodsInCell.length > 0) {
+            periodOrder = periodsInCell;
+            console.log(`Period order found: ${periodOrder.join(', ')}`);
+            break;
+          }
+        }
+      }
+
+      if (periodOrder.length === 0) {
+        console.log(`No period order found for ${metric}`);
+        return null;
+      }
+
+      const periodIndex = periodOrder.indexOf(period);
+      if (periodIndex === -1) {
+        console.log(`Period ${period} not found in order: ${periodOrder.join(', ')}`);
+        return null;
+      }
+
+      // 新的策略：找到每個指標專屬的行，並確保只從該行提取數據
+      for (const cell of cells) {
+        if (!cell || typeof cell !== 'string') continue;
+
+        // 檢查是否找到了包含指標名稱和數據的具體行
+        const metricLinePattern = new RegExp(`${metric.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\s+([\\d,\\-\\s]+)`, 'i');
+        const metricMatch = cell.match(metricLinePattern);
+        
+        if (!metricMatch) continue;
+
+        console.log(`Found specific data line for ${metric}: ${metricMatch[0]}`);
+
+        // 直接從匹配的行中提取數值部分
+        const dataSection = metricMatch[1];
+        console.log(`Data section: "${dataSection}"`);
+
+        // 從數據部分提取所有數值
+        const values = dataSection.match(/(--)|(--)|(-?\d{1,3}(?:,\d{3})*(?:\.\d+)?[BMKbmk]?)|(-?\d+\.?\d*[eE][+-]?\d+)/g);
+
+        if (!values || values.length === 0) {
+          console.log(`No values found in data section for ${metric}`);
+          continue;
+        }
+
+        if (values.length > 0) {
+          console.log(`Found ${values.length} values for ${metric}: [${values.join(', ')}]`);
+          console.log(`Looking for period ${period} at index ${periodIndex}`);
+          
+          // 確保我們有足夠的數值來對應期間
+          if (periodIndex < values.length) {
+            const rawValue = values[periodIndex];
+            console.log(`Raw value for ${metric} ${period}: ${rawValue}`);
+            
+            if (rawValue === '--' || rawValue === '-') {
+              return null;
+            }
+            
+            // 解析數值並轉換單位 (thousands -> actual)
+            const parsedValue = yahooFinanceUSTransforms.parseUSFinancialValue(rawValue);
+            if (typeof parsedValue === 'number') {
+              // Yahoo Finance US Cash Flow 數據單位為千，需要乘以 1000
+              const finalValue = parsedValue * 1000;
+              console.log(`Final value for ${metric} ${period}: ${finalValue}`);
+              return finalValue;
+            }
+            return parsedValue as number | null;
+          } else {
+            console.log(`Not enough values for ${metric}. Expected index ${periodIndex}, but only have ${values.length} values`);
+          }
+        } else {
+          console.log(`No values found for ${metric} in this cell`);
+        }
+
+        // 如果在這個 cell 中找到了指標但沒有合適的數據，繼續查找其他 cell
+      }
+
+      console.log(`No value found for cash flow metric ${metric} period ${period}`);
+      return null;
+    }
   },
 
   /**
