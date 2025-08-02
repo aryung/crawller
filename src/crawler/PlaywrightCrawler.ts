@@ -381,7 +381,7 @@ export class PlaywrightCrawler {
               logger.debug(`Scrolled to element: ${action.selector}`);
             } else {
               // 滾動到頁面底部
-              await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+              await page.evaluate(() => (globalThis as any).window.scrollTo(0, (globalThis as any).document.body.scrollHeight));
               logger.debug('Scrolled to bottom of page');
             }
             break;

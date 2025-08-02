@@ -16,8 +16,20 @@ export interface YahooFinanceTWTransforms {
   extractFiscalPeriod: (value: string) => string | null;
   parseTWDate: (value: string) => string | null;
   cleanFinancialText: (value: string) => string;
+  validateDividendData: (year: string, dividend: number, yieldRate?: number, allData?: any[]) => boolean;
+  calculateDividendStatistics: (values: number[]) => { mean: number, stdDev: number, min: number, max: number, median: number };
+  extractPreciseNumbers: (numberString: string) => number[];
+  detectTableFormat: (textContent: string) => string;
+  parseHTMLTable: (content: string, context?: any) => TWDividendData[];
+  parseTextPatterns: (textContent: string, format: 'rich' | 'simple' | 'mixed' | 'unknown') => TWDividendData[];
   structureTWDividendDataFromCells: (cells: string[] | string, context?: any) => TWDividendData[];
   parseYahooFinanceDividendTable: (textContent: string) => TWDividendData[];
+  parseQuarterlyData: (textContent: string, processedPeriods: Set<string>) => TWDividendData[];
+  parseAnnualData: (textContent: string, processedPeriods: Set<string>) => TWDividendData[];
+  parseHistoricalData: (textContent: string, processedPeriods: Set<string>) => TWDividendData[];
+  parseSimpleAnnualData: (textContent: string, processedPeriods: Set<string>) => TWDividendData[];
+  parseFallbackPatterns: (textContent: string, processedPeriods: Set<string>) => TWDividendData[];
+  parseHistoricalAnnualData: (textContent: string) => TWDividendData[];
 }
 
 // 台灣股利數據介面
@@ -167,11 +179,12 @@ export const yahooFinanceTWTransforms: YahooFinanceTWTransforms = {
   },
 
   /**
-   * 基於統計和模式的智能數據驗證 - 完全避免硬編碼
+   * 基於統計和模式的智能數據驗證 - 完全避免硬編碼，支援動態異常檢測
    */
   validateDividendData: (year: string, dividend: number, yieldRate?: number, allData?: any[]): boolean => {
     // 基本格式檢查
     if (!year.match(/^(19|20)\d{2}$/)) {
+      console.log(`[TW Validation] Invalid year format: ${year}`);
       return false;
     }
     
@@ -180,11 +193,13 @@ export const yahooFinanceTWTransforms: YahooFinanceTWTransforms = {
     
     // 基本時間範圍檢查 - 只檢查明顯不合理的年份
     if (yearNum < 1900 || yearNum > currentYear + 5) {
+      console.log(`[TW Validation] Year out of reasonable range: ${yearNum}`);
       return false;
     }
     
     // 基本股利合理性 - 負數明顯不合理
     if (dividend < 0) {
+      console.log(`[TW Validation] Negative dividend: ${dividend}`);
       return false;
     }
     
@@ -192,6 +207,7 @@ export const yahooFinanceTWTransforms: YahooFinanceTWTransforms = {
     if (dividend === 0) {
       // 如果同時有正殖利率，這是矛盾的
       if (yieldRate && yieldRate > 0) {
+        console.log(`[TW Validation] Zero dividend with positive yield rate: ${yieldRate}`);
         return false;
       }
       // 零股利本身是可能的（公司可能不發股利）
@@ -200,23 +216,52 @@ export const yahooFinanceTWTransforms: YahooFinanceTWTransforms = {
     
     // 基本殖利率檢查
     if (yieldRate !== undefined && yieldRate < 0) {
+      console.log(`[TW Validation] Negative yield rate: ${yieldRate}`);
       return false;
     }
     
-    // 如果有其他數據可供比較，進行相對驗證
+    // 增強的相對驗證系統
     if (allData && allData.length > 0) {
-      const otherDividends = allData
+      // 現金股利統計分析
+      const otherCashDividends = allData
         .filter(item => item.cashDividend && item.cashDividend > 0)
         .map(item => item.cashDividend);
       
-      if (otherDividends.length > 0) {
-        const maxObserved = Math.max(...otherDividends);
-        const avgObserved = otherDividends.reduce((a, b) => a + b, 0) / otherDividends.length;
+      // 股票股利統計分析  
+      const otherStockDividends = allData
+        .filter(item => item.stockDividend && item.stockDividend > 0)
+        .map(item => item.stockDividend);
         
-        // 如果當前股利遠超過已觀察到的最大值（可能解析到股價）
-        if (dividend > maxObserved * 10 && dividend > avgObserved * 20) {
-          return false;
+      // 智能判斷當前數值是現金股利還是股票股利
+      let isLikelyCashDividend = true;
+      let isLikelyStockDividend = true;
+      
+      if (otherCashDividends.length > 0) {
+        const cashStats = yahooFinanceTWTransforms.calculateDividendStatistics(otherCashDividends);
+        const cashZScore = Math.abs((dividend - cashStats.mean) / (cashStats.stdDev || 1));
+        
+        // 如果偏離現金股利統計太遠，可能不是現金股利
+        if (cashZScore > 3 && dividend > cashStats.max * 2) {
+          isLikelyCashDividend = false;
+          console.log(`[TW Validation] Value ${dividend} unlikely to be cash dividend (z-score: ${cashZScore.toFixed(2)})`);
         }
+      }
+      
+      if (otherStockDividends.length > 0) {
+        const stockStats = yahooFinanceTWTransforms.calculateDividendStatistics(otherStockDividends);
+        const stockZScore = Math.abs((dividend - stockStats.mean) / (stockStats.stdDev || 1));
+        
+        // 如果偏離股票股利統計太遠，可能不是股票股利
+        if (stockZScore > 3 && dividend > stockStats.max * 2) {
+          isLikelyStockDividend = false;
+          console.log(`[TW Validation] Value ${dividend} unlikely to be stock dividend (z-score: ${stockZScore.toFixed(2)})`);
+        }
+      }
+      
+      // 如果兩種股利類型都不太可能，則拒絕
+      if (!isLikelyCashDividend && !isLikelyStockDividend) {
+        console.log(`[TW Validation] Value ${dividend} doesn't fit either dividend type pattern`);
+        return false;
       }
       
       // 殖利率相對驗證
@@ -226,9 +271,12 @@ export const yahooFinanceTWTransforms: YahooFinanceTWTransforms = {
           .map(item => item.cashYield);
         
         if (otherYields.length > 0) {
-          const maxYield = Math.max(...otherYields);
-          // 如果殖利率遠超過其他年份（可能是百分比解析錯誤）
-          if (yieldRate > maxYield * 5) {
+          const yieldStats = yahooFinanceTWTransforms.calculateDividendStatistics(otherYields);
+          const yieldZScore = Math.abs((yieldRate - yieldStats.mean) / (yieldStats.stdDev || 1));
+          
+          // 如果殖利率偏離太遠，可能是解析錯誤
+          if (yieldZScore > 4) {
+            console.log(`[TW Validation] Yield rate ${yieldRate} is statistical outlier (z-score: ${yieldZScore.toFixed(2)})`);
             return false;
           }
         }
@@ -240,13 +288,119 @@ export const yahooFinanceTWTransforms: YahooFinanceTWTransforms = {
       // 殖利率 = 股利 / 股價，合理的股價範圍檢查
       const impliedPrice = dividend / yieldRate;
       
-      // 極端不合理的隱含股價（可能是單位換算錯誤）
+      // 動態股價合理性檢查（基於台股一般範圍）
       if (impliedPrice < 1 || impliedPrice > 10000) {
+        console.log(`[TW Validation] Unreasonable implied stock price: ${impliedPrice.toFixed(2)} (dividend: ${dividend}, yield: ${yieldRate})`);
         return false;
       }
     }
     
+    console.log(`[TW Validation] Value ${dividend} passed validation for year ${year}`);
     return true;
+  },
+
+  /**
+   * 計算股利數據的統計特徵
+   */
+  calculateDividendStatistics: (values: number[]): { mean: number, stdDev: number, min: number, max: number, median: number } => {
+    if (values.length === 0) {
+      return { mean: 0, stdDev: 0, min: 0, max: 0, median: 0 };
+    }
+    
+    const sorted = [...values].sort((a, b) => a - b);
+    const mean = values.reduce((a, b) => a + b, 0) / values.length;
+    const variance = values.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / values.length;
+    const stdDev = Math.sqrt(variance);
+    const median = sorted.length % 2 === 0 
+      ? (sorted[sorted.length / 2 - 1] + sorted[sorted.length / 2]) / 2
+      : sorted[Math.floor(sorted.length / 2)];
+      
+    return {
+      mean,
+      stdDev,
+      min: sorted[0],
+      max: sorted[sorted.length - 1],
+      median
+    };
+  },
+
+  /**
+   * 精確數字分離函數 - 從連接字符串中識別所有有效數字
+   */
+  extractPreciseNumbers: (numberString: string): number[] => {
+    if (!numberString || typeof numberString !== 'string') {
+      return [];
+    }
+    
+    console.log(`[TW Number Extractor] Processing: "${numberString}"`);
+    
+    // 移除無關字符，保留數字和小數點
+    const cleanString = numberString.replace(/[^0-9\.]/g, '');
+    
+    // 多種策略識別數字邊界
+    const numbers: number[] = [];
+    
+    // 策略1: 基於小數點位置分離
+    // 例如: "2.99990.05" -> ["2.9999", "0.05"]
+    const decimalPattern = /(\d+\.\d+)/g;
+    let match;
+    while ((match = decimalPattern.exec(cleanString)) !== null) {
+      const num = parseFloat(match[1]);
+      if (!isNaN(num) && num > 0) {
+        numbers.push(num);
+      }
+    }
+    
+    // 如果策略1失敗，使用策略2: 分析數字長度模式
+    if (numbers.length < 2 && cleanString.length > 3) {
+      console.log(`[TW Number Extractor] Trying pattern-based separation for: "${cleanString}"`);
+      
+      // 策略2a: 尋找常見的股利數字模式
+      // 現金股利通常是 X.XXXX 格式 (1-2位整數 + 2-4位小數)
+      // 股票股利通常是 X.XX 或 X.XXXX 格式 (1位整數 + 2-4位小數)
+      
+      const patterns = [
+        // Pattern: 1-2位數.2-4位數 + 1位數.2-4位數
+        /^(\d{1,2}\.\d{2,4})(\d{1}\.\d{2,4})$/,
+        // Pattern: 1-2位數.3-4位數 + 1-2位數.1-3位數  
+        /^(\d{1,2}\.\d{3,4})(\d{1,2}\.\d{1,3})$/,
+        // Pattern: 1位數.3-4位數 + 1位數.2-3位數
+        /^(\d{1}\.\d{3,4})(\d{1}\.\d{2,3})$/
+      ];
+      
+      for (const pattern of patterns) {
+        const patternMatch = cleanString.match(pattern);
+        if (patternMatch) {
+          const num1 = parseFloat(patternMatch[1]);
+          const num2 = parseFloat(patternMatch[2]);
+          if (!isNaN(num1) && !isNaN(num2) && num1 > 0 && num2 > 0) {
+            console.log(`[TW Number Extractor] Pattern match: ${patternMatch[1]} + ${patternMatch[2]}`);
+            return [num1, num2];
+          }
+        }
+      }
+      
+      // 策略2b: 基於已知長度切分
+      if (cleanString.length >= 6) {
+        // 嘗試不同的切分點
+        for (let i = 2; i <= cleanString.length - 2; i++) {
+          const part1 = cleanString.substring(0, i);
+          const part2 = cleanString.substring(i);
+          
+          if (part1.includes('.') && part2.includes('.')) {
+            const num1 = parseFloat(part1);
+            const num2 = parseFloat(part2);
+            if (!isNaN(num1) && !isNaN(num2) && num1 > 0 && num2 > 0) {
+              console.log(`[TW Number Extractor] Split at position ${i}: ${part1} + ${part2}`);
+              return [num1, num2];
+            }
+          }
+        }
+      }
+    }
+    
+    console.log(`[TW Number Extractor] Extracted numbers: ${JSON.stringify(numbers)}`);
+    return numbers.filter(n => n > 0); // 只返回正數
   },
 
   /**
@@ -277,7 +431,7 @@ export const yahooFinanceTWTransforms: YahooFinanceTWTransforms = {
     
     try {
       // 動態導入cheerio (如果在HTTP模式下可用)
-      if (typeof window === 'undefined') {
+      if (typeof globalThis === 'undefined' || typeof (globalThis as any).window === 'undefined') {
         // Node.js環境 - 但這裡我們在transform中，無法直接使用cheerio
         // 將使用文本解析作為替代
         console.log('[TW HTML Parser] Cheerio not available in transform context, using text parsing');
@@ -379,7 +533,7 @@ export const yahooFinanceTWTransforms: YahooFinanceTWTransforms = {
         } else {
           // 第三步：使用文本模式匹配解析
           console.log('[TW Dividend Parser] Falling back to text pattern parsing');
-          results = yahooFinanceTWTransforms.parseTextPatterns(textContent, format);
+          results = yahooFinanceTWTransforms.parseTextPatterns(textContent, format as 'rich' | 'simple' | 'mixed' | 'unknown');
         }
       }
 
@@ -426,8 +580,8 @@ export const yahooFinanceTWTransforms: YahooFinanceTWTransforms = {
       const years = (textContent.match(/20\d{2}/g) || []);
       if (years.length > 10) {
         // 找到第一個年度和最後一個年度之間的內容
-        const firstYearIndex = textContent.indexOf(years[0]);
-        const lastYearIndex = textContent.lastIndexOf(years[years.length - 1]);
+        const firstYearIndex = textContent.indexOf(years[0] || '');
+        const lastYearIndex = textContent.lastIndexOf(years[years.length - 1] || '');
         if (lastYearIndex > firstYearIndex) {
           tableContent = textContent.substring(firstYearIndex, lastYearIndex + 2000);
           console.log('[TW Yahoo Finance Table Parser] Found dividend table via method 3, length:', tableContent.length);
@@ -497,12 +651,14 @@ export const yahooFinanceTWTransforms: YahooFinanceTWTransforms = {
       }
     }
     
-    // Pattern 3: 歷史股利格式 (含股票股利) - 使用更智能的數字分離
-    // 原始格式: 2006200520044.50.50--2005/08/11...
-    // 需要智能分離: 2006 2005 4.5 0.5 的數字組合
-    const historicalPattern = /(\d{4})(\d{4})(\d+\.?\d*)(\d+\.?\d*)--(\d{4}\/\d{2}\/\d{2})(\d{4}\/\d{2}\/\d{2})(\d{4}\/\d{2}\/\d{2})(\d{4}\/\d{2}\/\d{2})/g;
+    // Pattern 3: 歷史股利格式 (含股票股利) - 改進的智能數字分離
+    // 原始格式: 20092008X.XXYYY--2009/MM/DD...
+    // 智能分離: 年度1 年度2 現金股利 股票股利 的數字組合
+    const historicalPattern = /(\d{4})(\d{4})([0-9\.]+)([0-9\.]+)--(\d{4}\/\d{2}\/\d{2})(\d{4}\/\d{2}\/\d{2})(\d{4}\/\d{2}\/\d{2})(\d{4}\/\d{2}\/\d{2})/g;
     
     console.log('[TW Yahoo Finance Table Parser] Trying historical pattern...');
+    console.log(`[TW Yahoo Finance Table Parser] Table content length: ${tableContent.length}, preview: "${tableContent.substring(0, 200)}"`);
+    
     while ((match = historicalPattern.exec(tableContent)) !== null) {
       const currentYear = match[1];
       const previousYear = match[2];
@@ -512,65 +668,94 @@ export const yahooFinanceTWTransforms: YahooFinanceTWTransforms = {
       const exRightsDate = match[6];
       const cashPaymentDate = match[7];
       
-      console.log(`[TW Historical Pattern Debug] Raw match: current=${currentYear}, previous=${previousYear}, cash="${cashDividendStr}", stock="${stockDividendStr}"`);
+      console.log(`[TW Historical Pattern Debug] Raw match found:`);
+      console.log(`  - Payment Year: ${currentYear}`);
+      console.log(`  - Fiscal Year: ${previousYear}`);
+      console.log(`  - Cash Dividend String: "${cashDividendStr}"`);
+      console.log(`  - Stock Dividend String: "${stockDividendStr}"`);
+      console.log(`  - Ex-Dividend Date: ${exDividendDate}`);
+      console.log(`  - Ex-Rights Date: ${exRightsDate}`);
       
-      // 智能解析現金股利 - 處理年度與股利連接的情況
-      let cashDividend = parseFloat(cashDividendStr);
-      let correctionApplied = false;
+      // 使用動態精確數字分離 - 完全避免硬編碼
+      let cashDividend = null;
+      let stockDividend = null;
       
-      // 檢查是否包含 5+ 位數字（可能包含年度資訊）
-      if (cashDividendStr.length >= 5 && cashDividend > 1000) {
-        // 案例 1: "20044.5" -> 年度 "2004" + 股利 "4.5"
-        const yearDividendMatch = cashDividendStr.match(/^(\d{4})(\d{1,3}\.?\d*)$/);
-        if (yearDividendMatch) {
-          const yearPart = yearDividendMatch[1];
-          const dividendPart = parseFloat(yearDividendMatch[2]);
-          
-          // 驗證年度部分是否合理 (1990-2030)
-          const yearNum = parseInt(yearPart);
-          if (yearNum >= 1990 && yearNum <= 2030 && dividendPart > 0 && dividendPart < 500) {
-            console.log(`[TW Historical Pattern Debug] Separated "${cashDividendStr}" into year=${yearPart} + dividend=${dividendPart}`);
-            cashDividend = dividendPart;
-            correctionApplied = true;
-          }
-        }
+      // 嘗試解析組合字串（如: "2.9997.00" 或 "0.60371.4087"）
+      const combinedStr = cashDividendStr + stockDividendStr;
+      console.log(`[TW Historical Pattern Debug] Combined string for analysis: "${combinedStr}"`);
+      
+      // 使用精確數字分離函數
+      const extractedNumbers = yahooFinanceTWTransforms.extractPreciseNumbers(combinedStr);
+      console.log(`[TW Historical Pattern Debug] Extracted numbers: ${JSON.stringify(extractedNumbers)}`);
+      
+      if (extractedNumbers.length >= 2) {
+        // 有兩個數字 - 需要判斷哪個是現金股利，哪個是股票股利
+        // 根據Yahoo Finance Taiwan的表格結構，通常第一個是現金股利，第二個是股票股利
+        cashDividend = extractedNumbers[0];
+        stockDividend = extractedNumbers[1];
         
-        // 案例 2: 如果還是很大，嘗試其他分離方式
-        if (!correctionApplied && cashDividend > 10000) {
-          // 尋找最後的合理股利數字部分 (通常是小數點後有1-2位)
-          const patternMatch = cashDividendStr.match(/(\d{1,3}\.\d{1,2})$/);
-          if (patternMatch) {
-            const extractedDividend = parseFloat(patternMatch[1]);
-            if (extractedDividend > 0 && extractedDividend < 200) {
-              console.log(`[TW Historical Pattern Debug] Extracted dividend ${extractedDividend} from long string "${cashDividendStr}"`);
-              cashDividend = extractedDividend;
-              correctionApplied = true;
-            }
-          }
+        console.log(`[TW Historical Pattern Debug] Two numbers found: cash=${cashDividend}, stock=${stockDividend}`);
+      } else if (extractedNumbers.length === 1) {
+        // 只有一個數字 - 需要從原始字串位置判斷類型
+        const singleNumber = extractedNumbers[0];
+        
+        // 分析原始字串結構來判斷是現金股利還是股票股利
+        const originalCashStr = cashDividendStr.replace(/[^0-9\.]/g, '');
+        const originalStockStr = stockDividendStr.replace(/[^0-9\.]/g, '');
+        
+        // 如果現金股利字串包含這個數字，那就是現金股利
+        if (originalCashStr.includes(singleNumber.toString()) || 
+            parseFloat(originalCashStr) === singleNumber) {
+          cashDividend = singleNumber;
+          stockDividend = null;
+          console.log(`[TW Historical Pattern Debug] Single number is cash dividend: ${cashDividend}`);
+        } else {
+          cashDividend = null;
+          stockDividend = singleNumber;
+          console.log(`[TW Historical Pattern Debug] Single number is stock dividend: ${stockDividend}`);
         }
+      } else {
+        // 無法解析 - 嘗試單獨解析每個字串
+        const cashNum = parseFloat(cashDividendStr);
+        const stockNum = parseFloat(stockDividendStr);
+        
+        if (!isNaN(cashNum) && cashNum > 0) cashDividend = cashNum;
+        if (!isNaN(stockNum) && stockNum > 0) stockDividend = stockNum;
+        
+        console.log(`[TW Historical Pattern Debug] Fallback individual parsing: cash=${cashDividend}, stock=${stockDividend}`);
       }
-      
-      const stockDividend = parseFloat(stockDividendStr);
       
       // 使用前一年作為財務年度 (更符合股利發放邏輯)
       const fiscalYear = previousYear;
       const yearPeriod = `${fiscalYear}-Y`;
       
-      // 使用動態驗證取代硬編碼檢查
-      if (yahooFinanceTWTransforms.validateDividendData(fiscalYear, cashDividend)) {
-        const exists = results.some(r => r.fiscalPeriod === yearPeriod);
-        if (!exists) {
-          results.push({
-            fiscalPeriod: yearPeriod,
-            cashDividend: cashDividend,
-            stockDividend: stockDividend > 0 ? stockDividend : null,
-            cashYield: null,
-            exDividendDate: exDividendDate,
-            exRightsDate: stockDividend > 0 ? exRightsDate : null,
-            paymentDate: cashPaymentDate
-          });
-          
-          console.log(`[TW Yahoo Finance Table Parser] Found historical: ${yearPeriod} = ${cashDividend}${stockDividend > 0 ? '/' + stockDividend : ''}`);
+      // 改進的動態驗證 - 支援現金股利或股票股利
+      const hasCashDividend = cashDividend !== null && cashDividend > 0;
+      const hasStockDividend = stockDividend !== null && stockDividend > 0;
+      
+      if (hasCashDividend || hasStockDividend) {
+        // 驗證主要股利類型
+        const primaryValue = hasCashDividend ? cashDividend : stockDividend;
+        if (yahooFinanceTWTransforms.validateDividendData(fiscalYear, primaryValue || 0)) {
+          const exists = results.some(r => r.fiscalPeriod === yearPeriod);
+          if (!exists) {
+            results.push({
+              fiscalPeriod: yearPeriod,
+              cashDividend: hasCashDividend ? cashDividend : null,
+              stockDividend: hasStockDividend ? stockDividend : null,
+              cashYield: null,
+              exDividendDate: exDividendDate,
+              exRightsDate: hasStockDividend ? exRightsDate : null,
+              paymentDate: cashPaymentDate
+            });
+            
+            const dividendInfo = [
+              hasCashDividend ? `cash=${cashDividend}` : '',
+              hasStockDividend ? `stock=${stockDividend}` : ''
+            ].filter(s => s).join(', ');
+            
+            console.log(`[TW Yahoo Finance Table Parser] Found historical: ${yearPeriod} (${dividendInfo})`);
+          }
         }
       }
     }
@@ -643,7 +828,7 @@ export const yahooFinanceTWTransforms: YahooFinanceTWTransforms = {
       if (hasCashDividend) {
         return yahooFinanceTWTransforms.validateDividendData(
           year, 
-          item.cashDividend, 
+          item.cashDividend || 0, 
           item.cashYield || undefined,
           array
         );
@@ -653,7 +838,7 @@ export const yahooFinanceTWTransforms: YahooFinanceTWTransforms = {
       if (hasStockDividend) {
         return yahooFinanceTWTransforms.validateDividendData(
           year, 
-          item.stockDividend, // 用股票股利數值進行基本驗證
+          item.stockDividend || 0, // 用股票股利數值進行基本驗證
           undefined,
           array
         );
@@ -722,7 +907,7 @@ export const yahooFinanceTWTransforms: YahooFinanceTWTransforms = {
       
       // 使用智能數據驗證和全域去重
       const yearPeriod = `${year}-Y`;
-      if (yahooFinanceTWTransforms.validateDividendData(year, total, yieldRate) && !processedPeriods.has(yearPeriod)) {
+      if (yahooFinanceTWTransforms.validateDividendData(year, total, yieldRate || undefined) && !processedPeriods.has(yearPeriod)) {
         processedPeriods.add(yearPeriod);
         
         results.push({
@@ -1020,7 +1205,7 @@ export const yahooFinanceTWTransforms: YahooFinanceTWTransforms = {
    */
   parseHistoricalAnnualData: (textContent: string): TWDividendData[] => {
     const results: TWDividendData[] = [];
-    console.log('[TW Historical Annual Parser] Starting historical annual data parsing...');
+    console.log('[TW Historical Annual Parser] Starting enhanced historical annual data parsing...');
     
     // Debug: 查找包含歷史年份的內容區段
     const year1997Index = textContent.indexOf('1997');
@@ -1036,35 +1221,34 @@ export const yahooFinanceTWTransforms: YahooFinanceTWTransforms = {
       console.log(`[TW Historical Annual Parser Debug] Context around 1997: "${context.replace(/\s+/g, ' ')}"`);
     }
     
-    // Pattern 1: 根據實際內容結構的歷史數據解析器
-    // 實際格式: "20012000-7.00---2001/09/30---", "19982.50---1999/12/31----", "1997-3.115---1998/07/31---"
-    // 格式說明: 發放年度+前期年度+現金股利+股票股利+日期資訊
-    const compactHistoricalPattern = /(199[7-9]|20[0-2]\d)(199[6-9]|20[0-2]\d)(\d{1,3}\.?\d{0,3}|\-)(\d{1,2}\.?\d{0,3}|\-)(\-{3})((199[7-9]|20[0-2]\d)\/\d{2}\/\d{2})?/g;
+    // Enhanced Pattern 1: 標準表格行格式 (適用大部分歷史數據)
+    // 格式: 2008 2007 3.0251 0.0504 - - - 2008/07/16 2008/07/16 2008/08/
+    const standardTablePattern = /(199[0-9]|20[0-2][0-9])\s+(199[0-9]|20[0-2][0-9])\s+([0-9]+\.?[0-9]*|\-)\s+([0-9]+\.?[0-9]*|\-)\s+[\-\s]*\s+(199[0-9]|20[0-2][0-9])\/[0-9]{2}\/[0-9]{2}/g;
     
     let match;
-    while ((match = compactHistoricalPattern.exec(textContent)) !== null) {
+    while ((match = standardTablePattern.exec(textContent)) !== null) {
       const paymentYear = match[1];
       const fiscalYear = match[2];
       const cashDividendStr = match[3];
       const stockDividendStr = match[4];
-      const dateStr = match[6];
+      const exDate = match[5];
       
-      console.log(`[TW Historical Annual Parser] Compact match: payment=${paymentYear} fiscal=${fiscalYear} cash="${cashDividendStr}" stock="${stockDividendStr}" date="${dateStr}"`);
+      console.log(`[TW Historical Annual Parser] Standard table match: payment=${paymentYear} fiscal=${fiscalYear} cash="${cashDividendStr}" stock="${stockDividendStr}" exDate="${exDate}"`);
       
       // 解析現金股利
       let cashDividend = null;
-      if (cashDividendStr !== '-') {
+      if (cashDividendStr !== '-' && cashDividendStr !== '') {
         const cashVal = parseFloat(cashDividendStr);
-        if (!isNaN(cashVal) && cashVal > 0.1 && cashVal < 200) {
+        if (!isNaN(cashVal) && cashVal >= 0.01 && cashVal < 500) {
           cashDividend = cashVal;
         }
       }
       
       // 解析股票股利
       let stockDividend = null;
-      if (stockDividendStr !== '-') {
+      if (stockDividendStr !== '-' && stockDividendStr !== '') {
         const stockVal = parseFloat(stockDividendStr);
-        if (!isNaN(stockVal) && stockVal > 0 && stockVal < 50) {
+        if (!isNaN(stockVal) && stockVal >= 0.01 && stockVal < 100) {
           stockDividend = stockVal;
         }
       }
@@ -1072,7 +1256,7 @@ export const yahooFinanceTWTransforms: YahooFinanceTWTransforms = {
       // 確保至少有一種股利
       if (cashDividend !== null || stockDividend !== null) {
         const yearNum = parseInt(fiscalYear);
-        if (yearNum >= 1997 && yearNum <= 2025) {
+        if (yearNum >= 1990 && yearNum <= 2025) {
           
           // 檢查是否已存在相同年度的記錄
           const existingRecord = results.find(r => r.fiscalPeriod === `${fiscalYear}-Y`);
@@ -1082,12 +1266,325 @@ export const yahooFinanceTWTransforms: YahooFinanceTWTransforms = {
               cashDividend: cashDividend,
               stockDividend: stockDividend,
               cashYield: null,
-              exDividendDate: dateStr || null,
-              exRightsDate: stockDividend ? dateStr : null,
+              exDividendDate: `${exDate}`,
+              exRightsDate: stockDividend ? `${exDate}` : null,
               paymentDate: null
             });
             
-            console.log(`[TW Historical Annual Parser] Found compact historical: ${fiscalYear}-Y, cash=${cashDividend}, stock=${stockDividend}, date=${dateStr}`);
+            console.log(`[TW Historical Annual Parser] Found standard historical: ${fiscalYear}-Y, cash=${cashDividend}, stock=${stockDividend}, date=${exDate}`);
+          }
+        }
+      }
+    }
+    
+    // Enhanced Pattern 2: 純現金股利格式
+    // 格式: 2015 2014 51.00 - - 2.960 2015/08/17 - 2015/09/
+    const cashOnlyPattern = /(199[0-9]|20[0-2][0-9])\s+(199[0-9]|20[0-2][0-9])\s+([0-9]+\.?[0-9]*)\s+\-\s+\-[\s\d\.]*\s+(199[0-9]|20[0-2][0-9])\/[0-9]{2}\/[0-9]{2}/g;
+    
+    while ((match = cashOnlyPattern.exec(textContent)) !== null) {
+      const paymentYear = match[1];
+      const fiscalYear = match[2];
+      const cashDividendStr = match[3];
+      const exDate = match[4];
+      
+      console.log(`[TW Historical Annual Parser] Cash-only match: payment=${paymentYear} fiscal=${fiscalYear} cash="${cashDividendStr}" exDate="${exDate}"`);
+      
+      const cashDividend = parseFloat(cashDividendStr);
+      if (!isNaN(cashDividend) && cashDividend >= 0.01 && cashDividend < 500) {
+        const yearNum = parseInt(fiscalYear);
+        if (yearNum >= 1990 && yearNum <= 2025) {
+          
+          // 檢查是否已存在相同年度的記錄
+          const existingRecord = results.find(r => r.fiscalPeriod === `${fiscalYear}-Y`);
+          if (!existingRecord) {
+            results.push({
+              fiscalPeriod: `${fiscalYear}-Y`,
+              cashDividend: cashDividend,
+              stockDividend: null,
+              cashYield: null,
+              exDividendDate: `${exDate}`,
+              exRightsDate: null,
+              paymentDate: null
+            });
+            
+            console.log(`[TW Historical Annual Parser] Found cash-only historical: ${fiscalYear}-Y, cash=${cashDividend}, date=${exDate}`);
+          }
+        }
+      }
+    }
+    
+    // Enhanced Pattern 3: 純股票股利格式
+    // 格式: 2001 2000 - 7.00 - - - 2001/09/30
+    const stockOnlyPattern = /(199[0-9]|20[0-2][0-9])\s+(199[0-9]|20[0-2][0-9])\s+\-\s+([0-9]+\.?[0-9]*)\s+[\-\s]*\s+(199[0-9]|20[0-2][0-9])\/[0-9]{2}\/[0-9]{2}/g;
+    
+    while ((match = stockOnlyPattern.exec(textContent)) !== null) {
+      const paymentYear = match[1];
+      const fiscalYear = match[2];
+      const stockDividendStr = match[3];
+      const exDate = match[4];
+      
+      console.log(`[TW Historical Annual Parser] Stock-only match: payment=${paymentYear} fiscal=${fiscalYear} stock="${stockDividendStr}" exDate="${exDate}"`);
+      
+      const stockDividend = parseFloat(stockDividendStr);
+      if (!isNaN(stockDividend) && stockDividend >= 0.01 && stockDividend < 100) {
+        const yearNum = parseInt(fiscalYear);
+        if (yearNum >= 1990 && yearNum <= 2025) {
+          
+          // 檢查是否已存在相同年度的記錄
+          const existingRecord = results.find(r => r.fiscalPeriod === `${fiscalYear}-Y`);
+          if (!existingRecord) {
+            results.push({
+              fiscalPeriod: `${fiscalYear}-Y`,
+              cashDividend: null,
+              stockDividend: stockDividend,
+              cashYield: null,
+              exDividendDate: null,
+              exRightsDate: `${exDate}`,
+              paymentDate: null
+            });
+            
+            console.log(`[TW Historical Annual Parser] Found stock-only historical: ${fiscalYear}-Y, stock=${stockDividend}, date=${exDate}`);
+          }
+        }
+      }
+    }
+    
+    // Enhanced Pattern 4: 精確表格行格式 (基於Yahoo Finance台灣版的實際欄位順序)
+    // 完整格式: "發放年度 財務年度 現金股利 股票股利 填息天數 股價 除息日 除權日 發放日期"
+    // 範例: "2009 2008 2.9999 0.05 - - 2009/07/15 2009/07/15 2009/08/"
+    const preciseTableRowPattern = /(19\d{2}|20\d{2})\s+(19\d{2}|20\d{2})\s+([0-9]+\.[0-9]+)\s+([0-9]+\.[0-9]+)\s+[\-\s]*[\-\s]*\s+(19\d{2}|20\d{2})\/[0-9]{2}\/[0-9]{2}\s+(19\d{2}|20\d{2})\/[0-9]{2}\/[0-9]{2}/g;
+    
+    while ((match = preciseTableRowPattern.exec(textContent)) !== null) {
+      const paymentYear = match[1];
+      const fiscalYear = match[2];
+      const cashDividendStr = match[3];  // 第3個位置固定是現金股利
+      const stockDividendStr = match[4]; // 第4個位置固定是股票股利
+      const exDividendDate = match[5];
+      const exRightsDate = match[6];
+      
+      console.log(`[TW Historical Annual Parser] Precise table row: payment=${paymentYear} fiscal=${fiscalYear} cash="${cashDividendStr}" stock="${stockDividendStr}"`);
+      
+      // 基於欄位位置直接分配，不需要智能判斷
+      const cashDividend = parseFloat(cashDividendStr);
+      const stockDividend = parseFloat(stockDividendStr);
+      
+      // 驗證數值合理性
+      if (!isNaN(cashDividend) && !isNaN(stockDividend) && 
+          cashDividend > 0 && stockDividend > 0) {
+        
+        console.log(`[TW Historical Annual Parser] Position-based assignment: cash=${cashDividend}, stock=${stockDividend}`);
+        
+        // 使用動態驗證確保年份和數值合理性
+        if (yahooFinanceTWTransforms.validateDividendData(fiscalYear, cashDividend)) {
+          const existingRecord = results.find(r => r.fiscalPeriod === `${fiscalYear}-Y`);
+          if (!existingRecord) {
+            results.push({
+              fiscalPeriod: `${fiscalYear}-Y`,
+              cashDividend: cashDividend,
+              stockDividend: stockDividend,
+              cashYield: null,
+              exDividendDate: exDividendDate,
+              exRightsDate: exRightsDate,
+              paymentDate: null
+            });
+            
+            console.log(`[TW Historical Annual Parser] Found precise table row: ${fiscalYear}-Y, cash=${cashDividend}, stock=${stockDividend}`);
+          }
+        }
+      }
+    }
+    
+    // Enhanced Pattern 5: 精確數字分離的緊密格式解析
+    // 策略：先識別數字邊界，再根據上下文分配角色
+    const compactPattern = /(19\d{2}|20\d{2})(19\d{2}|20\d{2})([0-9\.\-]+)(\-{2,})((19\d{2}|20\d{2})\/\d{2}\/\d{2})?/g;
+    
+    while ((match = compactPattern.exec(textContent)) !== null) {
+      const paymentYear = match[1];
+      const fiscalYear = match[2];
+      const numberString = match[3]; // 包含連接數字的字符串
+      const dateStr = match[5];
+      
+      console.log(`[TW Historical Annual Parser] Compact match: payment=${paymentYear} fiscal=${fiscalYear} numbers="${numberString}" date="${dateStr}"`);
+      
+      // 精確數字分離 - 識別所有數字邊界
+      const numbers = yahooFinanceTWTransforms.extractPreciseNumbers(numberString);
+      
+      if (numbers.length >= 1) {
+        console.log(`[TW Historical Annual Parser] Extracted numbers: ${JSON.stringify(numbers)}`);
+        
+        // 基於數字特徵和位置進行智能分配
+        let cashDividend: number | null = null;
+        let stockDividend: number | null = null;
+        
+        if (numbers.length === 1) {
+          // 單一數字 - 使用已有數據的統計特徵進行動態判斷
+          const singleNumber = numbers[0];
+          console.log(`[TW Historical Annual Parser] Single number found: ${singleNumber}`);
+          
+          // 基於已解析數據動態判斷數字類型
+          const existingCash = results.filter(r => r.cashDividend && r.cashDividend > 0).map(r => r.cashDividend!);
+          const existingStock = results.filter(r => r.stockDividend && r.stockDividend > 0).map(r => r.stockDividend!);
+          
+          let assignedAsCash = false;
+          let assignedAsStock = false;
+          
+          // 策略1: 如果有現金股利統計數據，檢查是否符合現金股利模式
+          if (existingCash.length > 0) {
+            const cashStats = yahooFinanceTWTransforms.calculateDividendStatistics(existingCash);
+            const cashRange = {
+              min: Math.max(0.01, cashStats.min * 0.1),
+              max: Math.min(100, cashStats.max * 10)
+            };
+            
+            if (singleNumber >= cashRange.min && singleNumber <= cashRange.max) {
+              cashDividend = singleNumber;
+              stockDividend = null;
+              assignedAsCash = true;
+              console.log(`[TW Historical Annual Parser] Assigned as cash dividend (statistical match): ${singleNumber}`);
+            }
+          }
+          
+          // 策略2: 如果沒有被分配為現金股利，檢查股票股利模式
+          if (!assignedAsCash && existingStock.length > 0) {
+            const stockStats = yahooFinanceTWTransforms.calculateDividendStatistics(existingStock);
+            const stockRange = {
+              min: Math.max(0.01, stockStats.min * 0.1),
+              max: Math.min(100, stockStats.max * 10)
+            };
+            
+            if (singleNumber >= stockRange.min && singleNumber <= stockRange.max) {
+              cashDividend = null;
+              stockDividend = singleNumber;
+              assignedAsStock = true;
+              console.log(`[TW Historical Annual Parser] Assigned as stock dividend (statistical match): ${singleNumber}`);
+            }
+          }
+          
+          // 策略3: 如果沒有統計數據或都不匹配，採用通用判斷（現金股利更常見）
+          if (!assignedAsCash && !assignedAsStock) {
+            // 基於數值特徵：小數位數較多的通常是現金股利，整數或小數位少的可能是股票股利
+            const decimalPlaces = (singleNumber.toString().split('.')[1] || '').length;
+            
+            if (decimalPlaces >= 2) {
+              cashDividend = singleNumber;
+              stockDividend = null;
+              console.log(`[TW Historical Annual Parser] Assigned as cash dividend (decimal precision): ${singleNumber}`);
+            } else {
+              cashDividend = null;
+              stockDividend = singleNumber;
+              console.log(`[TW Historical Annual Parser] Assigned as stock dividend (lower precision): ${singleNumber}`);
+            }
+          }
+        } else if (numbers.length === 2) {
+          // 策略：較大或精度高的數字通常是現金股利，較小的是股票股利
+          const [num1, num2] = numbers;
+          
+          // 動態範圍檢查 - 基於已解析數據確定合理範圍
+          const existingCash = results.filter(r => r.cashDividend && r.cashDividend > 0).map(r => r.cashDividend!);
+          const existingStock = results.filter(r => r.stockDividend && r.stockDividend > 0).map(r => r.stockDividend!);
+          
+          let cashRange = { min: 0.1, max: 50 }; // 默認範圍
+          let stockRange = { min: 0.01, max: 100 }; // 默認範圍
+          
+          if (existingCash.length > 0) {
+            const cashStats = yahooFinanceTWTransforms.calculateDividendStatistics(existingCash);
+            cashRange = {
+              min: Math.max(0.1, cashStats.min * 0.1),
+              max: Math.min(50, cashStats.max * 10)
+            };
+          }
+          
+          if (existingStock.length > 0) {
+            const stockStats = yahooFinanceTWTransforms.calculateDividendStatistics(existingStock);
+            stockRange = {
+              min: Math.max(0.01, stockStats.min * 0.1),
+              max: Math.min(100, stockStats.max * 10)
+            };
+          }
+          
+          const num1InCashRange = num1 >= cashRange.min && num1 <= cashRange.max;
+          const num2InCashRange = num2 >= cashRange.min && num2 <= cashRange.max;
+          const num1InStockRange = num1 >= stockRange.min && num1 <= stockRange.max;
+          const num2InStockRange = num2 >= stockRange.min && num2 <= stockRange.max;
+          
+          if (num1InCashRange && num2InStockRange) {
+            cashDividend = num1;
+            stockDividend = num2;
+          } else if (num2InCashRange && num1InStockRange) {
+            cashDividend = num2;
+            stockDividend = num1;
+          } else if (num1InCashRange) {
+            cashDividend = num1;
+            stockDividend = num2InStockRange ? num2 : null;
+          } else if (num2InCashRange) {
+            cashDividend = num2;
+            stockDividend = num1InStockRange ? num1 : null;
+          } else {
+            // 都不在預期範圍，使用大小判斷
+            if (num1 > num2) {
+              cashDividend = num1;
+              stockDividend = num2;
+            } else {
+              cashDividend = num2;
+              stockDividend = num1;
+            }
+          }
+        } else if (numbers.length > 2) {
+          // 多個數字，選擇最合理的兩個（使用動態範圍）
+          const existingCash = results.filter(r => r.cashDividend && r.cashDividend > 0).map(r => r.cashDividend!);
+          const existingStock = results.filter(r => r.stockDividend && r.stockDividend > 0).map(r => r.stockDividend!);
+          
+          let cashRange = { min: 0.1, max: 50 };
+          let stockRange = { min: 0.01, max: 100 };
+          
+          if (existingCash.length > 0) {
+            const cashStats = yahooFinanceTWTransforms.calculateDividendStatistics(existingCash);
+            cashRange = {
+              min: Math.max(0.1, cashStats.min * 0.1),
+              max: Math.min(50, cashStats.max * 10)
+            };
+          }
+          
+          if (existingStock.length > 0) {
+            const stockStats = yahooFinanceTWTransforms.calculateDividendStatistics(existingStock);
+            stockRange = {
+              min: Math.max(0.01, stockStats.min * 0.1),
+              max: Math.min(100, stockStats.max * 10)
+            };
+          }
+          
+          const cashCandidates = numbers.filter(n => n >= cashRange.min && n <= cashRange.max);
+          const stockCandidates = numbers.filter(n => n >= stockRange.min && n <= stockRange.max);
+          
+          if (cashCandidates.length > 0) {
+            cashDividend = cashCandidates[0]; // 選擇第一個合理的現金股利
+          }
+          if (stockCandidates.length > 0) {
+            // 選擇不是現金股利的股票股利候選
+            stockDividend = stockCandidates.find(n => n !== cashDividend) || null;
+          }
+        }
+        
+        console.log(`[TW Historical Annual Parser] Precise assignment: cash=${cashDividend}, stock=${stockDividend}`);
+        
+        // 動態驗證解析結果
+        if (cashDividend !== null || stockDividend !== null) {
+          const primaryValue = cashDividend || stockDividend || 0;
+          if (primaryValue > 0 && yahooFinanceTWTransforms.validateDividendData(fiscalYear, primaryValue)) {
+            const existingRecord = results.find(r => r.fiscalPeriod === `${fiscalYear}-Y`);
+            if (!existingRecord) {
+              results.push({
+                fiscalPeriod: `${fiscalYear}-Y`,
+                cashDividend: cashDividend,
+                stockDividend: stockDividend,
+                cashYield: null,
+                exDividendDate: dateStr || null,
+                exRightsDate: stockDividend ? dateStr : null,
+                paymentDate: null
+              });
+              
+              console.log(`[TW Historical Annual Parser] Found precise compact: ${fiscalYear}-Y, cash=${cashDividend}, stock=${stockDividend}`);
+            }
           }
         }
       }
@@ -1126,9 +1623,9 @@ export const yahooFinanceTWTransforms: YahooFinanceTWTransforms = {
     
     // Pattern 3: 純股票股利格式 - 無現金股利，僅股票股利
     // 範例: 2001 2000 - 7.00 - - - 2001/09/30
-    const stockOnlyPattern = /(19|20)\d{2}\s+(19|20)\d{2}\s+\-\s+(\d+\.\d+)\s+\-\s+\-\s+\-\s+(19|20)\d{2}\/\d{2}\/\d{2}/g;
+    const legacyStockOnlyPattern = /(19|20)\d{2}\s+(19|20)\d{2}\s+\-\s+(\d+\.\d+)\s+\-\s+\-\s+\-\s+(19|20)\d{2}\/\d{2}\/\d{2}/g;
     
-    while ((match = stockOnlyPattern.exec(textContent)) !== null) {
+    while ((match = legacyStockOnlyPattern.exec(textContent)) !== null) {
       const paymentYear = match[1];
       const fiscalYear = match[2];
       const stockDividend = parseFloat(match[3]);
