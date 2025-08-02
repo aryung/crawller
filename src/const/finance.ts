@@ -54,6 +54,7 @@ export const FINANCIAL_UNITS = {
 // 單位轉換倍數
 export const UNIT_MULTIPLIERS = {
   MILLION_YEN: 1000000,    // 百万円 → 実際の円
+  THOUSAND_TWD: 1000,      // 仟元 → 元 (台灣)
   PERCENTAGE: 0.01         // % → 小数 (例: 76.28% → 0.7628)
 } as const;
 
@@ -175,6 +176,25 @@ export function isDateHeader(header: string): boolean {
 }
 
 /**
+ * 根據台灣財務單位判斷數值轉換方式
+ */
+export function getTWUnitMultiplier(unit: string): number {
+  if (unit.includes(TW_FINANCIAL_UNITS.THOUSAND_TWD)) {
+    return UNIT_MULTIPLIERS.THOUSAND_TWD;
+  } else if (unit.includes(TW_FINANCIAL_UNITS.PERCENTAGE) || unit.includes(TW_FINANCIAL_UNITS.GROWTH_RATE)) {
+    return UNIT_MULTIPLIERS.PERCENTAGE;
+  }
+  return 1; // 無需轉換
+}
+
+/**
+ * 檢查是否為台灣仟元單位
+ */
+export function isTWThousandUnit(text: string): boolean {
+  return text.includes(TW_FINANCIAL_UNITS.THOUSAND_TWD);
+}
+
+/**
  * 根據實際表格標題動態判斷數據類型
  */
 export function detectDataTypeFromHeaders(headers: string[]): 'performance' | 'financials' | 'cashflow' {
@@ -226,14 +246,53 @@ export const YAHOO_FINANCE_TW_DIVIDEND_HEADERS = {
   PAYMENT_DATE: '股利發放日'
 } as const;
 
+// Yahoo Finance Taiwan Revenue 頁面表格標題常數
+export const YAHOO_FINANCE_TW_REVENUE_HEADERS = {
+  REVENUE: '營收',
+  MONTHLY_REVENUE: '單月合併',
+  MONTHLY_GROWTH: '月增率',
+  YEAR_OVER_YEAR_GROWTH: '年增率',
+  CUMULATIVE_REVENUE: '累計營收',
+  CUMULATIVE_GROWTH: '累計年增率',
+  UNIT: '仟元'
+} as const;
+
 // 台灣財務單位常數
 export const TW_FINANCIAL_UNITS = {
   TWD: '元',           // 新台幣
+  THOUSAND_TWD: '仟元', // 新台幣千元
   PERCENTAGE: '%',     // 百分比
+  GROWTH_RATE: '增率', // 增長率
   DATE: '/',          // 日期分隔符
   YEAR: '年',         // 年度
   MONTH: '月',        // 月份
   DAY: '日'           // 日期
+} as const;
+
+// 台灣財務數據處理常數
+export const TW_DATA_PROCESSING = {
+  DEFAULT_DATE: '1900/01/01',    // 默認日期
+  DATE_SEPARATOR: '/',           // 日期分隔符
+  MONTH_DAY_DEFAULT: '01',       // 默認日和月
+  SORT_ORDER: {
+    DESC: 'desc',               // 降序 (最新在前)
+    ASC: 'asc'                  // 升序 (最舊在前)
+  }
+} as const;
+
+// 台灣營收數據處理常數 - 僅包含基本格式驗證
+export const TW_REVENUE_DATA_CONSTANTS = {
+  // 年份範圍 (基本合理性檢查)
+  MIN_YEAR: 1990,                  // 最早年份 (台灣股市開始電子化交易)
+  MAX_YEAR_OFFSET: 2,              // 相對於當前年份的最大偏移 (允許未來2年)
+  
+  // 月份範圍
+  MIN_MONTH: 1,
+  MAX_MONTH: 12,
+  
+  // 數值基本檢查
+  MIN_REASONABLE_VALUE: 1,         // 最小合理數值 (避免0或負數)
+  MAX_DIGITS: 15                   // 最大數字位數 (避免超大數字錯誤)
 } as const;
 
 // Dividend 欄位到表格標題的映射
@@ -244,6 +303,15 @@ export const TW_DIVIDEND_DATA_FIELD_MAPPING = {
   exDividendDate: YAHOO_FINANCE_TW_DIVIDEND_HEADERS.EX_DIVIDEND_DATE,
   exRightsDate: YAHOO_FINANCE_TW_DIVIDEND_HEADERS.EX_RIGHTS_DATE,
   paymentDate: YAHOO_FINANCE_TW_DIVIDEND_HEADERS.PAYMENT_DATE
+} as const;
+
+// Revenue 欄位到表格標題的映射
+export const TW_REVENUE_DATA_FIELD_MAPPING = {
+  revenue: YAHOO_FINANCE_TW_REVENUE_HEADERS.REVENUE,
+  monthlyGrowth: YAHOO_FINANCE_TW_REVENUE_HEADERS.MONTHLY_GROWTH,
+  yearOverYearGrowth: YAHOO_FINANCE_TW_REVENUE_HEADERS.YEAR_OVER_YEAR_GROWTH,
+  cumulativeRevenue: YAHOO_FINANCE_TW_REVENUE_HEADERS.CUMULATIVE_REVENUE,
+  cumulativeGrowth: YAHOO_FINANCE_TW_REVENUE_HEADERS.CUMULATIVE_GROWTH
 } as const;
 
 // Yahoo Finance US 財務數據相關常數定義
@@ -273,3 +341,4 @@ export const US_FINANCIALS_HEADERS = {
   basicEPS: 'Basic EPS',
   dilutedEPS: 'Diluted EPS'
 } as const;
+

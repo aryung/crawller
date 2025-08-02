@@ -5,9 +5,14 @@
 
 import { 
   YAHOO_FINANCE_TW_DIVIDEND_HEADERS,
+  YAHOO_FINANCE_TW_REVENUE_HEADERS,
   TW_DIVIDEND_DATA_FIELD_MAPPING,
-  TW_FINANCIAL_UNITS
+  TW_REVENUE_DATA_FIELD_MAPPING,
+  TW_FINANCIAL_UNITS,
+  TW_REVENUE_DATA_CONSTANTS,
+  UNIT_MULTIPLIERS
 } from '../../const/finance.js';
+import { sortTWFinancialDataByPeriod } from '../../utils/twFinanceUtils.js';
 
 export interface YahooFinanceTWTransforms {
   cleanStockSymbol: (value: string) => string;
@@ -23,6 +28,7 @@ export interface YahooFinanceTWTransforms {
   parseHTMLTable: (content: string, context?: any) => TWDividendData[];
   parseTextPatterns: (textContent: string, format: 'rich' | 'simple' | 'mixed' | 'unknown') => TWDividendData[];
   structureTWDividendDataFromCells: (cells: string[] | string, context?: any) => TWDividendData[];
+  structureTWRevenueDataFromCells: (cells: string[] | string, context?: any) => TWRevenueData[];
   parseYahooFinanceDividendTable: (textContent: string) => TWDividendData[];
   parseQuarterlyData: (textContent: string, processedPeriods: Set<string>) => TWDividendData[];
   parseAnnualData: (textContent: string, processedPeriods: Set<string>) => TWDividendData[];
@@ -41,6 +47,16 @@ export interface TWDividendData {
   exDividendDate?: string | null;        // 除息日期
   exRightsDate?: string | null;          // 除權日期  
   paymentDate?: string | null;           // 股利發放日期
+}
+
+// 台灣營收數據介面
+export interface TWRevenueData {
+  fiscalPeriod: string | null;          // 財務期間 (YYYY/MM)
+  revenue?: number | null;              // 營收 (仟元)
+  monthlyGrowth?: number | null;        // 月增率 (小數)
+  yearOverYearGrowth?: number | null;   // 年增率 (小數)
+  cumulativeRevenue?: number | null;    // 累計營收 (仟元)
+  cumulativeGrowth?: number | null;     // 累計年增率 (小數)
 }
 
 // 台灣股利數據介面陣列
@@ -1686,6 +1702,13 @@ export const yahooFinanceTWTransforms: YahooFinanceTWTransforms = {
     
     console.log(`[TW Historical Annual Parser] Total historical records found: ${results.length}`);
     return results;
+  },
+
+  /**
+   * 從網頁內容中解析台灣營收數據 - 支援「單月合併 (仟元)」格式
+   */
+  structureTWRevenueDataFromCells: (content: string | string[], context?: any): TWRevenueData[] => {
+    return structureTWRevenueDataFromCells(content);
   }
 };
 
@@ -1728,6 +1751,347 @@ function extractDividendMetricValue(cells: string[], metric: string, period: str
   }
   
   return null;
+}
+
+/**
+ * 解析台灣營收數據 - 重新設計，專注「單月合併 (仟元)」表格解析
+ */
+function structureTWRevenueDataFromCells(content: string | string[]): TWRevenueData[] {
+  const results: TWRevenueData[] = [];
+  
+  // 處理輸入格式
+  let textContent: string;
+  if (Array.isArray(content)) {
+    if (content.length === 0) {
+      console.warn('[TW Revenue Parser] Empty content array');
+      return [];
+    }
+    textContent = content.join(' ');
+  } else if (typeof content === 'string') {
+    textContent = content;
+  } else {
+    console.warn('[TW Revenue Parser] Invalid content input:', typeof content);
+    return [];
+  }
+
+  try {
+    console.log('[TW Revenue Parser] Content length:', textContent.length);
+    console.log('[TW Revenue Parser] Content preview:', textContent.substring(0, 500));
+    
+    // 檢查內容中是否包含營收相關關鍵字
+    const revenueKeywords = ['單月合併', '當月營收', '月增率', '年增率', '仟元'];
+    const hasKeywords = revenueKeywords.some(keyword => textContent.includes(keyword));
+    if (!hasKeywords) {
+      console.warn('[TW Revenue Parser] No revenue keywords found in content');
+      return [];
+    }
+    
+    // 專門解析Yahoo Finance營收表格格式
+    // 表格結構: 年度/月份 | 當月營收 | 月增率% | 去年同月營收 | 年增率% | 當月累計營收 | 去年累計營收 | 年增率%
+    parseYahooFinanceRevenueTable(textContent, results);
+    
+  } catch (error) {
+    console.error('[TW Revenue Parser] Error parsing revenue data:', error);
+  }
+
+  console.log(`[TW Revenue Parser] Extracted ${results.length} revenue records`);
+  
+  // 使用通用排序函數 (最新的在前)
+  return sortTWFinancialDataByPeriod(results, 'desc');
+}
+
+/**
+ * 專門解析Yahoo Finance營收表格 - 簡化版本，專注於數據匹配
+ */
+function parseYahooFinanceRevenueTable(textContent: string, results: TWRevenueData[]): void {
+  console.log('[TW Revenue Table Parser] Starting simplified parsing...');
+  
+  // 從截圖看到的實際格式，嘗試多種模式匹配
+  // 模式1: 基本的年月 + 營收數字模式
+  const basicPattern = /(20\d{2}\/\d{2})\s+([0-9,]{7,})/g;
+  let match;
+  let foundAny = false;
+  
+  while ((match = basicPattern.exec(textContent)) !== null) {
+    const fiscalPeriod = match[1];
+    const revenueStr = match[2];
+    
+    console.log(`[TW Revenue Parser] Found potential data: ${fiscalPeriod} -> ${revenueStr}`);
+    
+    // 簡單解析營收數字
+    const revenue = parseSimpleRevenue(revenueStr);
+    
+    // 使用驗證函數而非硬編碼範圍
+    if (revenue !== null && isValidRevenueData(fiscalPeriod, revenue, null, null)) {
+      const revenueData: TWRevenueData = {
+        fiscalPeriod: fiscalPeriod,
+        revenue: revenue,
+        monthlyGrowth: null,
+        yearOverYearGrowth: null,
+        cumulativeRevenue: null,
+        cumulativeGrowth: null
+      };
+      
+      results.push(revenueData);
+      foundAny = true;
+      console.log(`[TW Revenue Parser] Added validated: ${fiscalPeriod} = ${revenue} 仟元`);
+    } else {
+      console.log(`[TW Revenue Parser] Basic validation failed: ${fiscalPeriod} = ${revenue}`);
+    }
+  }
+  
+  if (!foundAny) {
+    console.log('[TW Revenue Parser] Basic pattern failed, trying content analysis...');
+    // 輸出內容樣本來調試
+    const contentSample = textContent.substring(0, 2000);
+    console.log('[TW Revenue Parser] Content sample:', contentSample);
+    
+    // 嘗試尋找營收相關的關鍵字
+    if (textContent.includes('營收') || textContent.includes('仟元') || textContent.includes('2024') || textContent.includes('2025')) {
+      console.log('[TW Revenue Parser] Found revenue keywords, but no data parsed');
+      
+      // 回到最原始但有效的模式來匹配數據
+      const originalPattern = /(20\d{2}\/\d{2})[^0-9]*([0-9,]{6,})/g;
+      
+      console.log('[TW Revenue Parser] Using original working pattern...');
+      let foundMatches = 0;
+      
+      // 使用原始有效模式
+      while ((match = originalPattern.exec(textContent)) !== null) {
+        const period = match[1];
+        const value = match[2];
+        console.log(`[TW Revenue Parser] Flexible match: ${period} -> ${value}`);
+        foundMatches++;
+        
+        const revenue = parseSimpleRevenue(value);
+        // 移除硬編碼範圍，改用現有的驗證函數
+        if (revenue !== null && isValidRevenueData(period, revenue, null, null)) {
+          results.push({
+            fiscalPeriod: period,
+            revenue: revenue,
+            monthlyGrowth: null,
+            yearOverYearGrowth: null,
+            cumulativeRevenue: null,
+            cumulativeGrowth: null
+          });
+          console.log(`[TW Revenue Parser] Added validated data: ${period} = ${revenue} 仟元`);
+        } else {
+          console.log(`[TW Revenue Parser] Validation failed for: ${period} = ${revenue}`);
+        }
+      }
+      
+      console.log(`[TW Revenue Parser] Original pattern found ${foundMatches} matches`);
+    }
+  }
+}
+
+/**
+ * 智能營收數字解析 - 自動單位轉換
+ */
+function parseSimpleRevenue(valueStr: string): number | null {
+  if (!valueStr) return null;
+  
+  // 移除逗號和空白，保留數字
+  const cleanValue = valueStr.replace(/[,\s]/g, '');
+  const numValue = parseInt(cleanValue, 10);
+  
+  // 基本檢查 - 避免科學記號和不合理數值
+  if (isNaN(numValue) || numValue <= 0) {
+    return null;
+  }
+  
+  // 檢查是否為科學記號格式
+  if (cleanValue.includes('e') || cleanValue.includes('E') || numValue.toString().includes('e')) {
+    console.warn(`[TW Revenue Parser] Scientific notation detected in parsing: ${valueStr} -> ${numValue}`);
+    return null;
+  }
+  
+  // 自動進行單位轉換：仟元 -> 元 (x1000)
+  const convertedValue = numValue * UNIT_MULTIPLIERS.THOUSAND_TWD;
+  
+  console.log(`[TW Revenue Parser] Unit conversion: ${numValue} 仟元 -> ${convertedValue} 元`);
+  return convertedValue;
+}
+
+/**
+ * 解析營收數值 (移除逗號，確保為數字格式) - 改進版，避免科學記號
+ */
+function parseRevenueValue(valueStr: string): number | null {
+  if (!valueStr || valueStr === '--' || valueStr === '-') return null;
+  
+  const cleanValue = valueStr.replace(/[,\s]/g, '');
+  const numValue = parseInt(cleanValue);
+  
+  // 基本合理性檢查：台灣大型企業月營收通常在 1000-1000000 仟元之間
+  if (isNaN(numValue) || numValue < 1000 || numValue > 10000000) {
+    console.warn(`[TW Revenue Parser] Invalid revenue value: ${valueStr} -> ${numValue}`);
+    return null;
+  }
+  
+  return numValue;
+}
+
+/**
+ * 清理並解析營收數值 - 新版本，更嚴格的數字處理
+ */
+function parseCleanRevenueValue(valueStr: string): number | null {
+  if (!valueStr || valueStr === '--' || valueStr === '-' || valueStr === '') return null;
+  
+  // 移除所有非數字字符，保留逗號作為千分位分隔符
+  let cleanValue = valueStr
+    .replace(/[^\d,]/g, '')
+    .replace(/,/g, '');
+  
+  if (cleanValue === '') return null;
+  
+  // 使用 parseInt 而不是 parseFloat，避免浮點精度問題
+  const numValue = parseInt(cleanValue, 10);
+  
+  // 智能範圍檢查 - 僅基本合理性驗證
+  if (isNaN(numValue) || numValue <= 0) {
+    console.warn(`[TW Revenue Parser] Invalid revenue value: ${valueStr} -> ${numValue}`);
+    return null;
+  }
+  
+  // 檢查數字位數避免解析錯誤 
+  if (numValue.toString().length > TW_REVENUE_DATA_CONSTANTS.MAX_DIGITS) {
+    console.warn(`[TW Revenue Parser] Number too large: ${valueStr} -> ${numValue} (${numValue.toString().length} digits)`);
+    return null;
+  }
+  
+  // 防止科學記號：檢查數值是否在合理範圍內
+  if (numValue.toString().includes('e') || numValue.toString().includes('E')) {
+    console.warn(`[TW Revenue Parser] Scientific notation detected: ${valueStr} -> ${numValue}`);
+    return null;
+  }
+  
+  return numValue;
+}
+
+/**
+ * 解析增長率 (百分比轉小數)
+ */
+function parseGrowthRate(rateStr: string): number | null {
+  if (!rateStr || rateStr === '--' || rateStr === '-') return null;
+  
+  const cleanValue = rateStr.replace(/[%\s]/g, '');
+  const numValue = parseFloat(cleanValue);
+  
+  if (isNaN(numValue)) return null;
+  
+  // 轉換百分比為小數，並限制合理範圍 (-100% 到 +1000%)
+  const decimalValue = numValue / 100;
+  if (decimalValue < -1 || decimalValue > 10) {
+    console.warn(`[TW Revenue Parser] Extreme growth rate: ${rateStr} -> ${decimalValue}`);
+  }
+  
+  return decimalValue;
+}
+
+/**
+ * 清理並解析增長率 - 新版本
+ */
+function parseCleanGrowthRate(rateStr: string): number | null {
+  if (!rateStr || rateStr === '--' || rateStr === '-' || rateStr === '') return null;
+  
+  // 移除百分號和空白，保留正負號和小數點
+  const cleanValue = rateStr
+    .replace(/%/g, '')
+    .replace(/\s+/g, '')
+    .replace(/[^\d.\-\+]/g, '');
+  
+  if (cleanValue === '') return null;
+  
+  const numValue = parseFloat(cleanValue);
+  
+  if (isNaN(numValue)) return null;
+  
+  // 轉換百分比為小數，智能處理極端值
+  const decimalValue = numValue / 100;
+  
+  // 智能增長率檢查 - 記錄但不拒絕極端值
+  if (Math.abs(decimalValue) > 10) { // 超過1000%增長率的記錄
+    console.warn(`[TW Revenue Parser] Extreme growth rate detected: ${rateStr} -> ${decimalValue} (${decimalValue * 100}%)`);
+  }
+  
+  return decimalValue;
+}
+
+/**
+ * 智能營收數據驗證 - 僅基本格式檢查，無硬編碼範圍限制
+ */
+function isValidRevenueData(period: string, revenue: number | null, monthlyGrowth: number | null, yearGrowth: number | null): boolean {
+  // 檢查期間格式 (YYYY/MM)
+  if (!period || !period.match(/^\d{4}\/\d{2}$/)) {
+    console.warn(`[TW Revenue Validator] Invalid period format: ${period}`);
+    return false;
+  }
+  
+  // 檢查營收基本合理性 (必須有值且為正數)
+  if (revenue === null || revenue <= 0) {
+    console.warn(`[TW Revenue Validator] Invalid revenue value: ${revenue}`);
+    return false;
+  }
+  
+  // 檢查年份基本合理性
+  const year = parseInt(period.substring(0, 4));
+  const month = parseInt(period.substring(5, 7));
+  const currentYear = new Date().getFullYear();
+  
+  if (year < TW_REVENUE_DATA_CONSTANTS.MIN_YEAR || year > currentYear + TW_REVENUE_DATA_CONSTANTS.MAX_YEAR_OFFSET) {
+    console.warn(`[TW Revenue Validator] Invalid year: ${year} (acceptable range: ${TW_REVENUE_DATA_CONSTANTS.MIN_YEAR}-${currentYear + TW_REVENUE_DATA_CONSTANTS.MAX_YEAR_OFFSET})`);
+    return false;
+  }
+  
+  if (month < TW_REVENUE_DATA_CONSTANTS.MIN_MONTH || month > TW_REVENUE_DATA_CONSTANTS.MAX_MONTH) {
+    console.warn(`[TW Revenue Validator] Invalid month: ${month}`);
+    return false;
+  }
+  
+  // 檢查是否為科學記號格式
+  if (revenue.toString().includes('e') || revenue.toString().includes('E')) {
+    console.warn(`[TW Revenue Validator] Scientific notation detected: ${revenue}`);
+    return false;
+  }
+  
+  // 檢查數字位數是否合理 (避免超大數字錯誤)
+  if (revenue.toString().length > TW_REVENUE_DATA_CONSTANTS.MAX_DIGITS) {
+    console.warn(`[TW Revenue Validator] Number too large: ${revenue} (${revenue.toString().length} digits)`);
+    return false;
+  }
+  
+  console.log(`[TW Revenue Validator] Validation passed: ${period} = ${revenue} 元`);
+  return true;
+}
+
+/**
+ * 備用解析方法 - 處理格式變化的情況
+ */
+function parseFallbackRevenuePatterns(textContent: string, results: TWRevenueData[]): void {
+  console.log('[TW Revenue Fallback Parser] Trying alternative parsing patterns...');
+  
+  // 簡化模式：期間 + 營收數字
+  const simplePattern = /(\d{4}\/\d{2})\s+([0-9,]+)/g;
+  let match;
+  
+  while ((match = simplePattern.exec(textContent)) !== null) {
+    const fiscalPeriod = match[1];
+    const monthlyRevenue = parseRevenueValue(match[2]);
+    
+    if (isValidRevenueData(fiscalPeriod, monthlyRevenue, null, null)) {
+      const revenueData: TWRevenueData = {
+        fiscalPeriod: fiscalPeriod,
+        revenue: monthlyRevenue,
+        monthlyGrowth: null,
+        yearOverYearGrowth: null,
+        cumulativeRevenue: null,
+        cumulativeGrowth: null
+      };
+      
+      results.push(revenueData);
+      console.log(`[TW Revenue Fallback Parser] Added basic data: ${fiscalPeriod} = ${monthlyRevenue} 仟元`);
+    }
+  }
 }
 
 export default yahooFinanceTWTransforms;
