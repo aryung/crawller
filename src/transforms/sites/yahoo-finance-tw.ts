@@ -1801,6 +1801,193 @@ function structureTWRevenueDataFromCells(content: string | string[]): TWRevenueD
 }
 
 /**
+ * 解析串接的營收數據 - 特殊處理無分隔符的數字串接情況
+ */
+function parseConcatenatedRevenueData(rawMatch: string, fiscalPeriod: string): {revenue: string, monthlyGrowth: string} | null {
+  console.log(`[TW Revenue Parser] Parsing concatenated data for ${fiscalPeriod}: "${rawMatch}"`);
+  
+  // 從原始匹配中移除年月部分
+  const dataAfterPeriod = rawMatch.replace(/^20\d{2}\/\d{2}/, '');
+  console.log(`[TW Revenue Parser] Data after period: "${dataAfterPeriod}"`);
+  
+  // 針對特定的串接模式：56,433,62124.91% -> 營收: 56,433,621, 百分比: 24.91%
+  // 新策略：精確識別完整的百分比模式並反向分離
+  
+  // 全新策略：特殊處理串接模式 "營收數字+百分比數字.小數%"
+  // 針對模式如："56,433,62124.91%" -> revenue="56,433,621", growth="24.91%"
+  
+  // 第一步：尋找所有包含小數點的百分比模式
+  const decimalPercentMatches = dataAfterPeriod.match(/\d+\.\d{2}%/g);
+  if (!decimalPercentMatches || decimalPercentMatches.length === 0) {
+    console.warn(`[TW Revenue Parser] Could not find decimal percentage patterns`);
+    return null;
+  }
+  
+  console.log(`[TW Revenue Parser] Found decimal percentage patterns:`, decimalPercentMatches);
+  
+  // 第二步：對每個百分比模式，嘗試反向解析找到正確的分離點
+  let bestSeparation = null;
+  let bestScore = 0;
+  
+  for (const percentPattern of decimalPercentMatches) {
+    const percentIndex = dataAfterPeriod.indexOf(percentPattern);
+    if (percentIndex === -1) continue;
+    
+    const beforePercent = dataAfterPeriod.substring(0, percentIndex);
+    const percentValue = parseFloat(percentPattern.replace('%', ''));
+    
+    console.log(`[TW Revenue Parser] Analyzing pattern "${percentPattern}" at position ${percentIndex}`);
+    console.log(`[TW Revenue Parser] Content before: "${beforePercent}", percentage value: ${percentValue}`);
+    
+    // 嘗試智能分離：尋找合理的營收+百分比整數組合
+    const attempts = [];
+    
+    // 嘗試1：直接使用百分比作為分離點（適合正常情況）
+    if (Math.abs(percentValue) <= 100) {
+      attempts.push({
+        revenue: beforePercent,
+        growth: percentValue,
+        score: 100, // 最高分，因為百分比合理
+        method: 'direct'
+      });
+    }
+    
+    // 嘗試2：假設百分比被串接，嘗試分離（針對串接情況）
+    if (Math.abs(percentValue) > 100) {
+      // 對於如"124.91"的百分比，嘗試分離為"24.91"
+      const percentStr = percentValue.toString();
+      const decimalPart = (percentStr.split('.')[1] || '').substring(0, 2);
+      
+      for (let i = 1; i < percentStr.length - 3; i++) { // 保留至少X.XX的格式
+        const candidatePercent = parseFloat(percentStr.substring(i));
+        if (!isNaN(candidatePercent) && Math.abs(candidatePercent) <= 100 && decimalPart.length === 2) {
+          const removedDigits = percentStr.substring(0, i);
+          const candidateRevenue = beforePercent + removedDigits;
+          
+          attempts.push({
+            revenue: candidateRevenue,
+            growth: candidatePercent,
+            score: 80 - i, // 分數隨分離位置遞減
+            method: `separated-${i}`,
+            removedDigits: removedDigits
+          });
+          
+          console.log(`[TW Revenue Parser] Separation attempt: remove "${removedDigits}" from percent -> revenue:"${candidateRevenue}", growth:${candidatePercent}%`);
+        }
+      }
+    }
+    
+    // 評估最佳分離方案
+    for (const attempt of attempts) {
+      const cleanRevenue = attempt.revenue.replace(/[,\s]/g, '');
+      const revenueLength = cleanRevenue.length;
+      
+      // 評分標準：營收長度合理(6-9位) + 百分比合理(-100%到+100%) + 基礎分
+      let score = attempt.score;
+      
+      if (revenueLength >= 6 && revenueLength <= 9) score += 20;
+      if (Math.abs(attempt.growth) <= 50) score += 10; // 更常見的增長率範圍
+      if (/^[0-9,]+$/.test(attempt.revenue)) score += 5; // 營收格式正確
+      
+      console.log(`[TW Revenue Parser] Attempt "${attempt.method}": revenue="${attempt.revenue}" (${revenueLength} digits), growth=${attempt.growth}%, score=${score}`);
+      
+      if (score > bestScore) {
+        bestScore = score;
+        bestSeparation = attempt;
+      }
+    }
+  }
+  
+  if (!bestSeparation) {
+    console.warn(`[TW Revenue Parser] Could not find valid separation for concatenated data`);
+    return null;
+  }
+  
+  console.log(`[TW Revenue Parser] Best separation found (score: ${bestScore}):`, bestSeparation);
+  
+  // 最終處理營收格式
+  let finalRevenueStr = bestSeparation.revenue;
+  
+  // 如果營收包含逗號，保持格式；否則添加逗號格式化
+  if (!finalRevenueStr.includes(',') && /^\d+$/.test(finalRevenueStr.replace(/[^0-9]/g, ''))) {
+    const cleanRevenue = finalRevenueStr.replace(/[^0-9]/g, '');
+    if (cleanRevenue.length >= 6) {
+      finalRevenueStr = addCommasToNumber(cleanRevenue);
+    }
+  }
+  
+  const revenueStr = finalRevenueStr;
+  const monthlyGrowthStr = bestSeparation.growth.toString();
+  
+  console.log(`[TW Revenue Parser] Final extracted values:`);
+  console.log(`  revenue: "${revenueStr}"`);
+  console.log(`  monthlyGrowth: "${monthlyGrowthStr}"`);
+  
+  // 驗證提取的數據格式
+  const cleanFinalRevenue = revenueStr.replace(/,/g, '');
+  if (!/^[0-9,]+$/.test(revenueStr) || cleanFinalRevenue.length < 6 || cleanFinalRevenue.length > 10) {
+    console.warn(`[TW Revenue Parser] Invalid revenue format: "${revenueStr}" (length: ${cleanFinalRevenue.length})`);
+    return null;
+  }
+  
+  if (!/^[-+]?\d+\.?\d*$/.test(monthlyGrowthStr)) {
+    console.warn(`[TW Revenue Parser] Invalid monthly growth format: "${monthlyGrowthStr}"`);
+    return null;
+  }
+  
+  return {
+    revenue: revenueStr,
+    monthlyGrowth: monthlyGrowthStr
+  };
+}
+
+/**
+ * 檢測是否為數字串接問題 - 識別不合理的解析結果
+ */
+function detectConcatenatedNumbers(revenueStr: string, monthlyGrowthStr: string, rawMatch: string): boolean {
+  console.log(`[TW Revenue Parser] Detecting concatenated numbers: revenue="${revenueStr}", growth="${monthlyGrowthStr}"`);
+  
+  // 檢查1: 營收數字是否包含意外的長度或格式
+  const revenueClean = revenueStr.replace(/[,]/g, '');
+  if (revenueClean.length > 10) {
+    console.log(`[TW Revenue Parser] Revenue number too long (${revenueClean.length} digits): likely concatenated`);
+    return true;
+  }
+  
+  // 檢查2: 月增率是否明顯異常 (< 5% 但原始匹配包含更大的數字)
+  const monthlyGrowthValue = parseFloat(monthlyGrowthStr);
+  if (!isNaN(monthlyGrowthValue) && Math.abs(monthlyGrowthValue) < 10) {
+    // 在原始匹配中尋找更大的百分比數字
+    const percentMatches = rawMatch.match(/(\d{2,3}\.\d{2})%/g);
+    if (percentMatches && percentMatches.length > 0) {
+      for (const percentMatch of percentMatches) {
+        const value = parseFloat(percentMatch.replace('%', ''));
+        if (!isNaN(value) && Math.abs(value) > Math.abs(monthlyGrowthValue) * 2) {
+          console.log(`[TW Revenue Parser] Found larger percent ${value}% vs parsed ${monthlyGrowthValue}%: likely concatenated`);
+          return true;
+        }
+      }
+    }
+  }
+  
+  // 檢查3: 營收數字最後幾位是否包含非正常的數字模式
+  if (revenueClean.endsWith('2') || revenueClean.endsWith('24') || revenueClean.endsWith('249')) {
+    console.log(`[TW Revenue Parser] Revenue ends with suspicious digits: likely concatenated with percentage`);
+    return true;
+  }
+  
+  return false;
+}
+
+/**
+ * 為數字添加逗號格式化
+ */
+function addCommasToNumber(numberStr: string): string {
+  // 從右到左每三位添加逗號
+  return numberStr.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}
+
+/**
  * 專門解析Yahoo Finance營收表格 - 簡化版本，專注於數據匹配
  */
 function parseYahooFinanceRevenueTable(textContent: string, results: TWRevenueData[]): void {
@@ -1810,6 +1997,17 @@ function parseYahooFinanceRevenueTable(textContent: string, results: TWRevenueDa
   // 詳細內容調試
   const contentPreview = textContent.substring(0, 1000);
   console.log(`[TW Revenue Parser] Content preview:`, contentPreview);
+  
+  // 查找包含 2025/06 的部分，專門除錯最新資料
+  const currentYearMatch = textContent.match(/2025\/06[^0-9]*([0-9,]+)[^0-9]*([0-9.]+)%[^0-9]*([0-9,]+)[^0-9]*([0-9.]+)%/);
+  if (currentYearMatch) {
+    console.log(`[TW Revenue Parser DEBUG] Found 2025/06 specific match:`);
+    console.log(`  Full match: "${currentYearMatch[0]}"`);
+    console.log(`  Revenue: "${currentYearMatch[1]}"`);
+    console.log(`  Monthly growth: "${currentYearMatch[2]}%"`);
+    console.log(`  Prev year revenue: "${currentYearMatch[3]}"`);
+    console.log(`  Yearly growth: "${currentYearMatch[4]}%"`);
+  }
   
   // 檢查是否包含營收相關關鍵字
   const revenueKeywords = ['營收', '單月合併', '仟元', '2024', '2025', 'revenue'];
@@ -1835,7 +2033,9 @@ function parseYahooFinanceRevenueTable(textContent: string, results: TWRevenueDa
     // 寬鬆間距模式
     /(20\d{2}\/\d{2})\s*([0-9,]+)\s*([-+]?\d+\.?\d*)%\s*([0-9,]+)\s*([-+]?\d+\.?\d*)%/g,
     // HTML 表格模式
-    /<td[^>]*>(20\d{2}\/\d{2})<\/td>\s*<td[^>]*>([0-9,]+)<\/td>\s*<td[^>]*>([-+]?\d+\.?\d*)%<\/td>\s*<td[^>]*>([0-9,]+)<\/td>\s*<td[^>]*>([-+]?\d+\.?\d*)%<\/td>/g
+    /<td[^>]*>(20\d{2}\/\d{2})<\/td>\s*<td[^>]*>([0-9,]+)<\/td>\s*<td[^>]*>([-+]?\d+\.?\d*)%<\/td>\s*<td[^>]*>([0-9,]+)<\/td>\s*<td[^>]*>([-+]?\d+\.?\d*)%<\/td>/g,
+    // 特殊處理：數字串接模式 (無分隔符)
+    /(20\d{2}\/\d{2})([0-9,]{8,12})([-+]?\d{1,3}\.\d{2})%([0-9,]{8,12})([-+]?\d{1,3}\.\d{2})%/g
   ];
   
   let foundComplete = false;
@@ -1857,10 +2057,44 @@ function parseYahooFinanceRevenueTable(textContent: string, results: TWRevenueDa
       
       console.log(`[TW Revenue Parser] Pattern ${i + 1} match ${matchCount}: ${fiscalPeriod} | ${revenueStr} | ${monthlyGrowthStr}% | ${prevYearRevenueStr} | ${yearlyGrowthStr}%`);
       
+      // 加強除錯 - 顯示原始匹配結果的完整內容
+      console.log(`[TW Revenue Parser DEBUG] Full match details:`);
+      console.log(`  Raw match[0]: "${match[0]}"`);
+      console.log(`  Raw match[1] (fiscalPeriod): "${match[1]}"`);
+      console.log(`  Raw match[2] (revenueStr): "${match[2]}"`);
+      console.log(`  Raw match[3] (monthlyGrowthStr): "${match[3]}"`);
+      console.log(`  Raw match[4] (prevYearRevenueStr): "${match[4]}"`);
+      console.log(`  Raw match[5] (yearlyGrowthStr): "${match[5]}"`);
+      
+      // 特殊處理：檢測數字串接問題並修正
+      let correctedRevenueStr = revenueStr;
+      let correctedMonthlyGrowthStr = monthlyGrowthStr;
+      
+      // 檢測可能的數字串接問題（任何pattern都可能發生）
+      const needsConcatenatedParsing = detectConcatenatedNumbers(revenueStr, monthlyGrowthStr, match[0]);
+      
+      if (needsConcatenatedParsing || i === 3) { // 第4個pattern是特殊串接模式，或檢測到串接問題
+        console.log(`[TW Revenue Parser DEBUG] Using concatenated number parsing (pattern ${i + 1}, detected=${needsConcatenatedParsing})`);
+        const correctedData = parseConcatenatedRevenueData(match[0], fiscalPeriod);
+        if (correctedData) {
+          correctedRevenueStr = correctedData.revenue;
+          correctedMonthlyGrowthStr = correctedData.monthlyGrowth;
+          console.log(`[TW Revenue Parser DEBUG] Corrected values:`);
+          console.log(`  revenue: ${revenueStr} -> ${correctedRevenueStr}`);
+          console.log(`  monthlyGrowth: ${monthlyGrowthStr} -> ${correctedMonthlyGrowthStr}`);
+        }
+      }
+      
       // 解析所有數值
-      const revenue = parseCleanRevenueValue(revenueStr);
-      const monthlyGrowth = parseCleanGrowthRate(monthlyGrowthStr);
+      const revenue = parseCleanRevenueValue(correctedRevenueStr);
+      const monthlyGrowth = parseCleanGrowthRate(correctedMonthlyGrowthStr);
       const yearOverYearGrowth = parseCleanGrowthRate(yearlyGrowthStr);
+      
+      // 加強除錯 - 顯示解析後的數值
+      console.log(`[TW Revenue Parser DEBUG] Parsed values:`);
+      console.log(`  revenue: ${correctedRevenueStr} -> ${revenue}`);
+      console.log(`  monthlyGrowth: ${correctedMonthlyGrowthStr} -> ${monthlyGrowth}`);
+      console.log(`  yearOverYearGrowth: ${yearlyGrowthStr} -> ${yearOverYearGrowth}`);
       
       if (revenue !== null && isValidRevenueData(fiscalPeriod, revenue, monthlyGrowth, yearOverYearGrowth)) {
         const revenueData: TWRevenueData = {
