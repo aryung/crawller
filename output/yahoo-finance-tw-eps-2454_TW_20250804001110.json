@@ -1,0 +1,158 @@
+{
+  "exportDate": "2025-08-03T16:11:10.814Z",
+  "totalResults": 1,
+  "successCount": 1,
+  "results": [
+    {
+      "url": "https://tw.stock.yahoo.com/quote/2454.TW/eps",
+      "data": {
+        "stockInfo": "Yahoo奇摩財經",
+        "structuredEPSData": [
+          {
+            "fiscalPeriod": "2025-Q1",
+            "eps": 18.4,
+            "quarterlyGrowth": 3.2319999999999998,
+            "yearOverYearGrowth": -0.07150000000000001,
+            "averagePrice": 1471.912024
+          },
+          {
+            "fiscalPeriod": "2024-Q4",
+            "eps": 14.96,
+            "quarterlyGrowth": -0.06,
+            "yearOverYearGrowth": null,
+            "averagePrice": 15
+          },
+          {
+            "fiscalPeriod": "2024-Q3",
+            "eps": 15.94,
+            "quarterlyGrowth": -0.0154,
+            "yearOverYearGrowth": 0.36939999999999995,
+            "averagePrice": 1157.252024
+          },
+          {
+            "fiscalPeriod": "2024-Q2",
+            "eps": 16.19,
+            "quarterlyGrowth": -0.18,
+            "yearOverYearGrowth": null,
+            "averagePrice": 44
+          },
+          {
+            "fiscalPeriod": "2024-Q1",
+            "eps": 19.8,
+            "quarterlyGrowth": 5.2276,
+            "yearOverYearGrowth": 0.8656,
+            "averagePrice": 1036.962023
+          },
+          {
+            "fiscalPeriod": "2023-Q4",
+            "eps": 16.173,
+            "quarterlyGrowth": 0.08,
+            "yearOverYearGrowth": null,
+            "averagePrice": 92
+          },
+          {
+            "fiscalPeriod": "2023-Q3",
+            "eps": 11.6,
+            "quarterlyGrowth": 4.1559,
+            "yearOverYearGrowth": -0.4043,
+            "averagePrice": 716.762023
+          },
+          {
+            "fiscalPeriod": "2023-Q2",
+            "eps": 10.07,
+            "quarterlyGrowth": -0.05,
+            "yearOverYearGrowth": null,
+            "averagePrice": 36
+          },
+          {
+            "fiscalPeriod": "2023-Q1",
+            "eps": 10.64,
+            "quarterlyGrowth": -0.0883,
+            "yearOverYearGrowth": -0.4938,
+            "averagePrice": 738.092022
+          },
+          {
+            "fiscalPeriod": "2022-Q4",
+            "eps": 11.67,
+            "quarterlyGrowth": -0.4,
+            "yearOverYearGrowth": null,
+            "averagePrice": 28
+          },
+          {
+            "fiscalPeriod": "2022-Q3",
+            "eps": 19.54,
+            "quarterlyGrowth": -0.1273,
+            "yearOverYearGrowth": 0.0904,
+            "averagePrice": 835.732022
+          },
+          {
+            "fiscalPeriod": "2022-Q2",
+            "eps": 22.39,
+            "quarterlyGrowth": 0.06,
+            "yearOverYearGrowth": null,
+            "averagePrice": 52
+          },
+          {
+            "fiscalPeriod": "2022-Q1",
+            "eps": 21,
+            "quarterlyGrowth": 2.1046,
+            "yearOverYearGrowth": 0.2967,
+            "averagePrice": 1053.752021
+          },
+          {
+            "fiscalPeriod": "2021-Q4",
+            "eps": 19.03,
+            "quarterlyGrowth": 0.06,
+            "yearOverYearGrowth": null,
+            "averagePrice": 19
+          },
+          {
+            "fiscalPeriod": "2021-Q3",
+            "eps": 17.9,
+            "quarterlyGrowth": 0.2275,
+            "yearOverYearGrowth": 1.1283,
+            "averagePrice": 933.772021
+          },
+          {
+            "fiscalPeriod": "2021-Q2",
+            "eps": 17.44,
+            "quarterlyGrowth": 0.07,
+            "yearOverYearGrowth": null,
+            "averagePrice": 59
+          },
+          {
+            "fiscalPeriod": "2021-Q1",
+            "eps": 16.2,
+            "quarterlyGrowth": 1.73,
+            "yearOverYearGrowth": 3.4533,
+            "averagePrice": 898.64202
+          },
+          {
+            "fiscalPeriod": "2020-Q4",
+            "eps": 9.371,
+            "quarterlyGrowth": 0.01,
+            "yearOverYearGrowth": null,
+            "averagePrice": 28
+          },
+          {
+            "fiscalPeriod": "2020-Q3",
+            "eps": 8.4,
+            "quarterlyGrowth": 2.8383999999999996,
+            "yearOverYearGrowth": 0.9224,
+            "averagePrice": 628.32202
+          },
+          {
+            "fiscalPeriod": "2020-Q2",
+            "eps": 4.582,
+            "quarterlyGrowth": 0.05,
+            "yearOverYearGrowth": null,
+            "averagePrice": 82
+          }
+        ]
+      },
+      "timestamp": "2025-08-03T16:11:10.808Z",
+      "success": true,
+      "screenshot": "<Buffer 515203 bytes>"
+    }
+  ]
+}

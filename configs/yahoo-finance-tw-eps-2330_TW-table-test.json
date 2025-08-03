@@ -1,0 +1,64 @@
+{
+  "templateType": "tw-eps-table",
+  "url": "https://tw.stock.yahoo.com/quote/2330.TW/eps",
+  "_note": "Test config for table-based field extraction from Yahoo Finance Taiwan EPS page",
+  "actions": [
+    {
+      "type": "wait",
+      "timeout": 5000,
+      "description": "等待頁面初始載入"
+    },
+    {
+      "type": "wait",
+      "timeout": 3000,
+      "description": "等待EPS數據完全載入"
+    }
+  ],
+  "selectors": {
+    "stockInfo": {
+      "selector": "h1, .symbol, .stock-name",
+      "transform": "cleanStockSymbol"
+    },
+    "epsTableRows": {
+      "selector": "div[id*='eps'], table tr, .data-table tr, [data-testid*='eps'] tr, .eps-table tr",
+      "multiple": true,
+      "transform": "extractTableCells"
+    },
+    "debugHTML": {
+      "selector": "body",
+      "multiple": false,
+      "transform": "debugHTMLStructure"
+    }
+  },
+  "headers": {
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
+    "Accept-Language": "zh-TW,zh;q=0.9,en;q=0.8",
+    "Accept-Encoding": "gzip, deflate, br",
+    "Cache-Control": "no-cache",
+    "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+  },
+  "options": {
+    "timeout": 30000,
+    "retries": 3,
+    "headless": true,
+    "screenshot": true,
+    "encoding": "utf-8",
+    "domainDelay": 5000,
+    "waitFor": 8000,
+    "engine": "playwright",
+    "waitForNetworkIdle": false
+  },
+  "variables": {
+    "symbolCode": "2330.TW",
+    "baseUrl": "https://tw.stock.yahoo.com",
+    "companyName": "台灣積體電路製造股份有限公司",
+    "sector": "半導體業"
+  },
+  "export": {
+    "formats": [
+      "json",
+      "csv"
+    ],
+    "filename": "yahoo_finance_tw_eps_2330_TW_table_test"
+  }
+}
