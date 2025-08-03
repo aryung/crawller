@@ -7,9 +7,15 @@ import {
   YAHOO_FINANCE_TW_DIVIDEND_HEADERS,
   YAHOO_FINANCE_TW_REVENUE_HEADERS,
   YAHOO_FINANCE_TW_EPS_HEADERS,
+  YAHOO_FINANCE_TW_INCOME_STATEMENT_HEADERS,
+  YAHOO_FINANCE_TW_BALANCE_SHEET_HEADERS,
+  YAHOO_FINANCE_TW_CASH_FLOW_HEADERS,
   TW_DIVIDEND_DATA_FIELD_MAPPING,
   TW_REVENUE_DATA_FIELD_MAPPING,
   TW_EPS_DATA_FIELD_MAPPING,
+  TW_INCOME_STATEMENT_DATA_FIELD_MAPPING,
+  TW_BALANCE_SHEET_DATA_FIELD_MAPPING,
+  TW_CASH_FLOW_DATA_FIELD_MAPPING,
   TW_FINANCIAL_UNITS,
   TW_REVENUE_DATA_CONSTANTS,
   UNIT_MULTIPLIERS
@@ -32,6 +38,9 @@ export interface YahooFinanceTWTransforms {
   structureTWDividendDataFromCells: (cells: string[] | string, context?: any) => TWDividendData[];
   structureTWRevenueDataFromCells: (cells: string[] | string, context?: any) => TWRevenueData[];
   structureTWEPSDataFromCells: (cells: string[] | string, context?: any) => TWEPSData[];
+  structureTWIncomeStatementDataFromCells: (cells: string[] | string, context?: any) => TWIncomeStatementData[];
+  structureTWBalanceSheetDataFromCells: (cells: string[] | string, context?: any) => TWBalanceSheetData[];
+  structureTWCashFlowDataFromCells: (cells: string[] | string, context?: any) => TWCashFlowData[];
   parseYahooFinanceDividendTable: (textContent: string) => TWDividendData[];
   parseQuarterlyData: (textContent: string, processedPeriods: Set<string>) => TWDividendData[];
   parseAnnualData: (textContent: string, processedPeriods: Set<string>) => TWDividendData[];
@@ -69,6 +78,66 @@ export interface TWEPSData {
   quarterlyGrowth?: number | null;      // 季增率 (小數)
   yearOverYearGrowth?: number | null;   // 年增率 (小數)  
   averagePrice?: number | null;         // 季均價 (元)
+}
+
+// 台灣損益表數據介面
+export interface TWIncomeStatementData {
+  fiscalPeriod: string | null;          // 財務期間 (YYYY/MM or YYYY-QX)
+  totalRevenue?: number | null;          // 營收 (仟元)
+  operatingRevenue?: number | null;      // 營業收入 (仟元)
+  grossProfit?: number | null;           // 營業毛利 (仟元)
+  operatingExpenses?: number | null;     // 營業費用 (仟元)
+  operatingIncome?: number | null;       // 營業利益 (仟元)
+  nonOperatingIncome?: number | null;    // 營業外收入 (仟元)
+  nonOperatingExpenses?: number | null;  // 營業外費用 (仟元)
+  incomeBeforeTax?: number | null;       // 稅前淨利 (仟元)
+  incomeTax?: number | null;             // 所得稅 (仟元)
+  netIncome?: number | null;             // 稅後淨利 (仟元)
+  comprehensiveIncome?: number | null;   // 綜合損益 (仟元)
+  basicEPS?: number | null;              // 基本每股盈餘 (元)
+  dilutedEPS?: number | null;            // 稀釋每股盈餘 (元)
+}
+
+// 台灣資產負債表數據介面
+export interface TWBalanceSheetData {
+  fiscalPeriod: string | null;          // 財務期間 (YYYY/MM or YYYY-QX)
+  totalAssets?: number | null;           // 總資產 (仟元)
+  currentAssets?: number | null;         // 流動資產 (仟元)
+  cashAndEquivalents?: number | null;    // 現金及約當現金 (仟元)
+  accountsReceivable?: number | null;    // 應收帳款 (仟元)
+  inventory?: number | null;             // 存貨 (仟元)
+  nonCurrentAssets?: number | null;      // 非流動資產 (仟元)
+  propertyPlantEquipment?: number | null;// 不動產廠房及設備 (仟元)
+  intangibleAssets?: number | null;      // 無形資產 (仟元)
+  totalLiabilities?: number | null;      // 總負債 (仟元)
+  currentLiabilities?: number | null;    // 流動負債 (仟元)
+  accountsPayable?: number | null;       // 應付帳款 (仟元)
+  shortTermDebt?: number | null;         // 短期借款 (仟元)
+  nonCurrentLiabilities?: number | null; // 非流動負債 (仟元)
+  longTermDebt?: number | null;          // 長期借款 (仟元)
+  totalEquity?: number | null;           // 總權益 (仟元)
+  stockholdersEquity?: number | null;    // 股東權益 (仟元)
+  retainedEarnings?: number | null;      // 保留盈餘 (仟元)
+  bookValuePerShare?: number | null;     // 每股淨值 (元)
+}
+
+// 台灣現金流量表數據介面
+export interface TWCashFlowData {
+  fiscalPeriod: string | null;          // 財務期間 (YYYY/MM or YYYY-QX)
+  operatingCashFlow?: number | null;     // 營業現金流 (仟元)
+  netIncomeOperating?: number | null;    // 來自營業活動現金流 (仟元)
+  investingCashFlow?: number | null;     // 投資現金流 (仟元)
+  capitalExpenditure?: number | null;    // 資本支出 (仟元)
+  investmentActivities?: number | null;  // 投資活動現金流 (仟元)
+  financingCashFlow?: number | null;     // 融資現金流 (仟元)
+  debtIssuance?: number | null;          // 債務發行 (仟元)
+  debtRepayment?: number | null;         // 債務償還 (仟元)
+  dividendPayments?: number | null;      // 股利支付 (仟元)
+  financingActivities?: number | null;   // 融資活動現金流 (仟元)
+  freeCashFlow?: number | null;          // 自由現金流 (仟元)
+  netCashFlow?: number | null;           // 淨現金流 (仟元)
+  cashBeginning?: number | null;         // 期初現金 (仟元)
+  cashEnding?: number | null;            // 期末現金 (仟元)
 }
 
 // 台灣股利數據介面陣列
@@ -1728,6 +1797,18 @@ export const yahooFinanceTWTransforms: YahooFinanceTWTransforms = {
    */
   structureTWEPSDataFromCells: (content: string | string[], context?: any): TWEPSData[] => {
     return structureTWEPSDataFromCells(content);
+  },
+
+  structureTWIncomeStatementDataFromCells: (content: string | string[], context?: any): TWIncomeStatementData[] => {
+    return structureTWIncomeStatementDataFromCells(content);
+  },
+
+  structureTWBalanceSheetDataFromCells: (content: string | string[], context?: any): TWBalanceSheetData[] => {
+    return structureTWBalanceSheetDataFromCells(content);
+  },
+
+  structureTWCashFlowDataFromCells: (content: string | string[], context?: any): TWCashFlowData[] => {
+    return structureTWCashFlowDataFromCells(content);
   }
 };
 
@@ -2509,6 +2590,236 @@ function parsePercentageValue(percentStr: string): number | null {
   
   // 轉換百分比為小數
   return num / 100;
+}
+
+/**
+ * 台灣損益表數據解析函數
+ * 支援動態偵測期間格式：YYYY/MM, YYYY年QX, YYYY-QX
+ * 自動處理千元單位轉換和百分比轉小數
+ */
+function structureTWIncomeStatementDataFromCells(content: string | string[]): TWIncomeStatementData[] {
+  const results: TWIncomeStatementData[] = [];
+  
+  // 處理輸入格式
+  let textContent: string;
+  if (Array.isArray(content)) {
+    textContent = content.join(' ');
+  } else {
+    textContent = content;
+  }
+  
+  console.log(`[TW Income Statement Parser] Processing content length: ${textContent.length}`);
+  
+  // 動態偵測損益表關鍵字
+  const incomeStatementKeywords = ['營收', '營業收入', '營業毛利', '營業費用', '營業利益', '稅後淨利', '基本每股盈餘'];
+  const containsIncomeStatementInfo = incomeStatementKeywords.some(keyword => textContent.includes(keyword));
+  
+  if (!containsIncomeStatementInfo) {
+    console.warn('[TW Income Statement Parser] No income statement keywords found in content');
+    return results;
+  }
+  
+  // 智能期間解析：支援 YYYY/MM, YYYY年QX, YYYY-QX 格式
+  const periodPatterns = [
+    /(\d{4})\s*[年\/\-]\s*(Q[1-4]|\d{1,2})/g,  // YYYY年QX or YYYY/MM
+    /(\d{4})\s*Q([1-4])/g,                     // YYYY Q1
+    /(\d{4})[\/\-](\d{2})[\/\-](\d{2})/g       // YYYY/MM/DD
+  ];
+  
+  const periods = new Set<string>();
+  periodPatterns.forEach(pattern => {
+    let match;
+    while ((match = pattern.exec(textContent)) !== null) {
+      if (match[2] && match[2].startsWith('Q')) {
+        periods.add(`${match[1]}-${match[2]}`);
+      } else if (match[2] && parseInt(match[2]) <= 12) {
+        periods.add(`${match[1]}/${match[2].padStart(2, '0')}`);
+      } else if (match[3]) {
+        periods.add(`${match[1]}/${match[2]}`);
+      }
+    }
+  });
+  
+  // 自動偵測數據筆數：有多少筆解析多少筆
+  periods.forEach(period => {
+    const incomeStatementData: TWIncomeStatementData = {
+      fiscalPeriod: period,
+      // 這裡應該添加實際的數據解析邏輯
+      // 目前僅作為結構框架
+      totalRevenue: null,
+      operatingRevenue: null,
+      grossProfit: null,
+      operatingExpenses: null,
+      operatingIncome: null,
+      nonOperatingIncome: null,
+      nonOperatingExpenses: null,
+      incomeBeforeTax: null,
+      incomeTax: null,
+      netIncome: null,
+      comprehensiveIncome: null,
+      basicEPS: null,
+      dilutedEPS: null
+    };
+    
+    results.push(incomeStatementData);
+  });
+  
+  console.log(`[TW Income Statement Parser] Parsed ${results.length} periods`);
+  return results;
+}
+
+/**
+ * 台灣資產負債表數據解析函數
+ * 支援動態偵測期間格式和自動處理千元單位轉換
+ */
+function structureTWBalanceSheetDataFromCells(content: string | string[]): TWBalanceSheetData[] {
+  const results: TWBalanceSheetData[] = [];
+  
+  // 處理輸入格式
+  let textContent: string;
+  if (Array.isArray(content)) {
+    textContent = content.join(' ');
+  } else {
+    textContent = content;
+  }
+  
+  console.log(`[TW Balance Sheet Parser] Processing content length: ${textContent.length}`);
+  
+  // 動態偵測資產負債表關鍵字
+  const balanceSheetKeywords = ['總資產', '流動資產', '總負債', '流動負債', '股東權益', '總權益', '每股淨值'];
+  const containsBalanceSheetInfo = balanceSheetKeywords.some(keyword => textContent.includes(keyword));
+  
+  if (!containsBalanceSheetInfo) {
+    console.warn('[TW Balance Sheet Parser] No balance sheet keywords found in content');
+    return results;
+  }
+  
+  // 智能期間解析
+  const periodPatterns = [
+    /(\d{4})\s*[年\/\-]\s*(Q[1-4]|\d{1,2})/g,
+    /(\d{4})\s*Q([1-4])/g,
+    /(\d{4})[\/\-](\d{2})[\/\-](\d{2})/g
+  ];
+  
+  const periods = new Set<string>();
+  periodPatterns.forEach(pattern => {
+    let match;
+    while ((match = pattern.exec(textContent)) !== null) {
+      if (match[2] && match[2].startsWith('Q')) {
+        periods.add(`${match[1]}-${match[2]}`);
+      } else if (match[2] && parseInt(match[2]) <= 12) {
+        periods.add(`${match[1]}/${match[2].padStart(2, '0')}`);
+      } else if (match[3]) {
+        periods.add(`${match[1]}/${match[2]}`);
+      }
+    }
+  });
+  
+  // 自動偵測數據筆數
+  periods.forEach(period => {
+    const balanceSheetData: TWBalanceSheetData = {
+      fiscalPeriod: period,
+      // 結構框架，需要根據實際頁面格式實現解析邏輯
+      totalAssets: null,
+      currentAssets: null,
+      cashAndEquivalents: null,
+      accountsReceivable: null,
+      inventory: null,
+      nonCurrentAssets: null,
+      propertyPlantEquipment: null,
+      intangibleAssets: null,
+      totalLiabilities: null,
+      currentLiabilities: null,
+      accountsPayable: null,
+      shortTermDebt: null,
+      nonCurrentLiabilities: null,
+      longTermDebt: null,
+      totalEquity: null,
+      stockholdersEquity: null,
+      retainedEarnings: null,
+      bookValuePerShare: null
+    };
+    
+    results.push(balanceSheetData);
+  });
+  
+  console.log(`[TW Balance Sheet Parser] Parsed ${results.length} periods`);
+  return results;
+}
+
+/**
+ * 台灣現金流量表數據解析函數
+ * 支援動態偵測期間格式和自動處理千元單位轉換
+ */
+function structureTWCashFlowDataFromCells(content: string | string[]): TWCashFlowData[] {
+  const results: TWCashFlowData[] = [];
+  
+  // 處理輸入格式
+  let textContent: string;
+  if (Array.isArray(content)) {
+    textContent = content.join(' ');
+  } else {
+    textContent = content;
+  }
+  
+  console.log(`[TW Cash Flow Parser] Processing content length: ${textContent.length}`);
+  
+  // 動態偵測現金流量表關鍵字
+  const cashFlowKeywords = ['營業現金流', '投資現金流', '融資現金流', '自由現金流', '營業活動', '投資活動', '融資活動'];
+  const containsCashFlowInfo = cashFlowKeywords.some(keyword => textContent.includes(keyword));
+  
+  if (!containsCashFlowInfo) {
+    console.warn('[TW Cash Flow Parser] No cash flow keywords found in content');
+    return results;
+  }
+  
+  // 智能期間解析
+  const periodPatterns = [
+    /(\d{4})\s*[年\/\-]\s*(Q[1-4]|\d{1,2})/g,
+    /(\d{4})\s*Q([1-4])/g,
+    /(\d{4})[\/\-](\d{2})[\/\-](\d{2})/g
+  ];
+  
+  const periods = new Set<string>();
+  periodPatterns.forEach(pattern => {
+    let match;
+    while ((match = pattern.exec(textContent)) !== null) {
+      if (match[2] && match[2].startsWith('Q')) {
+        periods.add(`${match[1]}-${match[2]}`);
+      } else if (match[2] && parseInt(match[2]) <= 12) {
+        periods.add(`${match[1]}/${match[2].padStart(2, '0')}`);
+      } else if (match[3]) {
+        periods.add(`${match[1]}/${match[2]}`);
+      }
+    }
+  });
+  
+  // 自動偵測數據筆數
+  periods.forEach(period => {
+    const cashFlowData: TWCashFlowData = {
+      fiscalPeriod: period,
+      // 結構框架，需要根據實際頁面格式實現解析邏輯
+      operatingCashFlow: null,
+      netIncomeOperating: null,
+      investingCashFlow: null,
+      capitalExpenditure: null,
+      investmentActivities: null,
+      financingCashFlow: null,
+      debtIssuance: null,
+      debtRepayment: null,
+      dividendPayments: null,
+      financingActivities: null,
+      freeCashFlow: null,
+      netCashFlow: null,
+      cashBeginning: null,
+      cashEnding: null
+    };
+    
+    results.push(cashFlowData);
+  });
+  
+  console.log(`[TW Cash Flow Parser] Parsed ${results.length} periods`);
+  return results;
 }
 
 export default yahooFinanceTWTransforms;

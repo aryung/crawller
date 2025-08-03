@@ -124,6 +124,7 @@ if (exampleFiles[0]) {
   console.log(`   npm run crawl ${testFile}`);
 }
 console.log('\n💡 提示:');
-console.log('   - 使用 --type=dividend 只生成特定類型的配置');
-console.log('   - 配置文件位於 configs/active/ 目錄');
+console.log('   - 使用 --type=<type> 只生成特定類型的配置');
+console.log('   - 可用類型: dividend, revenue, eps, income-statement, balance-sheet, cash-flow-statement');
+console.log('   - 配置文件位於 configs/ 目錄');
 console.log('   - 可以直接編輯模板文件來調整所有配置');
