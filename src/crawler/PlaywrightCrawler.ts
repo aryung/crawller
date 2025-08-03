@@ -87,9 +87,12 @@ export class PlaywrightCrawler {
         await page.context().addCookies(cookies);
       }
 
-      // 導航到目標頁面
+      // 導航到目標頁面 - 根據配置選擇等待策略
+      const waitUntil = options.waitForNetworkIdle === false ? 'domcontentloaded' : 'networkidle';
+      console.log(`[Playwright] Using wait strategy: ${waitUntil}`);
+      
       await page.goto(config.url, { 
-        waitUntil: 'networkidle',
+        waitUntil: waitUntil as 'domcontentloaded' | 'networkidle',
         timeout: options.timeout 
       });
 

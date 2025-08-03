@@ -47,6 +47,7 @@ export interface CrawlerOptions {
   delay?: number;
   domainDelay?: number; // 對同一網域的請求間隔時間（毫秒），預防 DDoS 誤判
   encoding?: string; // 支援指定編碼：utf-8, big5, gb2312 等
+  waitForNetworkIdle?: boolean; // 是否等待網路閒置，false 時使用 domcontentloaded
   viewport?: {
     width: number;
     height: number;
