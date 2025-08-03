@@ -257,6 +257,15 @@ export const YAHOO_FINANCE_TW_REVENUE_HEADERS = {
   UNIT: '仟元'
 } as const;
 
+// Yahoo Finance Taiwan EPS 頁面表格標題常數
+export const YAHOO_FINANCE_TW_EPS_HEADERS = {
+  EPS: '每股盈餘',
+  QUARTERLY_GROWTH: '季增率',
+  YEAR_OVER_YEAR_GROWTH: '年增率',
+  AVERAGE_PRICE: '季均價',
+  PERIOD: '年度/季別'
+} as const;
+
 // 台灣財務單位常數
 export const TW_FINANCIAL_UNITS = {
   TWD: '元',           // 新台幣
@@ -312,6 +321,14 @@ export const TW_REVENUE_DATA_FIELD_MAPPING = {
   yearOverYearGrowth: YAHOO_FINANCE_TW_REVENUE_HEADERS.YEAR_OVER_YEAR_GROWTH,
   cumulativeRevenue: YAHOO_FINANCE_TW_REVENUE_HEADERS.CUMULATIVE_REVENUE,
   cumulativeGrowth: YAHOO_FINANCE_TW_REVENUE_HEADERS.CUMULATIVE_GROWTH
+} as const;
+
+// EPS 欄位到表格標題的映射
+export const TW_EPS_DATA_FIELD_MAPPING = {
+  eps: YAHOO_FINANCE_TW_EPS_HEADERS.EPS,
+  quarterlyGrowth: YAHOO_FINANCE_TW_EPS_HEADERS.QUARTERLY_GROWTH,
+  yearOverYearGrowth: YAHOO_FINANCE_TW_EPS_HEADERS.YEAR_OVER_YEAR_GROWTH,
+  averagePrice: YAHOO_FINANCE_TW_EPS_HEADERS.AVERAGE_PRICE
 } as const;
 
 // Yahoo Finance US 財務數據相關常數定義

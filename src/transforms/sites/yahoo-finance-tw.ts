@@ -6,8 +6,10 @@
 import { 
   YAHOO_FINANCE_TW_DIVIDEND_HEADERS,
   YAHOO_FINANCE_TW_REVENUE_HEADERS,
+  YAHOO_FINANCE_TW_EPS_HEADERS,
   TW_DIVIDEND_DATA_FIELD_MAPPING,
   TW_REVENUE_DATA_FIELD_MAPPING,
+  TW_EPS_DATA_FIELD_MAPPING,
   TW_FINANCIAL_UNITS,
   TW_REVENUE_DATA_CONSTANTS,
   UNIT_MULTIPLIERS
@@ -29,6 +31,7 @@ export interface YahooFinanceTWTransforms {
   parseTextPatterns: (textContent: string, format: 'rich' | 'simple' | 'mixed' | 'unknown') => TWDividendData[];
   structureTWDividendDataFromCells: (cells: string[] | string, context?: any) => TWDividendData[];
   structureTWRevenueDataFromCells: (cells: string[] | string, context?: any) => TWRevenueData[];
+  structureTWEPSDataFromCells: (cells: string[] | string, context?: any) => TWEPSData[];
   parseYahooFinanceDividendTable: (textContent: string) => TWDividendData[];
   parseQuarterlyData: (textContent: string, processedPeriods: Set<string>) => TWDividendData[];
   parseAnnualData: (textContent: string, processedPeriods: Set<string>) => TWDividendData[];
@@ -57,6 +60,15 @@ export interface TWRevenueData {
   yearOverYearGrowth?: number | null;   // 年增率 (小數)
   cumulativeRevenue?: number | null;    // 累計營收 (仟元)
   cumulativeGrowth?: number | null;     // 累計年增率 (小數)
+}
+
+// 台灣EPS數據介面
+export interface TWEPSData {
+  fiscalPeriod: string | null;          // 財務期間 (YYYY-Q1/Q2/Q3/Q4)
+  eps?: number | null;                  // 每股盈餘 (元)
+  quarterlyGrowth?: number | null;      // 季增率 (小數)
+  yearOverYearGrowth?: number | null;   // 年增率 (小數)  
+  averagePrice?: number | null;         // 季均價 (元)
 }
 
 // 台灣股利數據介面陣列
@@ -1709,6 +1721,13 @@ export const yahooFinanceTWTransforms: YahooFinanceTWTransforms = {
    */
   structureTWRevenueDataFromCells: (content: string | string[], context?: any): TWRevenueData[] => {
     return structureTWRevenueDataFromCells(content);
+  },
+
+  /**
+   * 從網頁內容中解析台灣EPS數據 - 支援「每股盈餘」表格格式
+   */
+  structureTWEPSDataFromCells: (content: string | string[], context?: any): TWEPSData[] => {
+    return structureTWEPSDataFromCells(content);
   }
 };
 
@@ -2360,6 +2379,136 @@ function parseFallbackRevenuePatterns(textContent: string, results: TWRevenueDat
       console.log(`[TW Revenue Fallback Parser] Added basic data: ${fiscalPeriod} = ${monthlyRevenue} 仟元`);
     }
   }
+}
+
+/**
+ * 從網頁內容中解析台灣EPS數據 - 支援「每股盈餘」表格格式
+ * 根據圖片顯示的表格格式：年度/季別, 每股盈餘, 季增率%, 年增率%, 季均價
+ */
+function structureTWEPSDataFromCells(content: string | string[]): TWEPSData[] {
+  const results: TWEPSData[] = [];
+  
+  // 處理輸入格式
+  let textContent: string;
+  if (Array.isArray(content)) {
+    textContent = content.join(' ');
+  } else {
+    textContent = content;
+  }
+  
+  console.log(`[TW EPS Parser] Processing content length: ${textContent.length}`);
+  console.log(`[TW EPS Parser] Content preview:`, textContent.substring(0, 500));
+  
+  // 檢測EPS關鍵字
+  const epsKeywords = ['每股盈餘', '季增率', '年增率', '季均價', 'EPS'];
+  const containsEPSInfo = epsKeywords.some(keyword => textContent.includes(keyword));
+  
+  if (!containsEPSInfo) {
+    console.warn('[TW EPS Parser] No EPS keywords found in content');
+    return results;
+  }
+  
+  // 動態偵測EPS數據模式
+  // 模式1: 季度格式 "2025 Q1" 配對數值
+  const quarterlyPattern = /(?:(\d{4})\s*Q([1-4]))\s*([0-9.,]+)\s*([+-]?[0-9.,]+%?)\s*([+-]?[0-9.,]+%?)\s*([0-9.,]+)/g;
+  
+  let match;
+  let dataCount = 0;
+  
+  while ((match = quarterlyPattern.exec(textContent)) !== null && dataCount < 20) {
+    const year = match[1];
+    const quarter = match[2];
+    const eps = parseFloat(match[3].replace(/,/g, ''));
+    const quarterlyGrowthStr = match[4];
+    const yearGrowthStr = match[5];
+    const averagePriceStr = match[6];
+    
+    // 建立期間格式 YYYY-QX
+    const fiscalPeriod = `${year}-Q${quarter}`;
+    
+    // 解析季增率 (百分比轉小數)
+    const quarterlyGrowth = parsePercentageValue(quarterlyGrowthStr);
+    
+    // 解析年增率 (百分比轉小數)
+    const yearOverYearGrowth = parsePercentageValue(yearGrowthStr);
+    
+    // 解析季均價 (移除千分位符號)
+    const averagePrice = parseFloat(averagePriceStr.replace(/,/g, ''));
+    
+    if (!isNaN(eps) && eps > 0) {
+      const epsData: TWEPSData = {
+        fiscalPeriod: fiscalPeriod,
+        eps: eps,
+        quarterlyGrowth: quarterlyGrowth,
+        yearOverYearGrowth: yearOverYearGrowth,
+        averagePrice: isNaN(averagePrice) ? null : averagePrice
+      };
+      
+      results.push(epsData);
+      dataCount++;
+      
+      console.log(`[TW EPS Parser] Parsed: ${fiscalPeriod} | EPS: ${eps} | QGrowth: ${quarterlyGrowth} | YGrowth: ${yearOverYearGrowth} | AvgPrice: ${averagePrice}`);
+    }
+  }
+  
+  // 如果沒有找到季度格式，嘗試其他模式
+  if (results.length === 0) {
+    // 模式2: 表格行格式偵測
+    const tableRowPattern = /(\d{4})\s*Q([1-4])\s+([0-9.,]+)\s+([+-]?[0-9.,]+)%\s+([+-]?[0-9.,]+)%\s+([0-9.,]+)/g;
+    
+    while ((match = tableRowPattern.exec(textContent)) !== null && results.length < 20) {
+      const year = match[1];
+      const quarter = match[2];
+      const eps = parseFloat(match[3].replace(/,/g, ''));
+      const quarterlyGrowthStr = match[4] + '%';
+      const yearGrowthStr = match[5] + '%';
+      const averagePriceStr = match[6];
+      
+      const fiscalPeriod = `${year}-Q${quarter}`;
+      const quarterlyGrowth = parsePercentageValue(quarterlyGrowthStr);
+      const yearOverYearGrowth = parsePercentageValue(yearGrowthStr);
+      const averagePrice = parseFloat(averagePriceStr.replace(/,/g, ''));
+      
+      if (!isNaN(eps) && eps > 0) {
+        const epsData: TWEPSData = {
+          fiscalPeriod: fiscalPeriod,
+          eps: eps,
+          quarterlyGrowth: quarterlyGrowth,
+          yearOverYearGrowth: yearOverYearGrowth,
+          averagePrice: isNaN(averagePrice) ? null : averagePrice
+        };
+        
+        results.push(epsData);
+        console.log(`[TW EPS Parser] Table row parsed: ${fiscalPeriod} | EPS: ${eps}`);
+      }
+    }
+  }
+  
+  // 按期間排序 (最新在前)
+  results.sort((a, b) => {
+    if (!a.fiscalPeriod || !b.fiscalPeriod) return 0;
+    return b.fiscalPeriod.localeCompare(a.fiscalPeriod);
+  });
+  
+  console.log(`[TW EPS Parser] Total EPS records found: ${results.length}`);
+  return results;
+}
+
+/**
+ * 解析百分比字串為小數 (支援負數)
+ * 例: "23.20%" → 0.232, "-7.15%" → -0.0715
+ */
+function parsePercentageValue(percentStr: string): number | null {
+  if (!percentStr || percentStr === '--' || percentStr === '-') return null;
+  
+  // 移除 % 符號和空格
+  const cleanValue = percentStr.replace('%', '').replace(/[\s]/g, '').trim();
+  const num = parseFloat(cleanValue);
+  
+  if (isNaN(num)) return null;
+  
+  // 轉換百分比為小數
+  return num / 100;
 }
 
 export default yahooFinanceTWTransforms;
