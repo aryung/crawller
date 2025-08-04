@@ -2785,7 +2785,7 @@ function structureTWEPSDataFromCells(content: string | string[]): TWEPSData[] {
   // 添加更多模式來提高資料覆蓋率
   
   const patterns = [
-    // 模式1: 標準季度格式 "2025 Q1" 配對數值
+    // 模式1: 標準季度格式 "2025-Q1" 配對數值
     /(?:(\d{4})\s*Q([1-4]))\s*([0-9.,]+)\s*([+-]?[0-9.,]+%?)\s*([+-]?[0-9.,]+%?)\s*([0-9.,]+)/g,
     
     // 模式2: 更寬鬆的季度格式，允許額外空格和字符
@@ -3102,17 +3102,30 @@ function extractEPSHeaders(content: string | string[], context?: any): string[] 
   }
 
   // 動態提取期間信息，遵循 "No Hard-coded Timeline" 原則
+  // 支援季度和半年度格式
   const quarterPattern = /(20\d{2})\s+Q([1-4])/g;
+  const halfYearPattern = /(20\d{2})\s+H([1-2])/g;
   const periods: string[] = [];
   let match;
 
   console.log('[EPS Headers] Found header text:', textContent.substring(0, 200));
 
+  // 提取季度數據
   while ((match = quarterPattern.exec(textContent)) !== null) {
-    const period = `${match[1]} Q${match[2]}`;
+    const period = `${match[1]}-Q${match[2]}`;
     if (!periods.includes(period)) {
       periods.push(period);
-      console.log('[EPS Headers] Found period:', period);
+      console.log('[EPS Headers] Found quarterly period:', period);
+    }
+  }
+  
+  // 提取半年度數據
+  halfYearPattern.lastIndex = 0; // 重置正則表達式狀態
+  while ((match = halfYearPattern.exec(textContent)) !== null) {
+    const period = `${match[1]}-H${match[2]}`;
+    if (!periods.includes(period)) {
+      periods.push(period);
+      console.log('[EPS Headers] Found half-yearly period:', period);
     }
   }
 
@@ -3348,12 +3361,18 @@ function combineSimpleEPSFields(content: string | string[], context?: any): Simp
   
   // 更精確的正則表達式模式來匹配 EPS 數據格式 - 嚴格控制小數位數
   const patterns = [
-    // 模式1: "2025 Q1 18.43" (有空格分隔，最多2位小數)
+    // 模式1: "2025-Q1 18.43" (有空格分隔，最多2位小數)
     /(20\d{2})\s*Q([1-4])\s+([0-9]+\.?[0-9]{0,2})/g,
-    // 模式2: "2025 Q118.43" (緊接著，嚴格限制為最多2位小數)
+    // 模式2: "2025-Q118.43" (緊接著，嚴格限制為最多2位小數)
     /(20\d{2})\s*Q([1-4])([0-9]{1,2}\.[0-9]{1,2})/g,
-    // 模式3: "2025 Q118" (整數 EPS，確保不接續小數點)
-    /(20\d{2})\s*Q([1-4])([0-9]{1,2})(?![0-9\.])/g
+    // 模式3: "2025-Q118" (整數 EPS，確保不接續小數點)
+    /(20\d{2})\s*Q([1-4])([0-9]{1,2})(?![0-9\.])/g,
+    // 模式4: "2025-H1 18.43" (半年度格式，有空格分隔)
+    /(20\d{2})\s*H([1-2])\s+([0-9]+\.?[0-9]{0,2})/g,
+    // 模式5: "2025-H118.43" (半年度格式，緊接著)
+    /(20\d{2})\s*H([1-2])([0-9]{1,2}\.[0-9]{1,2})/g,
+    // 模式6: "2025-H118" (半年度整數 EPS)
+    /(20\d{2})\s*H([1-2])([0-9]{1,2})(?![0-9\.])/g
   ];
   
   for (let patternIndex = 0; patternIndex < patterns.length; patternIndex++) {
@@ -3372,7 +3391,7 @@ function combineSimpleEPSFields(content: string | string[], context?: any): Simp
       
       try {
         const year = match[1];
-        const quarter = match[2];
+        const periodType = match[2]; // Q1-Q4 或 H1-H2
         const epsStr = match[3];
         
         // 清理 EPS 字串，移除不必要的字符
@@ -3381,7 +3400,15 @@ function combineSimpleEPSFields(content: string | string[], context?: any): Simp
         // 嚴格控制精度 - EPS 值最多保留 2 位小數
         const eps = Math.round(rawEps * 100) / 100;
         
-        const fiscalPeriod = `${year}-Q${quarter}`;
+        // 根據模式確定是季度還是半年度格式
+        let fiscalPeriod: string;
+        if (patternIndex < 3) {
+          // 季度格式 (模式 1-3)
+          fiscalPeriod = `${year}-Q${periodType}`;
+        } else {
+          // 半年度格式 (模式 4-6)
+          fiscalPeriod = `${year}-H${periodType}`;
+        }
         
         console.log(`[Simple EPS] Pattern ${patternIndex + 1} Match ${matchCount}: "${match[0]}" -> ${fiscalPeriod}, EPS=${eps}`);
         
@@ -3647,7 +3674,7 @@ function extractBalanceSheetHeaders(content: string | string[], context?: any): 
   
   console.log(`[Balance Sheet Headers] Processing content: ${textContent.substring(0, 200)}...`);
   
-  // 從我們的測試結果知道標題格式是: "年度/季度2025 Q12024 Q42024 Q32024 Q22024 Q1..."
+  // 從我們的測試結果知道標題格式是: "年度/季度2025-Q12024-Q42024-Q32024-Q22024-Q1..."
   const headerPattern = /年度\/季度(.+?)(?:股名|$)/;
   const match = textContent.match(headerPattern);
   
@@ -3659,15 +3686,25 @@ function extractBalanceSheetHeaders(content: string | string[], context?: any): 
   const headerText = match[1];
   console.log(`[Balance Sheet Headers] Found header text: ${headerText}`);
   
-  // 提取所有期間 - 格式如 "2025 Q1", "2024 Q4" 等
-  const periodPattern = /(\d{4})\s*Q([1-4])/g;
+  // 提取所有期間 - 支援季度和半年度格式
+  const quarterPattern = /(\d{4})\s*Q([1-4])/g;
+  const halfYearPattern = /(\d{4})\s*H([1-2])/g;
   const periods: string[] = [];
   let periodMatch;
   
-  while ((periodMatch = periodPattern.exec(headerText)) !== null) {
-    const period = `${periodMatch[1]} Q${periodMatch[2]}`;
+  // 提取季度期間
+  while ((periodMatch = quarterPattern.exec(headerText)) !== null) {
+    const period = `${periodMatch[1]}-Q${periodMatch[2]}`;
     periods.push(period);
-    console.log(`[Balance Sheet Headers] Found period: ${period}`);
+    console.log(`[Balance Sheet Headers] Found quarterly period: ${period}`);
+  }
+  
+  // 提取半年度期間
+  halfYearPattern.lastIndex = 0; // 重置正則表達式狀態
+  while ((periodMatch = halfYearPattern.exec(headerText)) !== null) {
+    const period = `${periodMatch[1]}-H${periodMatch[2]}`;
+    periods.push(period);
+    console.log(`[Balance Sheet Headers] Found half-yearly period: ${period}`);
   }
   
   console.log(`[Balance Sheet Headers] Extracted ${periods.length} periods:`, periods);
