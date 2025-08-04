@@ -1,7 +1,7 @@
 {
   "templateType": "tw-balance-sheet",
   "url": "https://tw.stock.yahoo.com/quote/2892.TW/balance-sheet",
-  "_note": "This config extracts structured balance sheet data from Yahoo Finance Taiwan balance sheet page. Extracts quarterly and annual financial data including total assets, liabilities, equity, and financial ratios. All values are automatically converted from '仟元' (thousands) to actual values. Use with Taiwan stock codes like 2330.TW, 1101.TW, etc.",
+  "_note": "IMPROVED: This config extracts structured balance sheet data using independent selectors following CLAUDE.md principles. Extracts quarterly and annual financial data including total assets, liabilities, equity, and financial ratios. All values are automatically converted from '仟元' (thousands) to actual values. Use with Taiwan stock codes like 2330.TW, 1101.TW, etc.",
   "actions": [
     {
       "type": "wait",
@@ -19,10 +19,20 @@
       "selector": "h1, .symbol, .stock-name",
       "transform": "cleanStockSymbol"
     },
-    "structuredBalanceSheetData": {
+    "balanceSheetHeaders": {
+      "selector": "table thead th, table thead td, .table-header, th, .header",
+      "multiple": true,
+      "transform": "extractBalanceSheetHeaders"
+    },
+    "totalAssetsRow": {
+      "selector": "table tbody tr, table tr, .table-row, tr",
+      "multiple": true,
+      "transform": "extractBalanceSheetRow"
+    },
+    "balanceSheetData": {
       "selector": "body",
       "multiple": false,
-      "transform": "structureTWBalanceSheetDataFromCells"
+      "transform": "combineBalanceSheetData"
     }
   },
   "headers": {

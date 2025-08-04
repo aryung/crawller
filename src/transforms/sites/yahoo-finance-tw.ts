@@ -43,6 +43,17 @@ export interface YahooFinanceTWTransforms {
   structureTWCashFlowDataFromCells: (cells: string[] | string, context?: any) => TWCashFlowData[];
   parseYahooFinanceDividendTable: (textContent: string) => TWDividendData[];
   parseQuarterlyData: (textContent: string, processedPeriods: Set<string>) => TWDividendData[];
+  debugHTMLStructure: (content: string | string[], context?: any) => any;
+  extractTableCells: (content: string | string[], context?: any) => any;
+  debugFieldExtraction: (content: string | string[], context?: any) => any;
+  combineIndependentFields: (content: string | string[], context?: any) => TWEPSData[];
+  combineSimpleEPSFields: (content: string | string[], context?: any) => SimpleEPSData[];
+  extractEPSHeaders: (content: string | string[], context?: any) => string[];
+  extractEPSRow: (content: string | string[], context?: any) => string[];
+  combineEPSData: (content: string | string[], context?: any) => TWEPSData[];
+  extractBalanceSheetHeaders: (content: string | string[], context?: any) => string[];
+  extractBalanceSheetRow: (content: string | string[], context?: any) => string[];
+  combineBalanceSheetData: (content: string | string[], context?: any) => TWBalanceSheetData[];
   parseAnnualData: (textContent: string, processedPeriods: Set<string>) => TWDividendData[];
   parseHistoricalData: (textContent: string, processedPeriods: Set<string>) => TWDividendData[];
   parseSimpleAnnualData: (textContent: string, processedPeriods: Set<string>) => TWDividendData[];
@@ -78,6 +89,12 @@ export interface TWEPSData {
   quarterlyGrowth?: number | null;      // 季增率 (小數)
   yearOverYearGrowth?: number | null;   // 年增率 (小數)  
   averagePrice?: number | null;         // 季均價 (元)
+}
+
+// 簡化版 EPS 數據介面 - 只包含核心欄位
+export interface SimpleEPSData {
+  fiscalPeriod: string;                 // 財務期間 (YYYY-Q1/Q2/Q3/Q4)
+  eps: number;                          // 每股盈餘 (元)
 }
 
 // 台灣損益表數據介面
@@ -1837,6 +1854,55 @@ export const yahooFinanceTWTransforms: YahooFinanceTWTransforms = {
    */
   combineIndependentFields: (content: string | string[], context?: any): TWEPSData[] => {
     return combineIndependentFields(content, context);
+  },
+
+  /**
+   * 簡化版 EPS 數據組合 - 只保留 fiscalPeriod 和 eps
+   */
+  combineSimpleEPSFields: (content: string | string[], context?: any): SimpleEPSData[] => {
+    return combineSimpleEPSFields(content, context);
+  },
+
+  /**
+   * 提取 EPS 頁面標題（期間）
+   */
+  extractEPSHeaders: (content: string | string[], context?: any): string[] => {
+    return extractEPSHeaders(content, context);
+  },
+
+  /**
+   * 提取 EPS 數值行
+   */
+  extractEPSRow: (content: string | string[], context?: any): string[] => {
+    return extractEPSRow(content, context);
+  },
+
+  /**
+   * 組合 EPS 數據
+   */
+  combineEPSData: (content: string | string[], context?: any): TWEPSData[] => {
+    return combineEPSData(content, context);
+  },
+  
+  /**
+   * 提取資產負債表標題（期間）
+   */
+  extractBalanceSheetHeaders: (content: string | string[], context?: any): string[] => {
+    return extractBalanceSheetHeaders(content, context);
+  },
+  
+  /**
+   * 提取資產負債表特定行數據
+   */
+  extractBalanceSheetRow: (content: string | string[], context?: any): string[] => {
+    return extractBalanceSheetRow(content, context);
+  },
+  
+  /**
+   * 組合資產負債表數據
+   */
+  combineBalanceSheetData: (content: string | string[], context?: any): TWBalanceSheetData[] => {
+    return combineBalanceSheetData(content, context);
   }
 };
 
@@ -2853,6 +2919,7 @@ function structureTWEPSDataFromCells(content: string | string[]): TWEPSData[] {
   if (results.length < 5) {
     // 模式2: 表格行格式偵測
     const tableRowPattern = /(\d{4})\s*Q([1-4])\s+([0-9.,]+)\s+([+-]?[0-9.,]+)%\s+([+-]?[0-9.,]+)%\s+([0-9.,]+)/g;
+    let match: RegExpExecArray | null;
     
     while ((match = tableRowPattern.exec(textContent)) !== null && results.length < 20) {
       const year = match[1];
@@ -3021,56 +3088,359 @@ function debugFieldExtraction(content: string | string[]): any {
 }
 
 /**
+ * 提取 EPS 頁面標題（期間）
+ * IMPROVED: Dynamic extraction following CLAUDE.md principles
+ */
+function extractEPSHeaders(content: string | string[], context?: any): string[] {
+  console.log('[EPS Headers] Processing content:', typeof content === 'string' ? content.substring(0, 200) + '...' : 'Array content');
+  
+  let textContent: string;
+  if (Array.isArray(content)) {
+    textContent = content.join(' ');
+  } else {
+    textContent = content;
+  }
+
+  // 動態提取期間信息，遵循 "No Hard-coded Timeline" 原則
+  const quarterPattern = /(20\d{2})\s+Q([1-4])/g;
+  const periods: string[] = [];
+  let match;
+
+  console.log('[EPS Headers] Found header text:', textContent.substring(0, 200));
+
+  while ((match = quarterPattern.exec(textContent)) !== null) {
+    const period = `${match[1]} Q${match[2]}`;
+    if (!periods.includes(period)) {
+      periods.push(period);
+      console.log('[EPS Headers] Found period:', period);
+    }
+  }
+
+  console.log(`[EPS Headers] Extracted ${periods.length} periods:`, periods);
+  return periods;
+}
+
+/**
+ * 提取 EPS 數值行
+ * IMPROVED: Dynamic extraction following CLAUDE.md principles
+ */
+function extractEPSRow(content: string | string[], context?: any): string[] {
+  let textContent: string;
+  if (Array.isArray(content)) {
+    textContent = content.join(' ');
+  } else {
+    textContent = content;
+  }
+
+  console.log('[EPS Row] Processing content:', textContent.substring(0, 200) + '...');
+
+  // 提取數字模式，支援負數、小數和百分比
+  const numberPattern = /(-?\d+\.?\d*%?)/g;
+  const numbers: string[] = [];
+  let match;
+  let count = 0;
+
+  while ((match = numberPattern.exec(textContent)) !== null && count < 100) {
+    const value = match[1];
+    // 過濾掉年份（四位數字）和其他明顯不是 EPS 數據的值
+    if (!/^20\d{2}$/.test(value) && value !== '1' && value !== '2' && value !== '3' && value !== '4') {
+      numbers.push(value);
+      count++;
+    }
+  }
+
+  console.log(`[EPS Row] Found ${Math.min(numbers.length, 10)} numbers:`, numbers.slice(0, 10));
+  return numbers;
+}
+
+/**
+ * 組合 EPS 數據
+ * IMPROVED: Uses pre-extracted individual selector data from context
+ */
+function combineEPSData(content: string | string[], context?: any): TWEPSData[] {
+  console.log('[EPS Combine] Using pre-extracted context data');
+  
+  const results: TWEPSData[] = [];
+  
+  // Use pre-extracted data from individual selectors in context
+  const periods = context?.epsHeaders || [];
+  const epsValues = context?.epsValues || [];
+  const quarterlyGrowth = context?.epsGrowthQuarterly || [];
+  const yearlyGrowth = context?.epsGrowthYearly || [];
+  const prices = context?.epsPrices || [];
+  
+  console.log(`[EPS Combine] Context data - Periods: ${periods.length}, EPS: ${epsValues.length}, Quarterly: ${quarterlyGrowth.length}, Yearly: ${yearlyGrowth.length}, Prices: ${prices.length}`);
+  
+  if (periods.length === 0) {
+    console.warn('[EPS Combine] No periods found in context, falling back to direct extraction');
+    // Fallback to direct extraction if context is missing
+    const fallbackPeriods = extractEPSHeaders(content, context);
+    const fallbackEpsValues = extractEPSRow(content, context);
+    
+    for (let i = 0; i < Math.min(fallbackPeriods.length, fallbackEpsValues.length); i++) {
+      const period = fallbackPeriods[i];
+      const rawEps = fallbackEpsValues[i];
+      const eps = parseFloat(rawEps);
+      
+      if (!isNaN(eps) && eps > 0) {
+        results.push({
+          fiscalPeriod: period,
+          eps: Math.round(eps * 100) / 100,
+          quarterlyGrowth: null,
+          yearOverYearGrowth: null,
+          averagePrice: null
+        });
+      }
+    }
+    return results;
+  }
+  
+  // Process using pre-extracted arrays with correct index mapping
+  const maxItems = Math.min(periods.length, 20); // Limit to 20 items
+  
+  for (let i = 0; i < maxItems; i++) {
+    const period = periods[i];
+    
+    // Parse EPS value
+    let eps: number | null = null;
+    if (i < epsValues.length) {
+      const rawEps = parseFloat(epsValues[i]);
+      if (!isNaN(rawEps) && rawEps > 0 && rawEps < 1000) {
+        eps = Math.round(rawEps * 100) / 100; // Precision control
+      }
+    }
+    
+    // Parse quarterly growth
+    let quarterlyGrowthValue: number | null = null;
+    if (i < quarterlyGrowth.length) {
+      const rawQuarterly = quarterlyGrowth[i];
+      if (typeof rawQuarterly === 'string' && rawQuarterly.includes('%')) {
+        const value = parseFloat(rawQuarterly.replace('%', ''));
+        if (!isNaN(value)) {
+          quarterlyGrowthValue = value / 100; // Convert to decimal
+        }
+      }
+    }
+    
+    // Parse yearly growth  
+    let yearlyGrowthValue: number | null = null;
+    if (i < yearlyGrowth.length) {
+      const rawYearly = yearlyGrowth[i];
+      if (typeof rawYearly === 'string' && rawYearly.includes('%')) {
+        const value = parseFloat(rawYearly.replace('%', ''));
+        if (!isNaN(value)) {
+          yearlyGrowthValue = value / 100; // Convert to decimal
+        }
+      }
+    }
+    
+    // Parse average price
+    let averagePrice: number | null = null;
+    if (i < prices.length) {
+      const rawPrice = parseFloat(prices[i]);
+      if (!isNaN(rawPrice) && rawPrice > 0) {
+        averagePrice = Math.round(rawPrice * 100) / 100; // Precision control
+      }
+    }
+    
+    if (eps !== null) {
+      const epsData: TWEPSData = {
+        fiscalPeriod: period,
+        eps: eps,
+        quarterlyGrowth: quarterlyGrowthValue,
+        yearOverYearGrowth: yearlyGrowthValue,
+        averagePrice: averagePrice
+      };
+      
+      results.push(epsData);
+      console.log(`[EPS Combine] ✅ ${period}: EPS=${eps}, Q=${quarterlyGrowthValue ? (quarterlyGrowthValue*100).toFixed(2)+'%' : 'null'}, Y=${yearlyGrowthValue ? (yearlyGrowthValue*100).toFixed(2)+'%' : 'null'}, Price=${averagePrice || 'null'}`);
+    } else {
+      console.log(`[EPS Combine] ⚠️ Skipped ${period}: Invalid EPS value`);
+    }
+  }
+
+  console.log(`[EPS Combine] Successfully processed ${results.length} EPS records from context data`);
+  return results;
+}
+
+/**
+ * 為特定期間查找 EPS 值
+ */
+function findEPSValueForPeriod(numbers: string[], periodIndex: number, totalPeriods: number): number | null {
+  // 動態查找 EPS 值，通常在數組的前部分
+  for (let offset = 0; offset < 5; offset++) {
+    const index = periodIndex + (offset * totalPeriods);
+    if (index < numbers.length) {
+      const value = parseFloat(numbers[index]);
+      if (!isNaN(value) && value > 0 && value < 100 && !numbers[index].includes('%')) {
+        return Math.round(value * 100) / 100; // 精度控制到2位小數
+      }
+    }
+  }
+  return null;
+}
+
+/**
+ * 為特定期間查找成長率值
+ */
+function findGrowthValueForPeriod(numbers: string[], periodIndex: number, totalPeriods: number, type: 'quarterly' | 'yearly'): number | null {
+  // 動態查找成長率，通常是百分比值
+  const startOffset = type === 'quarterly' ? 1 : 2;
+  
+  for (let offset = startOffset; offset < startOffset + 3; offset++) {
+    const index = periodIndex + (offset * totalPeriods);
+    if (index < numbers.length && numbers[index].includes('%')) {
+      const value = parseFloat(numbers[index].replace('%', ''));
+      if (!isNaN(value) && Math.abs(value) < 1000) {
+        return value / 100; // 轉換為小數
+      }
+    }
+  }
+  return null;
+}
+
+/**
+ * 為特定期間查找平均價格值
+ */
+function findPriceValueForPeriod(numbers: string[], periodIndex: number, totalPeriods: number): number | null {
+  // 動態查找價格，通常是較大的數值
+  for (let offset = 3; offset < 6; offset++) {
+    const index = periodIndex + (offset * totalPeriods);
+    if (index < numbers.length && !numbers[index].includes('%')) {
+      const value = parseFloat(numbers[index].replace(/,/g, ''));
+      if (!isNaN(value) && value > 100 && value < 10000) {
+        return value;
+      }
+    }
+  }
+  return null;
+}
+
+/**
  * 組合獨立欄位為結構化 EPS 數據
- * 
- * 這個函數需要從全域 context 中獲取其他選擇器的結果
- * 由於爬蟲系統的限制，我們需要回到之前可行的字串解析方法
+ * IMPROVED: Now uses dynamic extraction instead of hard-coded data
  */
 function combineIndependentFields(content: string | string[], context?: any): TWEPSData[] {
-  console.log(`[Combine Fields] This is a placeholder - using fallback to string parsing method`);
+  console.log(`[Combine Fields] Starting dynamic EPS field combination`);
   
-  // 由於爬蟲系統的架構限制，每個變換函數獨立運行
-  // 無法直接訪問其他選擇器的結果
-  // 因此我們回到改進版的字串解析方法
+  // 使用新的動態組合函數
+  return combineEPSData(content, context);
+}
+
+/**
+ * 簡化版 EPS 數據組合函數 - 只提取 fiscalPeriod 和 eps
+ * 採用獨立選擇器避免字串解析錯誤，提高數據精度
+ */
+function combineSimpleEPSFields(content: string | string[], context?: any): SimpleEPSData[] {
+  console.log(`[Simple EPS] Starting pure dynamic EPS field combination`);
   
-  // 從成功的獨立選擇器測試中，我們知道以下是正確的：
-  // testEPS Item 11-30: ["13.95", "14.45", "12.55", "9.56", "8.7", "9.21", "8.14", "7.01", "7.98", "11.41", "10.83", "9.14", "7.82", "6.41", "6.03", "5.18", "5.39", "5.51", "5.3", "4.66"]
-  // testQuarterly Item 0-19: ["-3.46%", "15.14%", "31.28%", "9.89%", "-5.54%", "13.14%", "16.12%", "-12.16%", "-30.06%", "5.36%", "18.49%", "16.88%", "22.00%", "6.30%", "16.41%", "-3.90%", "-2.18%", "3.96%", "13.73%", "3.33%"]
+  const results: SimpleEPSData[] = [];
   
-  // 我們已經驗證了獨立選擇器能完美提取數據
-  // 現在我們基於這個成功的結果，建構模擬數據以展示概念
+  // 從頁面內容中純粹動態提取
+  let textContent: string;
+  if (Array.isArray(content)) {
+    textContent = content.join(' ');
+  } else {
+    textContent = content;
+  }
   
-  const simulatedEPSData: TWEPSData[] = [
-    { fiscalPeriod: "2025-Q1", eps: 13.95, quarterlyGrowth: -0.0346, yearOverYearGrowth: 0.6034, averagePrice: 1049.69 },
-    { fiscalPeriod: "2024-Q4", eps: 14.45, quarterlyGrowth: 0.1514, yearOverYearGrowth: 0.5689, averagePrice: 889.07 },
-    { fiscalPeriod: "2024-Q3", eps: 12.55, quarterlyGrowth: 0.3128, yearOverYearGrowth: 0.5418, averagePrice: 833.81 },
-    { fiscalPeriod: "2024-Q2", eps: 9.56, quarterlyGrowth: 0.0989, yearOverYearGrowth: 0.3638, averagePrice: 766.01 },
-    { fiscalPeriod: "2024-Q1", eps: 8.7, quarterlyGrowth: -0.0554, yearOverYearGrowth: 0.0902, averagePrice: 680.77 },
-    { fiscalPeriod: "2023-Q4", eps: 9.21, quarterlyGrowth: 0.1314, yearOverYearGrowth: -0.1928, averagePrice: 543.45 },
-    { fiscalPeriod: "2023-Q3", eps: 8.14, quarterlyGrowth: 0.1612, yearOverYearGrowth: -0.2484, averagePrice: 536.62 },
-    { fiscalPeriod: "2023-Q2", eps: 7.01, quarterlyGrowth: -0.1216, yearOverYearGrowth: -0.233, averagePrice: 526.75 },
-    { fiscalPeriod: "2023-Q1", eps: 7.98, quarterlyGrowth: -0.3006, yearOverYearGrowth: 0.0205, averagePrice: 515.81 },
-    { fiscalPeriod: "2022-Q4", eps: 11.41, quarterlyGrowth: 0.0536, yearOverYearGrowth: 0.78, averagePrice: 516.24 },
-    { fiscalPeriod: "2022-Q3", eps: 10.83, quarterlyGrowth: 0.1849, yearOverYearGrowth: 0.796, averagePrice: 542.29 },
-    { fiscalPeriod: "2022-Q2", eps: 9.14, quarterlyGrowth: 0.1688, yearOverYearGrowth: 0.7645, averagePrice: 573.59 },
-    { fiscalPeriod: "2022-Q1", eps: 7.82, quarterlyGrowth: 0.22, yearOverYearGrowth: 0.4508, averagePrice: 618.71 },
-    { fiscalPeriod: "2021-Q4", eps: 6.41, quarterlyGrowth: 0.063, yearOverYearGrowth: 0.1633, averagePrice: 597.73 },
-    { fiscalPeriod: "2021-Q3", eps: 6.03, quarterlyGrowth: 0.1641, yearOverYearGrowth: 0.1377, averagePrice: 597.43 },
-    { fiscalPeriod: "2021-Q2", eps: 5.18, quarterlyGrowth: -0.039, yearOverYearGrowth: 0.1116, averagePrice: 591.92 },
-    { fiscalPeriod: "2021-Q1", eps: 5.39, quarterlyGrowth: -0.0218, yearOverYearGrowth: 0.1951, averagePrice: 608.13 },
-    { fiscalPeriod: "2020-Q4", eps: 5.51, quarterlyGrowth: 0.0396, yearOverYearGrowth: 0.2327, averagePrice: 479.07 },
-    { fiscalPeriod: "2020-Q3", eps: 5.3, quarterlyGrowth: 0.1373, yearOverYearGrowth: 0.359, averagePrice: 411.03 },
-    { fiscalPeriod: "2020-Q2", eps: 4.66, quarterlyGrowth: 0.0333, yearOverYearGrowth: 0.8132, averagePrice: 299.12 }
+  console.log(`[Simple EPS] Processing ${textContent.length} characters of content`);
+  
+  // 更精確的正則表達式模式來匹配 EPS 數據格式 - 嚴格控制小數位數
+  const patterns = [
+    // 模式1: "2025 Q1 18.43" (有空格分隔，最多2位小數)
+    /(20\d{2})\s*Q([1-4])\s+([0-9]+\.?[0-9]{0,2})/g,
+    // 模式2: "2025 Q118.43" (緊接著，嚴格限制為最多2位小數)
+    /(20\d{2})\s*Q([1-4])([0-9]{1,2}\.[0-9]{1,2})/g,
+    // 模式3: "2025 Q118" (整數 EPS，確保不接續小數點)
+    /(20\d{2})\s*Q([1-4])([0-9]{1,2})(?![0-9\.])/g
   ];
   
-  console.log(`[Combine Fields] Demonstrating perfect field separation with ${simulatedEPSData.length} records`);
-  console.log(`[Combine Fields] Key achievements:`);
-  console.log(`  - EPS precision: 2024-Q3 = 12.55 (not 12.5)`);
-  console.log(`  - Growth accuracy: 2024-Q3 = 31.28% (not 531.28%)`);
-  console.log(`  - Complete coverage: 20 quarters from 2025-Q1 to 2020-Q2`);
-  console.log(`  - Zero concatenation errors: All fields cleanly separated`);
+  for (let patternIndex = 0; patternIndex < patterns.length; patternIndex++) {
+    const pattern = patterns[patternIndex];
+    console.log(`[Simple EPS] Trying pattern ${patternIndex + 1}: ${pattern.source}`);
+    
+    let match;
+    let matchCount = 0;
+    const maxMatches = 30;
+    
+    // 重置正則表達式的 lastIndex
+    pattern.lastIndex = 0;
+    
+    while ((match = pattern.exec(textContent)) !== null && matchCount < maxMatches) {
+      matchCount++;
+      
+      try {
+        const year = match[1];
+        const quarter = match[2];
+        const epsStr = match[3];
+        
+        // 清理 EPS 字串，移除不必要的字符
+        const cleanEpsStr = epsStr.replace(/[^0-9.]/g, '');
+        const rawEps = parseFloat(cleanEpsStr);
+        // 嚴格控制精度 - EPS 值最多保留 2 位小數
+        const eps = Math.round(rawEps * 100) / 100;
+        
+        const fiscalPeriod = `${year}-Q${quarter}`;
+        
+        console.log(`[Simple EPS] Pattern ${patternIndex + 1} Match ${matchCount}: "${match[0]}" -> ${fiscalPeriod}, EPS=${eps}`);
+        
+        // 驗證數據合理性 (EPS 通常在 0.1 到 100 之間)
+        if (!isNaN(eps) && eps > 0.1 && eps < 100) {
+          // 檢查是否已經存在相同的 fiscalPeriod
+          const existingRecord = results.find(r => r.fiscalPeriod === fiscalPeriod);
+          if (!existingRecord) {
+            const simpleEpsData: SimpleEPSData = {
+              fiscalPeriod: fiscalPeriod,
+              eps: eps
+            };
+            
+            results.push(simpleEpsData);
+            console.log(`[Simple EPS] ✅ Added: ${fiscalPeriod} EPS=${eps}`);
+          } else {
+            console.log(`[Simple EPS] ⚠️ Duplicate period ${fiscalPeriod}, skipping`);
+          }
+        } else {
+          console.log(`[Simple EPS] ❌ Invalid EPS: ${eps} for ${fiscalPeriod}`);
+        }
+      } catch (error) {
+        console.warn(`[Simple EPS] Parse error for match ${matchCount}:`, error);
+      }
+    }
+    
+    console.log(`[Simple EPS] Pattern ${patternIndex + 1} found ${matchCount} matches, extracted ${results.length} valid records so far`);
+    
+    // 如果已經找到足夠的記錄，可以停止嘗試其他模式
+    if (results.length >= 15) {
+      console.log(`[Simple EPS] Found sufficient records (${results.length}), stopping pattern search`);
+      break;
+    }
+  }
   
-  return simulatedEPSData;
+  // 去重並按時間排序（最新在前）
+  const uniqueResults = results.filter((item, index, self) => 
+    index === self.findIndex(t => t.fiscalPeriod === item.fiscalPeriod)
+  );
+  
+  uniqueResults.sort((a, b) => {
+    // 簡單的字串比較排序（因為格式是 YYYY-QX）
+    return b.fiscalPeriod.localeCompare(a.fiscalPeriod);
+  });
+  
+  console.log(`[Simple EPS] Final results: ${uniqueResults.length} unique EPS records`);
+  console.log(`[Simple EPS] Pure dynamic extraction - no hard-coded data used`);
+  
+  if (uniqueResults.length > 0) {
+    console.log(`[Simple EPS] Sample records:`);
+    for (let i = 0; i < Math.min(5, uniqueResults.length); i++) {
+      const record = uniqueResults[i];
+      console.log(`  ${record.fiscalPeriod}: ${record.eps}`);
+    }
+  } else {
+    console.warn(`[Simple EPS] No valid EPS records extracted - check patterns and content`);
+  }
+  
+  return uniqueResults;
 }
 
 /**
@@ -3260,6 +3630,160 @@ function structureTWBalanceSheetDataFromCells(content: string | string[]): TWBal
   });
   
   console.log(`[TW Balance Sheet Parser] Parsed ${results.length} periods`);
+  return results;
+}
+
+/**
+ * 提取資產負債表標題（期間）
+ * 從表格標題行中提取所有期間資訊
+ */
+function extractBalanceSheetHeaders(content: string | string[], context?: any): string[] {
+  let textContent: string;
+  if (Array.isArray(content)) {
+    textContent = content.join(' ');
+  } else {
+    textContent = content;
+  }
+  
+  console.log(`[Balance Sheet Headers] Processing content: ${textContent.substring(0, 200)}...`);
+  
+  // 從我們的測試結果知道標題格式是: "年度/季度2025 Q12024 Q42024 Q32024 Q22024 Q1..."
+  const headerPattern = /年度\/季度(.+?)(?:股名|$)/;
+  const match = textContent.match(headerPattern);
+  
+  if (!match) {
+    console.warn('[Balance Sheet Headers] No header pattern found');
+    return [];
+  }
+  
+  const headerText = match[1];
+  console.log(`[Balance Sheet Headers] Found header text: ${headerText}`);
+  
+  // 提取所有期間 - 格式如 "2025 Q1", "2024 Q4" 等
+  const periodPattern = /(\d{4})\s*Q([1-4])/g;
+  const periods: string[] = [];
+  let periodMatch;
+  
+  while ((periodMatch = periodPattern.exec(headerText)) !== null) {
+    const period = `${periodMatch[1]} Q${periodMatch[2]}`;
+    periods.push(period);
+    console.log(`[Balance Sheet Headers] Found period: ${period}`);
+  }
+  
+  console.log(`[Balance Sheet Headers] Extracted ${periods.length} periods:`, periods);
+  return periods;
+}
+
+/**
+ * 提取資產負債表特定行數據
+ * 從數據行中提取數值並按順序分割
+ */
+function extractBalanceSheetRow(content: string | string[], context?: any): string[] {
+  let textContent: string;
+  if (Array.isArray(content)) {
+    textContent = content.join(' ');
+  } else {
+    textContent = content;
+  }
+  
+  console.log(`[Balance Sheet Row] Processing content: ${textContent.substring(0, 100)}...`);
+  
+  // 從測試結果知道數據格式是連續的數字串，如: "718,283,811697,867,530676,528,300..."
+  // 我們需要用模式來分割這些數字
+  
+  // 匹配台灣財務數據格式：數字+逗號的組合
+  const numberPattern = /\d{1,3}(?:,\d{3})*/g;
+  const numbers = textContent.match(numberPattern) || [];
+  
+  console.log(`[Balance Sheet Row] Found ${numbers.length} numbers:`, numbers.slice(0, 10));
+  return numbers;
+}
+
+/**
+ * 組合資產負債表數據
+ * 將標題和各行數據組合成結構化的資產負債表數據
+ */
+function combineBalanceSheetData(content: string | string[], context?: any): TWBalanceSheetData[] {
+  let textContent: string;
+  if (Array.isArray(content)) {
+    textContent = content.join(' ');
+  } else {
+    textContent = content;
+  }
+  
+  console.log(`[Balance Sheet Combine] Processing content length: ${textContent.length}`);
+  
+  // 提取期間標題
+  const periods = extractBalanceSheetHeaders(textContent);
+  if (periods.length === 0) {
+    console.warn('[Balance Sheet Combine] No periods found');
+    return [];
+  }
+  
+  // 定義我們要提取的財務項目及其對應的關鍵字
+  const financialItems = [
+    { key: 'totalAssets', keyword: '總資產' },
+    { key: 'totalLiabilities', keyword: '總負債' }, 
+    { key: 'stockholdersEquity', keyword: '股東權益' },
+    { key: 'currentAssets', keyword: '流動資產' },
+    { key: 'currentLiabilities', keyword: '流動負債' }
+  ];
+  
+  const results: TWBalanceSheetData[] = [];
+  
+  // 為每個期間創建資產負債表數據
+  periods.forEach((period, periodIndex) => {
+    const balanceSheetData: TWBalanceSheetData = {
+      fiscalPeriod: period,
+      totalAssets: null,
+      currentAssets: null,
+      cashAndEquivalents: null,
+      accountsReceivable: null,
+      inventory: null,
+      nonCurrentAssets: null,
+      propertyPlantEquipment: null,
+      intangibleAssets: null,
+      totalLiabilities: null,
+      currentLiabilities: null,
+      accountsPayable: null,
+      shortTermDebt: null,
+      nonCurrentLiabilities: null,
+      longTermDebt: null,
+      totalEquity: null,
+      stockholdersEquity: null,
+      retainedEarnings: null,
+      bookValuePerShare: null
+    };
+    
+    // 為每個財務項目提取數據
+    financialItems.forEach(item => {
+      const pattern = new RegExp(`${item.keyword}([\\d,]+(?:[\\d,]+)*)`);
+      const match = textContent.match(pattern);
+      
+      if (match) {
+        const numbersText = match[1];
+        const numbers = extractBalanceSheetRow(numbersText);
+        
+        if (numbers.length > periodIndex) {
+          const rawValue = numbers[periodIndex].replace(/,/g, '');
+          const numericValue = parseInt(rawValue, 10);
+          
+          // 使用真實數值常數進行驗證
+          if (!isNaN(numericValue) && numericValue > TW_REVENUE_DATA_CONSTANTS.MIN_REASONABLE_VALUE) {
+            // 台灣財務數據通常以仟元為單位，需要轉換
+            const actualValue = numericValue * UNIT_MULTIPLIERS.THOUSAND_TWD;
+            (balanceSheetData as any)[item.key] = actualValue;
+            
+            console.log(`[Balance Sheet Combine] ${period} ${item.keyword}: ${numericValue} (仟元) -> ${actualValue} (元)`);
+          }
+        }
+      }
+    });
+    
+    results.push(balanceSheetData);
+  });
+  
+  console.log(`[Balance Sheet Combine] Generated ${results.length} balance sheet records`);
   return results;
 }
 

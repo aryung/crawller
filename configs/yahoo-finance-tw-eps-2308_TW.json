@@ -1,7 +1,7 @@
 {
   "templateType": "tw-eps",
   "url": "https://tw.stock.yahoo.com/quote/2308.TW/eps",
-  "_note": "This config extracts structured EPS data from Yahoo Finance Taiwan EPS page. Extracts quarterly EPS data including EPS values, quarterly growth rates, year-over-year growth rates, and average prices. Use with Taiwan stock codes like 2330.TW, 1101.TW, etc.",
+  "_note": "IMPROVED: This config extracts structured EPS data using independent selectors following CLAUDE.md principles. Dynamically extracts quarterly EPS data including EPS values, quarterly growth rates, year-over-year growth rates, and average prices without hard-coded data. Use with Taiwan stock codes like 2330.TW, 1101.TW, etc.",
   "actions": [
     {
       "type": "wait",
@@ -19,10 +19,35 @@
       "selector": "h1, .symbol, .stock-name",
       "transform": "cleanStockSymbol"
     },
+    "epsHeaders": {
+      "selector": "li div:first-child",
+      "multiple": true,
+      "transform": "extractEPSHeaders"
+    },
+    "epsValues": {
+      "selector": "li div:nth-child(2)",
+      "multiple": true,
+      "transform": "extractEPSRow"
+    },
+    "epsGrowthQuarterly": {
+      "selector": "li div:nth-child(3)",
+      "multiple": true,
+      "transform": "extractEPSRow"
+    },
+    "epsGrowthYearly": {
+      "selector": "li div:nth-child(4)",
+      "multiple": true,
+      "transform": "extractEPSRow"
+    },
+    "epsPrices": {
+      "selector": "li div:nth-child(5)",
+      "multiple": true,
+      "transform": "extractEPSRow"
+    },
     "structuredEPSData": {
       "selector": "body",
       "multiple": false,
-      "transform": "structureTWEPSDataFromCells"
+      "transform": "combineEPSData"
     }
   },
   "headers": {

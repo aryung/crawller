@@ -156,7 +156,8 @@ export class PlaywrightCrawler {
           
           if (selectorObj.selector || selectorObj.extract) {
             // 這是 EnhancedSelectorItem 格式或有 extract 配置
-            data[key] = await this.processEnhancedSelectorPlaywright(page, selectorObj, config);
+            // Pass accumulated data as context for transforms that need it
+            data[key] = await this.processEnhancedSelectorPlaywright(page, selectorObj, config, data);
           }
         }
       } catch (selectorError) {
@@ -168,14 +169,14 @@ export class PlaywrightCrawler {
     return data;
   }
 
-  private async processEnhancedSelectorPlaywright(page: Page, selectorObj: any, config: any): Promise<any> {
+  private async processEnhancedSelectorPlaywright(page: Page, selectorObj: any, config: any, accumulatedData?: Record<string, any>): Promise<any> {
     const { selector, multiple, extract, attribute, transform } = selectorObj;
     
     if (extract) {
       // 有 extract 配置 - 提取多個屬性
       const cleanSelector = selector ? selector.replace(':multiple', '') : '';
       const isMultiple = multiple || (selector && selector.includes(':multiple'));
-      return await this.processExtractConfigPlaywright(page, { selector: cleanSelector, multiple: isMultiple, extract }, config);
+      return await this.processExtractConfigPlaywright(page, { selector: cleanSelector, multiple: isMultiple, extract }, config, accumulatedData);
     }
     
     if (!selector) {
@@ -203,7 +204,7 @@ export class PlaywrightCrawler {
 
       // 應用轉換
       if (transform) {
-        values = await this.applyTransformPlaywright(values, transform, config);
+        values = await this.applyTransformPlaywright(values, transform, config, accumulatedData);
       }
 
       return values;
@@ -224,14 +225,14 @@ export class PlaywrightCrawler {
 
       // 應用轉換
       if (transform) {
-        values = await this.applyTransformPlaywright(values, transform, config);
+        values = await this.applyTransformPlaywright(values, transform, config, accumulatedData);
       }
 
       return values;
     }
   }
 
-  private async processExtractConfigPlaywright(page: Page, selectorConfig: any, config: any): Promise<any> {
+  private async processExtractConfigPlaywright(page: Page, selectorConfig: any, config: any, accumulatedData?: Record<string, any>): Promise<any> {
     const { selector, multiple, extract } = selectorConfig;
     const isMultiple = multiple || selector.includes(':multiple');
     const cleanSelector = selector.replace(':multiple', '');
@@ -249,7 +250,7 @@ export class PlaywrightCrawler {
       for (const element of matchedElements) {
         const result: any = {};
         for (const [key, extractConfig] of Object.entries(extract)) {
-          result[key] = await this.extractSingleValuePlaywright(page, element, extractConfig, config);
+          result[key] = await this.extractSingleValuePlaywright(page, element, extractConfig, config, accumulatedData);
         }
         results.push(result);
       }
@@ -261,13 +262,13 @@ export class PlaywrightCrawler {
 
       const result: any = {};
       for (const [key, extractConfig] of Object.entries(extract)) {
-        result[key] = await this.extractSingleValuePlaywright(page, element, extractConfig, config);
+        result[key] = await this.extractSingleValuePlaywright(page, element, extractConfig, config, accumulatedData);
       }
       return result;
     }
   }
 
-  private async extractSingleValuePlaywright(page: Page, element: any, extractConfig: any, config: any): Promise<any> {
+  private async extractSingleValuePlaywright(page: Page, element: any, extractConfig: any, config: any, accumulatedData?: Record<string, any>): Promise<any> {
     let value: any;
 
     if (typeof extractConfig === 'string') {
@@ -289,20 +290,21 @@ export class PlaywrightCrawler {
 
       // 應用轉換
       if (transform) {
-        value = await this.applyTransformPlaywright(value, transform, config);
+        value = await this.applyTransformPlaywright(value, transform, config, accumulatedData);
       }
     }
 
     return value;
   }
 
-  private async applyTransformPlaywright(value: any, transformName: string, config: any): Promise<any> {
+  private async applyTransformPlaywright(value: any, transformName: string, config: any, accumulatedData?: Record<string, any>): Promise<any> {
     try {
-      // 創建 context 用於轉換函數
+      // 創建 context 用於轉換函數，包含累積的選擇器數據
       const context = {
         url: config.url,
         baseUrl: config.variables?.baseUrl || config.url,
-        templateType: config.templateType
+        templateType: config.templateType,
+        ...accumulatedData // Include all previously extracted data
       };
       
       // 檢查是否為內建轉換函數或網站特定轉換函數
