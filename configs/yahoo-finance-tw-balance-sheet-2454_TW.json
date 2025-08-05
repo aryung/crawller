@@ -1,7 +1,7 @@
 {
   "templateType": "tw-balance-sheet",
   "url": "https://tw.stock.yahoo.com/quote/2454.TW/balance-sheet",
-  "_note": "IMPROVED: This config extracts structured balance sheet data using independent selectors following CLAUDE.md principles. Extracts quarterly and annual financial data including total assets, liabilities, equity, and financial ratios. All values are automatically converted from '仟元' (thousands) to actual values. Use with Taiwan stock codes like 2330.TW, 1101.TW, etc.",
+  "_note": "IMPROVED: Position-Based Independent Selectors Implementation - This config follows CLAUDE.md principles using position-based independent selectors (DOM positions 105-241) to extract balance sheet data. Avoids complex string parsing by extracting fiscal periods (105-124), total assets (130-149), total liabilities (153-172), shareholders equity (176-195), current assets (199-218), and current liabilities (222-241) from specific DOM positions. All values are automatically converted from '仟元' (thousands) to actual values. Use with Taiwan stock codes like 2330.TW, 2454.TW, etc.",
   "actions": [
     {
       "type": "wait",
@@ -19,20 +19,40 @@
       "selector": "h1, .symbol, .stock-name",
       "transform": "cleanStockSymbol"
     },
-    "balanceSheetHeaders": {
-      "selector": "table thead th, table thead td, .table-header, th, .header",
+    "balanceSheetPeriods": {
+      "selector": "table td, tbody td, div[class*='table'] div, li div, [class*='cell'], .table-cell",
       "multiple": true,
-      "transform": "extractBalanceSheetHeaders"
+      "transform": "extractBalanceSheetPeriodsFromPosition"
     },
-    "totalAssetsRow": {
-      "selector": "table tbody tr, table tr, .table-row, tr",
+    "totalAssetsData": {
+      "selector": "table td, tbody td, div[class*='table'] div, li div, [class*='cell'], .table-cell",
       "multiple": true,
-      "transform": "extractBalanceSheetRow"
+      "transform": "extractTotalAssetsFromPosition"
     },
-    "balanceSheetData": {
+    "totalLiabilitiesData": {
+      "selector": "table td, tbody td, div[class*='table'] div, li div, [class*='cell'], .table-cell",
+      "multiple": true,
+      "transform": "extractTotalLiabilitiesFromPosition"
+    },
+    "shareholdersEquityData": {
+      "selector": "table td, tbody td, div[class*='table'] div, li div, [class*='cell'], .table-cell",
+      "multiple": true,
+      "transform": "extractShareholdersEquityFromPosition"
+    },
+    "currentAssetsData": {
+      "selector": "table td, tbody td, div[class*='table'] div, li div, [class*='cell'], .table-cell",
+      "multiple": true,
+      "transform": "extractCurrentAssetsFromPosition"
+    },
+    "currentLiabilitiesData": {
+      "selector": "table td, tbody td, div[class*='table'] div, li div, [class*='cell'], .table-cell",
+      "multiple": true,
+      "transform": "extractCurrentLiabilitiesFromPosition"
+    },
+    "independentBalanceSheetData": {
       "selector": "body",
       "multiple": false,
-      "transform": "combineBalanceSheetData"
+      "transform": "combineIndependentBalanceSheetData"
     }
   },
   "headers": {

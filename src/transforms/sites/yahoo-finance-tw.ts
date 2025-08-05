@@ -51,9 +51,6 @@ export interface YahooFinanceTWTransforms {
   extractEPSHeaders: (content: string | string[], context?: any) => string[];
   extractEPSRow: (content: string | string[], context?: any) => string[];
   combineEPSData: (content: string | string[], context?: any) => TWEPSData[];
-  extractBalanceSheetHeaders: (content: string | string[], context?: any) => string[];
-  extractBalanceSheetRow: (content: string | string[], context?: any) => string[];
-  combineBalanceSheetData: (content: string | string[], context?: any) => TWBalanceSheetData[];
   combineTWCashFlowFields: (content: string | string[], context?: any) => TWCashFlowData[];
   combineVerticalCashFlowFields: (content: string | string[], context?: any) => TWCashFlowData[];
   combineDirectCashFlowFields: (content: string | string[], context?: any) => TWCashFlowData[];
@@ -74,6 +71,14 @@ export interface YahooFinanceTWTransforms {
   extractFreeCashFlowFromPosition: (content: string | string[]) => number[];
   extractNetCashFlowFromPosition: (content: string | string[]) => number[];
   combineIndependentCashFlowData: (content: any, context?: any) => TWCashFlowData[];
+  // Balance Sheet Position-based Functions (positions 105-241)
+  extractBalanceSheetPeriodsFromPosition: (content: string | string[]) => string[];
+  extractTotalAssetsFromPosition: (content: string | string[]) => number[];
+  extractTotalLiabilitiesFromPosition: (content: string | string[]) => number[];
+  extractShareholdersEquityFromPosition: (content: string | string[]) => number[];
+  extractCurrentAssetsFromPosition: (content: string | string[]) => number[];
+  extractCurrentLiabilitiesFromPosition: (content: string | string[]) => number[];
+  combineIndependentBalanceSheetData: (content: any, context?: any) => TWBalanceSheetData[];
   parseAnnualData: (textContent: string, processedPeriods: Set<string>) => TWDividendData[];
   parseHistoricalData: (textContent: string, processedPeriods: Set<string>) => TWDividendData[];
   parseSimpleAnnualData: (textContent: string, processedPeriods: Set<string>) => TWDividendData[];
@@ -1905,26 +1910,6 @@ export const yahooFinanceTWTransforms: YahooFinanceTWTransforms = {
     return combineEPSData(content, context);
   },
   
-  /**
-   * 提取資產負債表標題（期間）
-   */
-  extractBalanceSheetHeaders: (content: string | string[], context?: any): string[] => {
-    return extractBalanceSheetHeaders(content, context);
-  },
-  
-  /**
-   * 提取資產負債表特定行數據
-   */
-  extractBalanceSheetRow: (content: string | string[], context?: any): string[] => {
-    return extractBalanceSheetRow(content, context);
-  },
-  
-  /**
-   * 組合資產負債表數據
-   */
-  combineBalanceSheetData: (content: string | string[], context?: any): TWBalanceSheetData[] => {
-    return combineBalanceSheetData(content, context);
-  },
   
   /**
    * 組合台灣現金流量表數據 - 遵循 CLAUDE.md 獨立選擇器原則
@@ -2275,6 +2260,317 @@ export const yahooFinanceTWTransforms: YahooFinanceTWTransforms = {
     
     // 如果是小數組或字符串，使用直接解析
     return combineDirectCashFlowFields(content, context);
+  },
+
+  // ============================================================================
+  // Balance Sheet Position-based Independent Selector Functions
+  // Based on DOM analysis: Periods(105-124), Assets(130-149), Liabilities(153-172), 
+  // Equity(176-195), Current Assets(199-218), Current Liabilities(222-241)
+  // ============================================================================
+
+  /**
+   * 從固定位置提取資產負債表期間數據 (位置 105-124)
+   * 遵循 CLAUDE.md Independent Selectors 原則，避免硬編碼時間軸
+   */
+  extractBalanceSheetPeriodsFromPosition: (content: string | string[]): string[] => {
+    console.log(`[TW Balance Sheet Periods] Processing periods from DOM positions...`);
+    
+    const contentArray = Array.isArray(content) ? content : [content];
+    const periodSet = new Set<string>(); // 使用 Set 自動去重
+    const periods: string[] = [];
+    
+    // 動態檢測期間數據位置，從正確的起始位置 105 開始
+    // 基於調試輸出：實際數據位置應該從 105 開始，而 102 可能是標題
+    let firstPeriodIndex = -1;
+    let lastPeriodIndex = -1;
+    
+    // 第一階段：找到期間數據的實際位置（跳過可能的標題行）
+    for (let i = 105; i < Math.min(130, contentArray.length); i++) {
+      const trimmed = contentArray[i]?.toString().trim();
+      if (trimmed && /(20\d{2})\s*[Qq]([1-4])/.test(trimmed)) {
+        if (firstPeriodIndex === -1) {
+          firstPeriodIndex = i;
+        }
+        lastPeriodIndex = i;
+      }
+    }
+    
+    console.log(`[TW Balance Sheet Periods] Detected period range: ${firstPeriodIndex}-${lastPeriodIndex}`);
+    
+    // 第二階段：在檢測到的範圍內提取數據並去重
+    if (firstPeriodIndex !== -1) {
+      for (let i = firstPeriodIndex; i <= lastPeriodIndex && i < contentArray.length; i++) {
+        const trimmed = contentArray[i]?.toString().trim();
+        if (trimmed) {
+          const periodMatch = trimmed.match(/(20\d{2})\s*[Qq]([1-4])/);
+          if (periodMatch) {
+            const period = `${periodMatch[1]}-Q${periodMatch[2]}`;
+            
+            // 使用 Set 檢查是否已存在，避免重複
+            if (!periodSet.has(period)) {
+              periodSet.add(period);
+              periods.push(period);
+              console.log(`[TW Balance Sheet Periods] 📅 Found period: ${period} at position ${i}`);
+            } else {
+              console.log(`[TW Balance Sheet Periods] ⚠️  Skipped duplicate period: ${period} at position ${i}`);
+            }
+          }
+        }
+      }
+    }
+    
+    console.log(`[TW Balance Sheet Periods] ✅ Extracted ${periods.length} unique periods`);
+    
+    // 驗證期間數量是否符合預期 (應該是 20 個期間)
+    if (periods.length !== 20) {
+      console.warn(`[TW Balance Sheet Periods] ⚠️  Expected 20 periods, but found ${periods.length}`);
+    }
+    
+    return periods;
+  },
+
+  /**
+   * 從固定位置提取總資產數據 (位置 130-149)
+   */
+  extractTotalAssetsFromPosition: (content: string | string[]): number[] => {
+    console.log(`[TW Total Assets] Processing total assets from DOM positions...`);
+    
+    const values: number[] = [];
+    const contentArray = Array.isArray(content) ? content : [content];
+    
+    // 基於調試輸出確認的總資產位置範圍 130-149
+    const startIndex = 130;
+    const endIndex = 149;
+    
+    for (let i = startIndex; i <= endIndex && i < contentArray.length; i++) {
+      const trimmed = contentArray[i]?.toString().trim();
+      
+      if (trimmed && /^[\d,]+$/.test(trimmed.replace(/[^\d,]/g, ''))) {
+        const cleanValue = trimmed.replace(/[^\d]/g, '');
+        const numValue = parseInt(cleanValue);
+        if (!isNaN(numValue) && numValue > 0) {
+          values.push(numValue * 1000); // 轉換仟元為元
+          console.log(`[TW Total Assets] 💰 Found asset: ${numValue * 1000} at position ${i}`);
+        }
+      }
+    }
+    
+    console.log(`[TW Total Assets] ✅ Extracted ${values.length} total asset values`);
+    return values;
+  },
+
+  /**
+   * 從固定位置提取總負債數據 (位置 153-172)
+   */
+  extractTotalLiabilitiesFromPosition: (content: string | string[]): number[] => {
+    console.log(`[TW Total Liabilities] Processing total liabilities from DOM positions...`);
+    
+    const values: number[] = [];
+    const contentArray = Array.isArray(content) ? content : [content];
+    
+    // 基於調試輸出確認的總負債位置範圍 153-172
+    const startIndex = 153;
+    const endIndex = 172;
+    
+    for (let i = startIndex; i <= endIndex && i < contentArray.length; i++) {
+      const trimmed = contentArray[i]?.toString().trim();
+      
+      if (trimmed && /^[\d,]+$/.test(trimmed.replace(/[^\d,]/g, ''))) {
+        const cleanValue = trimmed.replace(/[^\d]/g, '');
+        const numValue = parseInt(cleanValue);
+        if (!isNaN(numValue) && numValue > 0) {
+          values.push(numValue * 1000); // 轉換仟元為元
+          console.log(`[TW Total Liabilities] 📊 Found liability: ${numValue * 1000} at position ${i}`);
+        }
+      }
+    }
+    
+    console.log(`[TW Total Liabilities] ✅ Extracted ${values.length} total liability values`);
+    return values;
+  },
+
+  /**
+   * 從固定位置提取股東權益數據 (位置 176-195)
+   */
+  extractShareholdersEquityFromPosition: (content: string | string[]): number[] => {
+    console.log(`[TW Shareholders Equity] Processing equity from DOM positions...`);
+    
+    const values: number[] = [];
+    const contentArray = Array.isArray(content) ? content : [content];
+    
+    // 基於調試輸出確認的股東權益位置範圍 176-195
+    const startIndex = 176;
+    const endIndex = 195;
+    
+    for (let i = startIndex; i <= endIndex && i < contentArray.length; i++) {
+      const trimmed = contentArray[i]?.toString().trim();
+      
+      if (trimmed && /^[\d,]+$/.test(trimmed.replace(/[^\d,]/g, ''))) {
+        const cleanValue = trimmed.replace(/[^\d]/g, '');
+        const numValue = parseInt(cleanValue);
+        if (!isNaN(numValue) && numValue > 0) {
+          values.push(numValue * 1000); // 轉換仟元為元
+          console.log(`[TW Shareholders Equity] 🏦 Found equity: ${numValue * 1000} at position ${i}`);
+        }
+      }
+    }
+    
+    console.log(`[TW Shareholders Equity] ✅ Extracted ${values.length} equity values`);
+    return values;
+  },
+
+  /**
+   * 從固定位置提取流動資產數據 (位置 199-218)
+   */
+  extractCurrentAssetsFromPosition: (content: string | string[]): number[] => {
+    console.log(`[TW Current Assets] Processing current assets from DOM positions...`);
+    
+    const values: number[] = [];
+    const contentArray = Array.isArray(content) ? content : [content];
+    
+    // 基於調試輸出確認的流動資產位置範圍 199-218
+    const startIndex = 199;
+    const endIndex = 218;
+    
+    for (let i = startIndex; i <= endIndex && i < contentArray.length; i++) {
+      const trimmed = contentArray[i]?.toString().trim();
+      
+      if (trimmed && /^[\d,]+$/.test(trimmed.replace(/[^\d,]/g, ''))) {
+        const cleanValue = trimmed.replace(/[^\d]/g, '');
+        const numValue = parseInt(cleanValue);
+        if (!isNaN(numValue) && numValue > 0) {
+          values.push(numValue * 1000); // 轉換仟元為元
+          console.log(`[TW Current Assets] 💼 Found current asset: ${numValue * 1000} at position ${i}`);
+        }
+      }
+    }
+    
+    console.log(`[TW Current Assets] ✅ Extracted ${values.length} current asset values`);
+    return values;
+  },
+
+  /**
+   * 從固定位置提取流動負債數據 (位置 222-241)
+   */
+  extractCurrentLiabilitiesFromPosition: (content: string | string[]): number[] => {
+    console.log(`[TW Current Liabilities] Processing current liabilities from DOM positions...`);
+    
+    const values: number[] = [];
+    const contentArray = Array.isArray(content) ? content : [content];
+    
+    // 基於調試輸出確認的流動負債位置範圍 222-241
+    const startIndex = 222;
+    const endIndex = 241;
+    
+    for (let i = startIndex; i <= endIndex && i < contentArray.length; i++) {
+      const trimmed = contentArray[i]?.toString().trim();
+      
+      if (trimmed && /^[\d,]+$/.test(trimmed.replace(/[^\d,]/g, ''))) {
+        const cleanValue = trimmed.replace(/[^\d]/g, '');
+        const numValue = parseInt(cleanValue);
+        if (!isNaN(numValue) && numValue > 0) {
+          values.push(numValue * 1000); // 轉換仟元為元
+          console.log(`[TW Current Liabilities] 🧾 Found current liability: ${numValue * 1000} at position ${i}`);
+        }
+      }
+    }
+    
+    console.log(`[TW Current Liabilities] ✅ Extracted ${values.length} current liability values`);
+    return values;
+  },
+
+  /**
+   * 組合獨立提取的資產負債表數據
+   * 遵循 CLAUDE.md Independent Selectors 原則
+   */
+  combineIndependentBalanceSheetData: (content: any, context?: any): TWBalanceSheetData[] => {
+    console.log(`[TW Independent Balance Sheet] 🔧 Combining independent balance sheet data...`);
+    console.log(`[TW Independent Balance Sheet] Context keys:`, Object.keys(context || {}));
+    
+    // 從 context 中獲取各個獨立選擇器的結果
+    const periods = context?.balanceSheetPeriods || [];
+    const totalAssets = context?.totalAssetsData || [];
+    const totalLiabilities = context?.totalLiabilitiesData || [];
+    const shareholdersEquity = context?.shareholdersEquityData || [];
+    const currentAssets = context?.currentAssetsData || [];
+    const currentLiabilities = context?.currentLiabilitiesData || [];
+    
+    console.log(`[TW Independent Balance Sheet] 📊 Data summary:`);
+    console.log(`  Periods: ${periods.length}`);
+    console.log(`  Total Assets: ${totalAssets.length}`);
+    console.log(`  Total Liabilities: ${totalLiabilities.length}`);
+    console.log(`  Shareholders Equity: ${shareholdersEquity.length}`);
+    console.log(`  Current Assets: ${currentAssets.length}`);
+    console.log(`  Current Liabilities: ${currentLiabilities.length}`);
+    
+    // 驗證數組長度一致性
+    const expectedLength = 20; // Yahoo Finance Taiwan 通常顯示 20 個期間
+    const dataArrays = [
+      { name: 'periods', length: periods.length },
+      { name: 'totalAssets', length: totalAssets.length },
+      { name: 'totalLiabilities', length: totalLiabilities.length },
+      { name: 'shareholdersEquity', length: shareholdersEquity.length },
+      { name: 'currentAssets', length: currentAssets.length },
+      { name: 'currentLiabilities', length: currentLiabilities.length }
+    ];
+    
+    // 檢查數組長度不一致的情況
+    dataArrays.forEach(array => {
+      if (array.length !== expectedLength) {
+        console.warn(`[TW Independent Balance Sheet] ⚠️  ${array.name} has ${array.length} items, expected ${expectedLength}`);
+      }
+    });
+    
+    // 使用期間數組的長度作為基準（因為期間是主鍵）
+    const maxLength = periods.length;
+    
+    const results: TWBalanceSheetData[] = [];
+    for (let i = 0; i < maxLength; i++) {
+      const period = periods[i];
+      if (!period) continue;
+      
+      const balanceSheetData: TWBalanceSheetData = {
+        fiscalPeriod: period,
+        totalAssets: totalAssets[i] || null,
+        currentAssets: currentAssets[i] || null,
+        cashAndEquivalents: null, // 需要額外實現
+        accountsReceivable: null, // 需要額外實現  
+        inventory: null, // 需要額外實現
+        nonCurrentAssets: null, // 需要額外實現
+        propertyPlantEquipment: null, // 需要額外實現
+        intangibleAssets: null, // 需要額外實現
+        totalLiabilities: totalLiabilities[i] || null,
+        currentLiabilities: currentLiabilities[i] || null,
+        accountsPayable: null, // 需要額外實現
+        shortTermDebt: null, // 需要額外實現
+        nonCurrentLiabilities: null, // 需要額外實現
+        longTermDebt: null, // 需要額外實現
+        totalEquity: shareholdersEquity[i] || null,
+        stockholdersEquity: shareholdersEquity[i] || null,
+        retainedEarnings: null, // 需要額外實現
+        bookValuePerShare: null // 需要額外實現
+      };
+      
+      // 驗證核心數據完整性 (總資產、總負債、股東權益)
+      const coreFields = [
+        balanceSheetData.totalAssets,
+        balanceSheetData.totalLiabilities,
+        balanceSheetData.totalEquity
+      ].filter(value => value !== null).length;
+      
+      if (coreFields >= 2) { // 至少需要2個核心欄位
+        results.push(balanceSheetData);
+        console.log(`[TW Independent Balance Sheet] ✅ ${period}: ${coreFields}/3 core fields`);
+        console.log(`  Total Assets: ${balanceSheetData.totalAssets}`);
+        console.log(`  Total Liabilities: ${balanceSheetData.totalLiabilities}`);
+        console.log(`  Shareholders Equity: ${balanceSheetData.totalEquity}`);
+      } else {
+        console.log(`[TW Independent Balance Sheet] ❌ ${period}: insufficient core data (${coreFields}/3 fields)`);
+      }
+    }
+    
+    console.log(`[TW Independent Balance Sheet] 🎯 Successfully combined ${results.length} periods using Position-Based Independent Selectors`);
+    return results;
   }
 };
 
@@ -4032,169 +4328,8 @@ function structureTWBalanceSheetDataFromCells(content: string | string[]): TWBal
   return results;
 }
 
-/**
- * 提取資產負債表標題（期間）
- * 從表格標題行中提取所有期間資訊
- */
-function extractBalanceSheetHeaders(content: string | string[], context?: any): string[] {
-  let textContent: string;
-  if (Array.isArray(content)) {
-    textContent = content.join(' ');
-  } else {
-    textContent = content;
-  }
-  
-  console.log(`[Balance Sheet Headers] Processing content: ${textContent.substring(0, 200)}...`);
-  
-  // 從我們的測試結果知道標題格式是: "年度/季度2025-Q12024-Q42024-Q32024-Q22024-Q1..."
-  const headerPattern = /年度\/季度(.+?)(?:股名|$)/;
-  const match = textContent.match(headerPattern);
-  
-  if (!match) {
-    console.warn('[Balance Sheet Headers] No header pattern found');
-    return [];
-  }
-  
-  const headerText = match[1];
-  console.log(`[Balance Sheet Headers] Found header text: ${headerText}`);
-  
-  // 提取所有期間 - 支援季度和半年度格式
-  const quarterPattern = /(\d{4})\s*Q([1-4])/g;
-  const halfYearPattern = /(\d{4})\s*H([1-2])/g;
-  const periods: string[] = [];
-  let periodMatch;
-  
-  // 提取季度期間
-  while ((periodMatch = quarterPattern.exec(headerText)) !== null) {
-    const period = `${periodMatch[1]}-Q${periodMatch[2]}`;
-    periods.push(period);
-    console.log(`[Balance Sheet Headers] Found quarterly period: ${period}`);
-  }
-  
-  // 提取半年度期間
-  halfYearPattern.lastIndex = 0; // 重置正則表達式狀態
-  while ((periodMatch = halfYearPattern.exec(headerText)) !== null) {
-    const period = `${periodMatch[1]}-H${periodMatch[2]}`;
-    periods.push(period);
-    console.log(`[Balance Sheet Headers] Found half-yearly period: ${period}`);
-  }
-  
-  console.log(`[Balance Sheet Headers] Extracted ${periods.length} periods:`, periods);
-  return periods;
-}
 
-/**
- * 提取資產負債表特定行數據
- * 從數據行中提取數值並按順序分割
- */
-function extractBalanceSheetRow(content: string | string[], context?: any): string[] {
-  let textContent: string;
-  if (Array.isArray(content)) {
-    textContent = content.join(' ');
-  } else {
-    textContent = content;
-  }
-  
-  console.log(`[Balance Sheet Row] Processing content: ${textContent.substring(0, 100)}...`);
-  
-  // 從測試結果知道數據格式是連續的數字串，如: "718,283,811697,867,530676,528,300..."
-  // 我們需要用模式來分割這些數字
-  
-  // 匹配台灣財務數據格式：數字+逗號的組合
-  const numberPattern = /\d{1,3}(?:,\d{3})*/g;
-  const numbers = textContent.match(numberPattern) || [];
-  
-  console.log(`[Balance Sheet Row] Found ${numbers.length} numbers:`, numbers.slice(0, 10));
-  return numbers;
-}
 
-/**
- * 組合資產負債表數據
- * 將標題和各行數據組合成結構化的資產負債表數據
- */
-function combineBalanceSheetData(content: string | string[], context?: any): TWBalanceSheetData[] {
-  let textContent: string;
-  if (Array.isArray(content)) {
-    textContent = content.join(' ');
-  } else {
-    textContent = content;
-  }
-  
-  console.log(`[Balance Sheet Combine] Processing content length: ${textContent.length}`);
-  
-  // 提取期間標題
-  const periods = extractBalanceSheetHeaders(textContent);
-  if (periods.length === 0) {
-    console.warn('[Balance Sheet Combine] No periods found');
-    return [];
-  }
-  
-  // 定義我們要提取的財務項目及其對應的關鍵字
-  const financialItems = [
-    { key: 'totalAssets', keyword: '總資產' },
-    { key: 'totalLiabilities', keyword: '總負債' }, 
-    { key: 'stockholdersEquity', keyword: '股東權益' },
-    { key: 'currentAssets', keyword: '流動資產' },
-    { key: 'currentLiabilities', keyword: '流動負債' }
-  ];
-  
-  const results: TWBalanceSheetData[] = [];
-  
-  // 為每個期間創建資產負債表數據
-  periods.forEach((period, periodIndex) => {
-    const balanceSheetData: TWBalanceSheetData = {
-      fiscalPeriod: period,
-      totalAssets: null,
-      currentAssets: null,
-      cashAndEquivalents: null,
-      accountsReceivable: null,
-      inventory: null,
-      nonCurrentAssets: null,
-      propertyPlantEquipment: null,
-      intangibleAssets: null,
-      totalLiabilities: null,
-      currentLiabilities: null,
-      accountsPayable: null,
-      shortTermDebt: null,
-      nonCurrentLiabilities: null,
-      longTermDebt: null,
-      totalEquity: null,
-      stockholdersEquity: null,
-      retainedEarnings: null,
-      bookValuePerShare: null
-    };
-    
-    // 為每個財務項目提取數據
-    financialItems.forEach(item => {
-      const pattern = new RegExp(`${item.keyword}([\\d,]+(?:[\\d,]+)*)`);
-      const match = textContent.match(pattern);
-      
-      if (match) {
-        const numbersText = match[1];
-        const numbers = extractBalanceSheetRow(numbersText);
-        
-        if (numbers.length > periodIndex) {
-          const rawValue = numbers[periodIndex].replace(/,/g, '');
-          const numericValue = parseInt(rawValue, 10);
-          
-          // 使用真實數值常數進行驗證
-          if (!isNaN(numericValue) && numericValue > TW_REVENUE_DATA_CONSTANTS.MIN_REASONABLE_VALUE) {
-            // 台灣財務數據通常以仟元為單位，需要轉換
-            const actualValue = numericValue * UNIT_MULTIPLIERS.THOUSAND_TWD;
-            (balanceSheetData as any)[item.key] = actualValue;
-            
-            console.log(`[Balance Sheet Combine] ${period} ${item.keyword}: ${numericValue} (仟元) -> ${actualValue} (元)`);
-          }
-        }
-      }
-    });
-    
-    results.push(balanceSheetData);
-  });
-  
-  console.log(`[Balance Sheet Combine] Generated ${results.length} balance sheet records`);
-  return results;
-}
 
 /**
  * 台灣現金流量表數據解析函數

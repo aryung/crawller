@@ -37,7 +37,7 @@ async function main() {
   program
     .command('crawl [configs...]')
     .description('執行爬蟲任務')
-    .option('-c, --config <path>', '配置檔案目錄', 'configs')
+    .option('-c, --config <path>', '配置檔案目錄或特定配置檔案路徑', 'configs')
     .option('-o, --output <path>', '輸出目錄', 'output')
     .option('-f, --format <format>', '匯出格式 (json|csv|xlsx)', 'json')
     .option('--concurrent <number>', '同時處理的配置檔案數量（非引擎併發）', '1')
@@ -57,9 +57,21 @@ async function main() {
       }
 
       try {
+        // Check if --config points to a specific file
+        if (options.config && options.config.endsWith('.json')) {
+          // Direct config file specified
+          if (!fs.existsSync(options.config)) {
+            console.error(`❌ 找不到配置檔案: ${options.config}`);
+            process.exit(1);
+          }
+          await runDirectConfigFile(options.config, options);
+          return;
+        }
+
         if (!configs || configs.length === 0) {
           console.error('❌ 請指定配置檔案名稱');
           console.log('💡 範例: npm run crawl moneydj');
+          console.log('💡 或使用完整路徑: npx tsx src/cli.ts crawl --config configs/active/test.json');
           console.log('💡 或使用: npm run crawler list 查看所有配置');
           process.exit(1);
         }
@@ -161,6 +173,117 @@ async function main() {
 
 let globalCrawler: UniversalCrawler | null = null;
 let isShuttingDown = false;
+
+/**
+ * 直接執行指定的配置檔案
+ */
+async function runDirectConfigFile(configFilePath: string, options: CLIOptions) {
+  // 從檔案路徑提取配置名稱和目錄
+  const configDir = path.dirname(configFilePath);
+  const configFileName = path.basename(configFilePath, '.json');
+  
+  console.log(`🎯 直接執行配置檔案: ${configFilePath}`);
+  
+  const crawler = new UniversalCrawler({
+    configPath: configDir,
+    outputDir: options.output || 'output'  // 統一輸出到 output 目錄
+  });
+  
+  globalCrawler = crawler;
+  setupShutdownHandlers(crawler);
+  
+  try {
+    console.log('🚀 Universal Web Crawler v1.0.0');
+    console.log('='.repeat(50));
+    console.log(`📁 配置檔案: ${configFilePath}`);
+    console.log(`📂 輸出目錄: ${options.output || 'output'}`);
+    console.log(`⚡ 引擎: playwright`);
+    console.log(`🔢 併發數: ${options.concurrent || '1'}`);
+    console.log('='.repeat(50));
+    
+    const configs = [configFileName];
+    console.log(`📊 將執行 ${configs.length} 個配置任務`);
+    
+    const totalTimeout = 10 * 60 * 1000;
+    const startTime = Date.now();
+    
+    const concurrent = Number(options.concurrent) || 1;
+    const results = await crawler.crawlMultiple(configs, concurrent);
+    
+    const endTime = Date.now();
+    const duration = Math.round((endTime - startTime) / 1000);
+    
+    console.log('\n🎉 所有爬蟲任務已完成!');
+    console.log(`⏱️  總執行時間: ${duration} 秒`);
+    console.log(`📈 成功: ${results.filter(r => r.success).length}/${results.length}`);
+    console.log(`📂 輸出目錄: ${options.output || 'output'}`);
+    
+    if (results.some(r => !r.success)) {
+      console.log('\n❌ 部分任務失敗:');
+      results.filter(r => !r.success).forEach(r => {
+        console.log(`   • ${r.url || 'Unknown'}: ${r.error}`);
+      });
+    }
+
+    // Export results if successful
+    if (results.filter(r => r.success).length > 0) {
+      const successful = results.filter(r => r.success);
+      const timestamp = formatTimestamp();
+      const filename = timestamp;
+      
+      const exportPath = await crawler.export(successful, {
+        format: options.format || 'json',
+        filename,
+        configName: configFileName
+      });
+
+      console.log(`📄 結果已匯出: ${exportPath}`);
+
+      if (!options.skipReport && options.report !== false) {
+        const reportPath = await crawler.generateReport(results);
+        console.log(`📊 報告已生成: ${reportPath}`);
+      } else {
+        const paramUsed = options.report === false ? '--no-report' : '--skip-report';
+        console.log(`📊 已跳過 MD 報告生成（使用 ${paramUsed}）`);
+      }
+
+      const screenshotResults = results.filter(r => r.screenshot);
+      if (screenshotResults.length > 0) {
+        const screenshotPaths = await crawler.saveScreenshots(screenshotResults);
+        console.log(`📸 截圖已保存: ${screenshotPaths.length} 張`);
+      }
+    }
+    
+  } catch (error) {
+    console.error('❌ 執行配置失敗:', (error as Error).message);
+    process.exit(1);
+  } finally {
+    await crawler.cleanup();
+  }
+}
+
+function setupShutdownHandlers(crawler: UniversalCrawler) {
+  const handleShutdown = async (signal: string) => {
+    if (isShuttingDown) {
+      console.log('\n🚨 強制終止...');
+      process.exit(1);
+    }
+    isShuttingDown = true;
+    console.log(`\n📡 收到 ${signal} 信號，正在優雅關閉...`);
+    console.log('💡 再次按 Ctrl+C 可強制終止');
+    try {
+      await crawler.cleanup();
+      console.log('✅ 爬蟲已安全關閉');
+      process.exit(0);
+    } catch (error) {
+      console.error('❌ 關閉過程中發生錯誤:', error);
+      process.exit(1);
+    }
+  };
+  
+  process.on('SIGINT', () => handleShutdown('SIGINT'));
+  process.on('SIGTERM', () => handleShutdown('SIGTERM'));
+}
 
 async function runCrawler(configNames: string[], options: CLIOptions) {
   const crawler = new UniversalCrawler({
