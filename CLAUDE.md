@@ -232,8 +232,11 @@ if (!isNaN(eps) &&
 ## 常用命令
 
 ```bash
-# 執行特定配置
+# 執行特定配置 (configs/ 目錄中的配置)
 npm run crawl yahoo-finance-tw-eps-2454_TW-simple
+
+# 執行 active/ 目錄中的配置 (需要使用 --config 參數)
+npx tsx src/cli.ts --config configs/active/test-eps.json
 
 # 檢查 TypeScript 錯誤
 npm run typecheck
@@ -310,9 +313,13 @@ crawler/
 │   │   ├── yahoo-finance-tw-balance-sheet.json
 │   │   ├── yahoo-finance-tw-eps.json
 │   │   ├── yahoo-finance-us-cashflow.json
+│   │   ├── yahoo-finance-jp-cashflow.json
 │   │   └── ...
-│   ├── yahoo-finance-tw-*-XXXX_TW.json  # 生成的個別配置
-│   └── yahoo-finance-us-*-XXXX.json     # 生成的個別配置
+│   ├── active/                       # 開發環境專用配置 (可選)
+│   │   └── [手動測試用配置文件]
+│   ├── yahoo-finance-tw-*-XXXX_TW.json  # 生成的台灣個別配置
+│   ├── yahoo-finance-us-*-XXXX.json     # 生成的美國個別配置
+│   └── yahoo-finance-jp-*-XXXX_T.json   # 生成的日本個別配置
 ├── data/
 │   ├── yahoo-finance-tw-stockcodes.json  # 台灣股票代碼數據源
 │   ├── yahoo-finance-us-stockcodes.json  # 美國股票代碼數據源
@@ -320,8 +327,46 @@ crawler/
 └── scripts/
     ├── generate-yahoo-tw-configs.js      # 台灣配置生成器
     ├── generate-yahoo-us-configs.js      # 美國配置生成器
-    └── generate-yahoo-jp-configs.js      # 日本配置生成器
+    └── generate-yahoo-jp-configs.js      # 日本配置生成器 ✅
 ```
+
+### 🔧 開發環境配置
+
+#### configs/active/ 目錄用途
+
+`configs/active/` 目錄是開發者專用的測試環境，用於：
+
+- **手動配置測試**: 放置手動修改的配置文件進行測試
+- **模板原型開發**: 在批量生成前的單一配置原型測試
+- **調試專用配置**: 包含特殊選擇器或調試設置的配置
+- **臨時修改**: 不影響批量生成配置的臨時修改
+
+#### 開發工作流程
+
+**重要**: 執行 `configs/active/` 目錄中的配置文件時，必須使用 `--config` 參數指定完整路徑，而不能使用 `npm run crawl` 命令。
+
+```bash
+# 1️⃣ 在 active/ 目錄中創建或複製測試配置
+cp configs/yahoo-finance-tw-eps-2454_TW.json configs/active/test-eps.json
+
+# 2️⃣ 修改 active/ 中的配置進行測試
+vim configs/active/test-eps.json
+
+# 3️⃣ 測試修改後的配置 (使用 --config 參數指定 active 目錄中的配置)
+npx tsx src/cli.ts --config configs/active/test-eps.json
+
+# 4️⃣ 確認修改有效後，更新對應的模板
+vim configs/templates/yahoo-finance-tw-eps.json
+
+# 5️⃣ 重新生成所有相關配置
+node scripts/generate-yahoo-tw-configs.js --type=eps
+```
+
+**注意**: 
+- `active/` 目錄的配置不會被生成器覆蓋
+- 適合放置實驗性或一次性的配置修改
+- 正式修改應該同步到對應的模板文件
+- **使用 `--config` 參數**: 執行 active 目錄中的配置必須使用 `npx tsx src/cli.ts --config configs/active/<配置名>.json` 方式
 
 ### 🛠️ 模板開發流程
 
@@ -423,16 +468,14 @@ node scripts/generate-yahoo-us-configs.js --type=financials
 
 **日本市場**:
 ```bash
-# 生成所有類型配置 (需要先創建腳本)
+# 生成所有類型配置 ✅
 node scripts/generate-yahoo-jp-configs.js
 
-# 生成特定類型配置 (完整列表，模板已存在)
+# 生成特定類型配置 (完整列表)
 node scripts/generate-yahoo-jp-configs.js --type=cashflow
 node scripts/generate-yahoo-jp-configs.js --type=financials
 node scripts/generate-yahoo-jp-configs.js --type=performance
 ```
-
-> **注意**: `generate-yahoo-jp-configs.js` 腳本尚未創建，但對應的模板檔案已存在於 `configs/templates/` 目錄中。可以參考台灣或美國生成器腳本的結構來建立日本生成器。
 
 ### 🔄 生成器腳本工作原理
 
@@ -480,8 +523,11 @@ ls configs/yahoo-finance-tw-balance-sheet-*.json | wc -l
 #### 2. 單一配置功能測試
 
 ```bash
-# 測試生成的配置
+# 測試生成的配置 (configs/ 目錄中的配置)
 npm run crawl yahoo-finance-tw-balance-sheet-2454_TW
+
+# 測試 active/ 目錄中的配置 (使用 --config 參數)
+npx tsx src/cli.ts --config configs/active/test-balance-sheet.json
 
 # 驗證輸出結果
 cat output/yahoo-finance-tw-balance-sheet-2454_TW_*.json | jq '.results[0].data'
@@ -568,7 +614,7 @@ node scripts/generate-yahoo-tw-configs.js --type=balance-sheet | head -20
 |------|------------------|------|
 | **台灣** | `balance-sheet`, `cash-flow-statement`, `dividend`, `eps`, `income-statement`, `revenue` | 6 種財務報表類型 |
 | **美國** | `cashflow`, `financials` | 2 種財務報表類型 |
-| **日本** | `cashflow`, `financials`, `performance` | 3 種財務報表類型（需創建生成器腳本）|
+| **日本** | `cashflow`, `financials`, `performance` | 3 種財務報表類型 ✅ |
 
 #### 標準化命名
 
@@ -618,7 +664,7 @@ node scripts/generate-yahoo-us-configs.js --type=cashflow
 node scripts/generate-yahoo-us-configs.js --type=financials
 ```
 
-#### 日本股票配置生成（需先創建腳本）
+#### 日本股票配置生成 ✅
 ```bash
 # 所有類型
 node scripts/generate-yahoo-jp-configs.js
@@ -630,6 +676,14 @@ node scripts/generate-yahoo-jp-configs.js --type=performance
 ```
 
 ## 版本記錄
+
+- **v1.1.0** (2025-08-05): 配置生成器架構統一化
+  - **新增**: 創建 `generate-yahoo-jp-configs.js` 日本配置生成器
+  - **統一**: 所有三個區域生成器使用扁平結構輸出到 `configs/`
+  - **改進**: 標準化生成器輸出格式和命令行參數
+  - **文檔**: 新增 `configs/active/` 開發環境說明
+  - **完成**: yahoo-tw、yahoo-jp、yahoo-us 三區域配置生成器完整支援
+  - **說明**: 使用 `configs/active/` 目錄中的配置需要 `--config` 參數指定完整路徑
 
 - **v1.0.0** (2025-08-04): 初始版本
   - 實現純動態 EPS 提取
