@@ -127,12 +127,55 @@ async function main() {
       await runDiagnostics();
     });
 
+  // Check if we should handle legacy config name execution first
   const args = process.argv.slice(2);
   if (args.length > 0) {
     const firstArg = args[0];
     const knownCommands = ['crawl', 'list', 'create', 'validate', 'doctor', 'curl2config', '--help', '-h', '--version', '-V'];
     
-    if (!knownCommands.includes(firstArg) && !firstArg.startsWith('-')) {
+    // Check if any flag options are present
+    const hasOptions = args.some(arg => arg.startsWith('-'));
+    
+    // Check if --config option is present anywhere in args
+    const hasConfigOption = args.includes('--config') || args.includes('-c');
+    
+    // Handle --config option for direct config file execution
+    if (hasConfigOption && firstArg === '--config') {
+      const configFilePath = args[1];
+      if (!configFilePath) {
+        console.error('❌ --config 選項需要指定配置檔案路徑');
+        console.log('💡 範例: npx tsx src/cli.ts --config configs/active/test.json');
+        process.exit(1);
+      }
+      
+      try {
+        // Parse additional options after config file path
+        const remainingArgs = args.slice(2);
+        const skipReport = remainingArgs.includes('--skip-report') || remainingArgs.includes('--no-report');
+        const verboseIndex = remainingArgs.findIndex(arg => arg === '-v' || arg === '--verbose');
+        
+        const options: CLIOptions = {
+          config: configFilePath,
+          output: 'output',
+          format: 'json',
+          concurrent: 1,
+          verbose: verboseIndex >= 0,
+          skipReport
+        };
+        
+        if (options.verbose) {
+          process.env.LOG_LEVEL = 'debug';
+        }
+        
+        await runDirectConfigFile(configFilePath, options);
+        return;
+      } catch (error) {
+        console.error('❌ 執行配置檔案失敗:', (error as Error).message);
+        process.exit(1);
+      }
+    }
+    
+    if (!knownCommands.includes(firstArg) && !hasOptions) {
       try {
         console.log('🔄 檢測到配置名稱，執行爬蟲任務...');
         
@@ -168,6 +211,7 @@ async function main() {
     }
   }
 
+  // Handle standard commander.js commands
   await program.parseAsync();
 }
 
