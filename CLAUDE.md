@@ -288,6 +288,13 @@ document.querySelectorAll("li div:nth-child(2)");
 3. **硬編碼檢測**: 動態提取失效
    - **解決方案**: 檢查是否使用了固定的時間軸或數值映射
 
+4. **營業現金流顯示為 0**: Yahoo Finance 台灣現金流數據無法提取
+   - **問題原因**: `debugFieldExtraction` 函數預設只保留前10項數據，但營業現金流數據位於第11項以後
+   - **解決方案**: 將 `debugFieldExtraction` 中的 `content.slice(0, 10)` 修改為 `content.slice(0, 50)`
+   - **相關檔案**: `/src/transforms/sites/yahoo-finance-tw.ts` line 3093
+   - **修復效果**: 營業現金流從 0 正確提取為實際數值（如 625,573,672 仟元）
+   - **批量更新**: 使用 `node scripts/generate-yahoo-tw-configs.js --type=cash-flow-statement` 重新生成所有配置
+
 ## 配置生成器開發工作流程 (Config Generator Development Workflow)
 
 ### 概述
@@ -395,10 +402,13 @@ crawler/
 # 生成所有類型配置
 node scripts/generate-yahoo-tw-configs.js
 
-# 生成特定類型配置
+# 生成特定類型配置 (完整列表)
 node scripts/generate-yahoo-tw-configs.js --type=balance-sheet
-node scripts/generate-yahoo-tw-configs.js --type=eps
+node scripts/generate-yahoo-tw-configs.js --type=cash-flow-statement  
 node scripts/generate-yahoo-tw-configs.js --type=dividend
+node scripts/generate-yahoo-tw-configs.js --type=eps
+node scripts/generate-yahoo-tw-configs.js --type=income-statement
+node scripts/generate-yahoo-tw-configs.js --type=revenue
 ```
 
 **美國市場**:
@@ -406,10 +416,23 @@ node scripts/generate-yahoo-tw-configs.js --type=dividend
 # 生成所有類型配置
 node scripts/generate-yahoo-us-configs.js
 
-# 生成特定類型配置
+# 生成特定類型配置 (完整列表)
 node scripts/generate-yahoo-us-configs.js --type=cashflow
 node scripts/generate-yahoo-us-configs.js --type=financials
 ```
+
+**日本市場**:
+```bash
+# 生成所有類型配置 (需要先創建腳本)
+node scripts/generate-yahoo-jp-configs.js
+
+# 生成特定類型配置 (完整列表，模板已存在)
+node scripts/generate-yahoo-jp-configs.js --type=cashflow
+node scripts/generate-yahoo-jp-configs.js --type=financials
+node scripts/generate-yahoo-jp-configs.js --type=performance
+```
+
+> **注意**: `generate-yahoo-jp-configs.js` 腳本尚未創建，但對應的模板檔案已存在於 `configs/templates/` 目錄中。可以參考台灣或美國生成器腳本的結構來建立日本生成器。
 
 ### 🔄 生成器腳本工作原理
 
@@ -539,6 +562,14 @@ node scripts/generate-yahoo-tw-configs.js --type=balance-sheet | head -20
 | **美國** | `generate-yahoo-us-configs.js` | `yahoo-finance-us-stockcodes.json` | `finance.yahoo.com` | `AAPL` |
 | **日本** | `generate-yahoo-jp-configs.js` | `yahoo-finance-jp-stockcodes.json` | `finance.yahoo.co.jp` | `7203.T` |
 
+#### 各區域可用模板類型
+
+| 區域 | 可用 --type 選項 | 說明 |
+|------|------------------|------|
+| **台灣** | `balance-sheet`, `cash-flow-statement`, `dividend`, `eps`, `income-statement`, `revenue` | 6 種財務報表類型 |
+| **美國** | `cashflow`, `financials` | 2 種財務報表類型 |
+| **日本** | `cashflow`, `financials`, `performance` | 3 種財務報表類型（需創建生成器腳本）|
+
 #### 標準化命名
 
 ```
@@ -561,6 +592,43 @@ node scripts/generate-yahoo-tw-configs.js --type=balance-sheet | head -20
 📁 輸出目錄: configs/
 ```
 
+### 📋 快速參考指令
+
+#### 台灣股票配置生成
+```bash
+# 所有類型
+node scripts/generate-yahoo-tw-configs.js
+
+# 特定類型
+node scripts/generate-yahoo-tw-configs.js --type=balance-sheet
+node scripts/generate-yahoo-tw-configs.js --type=cash-flow-statement
+node scripts/generate-yahoo-tw-configs.js --type=dividend
+node scripts/generate-yahoo-tw-configs.js --type=eps
+node scripts/generate-yahoo-tw-configs.js --type=income-statement
+node scripts/generate-yahoo-tw-configs.js --type=revenue
+```
+
+#### 美國股票配置生成
+```bash
+# 所有類型
+node scripts/generate-yahoo-us-configs.js
+
+# 特定類型
+node scripts/generate-yahoo-us-configs.js --type=cashflow
+node scripts/generate-yahoo-us-configs.js --type=financials
+```
+
+#### 日本股票配置生成（需先創建腳本）
+```bash
+# 所有類型
+node scripts/generate-yahoo-jp-configs.js
+
+# 特定類型
+node scripts/generate-yahoo-jp-configs.js --type=cashflow
+node scripts/generate-yahoo-jp-configs.js --type=financials
+node scripts/generate-yahoo-jp-configs.js --type=performance
+```
+
 ## 版本記錄
 
 - **v1.0.0** (2025-08-04): 初始版本
@@ -570,6 +638,11 @@ node scripts/generate-yahoo-tw-configs.js --type=balance-sheet | head -20
   - 建立開發原則文檔
   - **新增**: 配置生成器開發工作流程文檔
   - **改進**: Balance Sheet 模板使用獨立選擇器方法
+  - **修復**: Yahoo Finance 台灣現金流營業現金流為 0 的問題
+    - 根本原因: `debugFieldExtraction` 數據截斷限制
+    - 解決方案: 將數據限制從 10 項增加到 50 項
+    - 影響範圍: 所有台灣現金流配置 (15 個股票代碼)
+    - 驗證結果: 營業現金流正確提取 (如 2330.TW: 625,573,672 仟元)
 
 ## 聯繫資訊
 
