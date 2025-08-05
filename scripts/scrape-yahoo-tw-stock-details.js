@@ -351,7 +351,7 @@ async function scrapeYahooStockDetails() {
     // 讀取股票分類數據
     const categoriesPath = path.join(
       __dirname,
-      '../output/yahoo-stock-categories.json'
+      '../output/yahoo-tw-stock-categories.json'
     );
     if (!fs.existsSync(categoriesPath)) {
       // 嘗試在 output 目錄中尋找最新的文件
@@ -474,4 +474,3 @@ if (require.main === module) {
 }
 
 module.exports = { scrapeYahooStockDetails };
-
