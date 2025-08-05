@@ -77,26 +77,259 @@ crawler/
 - 容易調試: 可單獨測試每個選擇器
 - 可擴展性: 新增欄位不影響現有邏輯
 
+### 位置獨立選擇器 (Position-Based Independent Selectors)
+
+**高級案例概念**: 當面對複雜 DOM 結構且數據類型需要精確對齊時，使用位置獨立選擇器方法確保每種數據類型從固定位置提取。
+
+#### 實際案例: Yahoo Finance 台灣現金流表
+
+**問題背景**: Yahoo Finance 現金流表數據在垂直結構中排列，不同現金流類型（營業、投資、融資、自由、淨）需要與對應期間精確對齊。
+
+**DOM 結構分析結果**:
+```
+DOM 位置映射表 (基於實際調試輸出):
+├── 期間數據:    位置 105-124 (20個期間: 2025-Q1 ~ 2020-Q2)
+├── 營業現金流:  位置 130-149 (20個數值)  
+├── 投資現金流:  位置 153-172 (20個數值)
+├── 融資現金流:  位置 176-195 (20個數值)
+├── 自由現金流:  位置 199-218 (20個數值)
+└── 淨現金流:    位置 222-241 (20個數值)
+```
+
+#### 位置獨立選擇器實現範例
+
+**1. 配置文件結構**:
+```json
+{
+  "selectors": {
+    "fiscalPeriods": {
+      "selector": "table td, tbody td, div[class*='table'] div, li div, [class*='cell'], .table-cell",
+      "multiple": true,
+      "transform": "extractFiscalPeriodsFromPosition"
+    },
+    "operatingCashFlowRow": {
+      "selector": "table td, tbody td, div[class*='table'] div, li div, [class*='cell'], .table-cell",
+      "multiple": true,
+      "transform": "extractOperatingCashFlowFromPosition"
+    },
+    "investingCashFlowRow": {
+      "selector": "table td, tbody td, div[class*='table'] div, li div, [class*='cell'], .table-cell",
+      "multiple": true,
+      "transform": "extractInvestingCashFlowFromPosition"
+    }
+  }
+}
+```
+
+**2. 位置提取函數實現**:
+
+#### ⚠️ 重要：硬編碼 vs 動態檢測
+
+**調試階段 (可接受的硬編碼)**:
+```typescript
+// 期間數據提取 (調試確認位置 105-124)
+extractFiscalPeriodsFromPosition: (content: string | string[]): string[] => {
+  const contentArray = Array.isArray(content) ? content : [content];
+  const periods: string[] = [];
+  
+  // ⚠️ 調試階段：使用硬編碼位置快速驗證
+  for (let i = 105; i <= 124 && i < contentArray.length; i++) {
+    const trimmed = contentArray[i]?.toString().trim();
+    if (trimmed) {
+      const periodMatch = trimmed.match(/(20\d{2})\s*[Qq]([1-4])/);
+      if (periodMatch) {
+        const period = `${periodMatch[1]}-Q${periodMatch[2]}`;
+        periods.push(period);
+      }
+    }
+  }
+  
+  return periods;
+}
+```
+
+**生產階段 (動態檢測方法)**:
+```typescript
+// 期間數據提取 (動態位置檢測)
+extractFiscalPeriodsFromPosition: (content: string | string[]): string[] => {
+  const contentArray = Array.isArray(content) ? content : [content];
+  const periods: string[] = [];
+  
+  // ✅ 生產階段：動態檢測期間數據位置
+  let firstPeriodIndex = -1;
+  let lastPeriodIndex = -1;
+  
+  // 第一階段：找到期間數據的開始和結束位置
+  for (let i = 0; i < contentArray.length; i++) {
+    const trimmed = contentArray[i]?.toString().trim();
+    if (trimmed && /(20\d{2})\s*[Qq]([1-4])/.test(trimmed)) {
+      if (firstPeriodIndex === -1) {
+        firstPeriodIndex = i;
+      }
+      lastPeriodIndex = i;
+    }
+  }
+  
+  // 第二階段：在檢測到的範圍內提取數據
+  if (firstPeriodIndex !== -1) {
+    for (let i = firstPeriodIndex; i <= lastPeriodIndex && i < contentArray.length; i++) {
+      const trimmed = contentArray[i]?.toString().trim();
+      if (trimmed) {
+        const periodMatch = trimmed.match(/(20\d{2})\s*[Qq]([1-4])/);
+        if (periodMatch) {
+          const period = `${periodMatch[1]}-Q${periodMatch[2]}`;
+          periods.push(period);
+        }
+      }
+    }
+  }
+  
+  return periods;
+},
+
+// 營業現金流提取 (動態位置檢測)
+extractOperatingCashFlowFromPosition: (content: string | string[]): number[] => {
+  const contentArray = Array.isArray(content) ? content : [content];
+  const values: number[] = [];
+  
+  // ✅ 動態檢測：根據期間數據位置推算現金流位置
+  let periodEndIndex = -1;
+  
+  // 找到期間數據的結束位置
+  for (let i = 0; i < contentArray.length; i++) {
+    const trimmed = contentArray[i]?.toString().trim();
+    if (trimmed && /(20\d{2})\s*[Qq]([1-4])/.test(trimmed)) {
+      periodEndIndex = i;
+    }
+  }
+  
+  // 基於期間結束位置動態推算現金流開始位置
+  if (periodEndIndex !== -1) {
+    const cashFlowStartIndex = periodEndIndex + 6; // 基於DOM結構的偏移量
+    let consecutiveEmptyCount = 0;
+    
+    for (let i = cashFlowStartIndex; i < contentArray.length; i++) {
+      const trimmed = contentArray[i]?.toString().trim();
+      
+      if (trimmed && /^-?\d{1,3}(,\d{3})*$/.test(trimmed.replace(/[^\d,-]/g, ''))) {
+        const cleanValue = trimmed.replace(/[^\d.-]/g, '');
+        const numValue = parseInt(cleanValue);
+        if (!isNaN(numValue)) {
+          values.push(numValue * 1000); // 轉換仟元為元
+          consecutiveEmptyCount = 0; // 重置空值計數
+        }
+      } else {
+        consecutiveEmptyCount++;
+        // 連續3個非數值項目則停止提取
+        if (consecutiveEmptyCount >= 3) break;
+      }
+    }
+  }
+  
+  return values;
+}
+```
+
+#### 🔄 開發流程建議
+
+1. **調試階段**: 使用 `debugFieldExtraction` 確定位置範圍
+2. **快速驗證**: 使用硬編碼位置驗證提取邏輯
+3. **生產實現**: 改為動態檢測方法
+4. **測試驗證**: 確保動態檢測在不同情況下都能正常工作
+
+**3. 數據組合函數**:
+```typescript
+combineIndependentCashFlowData: (content: string | string[]): CashFlowData[] => {
+  // 從各自的位置提取數據
+  const periods = extractFiscalPeriodsFromPosition(content);
+  const operating = extractOperatingCashFlowFromPosition(content);
+  const investing = extractInvestingCashFlowFromPosition(content);
+  const financing = extractFinancingCashFlowFromPosition(content);
+  const free = extractFreeCashFlowFromPosition(content);
+  const net = extractNetCashFlowFromPosition(content);
+  
+  // 確保所有數組長度一致
+  const maxLength = Math.max(periods.length, operating.length, investing.length, 
+                            financing.length, free.length, net.length);
+  
+  const results: CashFlowData[] = [];
+  for (let i = 0; i < maxLength; i++) {
+    if (periods[i] && operating[i] !== undefined) {
+      results.push({
+        fiscalPeriod: periods[i],
+        operatingCashFlow: operating[i] || 0,
+        investingCashFlow: investing[i] || 0,
+        financingCashFlow: financing[i] || 0,
+        freeCashFlow: free[i] || 0,
+        netCashFlow: net[i] || 0,
+        unit: "元"
+      });
+    }
+  }
+  
+  return results;
+}
+```
+
+#### 成功驗證結果
+
+**修復前**: 數據錯位、2020-Q2 缺失、投資現金流數據混亂
+**修復後**: 完美對齊，所有 20 個期間和 5 種現金流類型數據正確
+```json
+{
+  "fiscalPeriod": "2020-Q2",
+  "operatingCashFlow": 7177447000,    // ✅ 正確
+  "investingCashFlow": -1862686000,   // ✅ 正確對齊
+  "financingCashFlow": -9663376000,   // ✅ 正確對齊
+  "freeCashFlow": 5314761000,         // ✅ 正確對齊
+  "netCashFlow": -5900764000,         // ✅ 正確對齊
+  "unit": "元"
+}
+```
+
+#### 位置獨立選擇器關鍵原則
+
+1. **DOM 結構分析優先**: 使用 `debugFieldExtraction` 獲取完整 DOM 數據
+2. **精確位置映射**: 為每種數據類型建立固定的位置範圍
+3. **獨立提取函數**: 每種數據類型有專用的提取邏輯
+4. **類型安全驗證**: 確保提取的數據符合預期格式
+5. **長度一致性檢查**: 驗證所有數據數組長度匹配
+
 ### 禁止硬編碼軸數據 (No Hard-coded Timeline Data)
 
 **核心概念**: 所有時間軸和期間數據必須動態提取，禁止寫死任何時間相關的數據。
 
+#### ⚠️ 位置選擇器的特殊考量
+
+**重要說明**: 位置獨立選擇器中的位置檢測也應遵循動態原則，但可分階段實現：
+
+1. **調試階段**: 允許使用硬編碼位置進行快速驗證
+2. **生產階段**: 必須改為動態位置檢測
+3. **文檔範例**: 應同時展示調試和生產兩種方法
+
 #### 錯誤做法
 ```typescript
-// 硬編碼時間軸
+// ❌ 硬編碼時間軸數據
 const fiscalPeriods = ['2025-Q1', '2024-Q4', '2024-Q3', '2024-Q2'];
 const epsValues = [18.43, 14.96, 15.94, 16.19];
 
-// 硬編碼映射
+// ❌ 硬編碼數據映射
 const hardcodedMapping = {
   '2025-Q1': 18.43,
   '2024-Q4': 14.96
 };
+
+// ❌ 硬編碼位置範圍 (即使基於調試輸出)
+for (let i = 105; i <= 124; i++) {
+  // 提取期間數據
+}
 ```
 
 #### 正確做法
+
+**1. 動態內容解析**:
 ```typescript
-// 純動態提取
+// ✅ 純動態提取
 function combineSimpleEPSFields(content: string | string[]): SimpleEPSData[] {
   const patterns = [
     // 動態匹配時間格式 (季度和半年度)
@@ -109,6 +342,49 @@ function combineSimpleEPSFields(content: string | string[]): SimpleEPSData[] {
   // 從頁面內容中動態解析
   const results = extractDataUsingPatterns(content, patterns);
   return results;
+}
+```
+
+**2. 動態位置檢測**:
+```typescript
+// ✅ 動態位置檢測方法
+function findDataPositions(contentArray: string[], patterns: RegExp[]): DataPosition[] {
+  const positions: DataPosition[] = [];
+  
+  for (let i = 0; i < contentArray.length; i++) {
+    const content = contentArray[i]?.toString().trim();
+    
+    for (const pattern of patterns) {
+      if (content && pattern.test(content)) {
+        positions.push({
+          index: i,
+          content: content,
+          type: getDataType(content)
+        });
+        break;
+      }
+    }
+  }
+  
+  return positions;
+}
+```
+
+**3. 階段性開發方法**:
+```typescript
+// ✅ 開發流程：調試 → 驗證 → 動態化
+function extractDataWithFallback(contentArray: string[]): Data[] {
+  // 第一階段：嘗試動態檢測
+  let positions = findDataPositions(contentArray, DATA_PATTERNS);
+  
+  // 第二階段：動態檢測失敗時的回退邏輯
+  if (positions.length === 0) {
+    console.warn('動態檢測失敗，使用回退範圍');
+    // 使用較寬的搜索範圍而非硬編碼
+    positions = searchInRange(contentArray, 100, 300);
+  }
+  
+  return extractFromPositions(positions);
 }
 ```
 
@@ -248,14 +524,166 @@ npm run list
 npm run clean:output
 ```
 
+## CSS 選擇器開發工作流程
+
+### 完整開發流程 (5 階段方法)
+
+#### 階段 1: 問題診斷
+**目標**: 識別數據提取中的問題模式
+```bash
+# 執行爬蟲並檢查輸出
+npx tsx src/cli.ts --config configs/active/test-config.json
+
+# 常見問題指標:
+# - 缺失期間數據 (如 2020-Q2 missing)
+# - 數據錯位 (投資現金流顯示融資現金流數據)
+# - 數值異常 (應為負數的項目顯示正數)
+```
+
+#### 階段 2: DOM 結構分析
+**目標**: 獲取完整的 DOM 數據並理解結構
+```json
+{
+  "allTableCells": {
+    "selector": "table td, tbody td, div[class*='table'] div, li div, [class*='cell'], .table-cell",
+    "multiple": true,
+    "transform": "debugFieldExtraction"
+  }
+}
+```
+
+**分析輸出範例**:
+```
+[DEBUG] 項目 105: "2025 Q1"     <- 期間數據開始位置
+[DEBUG] 項目 106: "2024 Q4"  
+[DEBUG] 項目 124: "2020 Q2"     <- 期間數據結束位置
+[DEBUG] 項目 130: "13,422,960"  <- 營業現金流開始位置
+[DEBUG] 項目 149: "7,177,447"   <- 營業現金流結束位置
+[DEBUG] 項目 153: "-7,533,380"  <- 投資現金流開始位置
+```
+
+#### 階段 3: 位置映射建立
+**目標**: 建立數據類型與位置的精確對應關係
+```typescript
+// 基於實際 DOM 分析建立位置映射表
+const POSITION_MAPPING = {
+  fiscalPeriods: { start: 105, end: 124, count: 20 },
+  operatingCashFlow: { start: 130, end: 149, count: 20 },
+  investingCashFlow: { start: 153, end: 172, count: 20 },
+  financingCashFlow: { start: 176, end: 195, count: 20 },
+  freeCashFlow: { start: 199, end: 218, count: 20 },
+  netCashFlow: { start: 222, end: 241, count: 20 }
+};
+```
+
+#### 階段 4: 獨立提取函數實現
+**目標**: 為每種數據類型創建專用的提取邏輯
+```typescript
+// 模板: 位置獨立提取函數
+extract{DataType}FromPosition: (content: string | string[]): DataType[] => {
+  const contentArray = Array.isArray(content) ? content : [content];
+  const results: DataType[] = [];
+  
+  // 使用映射表中的位置範圍
+  const { start, end } = POSITION_MAPPING.{dataType};
+  for (let i = start; i <= end && i < contentArray.length; i++) {
+    const trimmed = contentArray[i]?.toString().trim();
+    if (trimmed && isValidData(trimmed)) {
+      results.push(parseData(trimmed));
+    }
+  }
+  
+  return results;
+}
+```
+
+#### 階段 5: 驗證與測試
+**目標**: 確保所有數據正確對齊和提取
+```bash
+# 1. 執行完整測試
+node scripts/generate-yahoo-tw-configs.js --type=cash-flow-statement
+npx tsx src/cli.ts --config configs/yahoo-finance-tw-cash-flow-statement-2454_TW.json
+
+# 2. 驗證關鍵指標
+# ✅ 期間完整性: 檢查是否包含所有預期期間 (如 2020-Q2)
+# ✅ 數據對齊性: 確認每個期間的現金流數據正確對應
+# ✅ 數值合理性: 驗證數值符合財務邏輯 (營業現金流通常為正)
+```
+
+### 獨立檢查方式實用範例
+
+#### 1. 瀏覽器開發者工具驗證
+```javascript
+// 在 Yahoo Finance 頁面的控制台中執行
+const cells = document.querySelectorAll("table td, tbody td, div[class*='table'] div, li div, [class*='cell'], .table-cell");
+console.log(`總共找到 ${cells.length} 個元素`);
+
+// 檢查特定位置的數據
+console.log("期間數據範例:");
+for (let i = 105; i <= 109; i++) {
+  console.log(`位置 ${i}: "${cells[i]?.textContent?.trim()}"`);
+}
+
+console.log("營業現金流數據範例:");
+for (let i = 130; i <= 134; i++) {
+  console.log(`位置 ${i}: "${cells[i]?.textContent?.trim()}"`);
+}
+```
+
+#### 2. TypeScript 類型安全檢查
+```bash
+# 檢查新增函數的類型定義
+npm run typecheck
+
+# 常見類型錯誤檢查清單:
+# ✅ YahooFinanceTWTransforms 介面是否包含新函數
+# ✅ 返回類型是否匹配 (string[] | number[])
+# ✅ 參數類型是否正確 (content: string | string[])
+```
+
+#### 3. 配置模板測試流程
+```bash
+# 1. 在 active/ 目錄中測試單一配置
+cp configs/templates/yahoo-finance-tw-cash-flow-statement.json configs/active/test-cashflow.json
+npx tsx src/cli.ts --config configs/active/test-cashflow.json
+
+# 2. 檢查輸出結果結構
+cat output/test-cashflow_*.json | jq '.results[0].data.independentCashFlowData[0]'
+
+# 3. 驗證數據完整性
+cat output/test-cashflow_*.json | jq '.results[0].data.independentCashFlowData | length'  # 應該是 20
+
+# 4. 確認數據對齊
+cat output/test-cashflow_*.json | jq '.results[0].data.independentCashFlowData[] | select(.fiscalPeriod == "2020-Q2")'
+```
+
+#### 4. 批量驗證命令
+```bash
+# 生成所有配置並測試第一個
+node scripts/generate-yahoo-tw-configs.js --type=cash-flow-statement
+npx tsx src/cli.ts crawl yahoo-finance-tw-cash-flow-statement-2330_TW
+
+# 檢查所有生成的配置文件
+ls configs/yahoo-finance-tw-cash-flow-statement-*.json | wc -l  # 應該是 15
+
+# 批量測試 (選擇性)
+for config in configs/yahoo-finance-tw-cash-flow-statement-233*; do
+  echo "測試: $(basename $config)"
+  npx tsx src/cli.ts --config "$config" > /dev/null && echo "✅ 成功" || echo "❌ 失敗"
+done
+```
+
 ## 調試技巧
 
 ### 1. 選擇器測試
 在瀏覽器開發者工具中測試 CSS 選擇器:
 ```javascript
-// 測試選擇器
+// 測試基本選擇器
 document.querySelectorAll("li div:first-child");
 document.querySelectorAll("li div:nth-child(2)");
+
+// 測試複雜選擇器 (適用於複雜 DOM)
+document.querySelectorAll("table td, tbody td, div[class*='table'] div, li div, [class*='cell'], .table-cell");
 ```
 
 ### 2. 數據提取驗證
@@ -275,6 +703,10 @@ document.querySelectorAll("li div:nth-child(2)");
 ```
 [Simple EPS] Pattern 2 Match 1: "2025 Q118.43" -> 2025-Q1, EPS=18.43
 [Simple EPS] ✅ Added: 2025-Q1 EPS=18.43
+
+[Position Extract] 期間範圍 105-124: 找到 20 個期間
+[Position Extract] 營業現金流範圍 130-149: 找到 20 個數值
+[Position Extract] ✅ 數據完全對齊: 20 期間 × 5 現金流類型
 ```
 
 ## 故障排除
@@ -297,6 +729,80 @@ document.querySelectorAll("li div:nth-child(2)");
    - **相關檔案**: `/src/transforms/sites/yahoo-finance-tw.ts` line 3093
    - **修復效果**: 營業現金流從 0 正確提取為實際數值（如 625,573,672 仟元）
    - **批量更新**: 使用 `node scripts/generate-yahoo-tw-configs.js --type=cash-flow-statement` 重新生成所有配置
+
+5. **數據對齊問題 (投資現金流錯位)**: 現金流表中不同類型數據錯位對應
+   - **問題症狀**: 
+     - 2020-Q2 期間缺失
+     - 投資現金流數據顯示為融資現金流的數值
+     - 期間與數值無法正確對應
+   - **根本原因**: 使用單一選擇器提取所有數據後進行字串解析，導致複雜 DOM 結構中的數據混亂
+   - **解決方案**: 採用**位置獨立選擇器方法**
+     ```typescript
+     // ❌ 錯誤方法: 單一選擇器 + 複雜解析
+     "combinedData": {
+       "selector": "table td",
+       "transform": "parseComplexTableData"
+     }
+     
+     // ✅ 正確方法: 位置獨立選擇器
+     "fiscalPeriods": {
+       "selector": "table td",
+       "transform": "extractFiscalPeriodsFromPosition"  // 位置 105-124
+     },
+     "operatingCashFlow": {
+       "selector": "table td", 
+       "transform": "extractOperatingCashFlowFromPosition"  // 位置 130-149
+     }
+     ```
+   - **實施步驟**:
+     1. 使用 `debugFieldExtraction` 分析完整 DOM 結構
+     2. 建立精確的位置映射表
+     3. 為每種數據類型創建專用提取函數
+     4. 實現數據組合邏輯確保對齊
+   - **驗證結果**: 所有 20 個期間和 5 種現金流類型完美對齊
+
+6. **位置選擇器開發常見錯誤**
+   - **錯誤 1**: 硬編碼位置範圍 (違反動態原則)
+     ```typescript
+     // ❌ 錯誤: 硬編碼位置範圍 (即使基於調試輸出)
+     for (let i = 105; i <= 124; i++) // 硬編碼範圍
+     
+     // ⚠️ 可接受: 調試階段的快速驗證
+     // 調試階段：使用硬編碼快速驗證提取邏輯
+     for (let i = 105; i <= 124; i++) // 臨時調試用
+     
+     // ✅ 正確: 生產階段的動態檢測
+     let startIndex = findFirstMatchIndex(contentArray, /(20\d{2})\s*[Qq]([1-4])/);
+     let endIndex = findLastMatchIndex(contentArray, /(20\d{2})\s*[Qq]([1-4])/);
+     for (let i = startIndex; i <= endIndex; i++) // 動態範圍
+     ```
+   - **錯誤 2**: 數據類型驗證不充分
+     ```typescript  
+     // ❌ 錯誤: 缺乏數據格式驗證
+     const value = parseInt(contentArray[i]);
+     
+     // ✅ 正確: 完整的數據驗證邏輯
+     const trimmed = contentArray[i]?.toString().trim();
+     if (trimmed && /^-?\d{1,3}(,\d{3})*$/.test(trimmed.replace(/[^\d,-]/g, ''))) {
+       const value = parseInt(trimmed.replace(/[^\d-]/g, ''));
+       if (!isNaN(value)) results.push(value);
+     }
+     ```
+   - **錯誤 3**: 忽略數組長度一致性檢查
+     ```typescript
+     // ❌ 錯誤: 未檢查數組長度匹配
+     for (let i = 0; i < periods.length; i++) {
+       results.push({ period: periods[i], value: values[i] }); // values[i] 可能 undefined
+     }
+     
+     // ✅ 正確: 確保數組長度一致
+     const maxLength = Math.max(periods.length, values.length);
+     for (let i = 0; i < maxLength; i++) {
+       if (periods[i] && values[i] !== undefined) {
+         results.push({ period: periods[i], value: values[i] });
+       }
+     }
+     ```
 
 ## 配置生成器開發工作流程 (Config Generator Development Workflow)
 
@@ -676,6 +1182,22 @@ node scripts/generate-yahoo-jp-configs.js --type=performance
 ```
 
 ## 版本記錄
+
+- **v1.2.0** (2025-08-05): 位置獨立選擇器方法完善
+  - **重大突破**: 完成位置獨立選擇器 (Position-Based Independent Selectors) 方法
+  - **核心解決**: Yahoo Finance 台灣現金流表數據對齊問題
+    - ✅ 修復 2020-Q2 期間缺失問題
+    - ✅ 解決投資現金流數據錯位問題 (原顯示融資現金流數據)
+    - ✅ 實現所有 20 個period × 5 種現金流類型完美對齊
+  - **技術創新**: 
+    - DOM 結構精確分析方法 (位置 105-241 精確映射)
+    - 5 階段 CSS 選擇器開發工作流程
+    - 獨立檢查方式實用範例 (瀏覽器工具 + TypeScript + 批量驗證)
+  - **文檔完善**: 在 CLAUDE.md 中新增完整的位置選擇器開發指南
+    - 實際案例: Yahoo Finance 現金流表完整實現
+    - 開發流程: 問題診斷 → DOM 分析 → 位置映射 → 獨立實現 → 驗證測試
+    - 常見錯誤: 位置範圍、數據驗證、數組長度一致性檢查
+  - **驗證結果**: 2454.TW 現金流數據從錯位混亂到完美對齊
 
 - **v1.1.0** (2025-08-05): 配置生成器架構統一化
   - **新增**: 創建 `generate-yahoo-jp-configs.js` 日本配置生成器
