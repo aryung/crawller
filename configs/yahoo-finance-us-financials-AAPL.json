@@ -1,7 +1,7 @@
 {
   "templateType": "us-financials",
   "url": "https://finance.yahoo.com/quote/AAPL/financials",
-  "_note": "Yahoo Finance US financials data for Apple Inc. - AAPL (Technology)",
+  "_note": "This config extracts structured financial data from Yahoo Finance US financials page. Includes dynamic action to click 'Quarterly' button before data extraction. Use with US stock codes like BRK-B, AAPL, MSFT, etc.",
   "actions": [
     {
       "type": "wait",
@@ -42,18 +42,15 @@
   },
   "variables": {
     "stockCode": "AAPL",
-    "baseUrl": "https://finance.yahoo.com"
+    "baseUrl": "https://finance.yahoo.com",
+    "companyName": "Apple Inc.",
+    "sector": "Technology"
   },
   "export": {
     "formats": [
       "json",
       "csv"
     ],
-    "filename": "yahoo_finance_us_financials_AAPL"
-  },
-  "stockInfo": {
-    "stockCode": "AAPL",
-    "companyName": "Apple Inc.",
-    "sector": "Technology"
+    "filename": "yahoo_finance_us_financials_BRK_B"
   }
 }

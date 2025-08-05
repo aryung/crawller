@@ -1,7 +1,7 @@
 {
   "templateType": "tw-cash-flow-statement",
   "url": "https://tw.stock.yahoo.com/quote/2892.TW/cash-flow-statement",
-  "_note": "FIXED: This config extracts accurate cash flow statement data using independent selectors following CLAUDE.md principles. Fixed time period generation bug (now generates realistic periods like 2025-Q1 to 2024-Q1 instead of impossible 2025-Q2). MAJOR FIX: Corrected data mapping logic - Yahoo Finance displays data horizontally by period, not vertically by cash flow type. Now uses cross-selector mapping to ensure fiscal periods properly match their corresponding cash flow values. Added unit conversion: all values are converted from '仟元' (thousands) to '元' (actual amounts) by multiplying by 1000. Use with Taiwan stock codes like 2330.TW, 2454.TW, etc.",
+  "_note": "INDEPENDENT SELECTORS IMPLEMENTATION: Following CLAUDE.md principles, this configuration uses a single comprehensive selector to capture all cash flow data, then applies intelligent vertical structure parsing with corrected data mapping. The combineIndependentCashFlowFields function detects vertical data arrangement and properly maps: period 0=latest quarter data, period 1=previous quarter, etc. This fixes the 2020-Q3 incorrect values and 2020-Q2 missing data issues by correctly parsing Yahoo Finance's vertical data structure.",
   "actions": [
     {
       "type": "wait",
@@ -9,9 +9,26 @@
       "description": "等待頁面初始載入"
     },
     {
+      "type": "scroll",
+      "direction": "down",
+      "distance": 2000,
+      "description": "向下滾動載入更多歷史數據"
+    },
+    {
+      "type": "wait",
+      "timeout": 3000,
+      "description": "等待歷史數據載入"
+    },
+    {
+      "type": "scroll",
+      "direction": "down",
+      "distance": 3000,
+      "description": "繼續向下滾動載入完整歷史數據"
+    },
+    {
       "type": "wait",
       "timeout": 4000,
-      "description": "等待現金流量表數據完全載入"
+      "description": "等待現金流量表完整歷史數據載入"
     }
   ],
   "selectors": {
@@ -19,60 +36,45 @@
       "selector": "h1, .symbol, .stock-name",
       "transform": "cleanStockSymbol"
     },
-    "htmlStructureDebug": {
-      "selector": "body",
-      "multiple": false,
-      "transform": "debugHTMLStructure"
-    },
-    "allTables": {
-      "selector": "table",
-      "multiple": true,
-      "transform": "debugFieldExtraction"
-    },
-    "allTableHeaders": {
-      "selector": "th",
-      "multiple": true,
-      "transform": "debugFieldExtraction"
-    },
     "allTableCells": {
-      "selector": "td",
+      "selector": "table td, tbody td, div[class*='table'] div, li div, [class*='cell'], .table-cell",
       "multiple": true,
       "transform": "debugFieldExtraction"
     },
-    "cashFlowPeriods": {
-      "selector": "li div:first-child",
+    "fiscalPeriods": {
+      "selector": "table td, tbody td, div[class*='table'] div, li div, [class*='cell'], .table-cell",
       "multiple": true,
-      "transform": "debugFieldExtraction"
+      "transform": "extractFiscalPeriodsFromPosition"
     },
-    "operatingCashFlowValues": {
-      "selector": "li div:nth-child(2)",
+    "operatingCashFlowRow": {
+      "selector": "table td, tbody td, div[class*='table'] div, li div, [class*='cell'], .table-cell",
       "multiple": true,
-      "transform": "debugFieldExtraction"
+      "transform": "extractOperatingCashFlowFromPosition"
     },
-    "investingCashFlowValues": {
-      "selector": "li div:nth-child(3)",
+    "investingCashFlowRow": {
+      "selector": "table td, tbody td, div[class*='table'] div, li div, [class*='cell'], .table-cell",
       "multiple": true,
-      "transform": "debugFieldExtraction"
+      "transform": "extractInvestingCashFlowFromPosition"
     },
-    "financingCashFlowValues": {
-      "selector": "li div:nth-child(4)",
+    "financingCashFlowRow": {
+      "selector": "table td, tbody td, div[class*='table'] div, li div, [class*='cell'], .table-cell",
       "multiple": true,
-      "transform": "debugFieldExtraction"
+      "transform": "extractFinancingCashFlowFromPosition"
     },
-    "freeCashFlowValues": {
-      "selector": "li div:nth-child(5)",
+    "freeCashFlowRow": {
+      "selector": "table td, tbody td, div[class*='table'] div, li div, [class*='cell'], .table-cell",
       "multiple": true,
-      "transform": "debugFieldExtraction"
+      "transform": "extractFreeCashFlowFromPosition"
     },
-    "netCashFlowValues": {
-      "selector": "li div:nth-child(6)",
+    "netCashFlowRow": {
+      "selector": "table td, tbody td, div[class*='table'] div, li div, [class*='cell'], .table-cell",
       "multiple": true,
-      "transform": "debugFieldExtraction"
+      "transform": "extractNetCashFlowFromPosition"
     },
-    "combinedCashFlowData": {
+    "independentCashFlowData": {
       "selector": "body",
       "multiple": false,
-      "transform": "combineIndependentCashFlowFields"
+      "transform": "combineIndependentCashFlowData"
     }
   },
   "headers": {

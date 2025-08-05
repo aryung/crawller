@@ -1,7 +1,7 @@
 {
   "templateType": "us-financials",
   "url": "https://finance.yahoo.com/quote/HD/financials",
-  "_note": "Yahoo Finance US financials data for The Home Depot Inc. - HD (Consumer Discretionary)",
+  "_note": "This config extracts structured financial data from Yahoo Finance US financials page. Includes dynamic action to click 'Quarterly' button before data extraction. Use with US stock codes like BRK-B, AAPL, MSFT, etc.",
   "actions": [
     {
       "type": "wait",
@@ -15,7 +15,7 @@
       "transform": "cleanStockSymbol"
     },
     "structuredFinancialData": {
-      "selector": "body",
+      "selector": "div[data-testid=\"financials-table\"], table[data-testid=\"table-container\"], [class*=\"table\"][class*=\"financial\"], .table-container, table.table, div.table",
       "multiple": false,
       "transform": "structureUSFinancialDataFromCells"
     }
@@ -42,18 +42,15 @@
   },
   "variables": {
     "stockCode": "HD",
-    "baseUrl": "https://finance.yahoo.com"
+    "baseUrl": "https://finance.yahoo.com",
+    "companyName": "The Home Depot Inc.",
+    "sector": "Consumer Discretionary"
   },
   "export": {
     "formats": [
       "json",
       "csv"
     ],
-    "filename": "yahoo_finance_us_financials_HD"
-  },
-  "stockInfo": {
-    "stockCode": "HD",
-    "companyName": "The Home Depot Inc.",
-    "sector": "Consumer Discretionary"
+    "filename": "yahoo_finance_us_financials_BRK_B"
   }
 }

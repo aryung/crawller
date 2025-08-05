@@ -1,6 +1,6 @@
 {
   "templateType": "cashflow",
-  "url": "https://finance.yahoo.co.jp/quote/143A.T/performance?styl=cf",
+  "url": "https://finance.yahoo.co.jp/quote/7901.T/performance?styl=cf",
   "_note": "This config extracts structured cashflow data from Yahoo Finance Japan cashflow page. The 'structuredFinancialData' field contains parsed cashflow metrics in object format for easier processing. Use with Japanese stock codes like 143A.T, 7203.T, etc.",
   "selectors": {
     "stockInfo": {
@@ -36,9 +36,9 @@
   "variables": {
     "stockCode": "7901.T",
     "baseUrl": "https://finance.yahoo.co.jp",
-    "symbolCode": "143A.T",
-    "companyName": "イシン(株)",
-    "sector": "食料品"
+    "symbolCode": "7901.T",
+    "companyName": "(株)マツモト",
+    "sector": "小売業"
   },
   "export": {
     "formats": [

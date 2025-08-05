@@ -1,7 +1,7 @@
 {
   "templateType": "us-financials",
   "url": "https://finance.yahoo.com/quote/JPM/financials",
-  "_note": "Yahoo Finance US financials data for JPMorgan Chase & Co. - JPM (Financial Services)",
+  "_note": "This config extracts structured financial data from Yahoo Finance US financials page. Includes dynamic action to click 'Quarterly' button before data extraction. Use with US stock codes like BRK-B, AAPL, MSFT, etc.",
   "actions": [
     {
       "type": "wait",
@@ -15,7 +15,7 @@
       "transform": "cleanStockSymbol"
     },
     "structuredFinancialData": {
-      "selector": "body",
+      "selector": "div[data-testid=\"financials-table\"], table[data-testid=\"table-container\"], [class*=\"table\"][class*=\"financial\"], .table-container, table.table, div.table",
       "multiple": false,
       "transform": "structureUSFinancialDataFromCells"
     }
@@ -42,18 +42,15 @@
   },
   "variables": {
     "stockCode": "JPM",
-    "baseUrl": "https://finance.yahoo.com"
+    "baseUrl": "https://finance.yahoo.com",
+    "companyName": "JPMorgan Chase & Co.",
+    "sector": "Financial Services"
   },
   "export": {
     "formats": [
       "json",
       "csv"
     ],
-    "filename": "yahoo_finance_us_financials_JPM"
-  },
-  "stockInfo": {
-    "stockCode": "JPM",
-    "companyName": "JPMorgan Chase & Co.",
-    "sector": "Financial Services"
+    "filename": "yahoo_finance_us_financials_BRK_B"
   }
 }
