@@ -67,7 +67,7 @@ node scripts/generate-yahoo-us-configs.js
 ### 📁 生成的檔案結構
 
 ```
-configs/
+config/
 ├── active/
 │   ├── yahoo-finance-us-cashflow-AAPL.json      # Apple 現金流配置
 │   ├── yahoo-finance-us-cashflow-MSFT.json      # Microsoft 現金流配置
@@ -204,7 +204,7 @@ tail -f logs/yahoo-us-cashflow-batch-*.json
 ls output/yahoo_finance_us_cashflow_*.json | wc -l
 
 # 統計總配置數量
-ls configs/yahoo-finance-us-cashflow-*.json | wc -l
+ls config/yahoo-finance-us-cashflow-*.json | wc -l
 ```
 
 ### 📋 日誌結構
@@ -277,7 +277,7 @@ cat output/yahoo_finance_us_cashflow_AAPL.json | jq '.structuredCashFlowData[0]'
 node scripts/generate-yahoo-us-configs.js --type=cashflow
 
 # 確認檔案生成成功
-ls configs/yahoo-finance-us-cashflow-*.json
+ls config/yahoo-finance-us-cashflow-*.json
 ```
 
 #### 2. Quarterly 按鈕點擊失敗
@@ -291,7 +291,7 @@ ls configs/yahoo-finance-us-cashflow-*.json
 npm run crawl yahoo-finance-us-cashflow-AAPL
 
 # 如需更新選擇器，編輯模板
-vi configs/templates/yahoo-finance-us-cashflow.json
+vi config/templates/yahoo-finance-us-cashflow.json
 ```
 
 #### 3. 數據解析失敗

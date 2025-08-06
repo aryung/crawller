@@ -4,7 +4,7 @@
 
 ```
 /crawler/
-├── configs/                     # 配置文件目錄
+├── config/                     # 配置文件目錄
 │   ├── templates/              # 配置模板（不被執行）
 │   │   └── *.json
 │   ├── active/                 # 生成的實際配置

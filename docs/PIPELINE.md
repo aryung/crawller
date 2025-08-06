@@ -9,7 +9,7 @@ The Crawler Pipeline is a complete end-to-end solution that orchestrates the ent
 ```
 1. Data Sources (data/)
    ↓
-2. Config Generation (configs/)
+2. Config Generation (config/)
    ↓
 3. Crawler Execution (sequential)
    ↓
@@ -197,7 +197,7 @@ NODE_ENV=development
 ```typescript
 interface PipelineConfig {
   dataDir?: string;          // Default: 'data'
-  configDir?: string;        // Default: 'configs'
+  configDir?: string;        // Default: 'config'
   outputDir?: string;        // Default: 'output'
   scriptsDir?: string;       // Default: 'scripts'
   batchSize?: number;        // Default: 100
@@ -265,7 +265,7 @@ npm run pipeline:stats
 
 2. **Config Generation Failed**
    - Check data source files exist in `data/`
-   - Verify template files in `configs/templates/`
+   - Verify template files in `config/templates/`
 
 3. **Crawler Execution Failed**
    - Check network connectivity
@@ -291,7 +291,7 @@ psql -h localhost -U your_db_user -d aha-development
 ls -la output/yahoo-finance-*.json | head -10
 
 # Test single configuration
-npx tsx src/cli.ts --config configs/yahoo-finance-tw-eps-2330_TW.json
+npx tsx src/cli.ts --config config/yahoo-finance-tw-eps-2330_TW.json
 
 # Check TypeScript compilation
 npm run typecheck
@@ -353,7 +353,7 @@ pg_dump -U your_db_user -d aha-development > backup_$(date +%Y%m%d).sql
 
 ### Adding New Report Types
 
-1. Create template: `configs/templates/yahoo-finance-{region}-{type}.json`
+1. Create template: `config/templates/yahoo-finance-{region}-{type}.json`
 2. Update config generator to include new type
 3. Add standardization function for new report type
 4. Update database schema if needed

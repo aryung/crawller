@@ -500,7 +500,7 @@ npm run crawl your-config-name
 DEBUG=true npm run crawl your-config-name
 
 # 檢查配置語法
-node -e "console.log(JSON.parse(require('fs').readFileSync('configs/your-config.json')))"
+node -e "console.log(JSON.parse(require('fs').readFileSync('config/your-config.json')))"
 ```
 
 ## 最佳實踐
@@ -606,7 +606,7 @@ DEBUG=* npm run crawl config-name
 
 # 檢查生成的選擇器
 node -e "
-const config = require('./configs/your-config.json');
+const config = require('./config/your-config.json');
 console.log('Selectors:', Object.keys(config.selectors));
 "
 ```

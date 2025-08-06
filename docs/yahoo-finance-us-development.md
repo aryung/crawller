@@ -44,7 +44,7 @@ graph TD
 └── crawler/
     └── PlaywrightCrawler.ts    # 瀏覽器爬蟲實現
 
-/configs/
+/config/
 ├── templates/
 │   ├── yahoo-finance-us-cashflow.json    # Cash Flow 模板
 │   └── yahoo-finance-us-financials.json  # Financials 模板

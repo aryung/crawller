@@ -45,7 +45,7 @@ graph TD
 └── crawler/
     └── PlaywrightCrawler.ts    # 瀏覽器爬蟲實現
 
-/configs/
+/config/
 ├── templates/
 │   ├── yahoo-finance-jp-financials.json   # Financials 模板
 │   └── yahoo-finance-jp-performance.json  # Performance 模板
@@ -821,7 +821,7 @@ vi data/yahoo-finance-jp-stockcodes.json
 node scripts/generate-batch-configs.js
 
 # 檢查生成的配置
-ls configs/active/yahoo-finance-jp-*新股票代碼*.json
+ls config/active/yahoo-finance-jp-*新股票代碼*.json
 ```
 
 #### 3. 測試單一配置

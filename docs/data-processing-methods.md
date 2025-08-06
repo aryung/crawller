@@ -142,7 +142,7 @@ Script 機制在**建置時期**讀取固定的資料檔案，批次生成大量
 ### 專案結構
 
 ```
-configs/
+config/
 ├── templates/                    # 配置模板
 │   ├── yahoo-finance-tw-dividend.json
 │   ├── yahoo-finance-us-cashflow.json
@@ -159,7 +159,7 @@ scripts/                         # 生成腳本
 
 ### 模板檔案範例
 
-**Template**: `configs/templates/yahoo-finance-tw-dividend.json`
+**Template**: `config/templates/yahoo-finance-tw-dividend.json`
 ```json
 {
   "url": "https://tw.stock.yahoo.com/quote/${symbolCode}/dividend",
@@ -227,7 +227,7 @@ stockCodes.forEach(stock => {
   
   // 6. 儲存配置檔案
   const fileName = `yahoo-finance-tw-dividend-${stock.stockCode.replace('.TW', '_TW')}.json`;
-  fs.writeFileSync(path.join(configsDir, fileName), JSON.stringify(config, null, 2));
+  fs.writeFileSync(path.join(configDir, fileName), JSON.stringify(config, null, 2));
 });
 ```
 
@@ -236,7 +236,7 @@ stockCodes.forEach(stock => {
 ```bash
 # 1. 生成配置檔案
 node scripts/generate-yahoo-tw-configs.js
-# 輸出：configs/yahoo-finance-tw-dividend-2330_TW.json (15個檔案)
+# 輸出：config/yahoo-finance-tw-dividend-2330_TW.json (15個檔案)
 
 # 2. 執行個別爬蟲
 npm run crawl yahoo-finance-tw-dividend-2330_TW
@@ -251,7 +251,7 @@ node scripts/run-yahoo-tw-dividend-batch.js
 | ---------------- | -------------------------------------- | ---------------------------------------- |
 | **處理時機**     | 執行時期動態處理                       | 建置時期批次生成                         |
 | **資料來源**     | 前一個爬蟲的輸出結果                   | 固定的 JSON 資料檔案                     |
-| **配置檔案**     | 記憶體中動態生成，不產生實體檔案       | 產生實體 JSON 配置檔案到 configs/        |
+| **配置檔案**     | 記憶體中動態生成，不產生實體檔案       | 產生實體 JSON 配置檔案到 config/        |
 | **變數語法**     | `{{item.field}}` 和 `{{variable}}`     | `${variable}` 字串替換                   |
 | **串聯能力**     | 支援多層串聯，A→B→C                    | 單層處理，需手動管理相依性               |
 | **適用情境**     | 動態資料，資料間有依賴關係             | 固定清單，批次處理                       |
@@ -325,7 +325,7 @@ Error: Source selector 'allSubIndustries' did not return an array
 ```
 Error: 沒有找到 Yahoo Finance Taiwan 模板文件
 ```
-**A**: 確認 `configs/templates/` 目錄下有對應的模板檔案。
+**A**: 確認 `config/templates/` 目錄下有對應的模板檔案。
 
 **Q: 資料檔案格式錯誤**
 ```
