@@ -9,7 +9,7 @@ const typeArg = args.find(arg => arg.startsWith('--type='));
 const specificType = typeArg ? typeArg.split('=')[1] : null;
 
 // 自動發現所有 Yahoo Finance 模板
-const templatesDir = path.join(__dirname, '../configs/templates');
+const templatesDir = path.join(__dirname, '../config/templates');
 const templateFiles = fs.readdirSync(templatesDir)
   .filter(file => file.startsWith('yahoo-finance-jp-') && file.endsWith('.json'));
 
@@ -26,8 +26,8 @@ const stockCodesPath = path.join(__dirname, '../data/yahoo-finance-jp-stockcodes
 const stockCodes = JSON.parse(fs.readFileSync(stockCodesPath, 'utf8'));
 
 // 確保目錄存在
-const activeDir = path.join(__dirname, '../configs/active');
-const configsDir = path.join(__dirname, '../configs');
+const activeDir = path.join(__dirname, '../config/active');
+const configsDir = path.join(__dirname, '../config');
 if (!fs.existsSync(activeDir)) {
   fs.mkdirSync(activeDir, { recursive: true });
 }
@@ -116,7 +116,7 @@ processedTemplates.forEach(template => {
   console.log(`   - ${template.type}: ${template.count} 個配置`);
 });
 console.log(`📈 總計: ${totalConfigs} 個配置文件`);
-console.log(`📁 配置文件位置: configs/ 和 configs/active/`);
+console.log(`📁 配置文件位置: config/ 和 config/active/`);
 
 if (processedTemplates.length > 1) {
   console.log(`\n💡 使用方法:`);

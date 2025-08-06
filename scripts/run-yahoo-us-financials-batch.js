@@ -55,7 +55,7 @@ async function main() {
   console.log('=============================================');
   
   // 尋找所有 Yahoo Finance US Financials 配置文件
-  const configsDir = path.join(__dirname, '../configs');
+  const configsDir = path.join(__dirname, '../config');
   const configFiles = fs.readdirSync(configsDir)
     .filter(file => file.startsWith('yahoo-finance-us-financials-') && file.endsWith('.json'))
     .map(file => file.replace('.json', ''));

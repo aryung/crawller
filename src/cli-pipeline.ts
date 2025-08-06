@@ -160,7 +160,7 @@ program
     console.log(chalk.cyan('\n# Run for specific symbols:'));
     console.log('  npx tsx src/cli-pipeline.ts run --symbols 2330.TW,2454.TW');
     
-    console.log(chalk.cyan('\n# Skip config generation (use existing configs):'));
+    console.log(chalk.cyan('\n# Skip config generation (use existing config):'));
     console.log('  npx tsx src/cli-pipeline.ts run --skip-config');
     
     console.log(chalk.cyan('\n# Run crawlers with higher concurrency:'));

@@ -9,7 +9,7 @@ const typeArg = args.find(arg => arg.startsWith('--type='));
 const specificType = typeArg ? typeArg.split('=')[1] : null;
 
 // 自動發現所有 Yahoo Finance US 模板
-const templatesDir = path.join(__dirname, '../configs/templates');
+const templatesDir = path.join(__dirname, '../config/templates');
 const templateFiles = fs.readdirSync(templatesDir)
   .filter(file => file.startsWith('yahoo-finance-us-') && file.endsWith('.json'));
 
@@ -30,8 +30,8 @@ if (!fs.existsSync(stockCodesPath)) {
 
 const stockCodes = JSON.parse(fs.readFileSync(stockCodesPath, 'utf8'));
 
-// 確保目錄存在 - 直接輸出到 configs 目錄 (扁平結構)
-const configsDir = path.join(__dirname, '../configs');
+// 確保目錄存在 - 直接輸出到 config 目錄 (扁平結構)
+const configsDir = path.join(__dirname, '../config');
 if (!fs.existsSync(configsDir)) {
   fs.mkdirSync(configsDir, { recursive: true });
 }
@@ -126,5 +126,5 @@ if (exampleFiles[0]) {
 console.log('\n💡 提示:');
 console.log('   - 使用 --type=<type> 只生成特定類型的配置');
 console.log('   - 可用類型: cashflow, financials');
-console.log('   - 配置文件位於 configs/ 目錄');
+console.log('   - 配置文件位於 config/ 目錄');
 console.log('   - 可以直接編輯模板文件來調整所有配置');

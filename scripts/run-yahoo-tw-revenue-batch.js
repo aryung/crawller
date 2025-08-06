@@ -52,8 +52,8 @@ function delay(ms) {
 
 async function main() {
   // 檢查兩個可能的配置目錄
-  const activeDir = path.join(__dirname, '../configs/active');
-  const configsDir = path.join(__dirname, '../configs');
+  const activeDir = path.join(__dirname, '../config/active');
+  const configsDir = path.join(__dirname, '../config');
   
   // 找出所有 Yahoo Finance TW revenue 配置文件
   let configFiles = [];

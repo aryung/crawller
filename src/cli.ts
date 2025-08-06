@@ -35,7 +35,7 @@ async function main() {
   program
     .command('crawl [configs...]')
     .description('執行爬蟲任務')
-    .option('-c, --config <path>', '配置檔案目錄或特定配置檔案路徑', 'configs')
+    .option('-c, --config <path>', '配置檔案目錄或特定配置檔案路徑', 'config')
     .option('-o, --output <path>', '輸出目錄', 'output')
     .option('-f, --format <format>', '匯出格式 (json|csv|xlsx)', 'json')
     .option('--concurrent <number>', '同時處理的配置檔案數量（非引擎併發）', '1')

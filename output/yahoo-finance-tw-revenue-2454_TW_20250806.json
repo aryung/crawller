@@ -1,5 +1,5 @@
 {
-  "exportDate": "2025-08-06T08:02:30.651Z",
+  "exportDate": "2025-08-06T13:20:00.898Z",
   "totalResults": 1,
   "successCount": 1,
   "results": [
@@ -7,412 +7,556 @@
       "url": "https://tw.stock.yahoo.com/quote/2454.TW/revenue",
       "data": {
         "stockInfo": "Yahoo奇摩財經",
-        "structuredRevenueData": [
+        "fiscalPeriods": [
+          "2025/06",
+          "2025/05",
+          "2025/04",
+          "2025/03",
+          "2025/02",
+          "2025/01",
+          "2024/12",
+          "2024/11",
+          "2024/10",
+          "2024/09",
+          "2024/08",
+          "2024/07",
+          "2024/06",
+          "2024/05",
+          "2024/04",
+          "2024/03",
+          "2024/02",
+          "2024/01",
+          "2023/12",
+          "2023/11",
+          "2023/10",
+          "2023/09",
+          "2023/08",
+          "2023/07",
+          "2023/06",
+          "2023/05",
+          "2023/04",
+          "2023/03",
+          "2023/02",
+          "2023/01",
+          "2022/12",
+          "2022/11",
+          "2022/10",
+          "2022/09",
+          "2022/08",
+          "2022/07",
+          "2022/06",
+          "2022/05",
+          "2022/04",
+          "2022/03",
+          "2022/02",
+          "2022/01",
+          "2021/12",
+          "2021/11",
+          "2021/10",
+          "2021/09",
+          "2021/08",
+          "2021/07",
+          "2021/06",
+          "2021/05",
+          "2021/04",
+          "2021/03",
+          "2021/02",
+          "2021/01",
+          "2020/12",
+          "2020/11",
+          "2020/10",
+          "2020/09",
+          "2020/08",
+          "2020/07"
+        ],
+        "revenueData": [
+          56433621000,
+          45180526000,
+          48754424000,
+          55996226000,
+          46171723000,
+          51144288000,
+          41683430000,
+          45242346000,
+          51117348000,
+          44675936000,
+          41527835000,
+          45609723000,
+          43092056000,
+          42151178000,
+          42027887000,
+          50479987000,
+          38481870000,
+          44496290000,
+          43679986000,
+          43071172000,
+          42810847000,
+          36078033000,
+          42256360000,
+          31763135000,
+          38218758000,
+          31566805000,
+          28349722000,
+          42958473000,
+          30309642000,
+          22383397000,
+          38685212000,
+          36124647000,
+          33384225000,
+          56571204000,
+          44699654000,
+          40890418000,
+          51029067000,
+          52076120000,
+          52624634000,
+          59179559000,
+          40028948000,
+          43502342000,
+          46202466000,
+          45039216000,
+          37412195000,
+          47906318000,
+          42808189000,
+          40359813000,
+          47755898000,
+          41325915000,
+          36571590000,
+          40146677000,
+          32552975000,
+          35333330000,
+          32428624000,
+          33537766000,
+          30438836000,
+          37866211000,
+          32716126000,
+          26692397000
+        ],
+        "simpleRevenueData": [
           {
             "fiscalPeriod": "2025/06",
-            "revenue": 56433621000,
-            "monthlyGrowth": 0.2491,
-            "yearOverYearGrowth": 0.0096,
-            "cumulativeRevenue": null,
-            "cumulativeGrowth": null
+            "revenue": 56433621,
+            "exchangeArea": "TPE",
+            "fiscalMonth": 6,
+            "reportType": "monthly"
           },
           {
             "fiscalPeriod": "2025/05",
-            "revenue": 45180526000,
-            "monthlyGrowth": 0.0733,
-            "yearOverYearGrowth": 0.0719,
-            "cumulativeRevenue": null,
-            "cumulativeGrowth": null
+            "revenue": 45180526,
+            "exchangeArea": "TPE",
+            "fiscalMonth": 5,
+            "reportType": "monthly"
           },
           {
             "fiscalPeriod": "2025/04",
-            "revenue": 48754424000,
-            "monthlyGrowth": 0.1293,
-            "yearOverYearGrowth": 0.06,
-            "cumulativeRevenue": null,
-            "cumulativeGrowth": null
+            "revenue": 48754424,
+            "exchangeArea": "TPE",
+            "fiscalMonth": 4,
+            "reportType": "monthly"
           },
           {
             "fiscalPeriod": "2025/03",
-            "revenue": 55996226000,
-            "monthlyGrowth": 0.21280000000000002,
-            "yearOverYearGrowth": 0.009300000000000001,
-            "cumulativeRevenue": null,
-            "cumulativeGrowth": null
+            "revenue": 55996226,
+            "exchangeArea": "TPE",
+            "fiscalMonth": 3,
+            "reportType": "monthly"
           },
           {
             "fiscalPeriod": "2025/02",
-            "revenue": 46171723000,
-            "monthlyGrowth": 0.09720000000000001,
-            "yearOverYearGrowth": 0.0998,
-            "cumulativeRevenue": null,
-            "cumulativeGrowth": null
+            "revenue": 46171723,
+            "exchangeArea": "TPE",
+            "fiscalMonth": 2,
+            "reportType": "monthly"
           },
           {
             "fiscalPeriod": "2025/01",
-            "revenue": 51144288000,
-            "monthlyGrowth": 0.1494,
-            "yearOverYearGrowth": 0.049400000000000006,
-            "cumulativeRevenue": null,
-            "cumulativeGrowth": null
+            "revenue": 51144288,
+            "exchangeArea": "TPE",
+            "fiscalMonth": 1,
+            "reportType": "monthly"
           },
           {
             "fiscalPeriod": "2024/12",
-            "revenue": 41683430000,
-            "monthlyGrowth": -0.0787,
-            "yearOverYearGrowth": -0.045700000000000005,
-            "cumulativeRevenue": null,
-            "cumulativeGrowth": null
+            "revenue": 41683430,
+            "exchangeArea": "TPE",
+            "fiscalMonth": 12,
+            "reportType": "monthly"
           },
           {
             "fiscalPeriod": "2024/11",
-            "revenue": 45242346000,
-            "monthlyGrowth": -0.1149,
-            "yearOverYearGrowth": 0.0504,
-            "cumulativeRevenue": null,
-            "cumulativeGrowth": null
+            "revenue": 45242346,
+            "exchangeArea": "TPE",
+            "fiscalMonth": 11,
+            "reportType": "monthly"
           },
           {
             "fiscalPeriod": "2024/10",
-            "revenue": 51117348000,
-            "monthlyGrowth": 0.1442,
-            "yearOverYearGrowth": 0.094,
-            "cumulativeRevenue": null,
-            "cumulativeGrowth": null
+            "revenue": 51117348,
+            "exchangeArea": "TPE",
+            "fiscalMonth": 10,
+            "reportType": "monthly"
           },
           {
             "fiscalPeriod": "2024/09",
-            "revenue": 44675936000,
-            "monthlyGrowth": 0.0758,
-            "yearOverYearGrowth": 0.0383,
-            "cumulativeRevenue": null,
-            "cumulativeGrowth": null
+            "revenue": 44675936,
+            "exchangeArea": "TPE",
+            "fiscalMonth": 9,
+            "reportType": "monthly"
           },
           {
             "fiscalPeriod": "2024/08",
-            "revenue": 41527835000,
-            "monthlyGrowth": -0.0895,
-            "yearOverYearGrowth": -0.0172,
-            "cumulativeRevenue": null,
-            "cumulativeGrowth": null
+            "revenue": 41527835,
+            "exchangeArea": "TPE",
+            "fiscalMonth": 8,
+            "reportType": "monthly"
           },
           {
             "fiscalPeriod": "2024/07",
-            "revenue": 4560972000,
-            "monthlyGrowth": 0.35840000000000005,
-            "yearOverYearGrowth": 0.0359,
-            "cumulativeRevenue": null,
-            "cumulativeGrowth": null
+            "revenue": 45609723,
+            "exchangeArea": "TPE",
+            "fiscalMonth": 7,
+            "reportType": "monthly"
           },
           {
             "fiscalPeriod": "2024/06",
-            "revenue": 4309256000,
-            "monthlyGrowth": 0.0223,
-            "yearOverYearGrowth": 0.0275,
-            "cumulativeRevenue": null,
-            "cumulativeGrowth": null
+            "revenue": 43092056,
+            "exchangeArea": "TPE",
+            "fiscalMonth": 6,
+            "reportType": "monthly"
           },
           {
             "fiscalPeriod": "2024/05",
-            "revenue": 42151178000,
-            "monthlyGrowth": 0.0029,
-            "yearOverYearGrowth": 0.0353,
-            "cumulativeRevenue": null,
-            "cumulativeGrowth": null
+            "revenue": 42151178,
+            "exchangeArea": "TPE",
+            "fiscalMonth": 5,
+            "reportType": "monthly"
           },
           {
             "fiscalPeriod": "2024/04",
-            "revenue": 42027887000,
-            "monthlyGrowth": -0.1674,
-            "yearOverYearGrowth": 0.0825,
-            "cumulativeRevenue": null,
-            "cumulativeGrowth": null
+            "revenue": 42027887,
+            "exchangeArea": "TPE",
+            "fiscalMonth": 4,
+            "reportType": "monthly"
           },
           {
             "fiscalPeriod": "2024/03",
-            "revenue": 50479987000,
-            "monthlyGrowth": 0.3118,
-            "yearOverYearGrowth": 0.0751,
-            "cumulativeRevenue": null,
-            "cumulativeGrowth": null
+            "revenue": 50479987,
+            "exchangeArea": "TPE",
+            "fiscalMonth": 3,
+            "reportType": "monthly"
           },
           {
             "fiscalPeriod": "2024/02",
-            "revenue": 38481870000,
-            "monthlyGrowth": -0.1352,
-            "yearOverYearGrowth": 0.0696,
-            "cumulativeRevenue": null,
-            "cumulativeGrowth": null
+            "revenue": 38481870,
+            "exchangeArea": "TPE",
+            "fiscalMonth": 2,
+            "reportType": "monthly"
           },
           {
             "fiscalPeriod": "2024/01",
-            "revenue": 4449629000,
-            "monthlyGrowth": 0.0187,
-            "yearOverYearGrowth": 0.08789999999999999,
-            "cumulativeRevenue": null,
-            "cumulativeGrowth": null
+            "revenue": 44496290,
+            "exchangeArea": "TPE",
+            "fiscalMonth": 1,
+            "reportType": "monthly"
           },
           {
             "fiscalPeriod": "2023/12",
-            "revenue": 43679986000,
-            "monthlyGrowth": 0.0141,
-            "yearOverYearGrowth": 0.0291,
-            "cumulativeRevenue": null,
-            "cumulativeGrowth": null
+            "revenue": 43679986,
+            "exchangeArea": "TPE",
+            "fiscalMonth": 12,
+            "reportType": "monthly"
           },
           {
             "fiscalPeriod": "2023/11",
-            "revenue": 4307117000,
-            "monthlyGrowth": 0.2061,
-            "yearOverYearGrowth": 0.09230000000000001,
-            "cumulativeRevenue": null,
-            "cumulativeGrowth": null
+            "revenue": 43071172,
+            "exchangeArea": "TPE",
+            "fiscalMonth": 11,
+            "reportType": "monthly"
           },
           {
             "fiscalPeriod": "2023/10",
-            "revenue": 42810847000,
-            "monthlyGrowth": 0.1866,
-            "yearOverYearGrowth": 0.0824,
-            "cumulativeRevenue": null,
-            "cumulativeGrowth": null
+            "revenue": 42810847,
+            "exchangeArea": "TPE",
+            "fiscalMonth": 10,
+            "reportType": "monthly"
           },
           {
             "fiscalPeriod": "2023/09",
-            "revenue": 36078033000,
-            "monthlyGrowth": -0.1462,
-            "yearOverYearGrowth": -0.36229999999999996,
-            "cumulativeRevenue": null,
-            "cumulativeGrowth": null
+            "revenue": 36078033,
+            "exchangeArea": "TPE",
+            "fiscalMonth": 9,
+            "reportType": "monthly"
           },
           {
             "fiscalPeriod": "2023/08",
-            "revenue": 4225636000,
-            "monthlyGrowth": 0.33039999999999997,
-            "yearOverYearGrowth": -0.0547,
-            "cumulativeRevenue": null,
-            "cumulativeGrowth": null
+            "revenue": 42256360,
+            "exchangeArea": "TPE",
+            "fiscalMonth": 8,
+            "reportType": "monthly"
           },
           {
             "fiscalPeriod": "2023/07",
-            "revenue": 31763135000,
-            "monthlyGrowth": -0.1689,
-            "yearOverYearGrowth": -0.2232,
-            "cumulativeRevenue": null,
-            "cumulativeGrowth": null
+            "revenue": 31763135,
+            "exchangeArea": "TPE",
+            "fiscalMonth": 7,
+            "reportType": "monthly"
           },
           {
             "fiscalPeriod": "2023/06",
-            "revenue": 38218758000,
-            "monthlyGrowth": 0.2107,
-            "yearOverYearGrowth": -0.251,
-            "cumulativeRevenue": null,
-            "cumulativeGrowth": null
+            "revenue": 38218758,
+            "exchangeArea": "TPE",
+            "fiscalMonth": 6,
+            "reportType": "monthly"
           },
           {
             "fiscalPeriod": "2023/05",
-            "revenue": 31566805000,
-            "monthlyGrowth": 0.11349999999999999,
-            "yearOverYearGrowth": -0.39380000000000004,
-            "cumulativeRevenue": null,
-            "cumulativeGrowth": null
+            "revenue": 31566805,
+            "exchangeArea": "TPE",
+            "fiscalMonth": 5,
+            "reportType": "monthly"
           },
           {
             "fiscalPeriod": "2023/04",
-            "revenue": 28349722000,
-            "monthlyGrowth": 0.34009999999999996,
-            "yearOverYearGrowth": -0.46130000000000004,
-            "cumulativeRevenue": null,
-            "cumulativeGrowth": null
+            "revenue": 28349722,
+            "exchangeArea": "TPE",
+            "fiscalMonth": 4,
+            "reportType": "monthly"
           },
           {
             "fiscalPeriod": "2023/03",
-            "revenue": 42958473000,
-            "monthlyGrowth": 0.41729999999999995,
-            "yearOverYearGrowth": -0.2741,
-            "cumulativeRevenue": null,
-            "cumulativeGrowth": null
+            "revenue": 42958473,
+            "exchangeArea": "TPE",
+            "fiscalMonth": 3,
+            "reportType": "monthly"
           },
           {
             "fiscalPeriod": "2023/02",
-            "revenue": 30309642000,
-            "monthlyGrowth": 0.35409999999999997,
-            "yearOverYearGrowth": -0.24280000000000002,
-            "cumulativeRevenue": null,
-            "cumulativeGrowth": null
+            "revenue": 30309642,
+            "exchangeArea": "TPE",
+            "fiscalMonth": 2,
+            "reportType": "monthly"
           },
           {
             "fiscalPeriod": "2023/01",
-            "revenue": 22383397000,
-            "monthlyGrowth": -0.4214,
-            "yearOverYearGrowth": -0.4855,
-            "cumulativeRevenue": null,
-            "cumulativeGrowth": null
+            "revenue": 22383397,
+            "exchangeArea": "TPE",
+            "fiscalMonth": 1,
+            "reportType": "monthly"
           },
           {
             "fiscalPeriod": "2022/12",
-            "revenue": 386852127000,
-            "monthlyGrowth": 0.16269999999999998,
-            "yearOverYearGrowth": -0.16269999999999998,
-            "cumulativeRevenue": null,
-            "cumulativeGrowth": null
+            "revenue": 38685212,
+            "exchangeArea": "TPE",
+            "fiscalMonth": 12,
+            "reportType": "monthly"
           },
           {
             "fiscalPeriod": "2022/11",
-            "revenue": 361246478000,
-            "monthlyGrowth": 0.1979,
-            "yearOverYearGrowth": -0.1979,
-            "cumulativeRevenue": null,
-            "cumulativeGrowth": null
+            "revenue": 36124647,
+            "exchangeArea": "TPE",
+            "fiscalMonth": 11,
+            "reportType": "monthly"
           },
           {
             "fiscalPeriod": "2022/10",
-            "revenue": 33384225000,
-            "monthlyGrowth": -0.40990000000000004,
-            "yearOverYearGrowth": -0.10769999999999999,
-            "cumulativeRevenue": null,
-            "cumulativeGrowth": null
+            "revenue": 33384225,
+            "exchangeArea": "TPE",
+            "fiscalMonth": 10,
+            "reportType": "monthly"
           },
           {
             "fiscalPeriod": "2022/09",
-            "revenue": 56571204000,
-            "monthlyGrowth": 0.2656,
-            "yearOverYearGrowth": 0.0809,
-            "cumulativeRevenue": null,
-            "cumulativeGrowth": null
+            "revenue": 56571204,
+            "exchangeArea": "TPE",
+            "fiscalMonth": 9,
+            "reportType": "monthly"
           },
           {
             "fiscalPeriod": "2022/08",
-            "revenue": 4469965000,
-            "monthlyGrowth": 0.4932,
-            "yearOverYearGrowth": 0.044199999999999996,
-            "cumulativeRevenue": null,
-            "cumulativeGrowth": null
+            "revenue": 44699654,
+            "exchangeArea": "TPE",
+            "fiscalMonth": 8,
+            "reportType": "monthly"
           },
           {
             "fiscalPeriod": "2022/07",
-            "revenue": 40890418000,
-            "monthlyGrowth": -0.19870000000000002,
-            "yearOverYearGrowth": 0.0131,
-            "cumulativeRevenue": null,
-            "cumulativeGrowth": null
+            "revenue": 40890418,
+            "exchangeArea": "TPE",
+            "fiscalMonth": 7,
+            "reportType": "monthly"
           },
           {
             "fiscalPeriod": "2022/06",
-            "revenue": 51029067000,
-            "monthlyGrowth": 0.020099999999999996,
-            "yearOverYearGrowth": 0.06849999999999999,
-            "cumulativeRevenue": null,
-            "cumulativeGrowth": null
+            "revenue": 51029067,
+            "exchangeArea": "TPE",
+            "fiscalMonth": 6,
+            "reportType": "monthly"
           },
           {
             "fiscalPeriod": "2022/05",
-            "revenue": 52076120000,
-            "monthlyGrowth": 0.0104,
-            "yearOverYearGrowth": 0.0601,
-            "cumulativeRevenue": null,
-            "cumulativeGrowth": null
+            "revenue": 52076120,
+            "exchangeArea": "TPE",
+            "fiscalMonth": 5,
+            "reportType": "monthly"
           },
           {
             "fiscalPeriod": "2022/04",
-            "revenue": 52624634000,
-            "monthlyGrowth": -0.1108,
-            "yearOverYearGrowth": 0.038900000000000004,
-            "cumulativeRevenue": null,
-            "cumulativeGrowth": null
+            "revenue": 52624634,
+            "exchangeArea": "TPE",
+            "fiscalMonth": 4,
+            "reportType": "monthly"
           },
           {
             "fiscalPeriod": "2022/03",
-            "revenue": 59179559000,
-            "monthlyGrowth": 0.47840000000000005,
-            "yearOverYearGrowth": 0.0741,
-            "cumulativeRevenue": null,
-            "cumulativeGrowth": null
+            "revenue": 59179559,
+            "exchangeArea": "TPE",
+            "fiscalMonth": 3,
+            "reportType": "monthly"
           },
           {
             "fiscalPeriod": "2022/02",
-            "revenue": 40028948000,
-            "monthlyGrowth": 0.07980000000000001,
-            "yearOverYearGrowth": 0.0297,
-            "cumulativeRevenue": null,
-            "cumulativeGrowth": null
+            "revenue": 40028948,
+            "exchangeArea": "TPE",
+            "fiscalMonth": 2,
+            "reportType": "monthly"
           },
           {
             "fiscalPeriod": "2022/01",
-            "revenue": 43502342000,
-            "monthlyGrowth": 0.0584,
-            "yearOverYearGrowth": 0.031200000000000002,
-            "cumulativeRevenue": null,
-            "cumulativeGrowth": null
+            "revenue": 43502342,
+            "exchangeArea": "TPE",
+            "fiscalMonth": 1,
+            "reportType": "monthly"
           },
           {
             "fiscalPeriod": "2021/12",
-            "revenue": 46202466000,
-            "monthlyGrowth": 0.0258,
-            "yearOverYearGrowth": 0.024700000000000003,
-            "cumulativeRevenue": null,
-            "cumulativeGrowth": null
+            "revenue": 46202466,
+            "exchangeArea": "TPE",
+            "fiscalMonth": 12,
+            "reportType": "monthly"
           },
           {
             "fiscalPeriod": "2021/11",
-            "revenue": 45039216000,
-            "monthlyGrowth": 0.2039,
-            "yearOverYearGrowth": 0.0429,
-            "cumulativeRevenue": null,
-            "cumulativeGrowth": null
+            "revenue": 45039216,
+            "exchangeArea": "TPE",
+            "fiscalMonth": 11,
+            "reportType": "monthly"
           },
           {
             "fiscalPeriod": "2021/10",
-            "revenue": 37412195000,
-            "monthlyGrowth": -0.2191,
-            "yearOverYearGrowth": 0.0291,
-            "cumulativeRevenue": null,
-            "cumulativeGrowth": null
+            "revenue": 37412195,
+            "exchangeArea": "TPE",
+            "fiscalMonth": 10,
+            "reportType": "monthly"
           },
           {
             "fiscalPeriod": "2021/09",
-            "revenue": 47906318000,
-            "monthlyGrowth": 0.1191,
-            "yearOverYearGrowth": 0.06509999999999999,
-            "cumulativeRevenue": null,
-            "cumulativeGrowth": null
+            "revenue": 47906318,
+            "exchangeArea": "TPE",
+            "fiscalMonth": 9,
+            "reportType": "monthly"
           },
           {
             "fiscalPeriod": "2021/08",
-            "revenue": 42808189000,
-            "monthlyGrowth": 0.060700000000000004,
-            "yearOverYearGrowth": 0.0085,
-            "cumulativeRevenue": null,
-            "cumulativeGrowth": null
+            "revenue": 42808189,
+            "exchangeArea": "TPE",
+            "fiscalMonth": 8,
+            "reportType": "monthly"
           },
           {
             "fiscalPeriod": "2021/07",
-            "revenue": 40359813000,
-            "monthlyGrowth": -0.1549,
-            "yearOverYearGrowth": 0.012,
-            "cumulativeRevenue": null,
-            "cumulativeGrowth": null
+            "revenue": 40359813,
+            "exchangeArea": "TPE",
+            "fiscalMonth": 7,
+            "reportType": "monthly"
           },
           {
             "fiscalPeriod": "2021/06",
-            "revenue": 47755898000,
-            "monthlyGrowth": 0.15560000000000002,
-            "yearOverYearGrowth": 0.0891,
-            "cumulativeRevenue": null,
-            "cumulativeGrowth": null
+            "revenue": 47755898,
+            "exchangeArea": "TPE",
+            "fiscalMonth": 6,
+            "reportType": "monthly"
           },
           {
             "fiscalPeriod": "2021/05",
-            "revenue": 41325915000,
-            "monthlyGrowth": 0.09759999999999999,
-            "yearOverYearGrowth": 0.09759999999999999,
-            "cumulativeRevenue": null,
-            "cumulativeGrowth": null
+            "revenue": 41325915,
+            "exchangeArea": "TPE",
+            "fiscalMonth": 5,
+            "reportType": "monthly"
+          },
+          {
+            "fiscalPeriod": "2021/04",
+            "revenue": 36571590,
+            "exchangeArea": "TPE",
+            "fiscalMonth": 4,
+            "reportType": "monthly"
+          },
+          {
+            "fiscalPeriod": "2021/03",
+            "revenue": 40146677,
+            "exchangeArea": "TPE",
+            "fiscalMonth": 3,
+            "reportType": "monthly"
+          },
+          {
+            "fiscalPeriod": "2021/02",
+            "revenue": 32552975,
+            "exchangeArea": "TPE",
+            "fiscalMonth": 2,
+            "reportType": "monthly"
+          },
+          {
+            "fiscalPeriod": "2021/01",
+            "revenue": 35333330,
+            "exchangeArea": "TPE",
+            "fiscalMonth": 1,
+            "reportType": "monthly"
+          },
+          {
+            "fiscalPeriod": "2020/12",
+            "revenue": 32428624,
+            "exchangeArea": "TPE",
+            "fiscalMonth": 12,
+            "reportType": "monthly"
+          },
+          {
+            "fiscalPeriod": "2020/11",
+            "revenue": 33537766,
+            "exchangeArea": "TPE",
+            "fiscalMonth": 11,
+            "reportType": "monthly"
+          },
+          {
+            "fiscalPeriod": "2020/10",
+            "revenue": 30438836,
+            "exchangeArea": "TPE",
+            "fiscalMonth": 10,
+            "reportType": "monthly"
+          },
+          {
+            "fiscalPeriod": "2020/09",
+            "revenue": 37866211,
+            "exchangeArea": "TPE",
+            "fiscalMonth": 9,
+            "reportType": "monthly"
+          },
+          {
+            "fiscalPeriod": "2020/08",
+            "revenue": 32716126,
+            "exchangeArea": "TPE",
+            "fiscalMonth": 8,
+            "reportType": "monthly"
+          },
+          {
+            "fiscalPeriod": "2020/07",
+            "revenue": 26692397,
+            "exchangeArea": "TPE",
+            "fiscalMonth": 7,
+            "reportType": "monthly"
           }
         ]
       },
-      "timestamp": "2025-08-06T08:02:30.647Z",
+      "timestamp": "2025-08-06T13:20:00.893Z",
       "success": true,
-      "screenshot": "<Buffer 807736 bytes>"
+      "screenshot": "<Buffer 806537 bytes>"
     }
   ]
 }

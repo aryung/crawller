@@ -1,3 +1,7 @@
+// 重新匯出增強型別
+export * from './enhanced';
+export * from './fundamental-data.interface';
+
 export interface CrawlerConfig {
   url: string;
   selectors?: SelectorConfig;
@@ -5,9 +9,6 @@ export interface CrawlerConfig {
   cookies?: CookieConfig;
   options?: CrawlerOptions;
 }
-
-// 重新匯出增強型別
-export * from './enhanced';
 
 export interface SelectorConfig {
   [key: string]: string | SelectorItem;
@@ -17,8 +18,8 @@ export interface SelectorItem {
   selector: string;
   attribute?: string;
   transform?: string | ((value: string) => unknown);
-  multiple?: boolean;  // Add enhanced properties as optional
-  extract?: Record<string, unknown>;  // Simplified extract for compatibility
+  multiple?: boolean; // Add enhanced properties as optional
+  extract?: Record<string, unknown>; // Simplified extract for compatibility
 }
 
 export interface CookieConfig {
@@ -69,3 +70,4 @@ export interface ExportOptions {
   path?: string;
   configName?: string;
 }
+

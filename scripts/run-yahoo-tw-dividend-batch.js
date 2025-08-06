@@ -51,7 +51,7 @@ function delay(ms) {
 }
 
 async function main() {
-  const activeDir = path.join(__dirname, '../configs/active');
+  const activeDir = path.join(__dirname, '../config/active');
   
   // 找出所有 Yahoo Finance TW dividend 配置文件
   let configFiles = [];
