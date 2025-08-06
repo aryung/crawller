@@ -678,8 +678,8 @@ async function scrapeYahooJpStockDetails() {
       fs.mkdirSync(outputDir, { recursive: true });
     }
     
-    const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
-    const outputPath = path.join(outputDir, `yahoo-jp-stock-details_${timestamp}.json`);
+    const timestamp = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+    const outputPath = path.join(outputDir, `yahoo-jp-stock-details-${timestamp}.json`);
     
     fs.writeFileSync(outputPath, JSON.stringify(finalOutput, null, 2), 'utf8');
     

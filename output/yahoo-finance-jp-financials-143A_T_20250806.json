@@ -1,0 +1,56 @@
+{
+  "exportDate": "2025-08-06T02:46:27.718Z",
+  "totalResults": 1,
+  "successCount": 1,
+  "results": [
+    {
+      "url": "https://finance.yahoo.co.jp/quote/143A.T/performance?styl=financials",
+      "data": {
+        "stockInfo": "イシン(株)の業績・財務・キャッシュフロー",
+        "structuredFinancialData": [
+          {
+            "fiscalPeriod": "2025年3月期",
+            "eps": 92.64,
+            "bps": 626,
+            "roa": 0.08070000000000001,
+            "roe": 0.1478,
+            "totalAssets": 2201000000,
+            "equityRatio": 0.5458,
+            "capital": 164000000,
+            "dividendYield": null,
+            "reductionAmount": 9000000,
+            "stockCount": 1917000
+          },
+          {
+            "fiscalPeriod": "2024年3月期",
+            "eps": 68.63,
+            "bps": 514,
+            "roa": 0.0632,
+            "roe": 0.1334,
+            "totalAssets": 2000000000,
+            "equityRatio": 0.4733,
+            "capital": 127000000,
+            "dividendYield": null,
+            "reductionAmount": 13000000,
+            "stockCount": 1840000
+          },
+          {
+            "fiscalPeriod": "2023年3月期",
+            "eps": 52.36,
+            "bps": 358,
+            "roa": 0.0519,
+            "roe": 0.1462,
+            "totalAssets": 1613000000,
+            "equityRatio": 0.3552,
+            "capital": 8000000,
+            "dividendYield": 0,
+            "reductionAmount": 12000000,
+            "stockCount": 1600000
+          }
+        ]
+      },
+      "timestamp": "2025-08-06T02:46:27.717Z",
+      "success": true
+    }
+  ]
+}

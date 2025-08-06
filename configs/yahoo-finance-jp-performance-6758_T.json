@@ -1,13 +1,13 @@
 {
   "templateType": "performance",
   "url": "https://finance.yahoo.co.jp/quote/6758.T/performance?styl=performance",
-  "_note": "Yahoo Finance Japan performance data for (株)ソニーグループ - 6758.T (電気機器)",
+  "_note": "This config extracts structured financial performance data from Yahoo Finance Japan. The 'structuredPerformanceData' field contains parsed financial metrics in object format for easier processing. Use with Japanese stock codes like 143A.T, 7203.T, etc.",
   "selectors": {
     "stockInfo": {
       "selector": "h1, .symbol",
       "transform": "cleanStockSymbol"
     },
-    "structuredPerformanceData": {
+    "structuredFinancialData": {
       "selector": "table td, table th",
       "multiple": true,
       "transform": "structureFinancialDataFromAllTableCells"
@@ -34,19 +34,17 @@
     }
   },
   "variables": {
-    "stockCode": "6758.T",
-    "baseUrl": "https://finance.yahoo.co.jp"
+    "stockCode": "7901.T",
+    "baseUrl": "https://finance.yahoo.co.jp",
+    "symbolCode": "6758.T",
+    "companyName": "(株)ソニーグループ",
+    "sector": "電気機器"
   },
   "export": {
     "formats": [
       "json",
       "csv"
     ],
-    "filename": "yahoo_finance_jp_performance_6758T"
-  },
-  "stockInfo": {
-    "stockCode": "6758.T",
-    "companyName": "(株)ソニーグループ",
-    "sector": "電気機器"
+    "filename": "yahoo_finance_jp_performance_7901_T"
   }
 }

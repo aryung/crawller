@@ -437,11 +437,11 @@ async function scrapeYahooStockDetails() {
 
     const timestamp = new Date()
       .toISOString()
-      .replace(/[:.]/g, '-')
-      .slice(0, 19);
+      .slice(0, 10)
+      .replace(/-/g, '');
     const outputPath = path.join(
       outputDir,
-      `yahoo-stock-details_${timestamp}.json`
+      `yahoo-tw-stock-details-${timestamp}.json`
     );
 
     fs.writeFileSync(outputPath, JSON.stringify(stockDetails, null, 2), 'utf8');

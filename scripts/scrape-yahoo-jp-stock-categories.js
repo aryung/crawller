@@ -195,8 +195,8 @@ async function scrapeYahooJpStockCategories() {
     }
     
     // 保存結果到 JSON 文件
-    const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
-    const outputPath = path.join(outputDir, `yahoo-jp-stock-categories_${timestamp}.json`);
+    const timestamp = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+    const outputPath = path.join(outputDir, `yahoo-jp-stock-categories-${timestamp}.json`);
     
     fs.writeFileSync(outputPath, JSON.stringify(categoriesData, null, 2), 'utf8');
     

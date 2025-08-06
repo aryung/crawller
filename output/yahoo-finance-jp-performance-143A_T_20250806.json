@@ -1,0 +1,69 @@
+{
+  "exportDate": "2025-08-06T02:46:59.668Z",
+  "totalResults": 1,
+  "successCount": 1,
+  "results": [
+    {
+      "url": "https://finance.yahoo.co.jp/quote/143A.T/performance?styl=performance",
+      "data": {
+        "stockInfo": "イシン(株)の業績・財務・キャッシュフロー",
+        "structuredFinancialData": [
+          {
+            "fiscalPeriod": "2026年3月期",
+            "revenue": "1534000000",
+            "grossProfit": null,
+            "grossMargin": null,
+            "operatingProfit": "30000000",
+            "operatingMargin": "0.0196",
+            "ordinaryProfit": "5000000",
+            "ordinaryMargin": "0.0033000000000000004",
+            "netProfit": "13000000",
+            "accountingMethod": "日本会計基準",
+            "updateDate": null
+          },
+          {
+            "fiscalPeriod": "2025年3月期",
+            "revenue": "1393000000",
+            "grossProfit": "1063000000",
+            "grossMargin": "0.7628",
+            "operatingProfit": "245000000",
+            "operatingMargin": "0.1759",
+            "ordinaryProfit": "233000000",
+            "ordinaryMargin": "0.167",
+            "netProfit": "178000000",
+            "accountingMethod": null,
+            "updateDate": null
+          },
+          {
+            "fiscalPeriod": "2024年3月期",
+            "revenue": "1280964000000",
+            "grossProfit": "75350000",
+            "grossMargin": "2.0100000000000002",
+            "operatingProfit": "15700000",
+            "operatingMargin": "1.8800000000000001",
+            "ordinaryProfit": "14710000",
+            "ordinaryMargin": "1.26",
+            "netProfit": null,
+            "accountingMethod": null,
+            "updateDate": null
+          },
+          {
+            "fiscalPeriod": "2023年3月期",
+            "revenue": "1148882000000",
+            "grossProfit": "76810000",
+            "grossMargin": "0.9500000000000001",
+            "operatingProfit": "8310000.000000001",
+            "operatingMargin": "1.11",
+            "ordinaryProfit": "9670000",
+            "ordinaryMargin": "0.84",
+            "netProfit": null,
+            "accountingMethod": null,
+            "updateDate": null
+          }
+        ]
+      },
+      "timestamp": "2025-08-06T02:46:59.666Z",
+      "success": true
+    }
+  ]
+}

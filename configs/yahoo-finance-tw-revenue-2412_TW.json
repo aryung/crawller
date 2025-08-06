@@ -36,10 +36,11 @@
     "timeout": 30000,
     "retries": 3,
     "headless": true,
-    "screenshot": false,
+    "screenshot": true,
     "encoding": "utf-8",
     "domainDelay": 5000,
-    "waitFor": 5000
+    "waitFor": 8000,
+    "engine": "playwright"
   },
   "variables": {
     "symbolCode": "2412.TW",

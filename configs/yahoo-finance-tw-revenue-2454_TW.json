@@ -11,7 +11,7 @@
     {
       "type": "wait",
       "timeout": 3000,
-      "description": "等待動態內容載入"
+      "description": "等待營收數據完全載入"
     }
   ],
   "selectors": {
@@ -34,19 +34,13 @@
   },
   "options": {
     "timeout": 30000,
-    "retries": 2,
+    "retries": 3,
     "headless": true,
     "screenshot": true,
     "encoding": "utf-8",
-    "domainDelay": 3000,
-    "waitFor": 5000,
-    "forcePlaywright": true,
-    "forceBrowser": true,
-    "engine": "playwright",
-    "useHttp": false,
-    "waitForNetworkIdle": false,
-    "executeJavaScript": true,
-    "disableHttpFallback": true
+    "domainDelay": 5000,
+    "waitFor": 8000,
+    "engine": "playwright"
   },
   "variables": {
     "symbolCode": "2454.TW",

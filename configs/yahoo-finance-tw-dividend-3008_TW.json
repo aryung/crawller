@@ -20,7 +20,7 @@
       "transform": "cleanStockSymbol"
     },
     "structuredDividendData": {
-      "selector": "[data-test='dividend-history'], [class*='dividend'], [class*='Dividend'], div:contains('發放期間'), table, .data-table, .table",
+      "selector": "body",
       "multiple": false,
       "transform": "structureTWDividendDataFromCells"
     }
