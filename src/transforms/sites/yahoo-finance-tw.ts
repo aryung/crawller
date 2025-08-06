@@ -18,9 +18,11 @@ import {
   TW_CASH_FLOW_DATA_FIELD_MAPPING,
   TW_FINANCIAL_UNITS,
   TW_REVENUE_DATA_CONSTANTS,
+  TW_EPS_DATA_CONSTANTS,
   UNIT_MULTIPLIERS
 } from '../../const/finance.js';
 import { sortTWFinancialDataByPeriod } from '../../utils/twFinanceUtils.js';
+import { StandardizedFundamentalData, FiscalReportType } from '../../types/standardized.js';
 
 export interface YahooFinanceTWTransforms {
   cleanStockSymbol: (value: string) => string;
@@ -2739,19 +2741,28 @@ function parseConcatenatedRevenueData(rawMatch: string, fiscalPeriod: string): {
       }
     }
     
-    // 評估最佳分離方案
+    // 評估最佳分離方案 - 基於數值範圍而非字符串長度
     for (const attempt of attempts) {
       const cleanRevenue = attempt.revenue.replace(/[,\s]/g, '');
-      const revenueLength = cleanRevenue.length;
+      const revenueNumValue = parseInt(cleanRevenue);
       
-      // 評分標準：營收長度合理(6-9位) + 百分比合理(-100%到+100%) + 基礎分
+      // 評分標準：營收數值合理範圍 + 百分比合理(-100%到+100%) + 基礎分
       let score = attempt.score;
       
-      if (revenueLength >= 6 && revenueLength <= 9) score += 20;
+      // 使用動態範圍驗證替代硬編碼位數檢查
+      const { MIN_VALID_REVENUE, MAX_SINGLE_COMPANY } = TW_REVENUE_DATA_CONSTANTS.CONCATENATED_DETECTION;
+      const revenueInTWD = revenueNumValue * UNIT_MULTIPLIERS.THOUSAND_TWD;
+      
+      // 檢查營收是否在合理範圍內 (基於台灣上市公司實際範圍)
+      if (revenueInTWD >= MIN_VALID_REVENUE * UNIT_MULTIPLIERS.THOUSAND_TWD && 
+          revenueInTWD <= TW_REVENUE_DATA_CONSTANTS.MAX_REASONABLE_REVENUE) {
+        score += 20; // 營收範圍合理
+      }
+      
       if (Math.abs(attempt.growth) <= 50) score += 10; // 更常見的增長率範圍
       if (/^[0-9,]+$/.test(attempt.revenue)) score += 5; // 營收格式正確
       
-      console.log(`[TW Revenue Parser] Attempt "${attempt.method}": revenue="${attempt.revenue}" (${revenueLength} digits), growth=${attempt.growth}%, score=${score}`);
+      console.log(`[TW Revenue Parser] Attempt "${attempt.method}": revenue="${attempt.revenue}" (${revenueInTWD} 元), growth=${attempt.growth}%, score=${score}`);
       
       if (score > bestScore) {
         bestScore = score;
@@ -2785,21 +2796,25 @@ function parseConcatenatedRevenueData(rawMatch: string, fiscalPeriod: string): {
   console.log(`  revenue: "${revenueStr}"`);
   console.log(`  monthlyGrowth: "${monthlyGrowthStr}"`);
   
-  // 驗證提取的數據格式
-  const cleanFinalRevenue = revenueStr.replace(/,/g, '');
-  if (!/^[0-9,]+$/.test(revenueStr) || cleanFinalRevenue.length < 6 || cleanFinalRevenue.length > 10) {
-    console.warn(`[TW Revenue Parser] Invalid revenue format: "${revenueStr}" (length: ${cleanFinalRevenue.length})`);
+  // 轉換為數字格式
+  const cleanRevenueStr = revenueStr.replace(/[,]/g, ''); // 移除逗號
+  const revenueNumber = parseFloat(cleanRevenueStr);
+  const monthlyGrowthNumber = parseFloat(monthlyGrowthStr);
+  
+  // 驗證轉換結果
+  if (isNaN(revenueNumber) || revenueNumber <= 0) {
+    console.warn(`[TW Revenue Parser] Invalid revenue number: "${revenueStr}" -> ${revenueNumber}`);
     return null;
   }
   
-  if (!/^[-+]?\d+\.?\d*$/.test(monthlyGrowthStr)) {
-    console.warn(`[TW Revenue Parser] Invalid monthly growth format: "${monthlyGrowthStr}"`);
+  if (isNaN(monthlyGrowthNumber)) {
+    console.warn(`[TW Revenue Parser] Invalid monthly growth number: "${monthlyGrowthStr}" -> ${monthlyGrowthNumber}`);
     return null;
   }
   
   return {
-    revenue: revenueStr,
-    monthlyGrowth: monthlyGrowthStr
+    revenue: revenueNumber.toString(), // 轉換為字串供後續處理
+    monthlyGrowth: monthlyGrowthNumber.toString() // 轉換為字串供後續處理
   };
 }
 
@@ -2864,29 +2879,31 @@ function separateEPSAndGrowthRate(rawText: string, fiscalPeriod: string): {
   console.log(`  Price: "${priceStr}"`);
   console.log(`  Year Suffix: "${yearSuffix || 'none'}"`);
   
-  // 處理可能的 EPS 和成長率連接問題，並改進精度控制
-  // 檢查 EPS 是否包含了成長率的一部分，或需要精度控制
-  if (epsStr.length > 8 || (epsStr.includes('.') && epsStr.split('.')[1].length > 2)) {
-    console.log(`[TW EPS Parser] EPS appears to have concatenation: "${epsStr}"`);
+  // 動態範圍驗證 (替代硬編碼位數檢測)
+  const { MAX_REASONABLE_EPS, CONCATENATION_DETECTION, MAX_DECIMAL_PLACES } = TW_EPS_DATA_CONSTANTS;
+  const preliminaryEPS = parseFloat(epsStr);
+  
+  if (!isNaN(preliminaryEPS) && (preliminaryEPS > MAX_REASONABLE_EPS || preliminaryEPS < CONCATENATION_DETECTION.MIN_VALID_EPS)) {
+    console.log(`[TW EPS Parser] EPS value exceeds reasonable range: "${epsStr}" (${preliminaryEPS})`);
     
     // 嘗試通過尋找合理的 EPS 邊界來分離
     // EPS 通常是 1-3 位整數 + 可選的 1-3 位小數，但要控制精度
-    const epsPattern = /^([0-9]{1,3}\.?[0-9]{0,3})/;
+    const epsPattern = new RegExp(`^([0-9]{1,3}\\.?[0-9]{0,${MAX_DECIMAL_PLACES}})`);
     const epsMatch = epsStr.match(epsPattern);
     
     if (epsMatch) {
       let cleanEPS = epsMatch[1];
       const remainder = epsStr.substring(cleanEPS.length);
       
-      // 改進精度控制：確保 EPS 只有合理的小數位數 (最多2位)
+      // 精度控制：確保 EPS 只有合理的小數位數
       if (cleanEPS.includes('.')) {
         const parts = cleanEPS.split('.');
-        if (parts[1] && parts[1].length > 2) {
-          // 如果小數位數超過2位，截取前2位，其餘部分併入remainder
+        if (parts[1] && parts[1].length > MAX_DECIMAL_PLACES) {
+          // 如果小數位數超過限制，截取合理位數，其餘部分併入remainder
           const integerPart = parts[0];
           const decimalPart = parts[1];
-          const validDecimal = decimalPart.substring(0, 2);
-          const extraDecimal = decimalPart.substring(2);
+          const validDecimal = decimalPart.substring(0, MAX_DECIMAL_PLACES);
+          const extraDecimal = decimalPart.substring(MAX_DECIMAL_PLACES);
           
           cleanEPS = `${integerPart}.${validDecimal}`;
           const updatedRemainder = extraDecimal + remainder;
@@ -3007,11 +3024,17 @@ function detectEPSGrowthConcatenation(epsStr: string, qGrowthStr: string, yGrowt
 function detectConcatenatedNumbers(revenueStr: string, monthlyGrowthStr: string, rawMatch: string): boolean {
   console.log(`[TW Revenue Parser] Detecting concatenated numbers: revenue="${revenueStr}", growth="${monthlyGrowthStr}"`);
   
-  // 檢查1: 營收數字是否包含意外的長度或格式
-  const revenueClean = revenueStr.replace(/[,]/g, '');
-  if (revenueClean.length > 10) {
-    console.log(`[TW Revenue Parser] Revenue number too long (${revenueClean.length} digits): likely concatenated`);
-    return true;
+  // 動態範圍驗證 (替代硬編碼位數檢測)
+  const revenueValue = parseFloat(revenueStr.replace(/[,]/g, ''));
+  const { MAX_REASONABLE_REVENUE, CONCATENATED_DETECTION } = TW_REVENUE_DATA_CONSTANTS;
+  
+  if (!isNaN(revenueValue)) {
+    // 轉換為元 (假設輸入為仟元)
+    const revenueInYuan = revenueValue * UNIT_MULTIPLIERS.THOUSAND_TWD;
+    if (revenueInYuan > MAX_REASONABLE_REVENUE) {
+      console.log(`[TW Revenue Parser] Revenue exceeds reasonable range: ${revenueValue} 仟元 (${revenueInYuan} 元) > ${MAX_REASONABLE_REVENUE} 元: likely concatenated`);
+      return true;
+    }
   }
   
   // 檢查2: 月增率是否明顯異常 (< 5% 但原始匹配包含更大的數字)
@@ -3030,7 +3053,8 @@ function detectConcatenatedNumbers(revenueStr: string, monthlyGrowthStr: string,
     }
   }
   
-  // 檢查3: 營收數字最後幾位是否包含非正常的數字模式
+  // 檢查3: 營收數字最後幾位是否包含非正常的數字模式 
+  const revenueClean = revenueStr.replace(/[,]/g, '');
   if (revenueClean.endsWith('2') || revenueClean.endsWith('24') || revenueClean.endsWith('249')) {
     console.log(`[TW Revenue Parser] Revenue ends with suspicious digits: likely concatenated with percentage`);
     return true;
@@ -3231,25 +3255,45 @@ function parseYahooFinanceRevenueTable(textContent: string, results: TWRevenueDa
 }
 
 /**
- * 清潔營收數值解析 - 防止數字串接問題
+ * 智能數據分離 - 基於台灣公司營收範圍的分離算法
+ * 替代硬編碼位數截取的方法
+ */
+function attemptIntelligentSeparation(numValue: number): number | null {
+  const valueStr = numValue.toString();
+  const { MIN_VALID_REVENUE, MAX_SINGLE_COMPANY } = TW_REVENUE_DATA_CONSTANTS.CONCATENATED_DETECTION;
+  
+  // 嘗試不同的分離點，基於台灣上市公司常見營收範圍
+  const separationAttempts = [
+    // 嘗試取前面部分 (去除可能串接的小數或增長率)
+    Math.floor(numValue / 100),     // 去除後兩位可能的小數部分
+    Math.floor(numValue / 1000),    // 去除後三位可能的百分比
+    Math.floor(numValue / 10000),   // 去除後四位
+    
+    // 基於位數的智能分離 (僅作為備選方案)
+    valueStr.length >= 8 ? parseInt(valueStr.substring(0, 7)) : null,
+    valueStr.length >= 9 ? parseInt(valueStr.substring(0, 8)) : null,
+  ];
+  
+  // 選擇第一個在合理範圍內的數值
+  for (const attempt of separationAttempts) {
+    if (attempt && attempt >= MIN_VALID_REVENUE && attempt <= MAX_SINGLE_COMPANY / UNIT_MULTIPLIERS.THOUSAND_TWD) {
+      console.log(`[TW Revenue Parser] Intelligent separation: ${numValue} -> ${attempt}`);
+      return attempt;
+    }
+  }
+  
+  return null;
+}
+
+/**
+ * 清理營收數值字串並返回數字
+ * 使用動態範圍驗證，避免硬編碼位數檢測
  */
 function parseCleanRevenueValue(valueStr: string): number | null {
   if (!valueStr) return null;
   
   // 移除逗號和空白，保留數字
-  let cleanValue = valueStr.replace(/[,\s]/g, '');
-  
-  // 防止數字串接: 如果數字過長，可能是串接錯誤
-  if (cleanValue.length > 10) { // 超過100億的數字可能有問題
-    console.warn(`[TW Revenue Parser] Potentially concatenated number detected: ${valueStr} (${cleanValue.length} digits)`);
-    // 嘗試截取前面部分作為正確數值
-    if (cleanValue.length <= 12) {
-      cleanValue = cleanValue.substring(0, 8); // 取前8位數字
-      console.log(`[TW Revenue Parser] Truncated to: ${cleanValue}`);
-    } else {
-      return null;
-    }
-  }
+  const cleanValue = valueStr.replace(/[,\s]/g, '');
   
   const numValue = parseInt(cleanValue, 10);
   
@@ -3264,8 +3308,34 @@ function parseCleanRevenueValue(valueStr: string): number | null {
     return null;
   }
   
-  // 自動單位轉換: 仟元 -> 元
+  // 動態範圍驗證 (替代硬編碼位數檢測)
+  const { MAX_REASONABLE_REVENUE, CONCATENATED_DETECTION } = TW_REVENUE_DATA_CONSTANTS;
+  
+  // 先轉換單位: 仟元 -> 元
   const convertedValue = numValue * UNIT_MULTIPLIERS.THOUSAND_TWD;
+  
+  // 檢查是否超過合理範圍 (轉換後的數值)
+  if (convertedValue > MAX_REASONABLE_REVENUE) {
+    console.warn(`[TW Revenue Parser] Value exceeds reasonable range: ${valueStr} (${convertedValue} 元)`);
+    
+    // 智能分離：嘗試基於台灣公司營收範圍進行分離
+    if (convertedValue > CONCATENATED_DETECTION.MAX_SINGLE_COMPANY) {
+      // 對於超大數值，嘗試智能分離
+      const possibleValue = attemptIntelligentSeparation(numValue);
+      if (possibleValue && (possibleValue * UNIT_MULTIPLIERS.THOUSAND_TWD) <= MAX_REASONABLE_REVENUE) {
+        const separatedConverted = possibleValue * UNIT_MULTIPLIERS.THOUSAND_TWD;
+        console.log(`[TW Revenue Parser] Separated to reasonable value: ${separatedConverted} 元`);
+        return separatedConverted;
+      }
+      console.warn(`[TW Revenue Parser] Cannot separate concatenated number: ${valueStr}`);
+      return null;
+    }
+    
+    // 對於略微超過範圍但在可接受範圍內的數值，給予警告但接受
+    if (convertedValue <= CONCATENATED_DETECTION.MAX_SINGLE_COMPANY) {
+      console.warn(`[TW Revenue Parser] Large but acceptable value: ${valueStr} (${convertedValue} 元)`);
+    }
+  }
   
   console.log(`[TW Revenue Parser] Clean parsing: ${valueStr} -> ${numValue} 仟元 -> ${convertedValue} 元`);
   return convertedValue;
@@ -5527,6 +5597,303 @@ function combineTWCashFlowFields(content: string | string[], context?: any): TWC
     result.investingCashFlow !== null || 
     result.financingCashFlow !== null
   );
+}
+
+/**
+ * ==========================================
+ * 標準化資料轉換函數 (Standardization Functions)
+ * ==========================================
+ * 將台灣 Yahoo Finance 資料轉換為標準化格式
+ * 用於匯入後端 FundamentalDataEntity
+ */
+
+/**
+ * 解析財務期間字串，提取年度和季度
+ * @param fiscalPeriod 財務期間字串，如 "2025-Q1", "2024-Q4"
+ * @returns 年度和季度
+ */
+function parseFiscalPeriod(fiscalPeriod: string | null): [number, number | undefined] {
+  if (!fiscalPeriod) {
+    return [new Date().getFullYear(), undefined];
+  }
+  
+  // 處理季度格式: "2025-Q1"
+  const quarterMatch = fiscalPeriod.match(/(\d{4})-Q(\d)/);
+  if (quarterMatch) {
+    return [parseInt(quarterMatch[1]), parseInt(quarterMatch[2])];
+  }
+  
+  // 處理年度格式: "2024"
+  const yearMatch = fiscalPeriod.match(/^(\d{4})$/);
+  if (yearMatch) {
+    return [parseInt(yearMatch[1]), undefined];
+  }
+  
+  // 處理月份格式: "2024/12"
+  const monthMatch = fiscalPeriod.match(/(\d{4})\/(\d{1,2})/);
+  if (monthMatch) {
+    const month = parseInt(monthMatch[2]);
+    const quarter = Math.ceil(month / 3);
+    return [parseInt(monthMatch[1]), quarter];
+  }
+  
+  // 預設返回當前年度
+  return [new Date().getFullYear(), undefined];
+}
+
+/**
+ * 將台灣現金流量表資料轉換為標準化格式
+ * @param data 台灣現金流資料
+ * @param symbolCode 股票代碼 (含 .TW 後綴)
+ * @returns 標準化財務資料
+ */
+export function toStandardizedFromCashFlow(
+  data: TWCashFlowData,
+  symbolCode: string
+): StandardizedFundamentalData {
+  const [year, quarter] = parseFiscalPeriod(data.fiscalPeriod);
+  
+  return {
+    // 基本資訊
+    symbolCode: symbolCode.replace('.TW', ''),
+    exchangeArea: 'TW',
+    reportDate: new Date().toISOString().split('T')[0],
+    fiscalYear: year,
+    fiscalQuarter: quarter,
+    reportType: quarter ? FiscalReportType.QUARTERLY : FiscalReportType.ANNUAL,
+    
+    // 現金流數據（單位已是元，直接使用）
+    operatingCashFlow: data.operatingCashFlow || undefined,
+    investingCashFlow: data.investingCashFlow || undefined,
+    financingCashFlow: data.financingCashFlow || undefined,
+    freeCashFlow: data.freeCashFlow || undefined,
+    netCashFlow: data.netCashFlow || undefined,
+    
+    // 元數據
+    dataSource: 'yahoo-finance-tw',
+    lastUpdated: new Date().toISOString(),
+    currencyCode: 'TWD'
+  };
+}
+
+/**
+ * 將台灣損益表資料轉換為標準化格式
+ * @param data 台灣損益表資料
+ * @param symbolCode 股票代碼 (含 .TW 後綴)
+ * @returns 標準化財務資料
+ */
+export function toStandardizedFromIncomeStatement(
+  data: TWIncomeStatementData,
+  symbolCode: string
+): StandardizedFundamentalData {
+  const [year, quarter] = parseFiscalPeriod(data.fiscalPeriod);
+  
+  return {
+    // 基本資訊
+    symbolCode: symbolCode.replace('.TW', ''),
+    exchangeArea: 'TW',
+    reportDate: new Date().toISOString().split('T')[0],
+    fiscalYear: year,
+    fiscalQuarter: quarter,
+    reportType: quarter ? FiscalReportType.QUARTERLY : FiscalReportType.ANNUAL,
+    
+    // 損益表數據（單位已是元）
+    revenue: data.totalRevenue || data.operatingRevenue || undefined,
+    // costOfGoodsSold 不在 TWIncomeStatementData 中，需從其他地方計算
+    grossProfit: data.grossProfit || undefined,
+    operatingExpenses: data.operatingExpenses || undefined,
+    operatingIncome: data.operatingIncome || undefined,
+    incomeBeforeTax: data.incomeBeforeTax || undefined,
+    incomeTax: data.incomeTax || undefined,
+    netIncome: data.netIncome || undefined,
+    eps: data.basicEPS || undefined,
+    dilutedEPS: data.dilutedEPS || undefined,
+    
+    // 元數據
+    dataSource: 'yahoo-finance-tw',
+    lastUpdated: new Date().toISOString(),
+    currencyCode: 'TWD'
+  };
+}
+
+/**
+ * 將台灣資產負債表資料轉換為標準化格式
+ * @param data 台灣資產負債表資料
+ * @param symbolCode 股票代碼 (含 .TW 後綴)
+ * @returns 標準化財務資料
+ */
+export function toStandardizedFromBalanceSheet(
+  data: TWBalanceSheetData,
+  symbolCode: string
+): StandardizedFundamentalData {
+  const [year, quarter] = parseFiscalPeriod(data.fiscalPeriod);
+  
+  return {
+    // 基本資訊
+    symbolCode: symbolCode.replace('.TW', ''),
+    exchangeArea: 'TW',
+    reportDate: new Date().toISOString().split('T')[0],
+    fiscalYear: year,
+    fiscalQuarter: quarter,
+    reportType: quarter ? FiscalReportType.QUARTERLY : FiscalReportType.ANNUAL,
+    
+    // 資產負債表數據（單位已是元）
+    totalAssets: data.totalAssets || undefined,
+    currentAssets: data.currentAssets || undefined,
+    cashAndEquivalents: data.cashAndEquivalents || undefined,
+    accountsReceivable: data.accountsReceivable || undefined,
+    inventory: data.inventory || undefined,
+    totalLiabilities: data.totalLiabilities || undefined,
+    currentLiabilities: data.currentLiabilities || undefined,
+    accountsPayable: data.accountsPayable || undefined,
+    shareholdersEquity: data.stockholdersEquity || data.totalEquity || undefined,
+    longTermDebt: data.longTermDebt || undefined,
+    shortTermDebt: data.shortTermDebt || undefined,
+    retainedEarnings: data.retainedEarnings || undefined,
+    bookValuePerShare: data.bookValuePerShare || undefined,
+    propertyPlantEquipment: data.propertyPlantEquipment || undefined,
+    intangibleAssets: data.intangibleAssets || undefined,
+    
+    // 元數據
+    dataSource: 'yahoo-finance-tw',
+    lastUpdated: new Date().toISOString(),
+    currencyCode: 'TWD'
+  };
+}
+
+/**
+ * 將台灣 EPS 資料轉換為標準化格式
+ * @param data 台灣 EPS 資料
+ * @param symbolCode 股票代碼 (含 .TW 後綴)
+ * @returns 標準化財務資料
+ */
+export function toStandardizedFromEPS(
+  data: TWEPSData | SimpleEPSData,
+  symbolCode: string
+): StandardizedFundamentalData {
+  const [year, quarter] = parseFiscalPeriod(data.fiscalPeriod);
+  
+  return {
+    // 基本資訊
+    symbolCode: symbolCode.replace('.TW', ''),
+    exchangeArea: 'TW',
+    reportDate: new Date().toISOString().split('T')[0],
+    fiscalYear: year,
+    fiscalQuarter: quarter,
+    reportType: quarter ? FiscalReportType.QUARTERLY : FiscalReportType.ANNUAL,
+    
+    // EPS 數據
+    eps: data.eps || undefined,
+    
+    // 元數據
+    dataSource: 'yahoo-finance-tw',
+    lastUpdated: new Date().toISOString(),
+    currencyCode: 'TWD'
+  };
+}
+
+/**
+ * 將台灣股利資料轉換為標準化格式
+ */
+export function toStandardizedFromDividend(
+  data: TWDividendData,
+  symbolCode: string
+): StandardizedFundamentalData {
+  const [year] = parseFiscalPeriod(data.fiscalPeriod);
+  
+  return {
+    // 基本資訊
+    symbolCode: symbolCode.replace('.TW', ''),
+    exchangeArea: 'TW',
+    reportDate: new Date().toISOString().split('T')[0],
+    fiscalYear: year,
+    reportType: FiscalReportType.ANNUAL, // 股利通常為年度數據
+    
+    // 股利數據
+    dividendYield: data.cashYield || undefined,
+    
+    // 元數據
+    dataSource: 'yahoo-finance-tw',
+    lastUpdated: new Date().toISOString(),
+    currencyCode: 'TWD'
+  };
+}
+
+/**
+ * 將台灣營收資料轉換為標準化格式
+ */
+export function toStandardizedFromRevenue(
+  data: TWRevenueData,
+  symbolCode: string
+): StandardizedFundamentalData {
+  const [year] = parseFiscalPeriod(data.fiscalPeriod);
+  
+  // 提取月份信息 (格式: "YYYY/MM")
+  let month: number | undefined = undefined;
+  if (data.fiscalPeriod) {
+    const monthMatch = data.fiscalPeriod.match(/\d{4}\/(\d{2})/);
+    if (monthMatch) {
+      month = parseInt(monthMatch[1]);
+    }
+  }
+  
+  return {
+    // 基本資訊
+    symbolCode: symbolCode.replace('.TW', ''),
+    exchangeArea: 'TW',
+    reportDate: new Date().toISOString().split('T')[0],
+    fiscalYear: year,
+    fiscalMonth: month,
+    reportType: FiscalReportType.MONTHLY, // 營收為月度數據
+    
+    // 營收數據 (轉換從仟元為元)
+    revenue: data.revenue ? data.revenue * 1000 : undefined,
+    
+    // 元數據
+    dataSource: 'yahoo-finance-tw',
+    lastUpdated: new Date().toISOString(),
+    currencyCode: 'TWD'
+  };
+}
+
+/**
+ * 批量轉換台灣財務資料為標準化格式
+ * @param dataType 資料類型
+ * @param dataArray 資料陣列
+ * @param symbolCode 股票代碼
+ * @returns 標準化財務資料陣列
+ */
+export function batchToStandardized(
+  dataType: 'cashflow' | 'income' | 'balance' | 'eps',
+  dataArray: any[],
+  symbolCode: string
+): StandardizedFundamentalData[] {
+  const results: StandardizedFundamentalData[] = [];
+  
+  for (const data of dataArray) {
+    let standardized: StandardizedFundamentalData | null = null;
+    
+    switch (dataType) {
+      case 'cashflow':
+        standardized = toStandardizedFromCashFlow(data as TWCashFlowData, symbolCode);
+        break;
+      case 'income':
+        standardized = toStandardizedFromIncomeStatement(data as TWIncomeStatementData, symbolCode);
+        break;
+      case 'balance':
+        standardized = toStandardizedFromBalanceSheet(data as TWBalanceSheetData, symbolCode);
+        break;
+      case 'eps':
+        standardized = toStandardizedFromEPS(data as TWEPSData | SimpleEPSData, symbolCode);
+        break;
+    }
+    
+    if (standardized) {
+      results.push(standardized);
+    }
+  }
+  
+  return results;
 }
 
 export default yahooFinanceTWTransforms;

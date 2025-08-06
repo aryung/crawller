@@ -23,9 +23,7 @@ interface CLIOptions {
   selectors?: string;
   batchSize?: number;
   startFrom?: number;
-  skipReport?: boolean;
-  noReport?: boolean;
-  report?: boolean;  // Added to handle --no-report (creates report: false)
+  generateReport?: boolean;  // New: explicitly enable markdown report generation (default: false)
 }
 
 async function main() {
@@ -43,18 +41,15 @@ async function main() {
     .option('--concurrent <number>', '同時處理的配置檔案數量（非引擎併發）', '1')
     .option('--batch-size <number>', '數據驅動配置的批次大小', '50')
     .option('--start-from <number>', '從第幾個配置開始執行', '0')
-    .option('--skip-report', '跳過生成 MD 格式的爬蟲報告')
-    .option('--no-report', '跳過生成 MD 格式的爬蟲報告（--skip-report 的別名）')
+    .option('--report', '生成 MD 格式的爬蟲報告（預設只輸出 JSON）')
     .option('-v, --verbose', '詳細日誌')
     .action(async (configs: string[], options: CLIOptions) => {
       if (options.verbose) {
         process.env.LOG_LEVEL = 'debug';
       }
 
-      // Handle --no-report (which creates report: false) as an alias for --skip-report
-      if (options.report === false) {
-        options.skipReport = true;
-      }
+      // Default behavior: skip markdown report generation unless explicitly requested
+      // generateReport will be true only if --report flag is specified
 
       try {
         // Check if --config points to a specific file
@@ -151,7 +146,7 @@ async function main() {
       try {
         // Parse additional options after config file path
         const remainingArgs = args.slice(2);
-        const skipReport = remainingArgs.includes('--skip-report') || remainingArgs.includes('--no-report');
+        const generateReport = remainingArgs.includes('--report');
         const verboseIndex = remainingArgs.findIndex(arg => arg === '-v' || arg === '--verbose');
         
         const options: CLIOptions = {
@@ -160,7 +155,7 @@ async function main() {
           format: 'json',
           concurrent: 1,
           verbose: verboseIndex >= 0,
-          skipReport
+          generateReport
         };
         
         if (options.verbose) {
@@ -180,7 +175,7 @@ async function main() {
         console.log('🔄 檢測到配置名稱，執行爬蟲任務...');
         
         // Parse CLI arguments for direct config execution
-        const skipReport = args.includes('--skip-report') || args.includes('--no-report');
+        const generateReport = args.includes('--report');
         const verboseIndex = args.findIndex(arg => arg === '-v' || arg === '--verbose');
         const concurrentIndex = args.findIndex(arg => arg === '--concurrent');
         const formatIndex = args.findIndex(arg => arg === '-f' || arg === '--format');
@@ -193,7 +188,7 @@ async function main() {
           format: formatIndex >= 0 && args[formatIndex + 1] ? args[formatIndex + 1] as ExportOptions['format'] : 'json',
           concurrent: concurrentIndex >= 0 && args[concurrentIndex + 1] ? Number(args[concurrentIndex + 1]) : 3,
           verbose: verboseIndex >= 0,
-          skipReport
+          generateReport
         };
         
         if (options.verbose) {
@@ -283,12 +278,11 @@ async function runDirectConfigFile(configFilePath: string, options: CLIOptions) 
 
       console.log(`📄 結果已匯出: ${exportPath}`);
 
-      if (!options.skipReport && options.report !== false) {
+      if (options.generateReport) {
         const reportPath = await crawler.generateReport(results);
-        console.log(`📊 報告已生成: ${reportPath}`);
+        console.log(`📊 MD 報告已生成: ${reportPath}`);
       } else {
-        const paramUsed = options.report === false ? '--no-report' : '--skip-report';
-        console.log(`📊 已跳過 MD 報告生成（使用 ${paramUsed}）`);
+        console.log(`📊 已跳過 MD 報告生成（預設行為，使用 --report 可啟用）`);
       }
 
       const screenshotResults = results.filter(r => r.screenshot);
@@ -484,12 +478,11 @@ async function runCrawler(configNames: string[], options: CLIOptions) {
 
       console.log(`📄 結果已匯出: ${exportPath}`);
 
-      if (!options.skipReport) {
+      if (options.generateReport) {
         const reportPath = await crawler.generateReport(results);
-        console.log(`📊 報告已生成: ${reportPath}`);
+        console.log(`📊 MD 報告已生成: ${reportPath}`);
       } else {
-        const paramUsed = options.report === false ? '--no-report' : '--skip-report';
-        console.log(`📊 已跳過 MD 報告生成（使用 ${paramUsed}）`);
+        console.log(`📊 已跳過 MD 報告生成（預設行為，使用 --report 可啟用）`);
       }
 
       const screenshotResults = results.filter(r => r.screenshot);

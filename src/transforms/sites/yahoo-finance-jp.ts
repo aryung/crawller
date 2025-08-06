@@ -29,6 +29,13 @@ export interface YahooFinanceJPTransforms {
   structureFinancialData: (tableText: string, dataType?: 'performance' | 'financials') => FinancialData[];
   structureFinancialDataFromCells: (cells: string[], dataType?: 'performance' | 'financials') => FinancialData[];
   structureFinancialDataFromAllTableCells: (cells: string[], context?: any) => FinancialData[];
+  // Standardization functions
+  toStandardizedFromPerformance?: (data: any, symbolCode: string) => any;
+  toStandardizedFromFinancials?: (data: any, symbolCode: string) => any;
+  toStandardizedFromCashFlow?: (data: any, symbolCode: string) => any;
+  toStandardizedBatchFromPerformance?: (dataArray: any[], symbolCode: string) => any[];
+  toStandardizedBatchFromFinancials?: (dataArray: any[], symbolCode: string) => any[];
+  toStandardizedBatchFromCashFlow?: (dataArray: any[], symbolCode: string) => any[];
 }
 
 // 通用財務數據介面，支援多種數據類型
@@ -429,7 +436,15 @@ export const yahooFinanceJPTransforms: YahooFinanceJPTransforms = {
       console.warn('Failed to structure financial data from all table cells:', error);
       return [];
     }
-  }
+  },
+  
+  // Add standardization functions to the export object
+  toStandardizedFromPerformance,
+  toStandardizedFromFinancials,
+  toStandardizedFromCashFlow,
+  toStandardizedBatchFromPerformance,
+  toStandardizedBatchFromFinancials,
+  toStandardizedBatchFromCashFlow
 };
 
 /**
@@ -1073,4 +1088,236 @@ export function getYahooFinanceJPTransform(name: keyof YahooFinanceJPTransforms)
  */
 export function listYahooFinanceJPTransforms(): string[] {
   return Object.keys(yahooFinanceJPTransforms);
+}
+
+// ============= Standardization Functions for Database Integration =============
+import { StandardizedFundamentalData } from '../../types/standardized.js';
+
+/**
+ * Parse Japanese fiscal period format
+ * @param period - Format like "2025年3月期" or "2024/12"
+ * @returns Tuple of [year, quarter or null]
+ */
+function parseJapaneseFiscalPeriod(period: string | null): [number, number | null] {
+  if (!period) {
+    return [new Date().getFullYear(), null];
+  }
+
+  // Handle "2025年3月期" format (fiscal year ending in March)
+  const fiscalYearMatch = period.match(/(\d{4})年(\d{1,2})月期/);
+  if (fiscalYearMatch) {
+    const year = parseInt(fiscalYearMatch[1]);
+    const month = parseInt(fiscalYearMatch[2]);
+    
+    // Japanese fiscal year typically ends in March
+    // Map month to approximate quarter
+    let quarter: number | null = null;
+    if (month === 3) quarter = 4;  // March = Q4
+    else if (month === 6) quarter = 1;  // June = Q1
+    else if (month === 9) quarter = 2;  // September = Q2
+    else if (month === 12) quarter = 3; // December = Q3
+    
+    return [year, quarter];
+  }
+
+  // Handle "2024/12" format
+  const monthlyMatch = period.match(/(\d{4})\/(\d{1,2})/);
+  if (monthlyMatch) {
+    const year = parseInt(monthlyMatch[1]);
+    const month = parseInt(monthlyMatch[2]);
+    const quarter = Math.ceil(month / 3);
+    return [year, quarter];
+  }
+
+  // Handle quarterly format like "2024-Q1"
+  const quarterMatch = period.match(/(\d{4})-Q(\d)/);
+  if (quarterMatch) {
+    return [parseInt(quarterMatch[1]), parseInt(quarterMatch[2])];
+  }
+
+  // Default to annual report
+  const yearMatch = period.match(/(\d{4})/);
+  if (yearMatch) {
+    return [parseInt(yearMatch[1]), null];
+  }
+
+  return [new Date().getFullYear(), null];
+}
+
+/**
+ * Convert Japanese performance data to standardized format
+ * Note: Data is already converted from millions to yen in extraction
+ */
+export function toStandardizedFromPerformance(
+  data: any,
+  symbolCode: string
+): StandardizedFundamentalData {
+  const [year, quarter] = parseJapaneseFiscalPeriod(data.fiscalPeriod);
+  
+  // Remove .T suffix from symbol code
+  const cleanSymbol = symbolCode.replace('.T', '');
+  
+  // Generate report date (approximate)
+  let reportDate = `${year}-`;
+  if (quarter) {
+    const month = quarter * 3;
+    reportDate += `${month.toString().padStart(2, '0')}-01`;
+  } else {
+    reportDate += '12-31';
+  }
+
+  return {
+    symbolCode: cleanSymbol,
+    exchangeArea: 'JP',
+    reportDate,
+    fiscalYear: year,
+    fiscalQuarter: quarter || undefined,
+    reportType: quarter ? 'QUARTERLY' : 'ANNUAL',
+    
+    // Financial metrics from performance data
+    eps: data.eps || undefined,
+    bookValuePerShare: data.bps || undefined,
+    roa: data.roa || undefined,
+    roe: data.roe || undefined,
+    
+    // Assets and equity (already in yen)
+    totalAssets: data.totalAssets || undefined,
+    shareholdersEquity: data.equityRatio && data.totalAssets
+      ? Math.round(data.totalAssets * data.equityRatio)
+      : undefined,
+    
+    // Share information
+    sharesOutstanding: data.stockCount || undefined,
+    
+    // Regional specific data
+    regionalData: {
+      capital: data.capital || undefined,
+      equityRatio: data.equityRatio || undefined,
+      dividendYield: data.dividendYield || undefined,
+      reductionAmount: data.reductionAmount || undefined
+    },
+    
+    // Metadata
+    currencyCode: 'JPY',
+    dataSource: 'YAHOO_JP',
+    lastUpdated: new Date().toISOString()
+  };
+}
+
+/**
+ * Convert Japanese financial data to standardized format
+ * Note: Financial data from Yahoo Finance JP is already in yen
+ */
+export function toStandardizedFromFinancials(
+  data: any,
+  symbolCode: string
+): StandardizedFundamentalData {
+  const [year, quarter] = parseJapaneseFiscalPeriod(data.fiscalPeriod);
+  
+  const cleanSymbol = symbolCode.replace('.T', '');
+  
+  let reportDate = `${year}-`;
+  if (quarter) {
+    const month = quarter * 3;
+    reportDate += `${month.toString().padStart(2, '0')}-01`;
+  } else {
+    reportDate += '12-31';
+  }
+
+  return {
+    symbolCode: cleanSymbol,
+    exchangeArea: 'JP',
+    reportDate,
+    fiscalYear: year,
+    fiscalQuarter: quarter || undefined,
+    reportType: quarter ? 'QUARTERLY' : 'ANNUAL',
+    
+    // Income statement (already in yen)
+    revenue: data.totalRevenue || undefined,
+    operatingIncome: data.operatingIncome || undefined,
+    netIncome: data.netIncome || undefined,
+    
+    // Japanese specific - ordinary income
+    incomeBeforeTax: data.ordinaryIncome || undefined,
+    
+    // Regional specific data
+    regionalData: {
+      ordinaryProfit: data.ordinaryIncome || undefined,
+      revenueChange: data.revenueChange || undefined,
+      operatingIncomeChange: data.operatingIncomeChange || undefined,
+      ordinaryIncomeChange: data.ordinaryIncomeChange || undefined,
+      netIncomeChange: data.netIncomeChange || undefined
+    },
+    
+    // Metadata
+    currencyCode: 'JPY',
+    dataSource: 'YAHOO_JP',
+    lastUpdated: new Date().toISOString()
+  };
+}
+
+/**
+ * Convert Japanese cash flow data to standardized format
+ * Note: Cash flow data is already in yen
+ */
+export function toStandardizedFromCashFlow(
+  data: any,
+  symbolCode: string
+): StandardizedFundamentalData {
+  const [year, quarter] = parseJapaneseFiscalPeriod(data.fiscalPeriod);
+  
+  const cleanSymbol = symbolCode.replace('.T', '');
+  
+  let reportDate = `${year}-`;
+  if (quarter) {
+    const month = quarter * 3;
+    reportDate += `${month.toString().padStart(2, '0')}-01`;
+  } else {
+    reportDate += '12-31';
+  }
+
+  return {
+    symbolCode: cleanSymbol,
+    exchangeArea: 'JP',
+    reportDate,
+    fiscalYear: year,
+    fiscalQuarter: quarter || undefined,
+    reportType: quarter ? 'QUARTERLY' : 'ANNUAL',
+    
+    // Cash flow statement (already in yen)
+    operatingCashFlow: data.operatingCashFlow || undefined,
+    investingCashFlow: data.investingCashFlow || undefined,
+    financingCashFlow: data.financingCashFlow || undefined,
+    freeCashFlow: data.freeCashFlow || undefined,
+    netCashFlow: data.netCashFlow || undefined,
+    
+    // Metadata
+    currencyCode: 'JPY',
+    dataSource: 'YAHOO_JP',
+    lastUpdated: new Date().toISOString()
+  };
+}
+
+/**
+ * Batch conversion for arrays of Japan data
+ */
+export function toStandardizedBatchFromPerformance(
+  dataArray: any[],
+  symbolCode: string
+): StandardizedFundamentalData[] {
+  return dataArray.map(data => toStandardizedFromPerformance(data, symbolCode));
+}
+
+export function toStandardizedBatchFromFinancials(
+  dataArray: any[],
+  symbolCode: string
+): StandardizedFundamentalData[] {
+  return dataArray.map(data => toStandardizedFromFinancials(data, symbolCode));
+}
+
+export function toStandardizedBatchFromCashFlow(
+  dataArray: any[],
+  symbolCode: string
+): StandardizedFundamentalData[] {
+  return dataArray.map(data => toStandardizedFromCashFlow(data, symbolCode));
 }

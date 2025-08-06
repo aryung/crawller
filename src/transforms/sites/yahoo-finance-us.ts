@@ -3,6 +3,8 @@
  * 包含針對 Yahoo Finance US 網站結構和資料格式的特殊處理邏輯
  */
 
+import { StandardizedFundamentalData, FiscalReportType } from '../../types/standardized.js';
+
 export interface YahooFinanceUSTransforms {
   cleanStockSymbol: (value: string) => string;
   parseUSFinancialValue: (value: string) => number | string | null;
@@ -765,4 +767,167 @@ export function registerYahooFinanceUSTransforms(registry: any): void {
  */
 export function getYahooFinanceUSTransform(name: keyof YahooFinanceUSTransforms): Function | null {
   return yahooFinanceUSTransforms[name] || null;
+}
+
+/**
+ * ==========================================
+ * 標準化資料轉換函數 (Standardization Functions)
+ * ==========================================
+ * 將美國 Yahoo Finance 資料轉換為標準化格式
+ * 用於匯入後端 FundamentalDataEntity
+ */
+
+/**
+ * 轉換美國日期格式為 ISO 格式
+ * @param dateStr 美國日期字串，如 "9/30/2024" 或 "TTM"
+ * @returns ISO 日期格式 "2024-09-30"
+ */
+function convertUSDateFormat(dateStr: string | null): string {
+  if (!dateStr || dateStr === 'TTM') {
+    return new Date().toISOString().split('T')[0];
+  }
+  
+  // 處理 "9/30/2024" 格式
+  const parts = dateStr.split('/');
+  if (parts.length === 3) {
+    const month = parts[0].padStart(2, '0');
+    const day = parts[1].padStart(2, '0');
+    const year = parts[2];
+    return `${year}-${month}-${day}`;
+  }
+  
+  return new Date().toISOString().split('T')[0];
+}
+
+/**
+ * 從日期推算季度
+ * @param dateStr ISO 日期格式
+ * @returns 季度 (1-4)
+ */
+function getQuarterFromDate(dateStr: string): number | undefined {
+  const date = new Date(dateStr);
+  const month = date.getMonth() + 1; // getMonth() returns 0-11
+  return Math.ceil(month / 3);
+}
+
+/**
+ * 將美國財務報表資料轉換為標準化格式
+ * @param data 美國財務資料
+ * @param symbolCode 股票代碼 (如 "AAPL")
+ * @returns 標準化財務資料
+ */
+export function toStandardizedFromFinancials(
+  data: USFinancialData,
+  symbolCode: string
+): StandardizedFundamentalData {
+  const reportDate = convertUSDateFormat(data.fiscalPeriod);
+  const isTTM = data.fiscalPeriod === 'TTM';
+  const fiscalYear = new Date(reportDate).getFullYear();
+  const fiscalQuarter = isTTM ? undefined : getQuarterFromDate(reportDate);
+  
+  return {
+    // 基本資訊
+    symbolCode: symbolCode, // 美國股票不需要去除後綴
+    exchangeArea: 'US',
+    reportDate: reportDate,
+    fiscalYear: fiscalYear,
+    fiscalQuarter: fiscalQuarter,
+    reportType: isTTM ? FiscalReportType.ANNUAL : 
+                (fiscalQuarter ? FiscalReportType.QUARTERLY : FiscalReportType.ANNUAL),
+    
+    // 損益表數據（千美元 × 1000 → 美元）
+    revenue: data.totalRevenue ? data.totalRevenue * 1000 : undefined,
+    costOfGoodsSold: data.costOfRevenue ? data.costOfRevenue * 1000 : undefined,
+    grossProfit: data.grossProfit ? data.grossProfit * 1000 : undefined,
+    operatingExpenses: data.operatingExpense ? data.operatingExpense * 1000 : undefined,
+    operatingIncome: data.operatingIncome ? data.operatingIncome * 1000 : undefined,
+    incomeBeforeTax: data.pretaxIncome ? data.pretaxIncome * 1000 : undefined,
+    taxExpense: data.taxProvision ? data.taxProvision * 1000 : undefined,
+    netIncome: data.netIncomeCommonStockholders ? data.netIncomeCommonStockholders * 1000 : undefined,
+    ebitda: data.ebitda ? data.ebitda * 1000 : undefined,
+    
+    // EPS 不需轉換
+    eps: data.basicEPS || undefined,
+    dilutedEPS: data.dilutedEPS || undefined,
+    
+    // 元數據
+    dataSource: 'yahoo-finance-us',
+    lastUpdated: new Date().toISOString(),
+    currencyCode: 'USD'
+  };
+}
+
+/**
+ * 將美國現金流量表資料轉換為標準化格式
+ * @param data 美國現金流資料
+ * @param symbolCode 股票代碼 (如 "AAPL")
+ * @returns 標準化財務資料
+ */
+export function toStandardizedFromCashFlow(
+  data: USCashFlowData,
+  symbolCode: string
+): StandardizedFundamentalData {
+  const reportDate = convertUSDateFormat(data.fiscalPeriod);
+  const isTTM = data.fiscalPeriod === 'TTM';
+  const fiscalYear = new Date(reportDate).getFullYear();
+  const fiscalQuarter = isTTM ? undefined : getQuarterFromDate(reportDate);
+  
+  return {
+    // 基本資訊
+    symbolCode: symbolCode,
+    exchangeArea: 'US',
+    reportDate: reportDate,
+    fiscalYear: fiscalYear,
+    fiscalQuarter: fiscalQuarter,
+    reportType: isTTM ? FiscalReportType.ANNUAL : 
+                (fiscalQuarter ? FiscalReportType.QUARTERLY : FiscalReportType.ANNUAL),
+    
+    // 現金流數據（單位已是美元，直接使用）
+    operatingCashFlow: data.operatingCashFlow || undefined,
+    investingCashFlow: data.investingCashFlow || undefined,
+    financingCashFlow: data.financingCashFlow || undefined,
+    freeCashFlow: data.freeCashFlow || undefined,
+    capex: data.capitalExpenditure || undefined,
+    debtIssuance: data.issuanceOfDebt || undefined,
+    debtRepayment: data.repaymentOfDebt || undefined,
+    
+    // 元數據
+    dataSource: 'yahoo-finance-us',
+    lastUpdated: new Date().toISOString(),
+    currencyCode: 'USD'
+  };
+}
+
+/**
+ * 批量轉換美國財務資料為標準化格式
+ * @param dataType 資料類型
+ * @param dataArray 資料陣列
+ * @param symbolCode 股票代碼
+ * @returns 標準化財務資料陣列
+ */
+export function batchToStandardized(
+  dataType: 'financials' | 'cashflow',
+  dataArray: any[],
+  symbolCode: string
+): StandardizedFundamentalData[] {
+  const results: StandardizedFundamentalData[] = [];
+  
+  for (const data of dataArray) {
+    let standardized: StandardizedFundamentalData | null = null;
+    
+    switch (dataType) {
+      case 'financials':
+        standardized = toStandardizedFromFinancials(data as USFinancialData, symbolCode);
+        break;
+      case 'cashflow':
+        standardized = toStandardizedFromCashFlow(data as USCashFlowData, symbolCode);
+        break;
+    }
+    
+    if (standardized) {
+      results.push(standardized);
+    }
+  }
+  
+  return results;
 }

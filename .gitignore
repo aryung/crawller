@@ -9,3 +9,5 @@ dist/
 output/screenshots/
 output/*.md
 logs/
+
+.env

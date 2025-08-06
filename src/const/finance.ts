@@ -349,7 +349,7 @@ export const TW_DATA_PROCESSING = {
   }
 } as const;
 
-// 台灣營收數據處理常數 - 僅包含基本格式驗證
+// 台灣營收數據處理常數 - 基於實際範圍的動態驗證
 export const TW_REVENUE_DATA_CONSTANTS = {
   // 年份範圍 (基本合理性檢查)
   MIN_YEAR: 1990,                  // 最早年份 (台灣股市開始電子化交易)
@@ -359,9 +359,36 @@ export const TW_REVENUE_DATA_CONSTANTS = {
   MIN_MONTH: 1,
   MAX_MONTH: 12,
   
-  // 數值基本檢查
+  // 數值基本檢查 - 基於台灣上市公司實際營收範圍
   MIN_REASONABLE_VALUE: 1,         // 最小合理數值 (避免0或負數)
-  MAX_DIGITS: 15                   // 最大數字位數 (避免超大數字錯誤)
+  MAX_REASONABLE_REVENUE: 800000000000, // 最大合理營收 (8000億，基於台積電等大型公司)
+  MAX_DIGITS: 15,                  // 避免超大數字錯誤
+  
+  // 動態驗證參數 (替代硬編碼位數檢測)
+  CONCATENATED_DETECTION: {
+    // 基於數值範圍而非字符串長度的檢測
+    SUSPICIOUS_MULTIPLIER: 100,     // 如果數值超過合理範圍100倍，可能是串接
+    MIN_VALID_REVENUE: 1000,        // 最小有效營收 (千元)
+    MAX_SINGLE_COMPANY: 1000000000000 // 單一公司最大可能營收 (1兆)
+  }
+} as const;
+
+// 台灣EPS數據處理常數 - 基於實際EPS範圍的動態驗證
+export const TW_EPS_DATA_CONSTANTS = {
+  // EPS 基本檢查 - 基於台灣上市公司實際EPS範圍
+  MIN_REASONABLE_EPS: -50,         // 最小合理EPS (-50元，考慮虧損公司)
+  MAX_REASONABLE_EPS: 100,         // 最大合理EPS (100元，基於高獲利公司如台積電)
+  
+  // 精度控制 (替代硬編碼小數位檢測)
+  MAX_DECIMAL_PLACES: 2,           // EPS 最多2位小數
+  SUSPICIOUS_EPS_THRESHOLD: 1000,  // 超過此值可能是串接錯誤
+  
+  // 動態分離參數
+  CONCATENATION_DETECTION: {
+    VALUE_RATIO_THRESHOLD: 100,    // 如果EPS超過合理範圍100倍，可能是串接
+    MIN_VALID_EPS: 0.01,           // 最小有效EPS
+    MAX_SINGLE_COMPANY_EPS: 200    // 單一公司最大可能EPS
+  }
 } as const;
 
 // Dividend 欄位到表格標題的映射

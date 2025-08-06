@@ -1,10 +1,10 @@
 {
-  "exportDate": "2025-08-06T02:49:10.146Z",
+  "exportDate": "2025-08-06T07:53:21.532Z",
   "totalResults": 1,
   "successCount": 1,
   "results": [
     {
-      "url": "https://tw.stock.yahoo.com/quote/1101.TW/income-statement",
+      "url": "https://tw.stock.yahoo.com/quote/2454.TW/income-statement",
       "data": {
         "stockInfo": "Yahoo奇摩財經",
         "structuredIncomeStatementData": [
@@ -25,7 +25,7 @@
             "dilutedEPS": null
           },
           {
-            "fiscalPeriod": "1950/12",
+            "fiscalPeriod": "1997/05",
             "totalRevenue": null,
             "operatingRevenue": null,
             "grossProfit": null,
@@ -41,7 +41,7 @@
             "dilutedEPS": null
           },
           {
-            "fiscalPeriod": "1962/02",
+            "fiscalPeriod": "2001/07",
             "totalRevenue": null,
             "operatingRevenue": null,
             "grossProfit": null,
@@ -105,7 +105,7 @@
             "dilutedEPS": null
           },
           {
-            "fiscalPeriod": "2022/07",
+            "fiscalPeriod": "2010/07",
             "totalRevenue": null,
             "operatingRevenue": null,
             "grossProfit": null,
@@ -121,7 +121,7 @@
             "dilutedEPS": null
           },
           {
-            "fiscalPeriod": "2022/08",
+            "fiscalPeriod": "2010/08",
             "totalRevenue": null,
             "operatingRevenue": null,
             "grossProfit": null,
@@ -746,9 +746,9 @@
           }
         ]
       },
-      "timestamp": "2025-08-06T02:49:10.142Z",
+      "timestamp": "2025-08-06T07:53:21.528Z",
       "success": true,
-      "screenshot": "<Buffer 334883 bytes>"
+      "screenshot": "<Buffer 369426 bytes>"
     }
   ]
 }

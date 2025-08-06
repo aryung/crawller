@@ -1,0 +1,215 @@
+{
+  "exportDate": "2025-08-06T07:52:42.049Z",
+  "totalResults": 1,
+  "successCount": 1,
+  "results": [
+    {
+      "url": "https://tw.stock.yahoo.com/quote/2454.TW/dividend",
+      "data": {
+        "stockInfo": "Yahoo奇摩財經聯發科",
+        "structuredDividendData": [
+          {
+            "fiscalPeriod": "2024-H2",
+            "cashDividend": 25.0002,
+            "stockDividend": null,
+            "cashYield": 0.019299999999999998,
+            "exDividendDate": "2025/07/03",
+            "exRightsDate": null,
+            "paymentDate": "2025/07/31"
+          },
+          {
+            "fiscalPeriod": "2024-H1",
+            "cashDividend": 29,
+            "stockDividend": null,
+            "cashYield": 0.020499999999999997,
+            "exDividendDate": "2025/01/02",
+            "exRightsDate": null,
+            "paymentDate": "2025/01/24"
+          },
+          {
+            "fiscalPeriod": "2023-H2",
+            "cashDividend": 30.4053,
+            "stockDividend": null,
+            "cashYield": 0.0216,
+            "exDividendDate": "2024/07/04",
+            "exRightsDate": null,
+            "paymentDate": "2024/07/31"
+          },
+          {
+            "fiscalPeriod": "2023-H1",
+            "cashDividend": 24.6,
+            "stockDividend": null,
+            "cashYield": 0.0258,
+            "exDividendDate": "2024/01/04",
+            "exRightsDate": null,
+            "paymentDate": "2024/01/31"
+          },
+          {
+            "fiscalPeriod": "2014-Y",
+            "cashDividend": 21.9999,
+            "stockDividend": null,
+            "cashYield": null,
+            "exDividendDate": null,
+            "exRightsDate": null,
+            "paymentDate": null
+          },
+          {
+            "fiscalPeriod": "2013-Y",
+            "cashDividend": 15,
+            "stockDividend": null,
+            "cashYield": null,
+            "exDividendDate": "2014/07/04",
+            "exRightsDate": null,
+            "paymentDate": null
+          },
+          {
+            "fiscalPeriod": "2012-Y",
+            "cashDividend": 8.9998,
+            "stockDividend": null,
+            "cashYield": null,
+            "exDividendDate": "2013/07/16",
+            "exRightsDate": null,
+            "paymentDate": null
+          },
+          {
+            "fiscalPeriod": "2011-Y",
+            "cashDividend": 8.9998,
+            "stockDividend": null,
+            "cashYield": null,
+            "exDividendDate": "2012/07/16",
+            "exRightsDate": null,
+            "paymentDate": null
+          },
+          {
+            "fiscalPeriod": "2010-Y",
+            "cashDividend": 19.9999,
+            "stockDividend": null,
+            "cashYield": null,
+            "exDividendDate": "2011/07/08",
+            "exRightsDate": null,
+            "paymentDate": null
+          },
+          {
+            "fiscalPeriod": "2009-Y",
+            "cashDividend": 25.9979,
+            "stockDividend": 0.02,
+            "cashYield": null,
+            "exDividendDate": "2010/07/28",
+            "exRightsDate": "2010/07/28",
+            "paymentDate": null
+          },
+          {
+            "fiscalPeriod": "2008-Y",
+            "cashDividend": 14,
+            "stockDividend": 0.02,
+            "cashYield": null,
+            "exDividendDate": "2009/07/17",
+            "exRightsDate": "2009/07/17",
+            "paymentDate": null
+          },
+          {
+            "fiscalPeriod": "2007-Y",
+            "cashDividend": 19,
+            "stockDividend": 0.1,
+            "cashYield": null,
+            "exDividendDate": "2008/07/16",
+            "exRightsDate": "2008/07/16",
+            "paymentDate": null
+          },
+          {
+            "fiscalPeriod": "2006-Y",
+            "cashDividend": 15,
+            "stockDividend": 0.5,
+            "cashYield": null,
+            "exDividendDate": "2007/07/25",
+            "exRightsDate": "2007/07/25",
+            "paymentDate": null
+          },
+          {
+            "fiscalPeriod": "2005-Y",
+            "cashDividend": 11,
+            "stockDividend": 1,
+            "cashYield": null,
+            "exDividendDate": "2006/08/02",
+            "exRightsDate": "2006/08/02",
+            "paymentDate": null
+          },
+          {
+            "fiscalPeriod": "2004-Y",
+            "cashDividend": 10,
+            "stockDividend": 1,
+            "cashYield": null,
+            "exDividendDate": "2005/08/10",
+            "exRightsDate": "2005/08/10",
+            "paymentDate": null
+          },
+          {
+            "fiscalPeriod": "2003-Y",
+            "cashDividend": 8.5457,
+            "stockDividend": 1.8097,
+            "cashYield": null,
+            "exDividendDate": "2004/07/29",
+            "exRightsDate": "2004/07/29",
+            "paymentDate": null
+          },
+          {
+            "fiscalPeriod": "2001-Y",
+            "cashDividend": 20001,
+            "stockDividend": 4,
+            "cashYield": null,
+            "exDividendDate": "2001/08/30",
+            "exRightsDate": "2001/08/30",
+            "paymentDate": "2001/10/05"
+          },
+          {
+            "fiscalPeriod": "2001-Y",
+            "cashDividend": 4,
+            "stockDividend": 4,
+            "cashYield": null,
+            "exDividendDate": "2002/08/29",
+            "exRightsDate": "2002/08/29",
+            "paymentDate": null
+          },
+          {
+            "fiscalPeriod": "2000-Y",
+            "cashDividend": 1,
+            "stockDividend": 4,
+            "cashYield": null,
+            "exDividendDate": "2001/08/30",
+            "exRightsDate": "2001/08/30",
+            "paymentDate": null
+          },
+          {
+            "fiscalPeriod": "1999-Y",
+            "cashDividend": 7.5,
+            "stockDividend": null,
+            "cashYield": null,
+            "exDividendDate": "2000/08/30",
+            "exRightsDate": null,
+            "paymentDate": null
+          },
+          {
+            "fiscalPeriod": "1998-Y",
+            "cashDividend": 7.5,
+            "stockDividend": null,
+            "cashYield": null,
+            "exDividendDate": "1999/08/04",
+            "exRightsDate": null,
+            "paymentDate": null
+          },
+          {
+            "fiscalPeriod": "1997-Y",
+            "cashDividend": 1.2,
+            "stockDividend": null,
+            "cashYield": null,
+            "exDividendDate": "1998/07/22",
+            "exRightsDate": null,
+            "paymentDate": null
+          }
+        ]
+      },
+      "timestamp": "2025-08-06T07:52:42.048Z",
+      "success": true
+    }
+  ]
+}
