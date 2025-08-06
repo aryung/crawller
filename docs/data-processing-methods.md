@@ -235,14 +235,14 @@ stockCodes.forEach(stock => {
 
 ```bash
 # 1. 生成配置檔案
-node scripts/generate-yahoo-tw-configs.js
+npx tsx scripts/generate-yahoo-tw-configs.ts
 # 輸出：config/yahoo-finance-tw-dividend-2330_TW.json (15個檔案)
 
 # 2. 執行個別爬蟲
 npm run crawl yahoo-finance-tw-dividend-2330_TW
 
 # 3. 或使用批次執行腳本
-node scripts/run-yahoo-tw-dividend-batch.js
+npx tsx scripts/run-yahoo-tw-dividend-batch.ts
 ```
 
 ## 比較表格

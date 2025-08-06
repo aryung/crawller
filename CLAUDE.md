@@ -601,7 +601,7 @@ extract{DataType}FromPosition: (content: string | string[]): DataType[] => {
 **目標**: 確保所有數據正確對齊和提取
 ```bash
 # 1. 執行完整測試
-node scripts/generate-yahoo-tw-configs.js --type=cash-flow-statement
+npx tsx scripts/generate-yahoo-tw-configs.ts --type=cash-flow-statement
 npx tsx src/cli.ts --config config/yahoo-finance-tw-cash-flow-statement-2454_TW.json
 
 # 2. 驗證關鍵指標
@@ -660,7 +660,7 @@ cat output/test-cashflow_*.json | jq '.results[0].data.independentCashFlowData[]
 #### 4. 批量驗證命令
 ```bash
 # 生成所有配置並測試第一個
-node scripts/generate-yahoo-tw-configs.js --type=cash-flow-statement
+npx tsx scripts/generate-yahoo-tw-configs.ts --type=cash-flow-statement
 npx tsx src/cli.ts crawl yahoo-finance-tw-cash-flow-statement-2330_TW
 
 # 檢查所有生成的配置文件
@@ -728,7 +728,7 @@ document.querySelectorAll("table td, tbody td, div[class*='table'] div, li div, 
    - **解決方案**: 將 `debugFieldExtraction` 中的 `content.slice(0, 10)` 修改為 `content.slice(0, 50)`
    - **相關檔案**: `/src/transforms/sites/yahoo-finance-tw.ts` line 3093
    - **修復效果**: 營業現金流從 0 正確提取為實際數值（如 625,573,672 仟元）
-   - **批量更新**: 使用 `node scripts/generate-yahoo-tw-configs.js --type=cash-flow-statement` 重新生成所有配置
+   - **批量更新**: 使用 `npx tsx scripts/generate-yahoo-tw-configs.ts --type=cash-flow-statement` 重新生成所有配置
 
 5. **數據對齊問題 (投資現金流錯位)**: 現金流表中不同類型數據錯位對應
    - **問題症狀**: 
@@ -865,7 +865,7 @@ npx tsx src/cli.ts --config config/active/test-eps.json
 vim config/templates/yahoo-finance-tw-eps.json
 
 # 5️⃣ 重新生成所有相關配置
-node scripts/generate-yahoo-tw-configs.js --type=eps
+npx tsx scripts/generate-yahoo-tw-configs.ts --type=eps
 ```
 
 **注意**: 
@@ -951,36 +951,36 @@ node scripts/generate-yahoo-tw-configs.js --type=eps
 **台灣市場**:
 ```bash
 # 生成所有類型配置
-node scripts/generate-yahoo-tw-configs.js
+npx tsx scripts/generate-yahoo-tw-configs.ts
 
 # 生成特定類型配置 (完整列表)
-node scripts/generate-yahoo-tw-configs.js --type=balance-sheet
-node scripts/generate-yahoo-tw-configs.js --type=cash-flow-statement  
-node scripts/generate-yahoo-tw-configs.js --type=dividend
-node scripts/generate-yahoo-tw-configs.js --type=eps
-node scripts/generate-yahoo-tw-configs.js --type=income-statement
-node scripts/generate-yahoo-tw-configs.js --type=revenue
+npx tsx scripts/generate-yahoo-tw-configs.ts --type=balance-sheet
+npx tsx scripts/generate-yahoo-tw-configs.ts --type=cash-flow-statement  
+npx tsx scripts/generate-yahoo-tw-configs.ts --type=dividend
+npx tsx scripts/generate-yahoo-tw-configs.ts --type=eps
+npx tsx scripts/generate-yahoo-tw-configs.ts --type=income-statement
+npx tsx scripts/generate-yahoo-tw-configs.ts --type=revenue
 ```
 
 **美國市場**:
 ```bash
 # 生成所有類型配置
-node scripts/generate-yahoo-us-configs.js
+npx tsx scripts/generate-yahoo-us-configs.ts
 
 # 生成特定類型配置 (完整列表)
-node scripts/generate-yahoo-us-configs.js --type=cashflow
-node scripts/generate-yahoo-us-configs.js --type=financials
+npx tsx scripts/generate-yahoo-us-configs.ts --type=cashflow
+npx tsx scripts/generate-yahoo-us-configs.ts --type=financials
 ```
 
 **日本市場**:
 ```bash
 # 生成所有類型配置 ✅
-node scripts/generate-yahoo-jp-configs.js
+npx tsx scripts/generate-yahoo-jp-configs.ts
 
 # 生成特定類型配置 (完整列表)
-node scripts/generate-yahoo-jp-configs.js --type=cashflow
-node scripts/generate-yahoo-jp-configs.js --type=financials
-node scripts/generate-yahoo-jp-configs.js --type=performance
+npx tsx scripts/generate-yahoo-jp-configs.ts --type=cashflow
+npx tsx scripts/generate-yahoo-jp-configs.ts --type=financials
+npx tsx scripts/generate-yahoo-jp-configs.ts --type=performance
 ```
 
 ### 🔄 生成器腳本工作原理
@@ -1020,7 +1020,7 @@ config.export.filename = config.export.filename.replace(
 
 ```bash
 # 測試生成指定類型
-node scripts/generate-yahoo-tw-configs.js --type=balance-sheet
+npx tsx scripts/generate-yahoo-tw-configs.ts --type=balance-sheet
 
 # 檢查生成的配置數量和內容
 ls config/yahoo-finance-tw-balance-sheet-*.json | wc -l
@@ -1043,7 +1043,7 @@ cat output/yahoo-finance-tw-balance-sheet-2454_TW_*.json | jq '.results[0].data'
 
 ```bash
 # 小批量測試
-node scripts/run-yahoo-tw-balance-sheet-batch.js --limit=3
+npx tsx scripts/run-yahoo-tw-balance-sheet-batch.ts --limit=3
 
 # 檢查批量結果
 ls output/yahoo-finance-tw-balance-sheet-*_*.json
@@ -1101,7 +1101,7 @@ console.log('Variables:', template.variables);
 "
 
 # 驗證生成邏輯
-node scripts/generate-yahoo-tw-configs.js --type=balance-sheet | head -20
+npx tsx scripts/generate-yahoo-tw-configs.ts --type=balance-sheet | head -20
 ```
 
 ### 🌐 跨區域一致性
@@ -1149,36 +1149,36 @@ node scripts/generate-yahoo-tw-configs.js --type=balance-sheet | head -20
 #### 台灣股票配置生成
 ```bash
 # 所有類型
-node scripts/generate-yahoo-tw-configs.js
+npx tsx scripts/generate-yahoo-tw-configs.ts
 
 # 特定類型
-node scripts/generate-yahoo-tw-configs.js --type=balance-sheet
-node scripts/generate-yahoo-tw-configs.js --type=cash-flow-statement
-node scripts/generate-yahoo-tw-configs.js --type=dividend
-node scripts/generate-yahoo-tw-configs.js --type=eps
-node scripts/generate-yahoo-tw-configs.js --type=income-statement
-node scripts/generate-yahoo-tw-configs.js --type=revenue
+npx tsx scripts/generate-yahoo-tw-configs.ts --type=balance-sheet
+npx tsx scripts/generate-yahoo-tw-configs.ts --type=cash-flow-statement
+npx tsx scripts/generate-yahoo-tw-configs.ts --type=dividend
+npx tsx scripts/generate-yahoo-tw-configs.ts --type=eps
+npx tsx scripts/generate-yahoo-tw-configs.ts --type=income-statement
+npx tsx scripts/generate-yahoo-tw-configs.ts --type=revenue
 ```
 
 #### 美國股票配置生成
 ```bash
 # 所有類型
-node scripts/generate-yahoo-us-configs.js
+npx tsx scripts/generate-yahoo-us-configs.ts
 
 # 特定類型
-node scripts/generate-yahoo-us-configs.js --type=cashflow
-node scripts/generate-yahoo-us-configs.js --type=financials
+npx tsx scripts/generate-yahoo-us-configs.ts --type=cashflow
+npx tsx scripts/generate-yahoo-us-configs.ts --type=financials
 ```
 
 #### 日本股票配置生成 ✅
 ```bash
 # 所有類型
-node scripts/generate-yahoo-jp-configs.js
+npx tsx scripts/generate-yahoo-jp-configs.ts
 
 # 特定類型
-node scripts/generate-yahoo-jp-configs.js --type=cashflow
-node scripts/generate-yahoo-jp-configs.js --type=financials
-node scripts/generate-yahoo-jp-configs.js --type=performance
+npx tsx scripts/generate-yahoo-jp-configs.ts --type=cashflow
+npx tsx scripts/generate-yahoo-jp-configs.ts --type=financials
+npx tsx scripts/generate-yahoo-jp-configs.ts --type=performance
 ```
 
 ## 版本記錄

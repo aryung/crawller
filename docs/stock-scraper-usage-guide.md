@@ -15,10 +15,10 @@ npm install
 ### 基本執行
 ```bash
 # Yahoo Japan 股票爬蟲
-node scripts/scrape-yahoo-jp-stock-details.js
+npx tsx scripts/scrape-yahoo-jp-stock-details.ts
 
 # Yahoo Taiwan 股票爬蟲 (如果存在)
-node scripts/scrape-yahoo-tw-stock-details.js
+npx tsx scripts/scrape-yahoo-tw-stock-details.ts
 ```
 
 ## 🔧 Yahoo Japan 股票爬蟲詳解
@@ -33,31 +33,31 @@ node scripts/scrape-yahoo-tw-stock-details.js
 #### 1. 基本參數
 ```bash
 # 限制處理分類數量
-node scripts/scrape-yahoo-jp-stock-details.js --limit=5
+npx tsx scripts/scrape-yahoo-jp-stock-details.ts --limit=5
 
 # 指定特定分類 ID
-node scripts/scrape-yahoo-jp-stock-details.js --category=food
+npx tsx scripts/scrape-yahoo-jp-stock-details.ts --category=food
 
 # 設置並發數量 (建議保持 1 避免 IP 封鎖)
-node scripts/scrape-yahoo-jp-stock-details.js --concurrent=1
+npx tsx scripts/scrape-yahoo-jp-stock-details.ts --concurrent=1
 ```
 
 #### 2. 分頁控制參數
 ```bash
 # 限制最大頁數
-node scripts/scrape-yahoo-jp-stock-details.js --max-pages=5
+npx tsx scripts/scrape-yahoo-jp-stock-details.ts --max-pages=5
 
 # 測試模式 (只處理前 2 頁)
-node scripts/scrape-yahoo-jp-stock-details.js --test-mode
+npx tsx scripts/scrape-yahoo-jp-stock-details.ts --test-mode
 ```
 
 #### 3. 參數組合使用
 ```bash
 # 測試特定分類的前 3 頁
-node scripts/scrape-yahoo-jp-stock-details.js --category=food --test-mode --max-pages=3
+npx tsx scripts/scrape-yahoo-jp-stock-details.ts --category=food --test-mode --max-pages=3
 
 # 批量處理前 10 個分類，每個分類最多 7 頁
-node scripts/scrape-yahoo-jp-stock-details.js --limit=10 --max-pages=7
+npx tsx scripts/scrape-yahoo-jp-stock-details.ts --limit=10 --max-pages=7
 ```
 
 ### 輸出結果
@@ -180,7 +180,7 @@ page=7 → 提取 121-128 股票 (最後8支)
 ### 啟用詳細日誌
 ```bash
 # 顯示所有調試信息
-DEBUG=true node scripts/scrape-yahoo-jp-stock-details.js --test-mode
+DEBUG=true npx tsx scripts/scrape-yahoo-jp-stock-details.ts --test-mode
 ```
 
 ### 常見問題
@@ -194,7 +194,7 @@ DEBUG=true node scripts/scrape-yahoo-jp-stock-details.js --test-mode
 curl -I "https://finance.yahoo.co.jp/stocks/search/?sector=food"
 
 # 2. 使用測試模式檢查
-node scripts/scrape-yahoo-jp-stock-details.js --category=food --test-mode
+npx tsx scripts/scrape-yahoo-jp-stock-details.ts --category=food --test-mode
 
 # 3. 檢查分類 ID 是否正確
 # 確認 category ID 存在於分類數據文件中
@@ -221,10 +221,10 @@ node scripts/scrape-yahoo-jp-stock-details.js --category=food --test-mode
 # 腳本預設 2 秒間隔，可在代碼中調整
 
 # 2. 使用測試模式減少負載
-node scripts/scrape-yahoo-jp-stock-details.js --test-mode
+npx tsx scripts/scrape-yahoo-jp-stock-details.ts --test-mode
 
 # 3. 分批處理
-node scripts/scrape-yahoo-jp-stock-details.js --limit=3
+npx tsx scripts/scrape-yahoo-jp-stock-details.ts --limit=3
 ```
 
 #### 4. 分類數據文件不存在
@@ -233,7 +233,7 @@ node scripts/scrape-yahoo-jp-stock-details.js --limit=3
 **解決方案**:
 ```bash
 # 先運行分類爬蟲
-node scripts/scrape-yahoo-jp-stock-categories.js
+npx tsx scripts/scrape-yahoo-jp-stock-categories.ts
 
 # 確認輸出文件存在
 ls -la output/yahoo-jp-stock-categories*.json
@@ -244,7 +244,7 @@ ls -la output/yahoo-jp-stock-categories*.json
 ### 最佳實踐設置
 ```bash
 # 推薦配置：單線程、適度限制
-node scripts/scrape-yahoo-jp-stock-details.js \
+npx tsx scripts/scrape-yahoo-jp-stock-details.ts \
   --concurrent=1 \
   --max-pages=10 \
   --limit=5
@@ -254,7 +254,7 @@ node scripts/scrape-yahoo-jp-stock-details.js \
 ```bash
 # 分批執行，避免 IP 封鎖
 # 第一批：前 5 個分類
-node scripts/scrape-yahoo-jp-stock-details.js --limit=5
+npx tsx scripts/scrape-yahoo-jp-stock-details.ts --limit=5
 
 # 等待 30 分鐘後執行第二批
 # (手動或使用 cron job)
@@ -274,7 +274,7 @@ node scripts/scrape-yahoo-jp-stock-details.js --limit=5
 cat output/yahoo-jp-stock-categories_*.json | jq 'keys'
 
 # 2. 處理特定分類
-node scripts/scrape-yahoo-jp-stock-details.js --category=construction
+npx tsx scripts/scrape-yahoo-jp-stock-details.ts --category=construction
 
 # 3. 批量處理特定類型
 # 在腳本中修改分類過濾邏輯
@@ -283,10 +283,10 @@ node scripts/scrape-yahoo-jp-stock-details.js --category=construction
 ### 結合其他腳本
 ```bash
 # 1. 先獲取分類
-node scripts/scrape-yahoo-jp-stock-categories.js
+npx tsx scripts/scrape-yahoo-jp-stock-categories.ts
 
 # 2. 再處理詳細數據
-node scripts/scrape-yahoo-jp-stock-details.js
+npx tsx scripts/scrape-yahoo-jp-stock-details.ts
 
 # 3. 後續數據處理
 # 使用輸出文件進行進一步分析
@@ -351,10 +351,10 @@ mv output/yahoo-jp-stock-details_2025-08-*.json archive/2025-08/
 
 ```bash
 # 基本執行
-node scripts/scrape-yahoo-tw-stock-details.js
+npx tsx scripts/scrape-yahoo-tw-stock-details.ts
 
 # 參數可能包括
-node scripts/scrape-yahoo-tw-stock-details.js --limit=10 --test-mode
+npx tsx scripts/scrape-yahoo-tw-stock-details.ts --limit=10 --test-mode
 ```
 
 具體參數和功能需要根據實際腳本實現進行調整。

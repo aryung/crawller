@@ -1,7 +1,30 @@
-#!/usr/bin/env node
+#!/usr/bin/env tsx
 
-const fs = require('fs');
-const path = require('path');
+import * as fs from 'fs';
+import * as path from 'path';
+
+interface StockCode {
+  stockCode: string;
+  companyName: string;
+  sector: string;
+}
+
+interface ConfigTemplate {
+  templateType?: string;
+  url: string;
+  variables?: Record<string, any>;
+  export?: {
+    filename?: string;
+    [key: string]: any;
+  };
+  [key: string]: any;
+}
+
+interface ProcessedTemplate {
+  type: string;
+  file: string;
+  configs: number;
+}
 
 // 解析命令行參數
 const args = process.argv.slice(2);
@@ -28,7 +51,7 @@ if (!fs.existsSync(stockCodesPath)) {
   process.exit(1);
 }
 
-const stockCodes = JSON.parse(fs.readFileSync(stockCodesPath, 'utf8'));
+const stockCodes: StockCode[] = JSON.parse(fs.readFileSync(stockCodesPath, 'utf8'));
 
 // 確保目錄存在 - 直接輸出到 config 目錄 (扁平結構)
 const configsDir = path.join(__dirname, '../config');
@@ -36,13 +59,13 @@ if (!fs.existsSync(configsDir)) {
   fs.mkdirSync(configsDir, { recursive: true });
 }
 
-let processedTemplates = [];
+const processedTemplates: ProcessedTemplate[] = [];
 let totalConfigs = 0;
 
 // 處理每個模板
 templateFiles.forEach(templateFile => {
   const templatePath = path.join(templatesDir, templateFile);
-  const template = JSON.parse(fs.readFileSync(templatePath, 'utf8'));
+  const template: ConfigTemplate = JSON.parse(fs.readFileSync(templatePath, 'utf8'));
   
   // 從文件名提取模板類型，避免從 templateType 欄位取得 (會造成重複的 tw-)
   const templateType = templateFile.replace('yahoo-finance-tw-', '').replace('.json', '');
@@ -59,7 +82,7 @@ templateFiles.forEach(templateFile => {
   
   // 為每個股票代碼生成配置
   stockCodes.forEach(stock => {
-    const config = { ...template };
+    const config: ConfigTemplate = { ...template };
     
     // 更新 URL 中的變數
     config.url = config.url.replace('${symbolCode}', stock.stockCode);

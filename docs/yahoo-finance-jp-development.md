@@ -295,19 +295,19 @@ if (companyName) {
 **新增參數支援**: 配合智能分頁策略使用
 ```bash
 # 基本執行
-node scripts/scrape-yahoo-jp-stock-details.js
+npx tsx scripts/scrape-yahoo-jp-stock-details.ts
 
 # 測試模式 (限制2頁)
-node scripts/scrape-yahoo-jp-stock-details.js --test-mode
+npx tsx scripts/scrape-yahoo-jp-stock-details.ts --test-mode
 
 # 指定分類
-node scripts/scrape-yahoo-jp-stock-details.js --category=food
+npx tsx scripts/scrape-yahoo-jp-stock-details.ts --category=food
 
 # 限制最大頁數
-node scripts/scrape-yahoo-jp-stock-details.js --max-pages=5
+npx tsx scripts/scrape-yahoo-jp-stock-details.ts --max-pages=5
 
 # 組合使用
-node scripts/scrape-yahoo-jp-stock-details.js --category=food --test-mode --max-pages=3
+npx tsx scripts/scrape-yahoo-jp-stock-details.ts --category=food --test-mode --max-pages=3
 ```
 
 #### 9. 容錯處理機制
@@ -818,7 +818,7 @@ vi data/yahoo-finance-jp-stockcodes.json
 #### 2. 生成配置文件
 ```bash
 # 自動生成所有配置
-node scripts/generate-batch-configs.js
+npx tsx scripts/generate-batch-configs.ts
 
 # 檢查生成的配置
 ls config/active/yahoo-finance-jp-*新股票代碼*.json
@@ -836,7 +836,7 @@ npm run crawl yahoo-finance-jp-financials-新股票代碼
 #### 4. 批量執行
 ```bash
 # 執行批量處理
-node scripts/run-yahoo-finance-batch.js
+npx tsx scripts/run-yahoo-finance-batch.ts
 ```
 
 ### 🔄 新增數據類型流程
@@ -937,7 +937,7 @@ npm run crawl yahoo-finance-jp-financials-143A_T
 #### 3. 批量測試
 ```bash
 # 測試批量處理（小批量）
-node scripts/run-yahoo-finance-batch.js --limit 3
+npx tsx scripts/run-yahoo-finance-batch.ts --limit 3
 ```
 
 ### 🚨 常見問題排除

@@ -1,19 +1,27 @@
-#!/usr/bin/env node
+#!/usr/bin/env tsx
 
-const { spawn } = require('child_process');
-const fs = require('fs');
-const path = require('path');
+import { spawn, ChildProcessWithoutNullStreams } from 'child_process';
+import * as fs from 'fs';
+import * as path from 'path';
+
+interface RunResult {
+  configName: string;
+  success: boolean;
+  output?: string;
+  error?: string;
+  code?: number;
+}
 
 // 解析命令行參數
 const args = process.argv.slice(2);
 const limitArg = args.find(arg => arg.startsWith('--limit='));
 const limit = limitArg ? parseInt(limitArg.split('=')[1]) : null;
 
-async function runCrawler(configName) {
+async function runCrawler(configName: string): Promise<RunResult> {
   return new Promise((resolve, reject) => {
     console.log(`🚀 開始執行: ${configName}`);
     
-    const child = spawn('npm', ['run', 'crawl', configName], {
+    const child: ChildProcessWithoutNullStreams = spawn('npm', ['run', 'crawl', configName], {
       stdio: 'pipe',
       cwd: path.join(__dirname, '..')
     });
@@ -21,48 +29,48 @@ async function runCrawler(configName) {
     let output = '';
     let errorOutput = '';
     
-    child.stdout.on('data', (data) => {
+    child.stdout.on('data', (data: Buffer) => {
       output += data.toString();
     });
     
-    child.stderr.on('data', (data) => {
+    child.stderr.on('data', (data: Buffer) => {
       errorOutput += data.toString();
     });
     
-    child.on('close', (code) => {
+    child.on('close', (code: number | null) => {
       if (code === 0) {
         console.log(`✅ 完成: ${configName}`);
         resolve({ configName, success: true, output });
       } else {
         console.log(`❌ 失敗: ${configName} (代碼: ${code})`);
-        resolve({ configName, success: false, error: errorOutput, code });
+        resolve({ configName, success: false, error: errorOutput, code: code || undefined });
       }
     });
     
-    child.on('error', (error) => {
+    child.on('error', (error: Error) => {
       console.log(`💥 錯誤: ${configName} - ${error.message}`);
       reject({ configName, error: error.message });
     });
   });
 }
 
-function delay(ms) {
+function delay(ms: number): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-async function main() {
+async function main(): Promise<void> {
   // 檢查兩個可能的配置目錄
   const activeDir = path.join(__dirname, '../config/active');
   const configsDir = path.join(__dirname, '../config');
   
-  // 找出所有 Yahoo Finance TW revenue 配置文件
-  let configFiles = [];
+  // 找出所有 Yahoo Finance TW Balance Sheet 配置文件
+  let configFiles: string[] = [];
   
   // 首先檢查 active 目錄
   if (fs.existsSync(activeDir)) {
     try {
       configFiles = fs.readdirSync(activeDir)
-        .filter(file => file.startsWith('yahoo-finance-tw-revenue-') && file.endsWith('.json'))
+        .filter(file => file.startsWith('yahoo-finance-tw-balance-sheet-') && file.endsWith('.json'))
         .map(file => `active/${file.replace('.json', '')}`);
     } catch (error) {
       console.log('⚠️  無法讀取 active 配置目錄:', activeDir);
@@ -73,7 +81,7 @@ async function main() {
   if (configFiles.length === 0) {
     try {
       configFiles = fs.readdirSync(configsDir)
-        .filter(file => file.startsWith('yahoo-finance-tw-revenue-') && file.endsWith('.json'))
+        .filter(file => file.startsWith('yahoo-finance-tw-balance-sheet-') && file.endsWith('.json'))
         .map(file => file.replace('.json', ''));
     } catch (error) {
       console.log('❌ 無法讀取配置目錄:', configsDir);
@@ -82,8 +90,8 @@ async function main() {
   }
   
   if (configFiles.length === 0) {
-    console.log('❌ 沒有找到 Yahoo Finance TW revenue 配置文件');
-    console.log('💡 請先執行: node scripts/generate-yahoo-tw-configs.js --type=revenue');
+    console.log('❌ 沒有找到 Yahoo Finance TW Balance Sheet 配置文件');
+    console.log('💡 請先執行: npx tsx scripts/generate-yahoo-tw-configs.ts --type=balance-sheet');
     process.exit(1);
   }
   
@@ -93,19 +101,19 @@ async function main() {
     console.log(`📊 限制執行數量: ${limit} 個配置`);
   }
   
-  console.log('🔍 Yahoo Finance Taiwan Revenue 批量爬蟲');
+  console.log('🔍 Yahoo Finance Taiwan Balance Sheet 批量爬蟲');
   console.log('===============================================');
-  console.log(`📋 找到 ${configFiles.length} 個營收配置文件`);
+  console.log(`📋 找到 ${configFiles.length} 個資產負債表配置文件`);
   console.log(`⏱️  預估執行時間: ${Math.ceil(configFiles.length * 15 / 60)} 分鐘`);
   console.log('');
   
-  const results = [];
+  const results: RunResult[] = [];
   const startTime = Date.now();
   
   for (let i = 0; i < configFiles.length; i++) {
     const configName = configFiles[i];
     
-    console.log(`\n[${i + 1}/${configFiles.length}] 處理營收配置: ${configName}`);
+    console.log(`\n[${i + 1}/${configFiles.length}] 處理資產負債表配置: ${configName}`);
     
     try {
       const result = await runCrawler(configName);
@@ -117,7 +125,7 @@ async function main() {
         await delay(8000);
       }
       
-    } catch (error) {
+    } catch (error: any) {
       console.log(`💥 配置執行異常: ${configName}`, error);
       results.push({ configName, success: false, error: error.error || error.message });
     }
@@ -129,7 +137,7 @@ async function main() {
   const endTime = Date.now();
   const duration = Math.round((endTime - startTime) / 1000);
   
-  console.log('\n✅ 營收批量執行完成');
+  console.log('\n✅ Balance Sheet批量執行完成');
   console.log('===============================================');
   console.log(`📊 成功: ${successful} 個`);
   console.log(`❌ 失敗: ${failed} 個`);
@@ -155,10 +163,11 @@ async function main() {
   }
   
   console.log('\n💡 提示:');
-  console.log('   - 檢查 output/ 目錄查看營收爬取結果');
+  console.log('   - 檢查 output/ 目錄查看資產負債表爬取結果');
   console.log('   - 使用 --limit=N 參數限制執行數量');
   console.log('   - 失敗的配置可以單獨重新執行');
-  console.log('   - 營收數據格式: 「單月合併 (仟元)」');
+  console.log('   - 資產負債表數據格式: 「總資產、總負債、總權益」季度/年度表格');
+  console.log('   - 輸出格式: fiscalPeriod, totalAssets, totalLiabilities, totalEquity, bookValuePerShare');
 }
 
 main().catch(console.error);

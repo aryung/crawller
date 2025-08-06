@@ -30,8 +30,8 @@
 ├── data/                   # 數據源目錄
 │   └── *.json              # 純數據文件
 ├── scripts/                # 自動化腳本
-│   ├── generate-*.js       # 配置生成器
-│   └── run-*.js           # 批處理執行器
+│   ├── generate-*.ts       # 配置生成器
+│   └── run-*.ts           # 批處理執行器
 └── output/                 # 批處理結果
 ```
 
@@ -232,10 +232,10 @@ main().catch(console.error);
 
 ```bash
 # 生成配置
-node scripts/generate-batch-configs.js
+npx tsx scripts/generate-batch-configs.ts
 
 # 執行批處理
-node scripts/run-yahoo-finance-batch.js
+npx tsx scripts/run-yahoo-finance-batch.ts
 ```
 
 ## 進階功能
@@ -420,14 +420,14 @@ function checkSystemResources() {
 
 ```bash
 # 測試單一配置
-node scripts/generate-batch-configs.js
+npx tsx scripts/generate-batch-configs.ts
 npm run crawl generated-config-name
 
 # 檢查生成的配置
 cat config/generated-config-name.json
 
 # 啟用詳細日誌
-DEBUG=true node scripts/run-batch-processor.js
+DEBUG=true npx tsx scripts/run-batch-processor.ts
 ```
 
 ## 擴展功能

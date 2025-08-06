@@ -56,7 +56,7 @@ graph TD
 
 /scripts/
 ├── generate-yahoo-tw-configs.js          # 配置生成器
-└── run-yahoo-tw-dividend-batch.js        # 批量執行腳本
+└── run-yahoo-tw-dividend-batch.ts        # 批量執行腳本
 ```
 
 ---
@@ -325,7 +325,7 @@ combineSimpleTWRevenueData: (content: string | string[], context?: any): TWReven
 **配置生成與測試**：
 ```bash
 # 1. 生成 Revenue 配置
-node scripts/generate-yahoo-tw-configs.js --type=revenue
+npx tsx scripts/generate-yahoo-tw-configs.ts --type=revenue
 
 # 2. 測試單一配置
 npm run crawl yahoo-finance-tw-revenue-2454_TW
@@ -334,13 +334,13 @@ npm run crawl yahoo-finance-tw-revenue-2454_TW
 cat output/yahoo-finance-tw-revenue-2454_TW_*.json | jq '.results[0].data.simpleRevenueData[0]'
 
 # 4. 批量執行（未來）
-node scripts/run-yahoo-tw-revenue-batch.js --limit=3
+npx tsx scripts/run-yahoo-tw-revenue-batch.ts --limit=3
 ```
 
 **模板同步驗證**：
 ```bash
 # 重新生成並驗證配置一致性
-node scripts/generate-yahoo-tw-configs.js --type=revenue
+npx tsx scripts/generate-yahoo-tw-configs.ts --type=revenue
 diff config/yahoo-finance-tw-revenue-2454_TW.json config/templates/yahoo-finance-tw-revenue.json
 ```
 
@@ -623,13 +623,13 @@ vi data/yahoo-finance-tw-stockcodes.json
 #### 2. 生成配置文件
 ```bash
 # 生成 Dividend 配置
-node scripts/generate-yahoo-tw-configs.js --type=dividend
+npx tsx scripts/generate-yahoo-tw-configs.ts --type=dividend
 
 # 生成 Revenue 配置 (未來)
-node scripts/generate-yahoo-tw-configs.js --type=revenue
+npx tsx scripts/generate-yahoo-tw-configs.ts --type=revenue
 
 # 生成所有類型配置
-node scripts/generate-yahoo-tw-configs.js
+npx tsx scripts/generate-yahoo-tw-configs.ts
 ```
 
 #### 3. 測試單一配置
@@ -644,10 +644,10 @@ npm run crawl active/yahoo-finance-tw-revenue-新股票代碼_TW
 #### 4. 批量執行
 ```bash
 # 執行 Dividend 批量處理
-node scripts/run-yahoo-tw-dividend-batch.js
+npx tsx scripts/run-yahoo-tw-dividend-batch.ts
 
 # 限制執行數量
-node scripts/run-yahoo-tw-dividend-batch.js --limit=3
+npx tsx scripts/run-yahoo-tw-dividend-batch.ts --limit=3
 ```
 
 ### 🔄 新增數據類型流程
@@ -755,7 +755,7 @@ npm run crawl active/yahoo-finance-tw-dividend-1101_TW
 #### 3. 批量測試
 ```bash
 # 測試小批量處理
-node scripts/run-yahoo-tw-dividend-batch.js --limit=3
+npx tsx scripts/run-yahoo-tw-dividend-batch.ts --limit=3
 ```
 
 ### 🚨 常見問題排除

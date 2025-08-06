@@ -54,10 +54,10 @@ npm run crawl yahoo-finance-jp-7901_T
 
 ```bash
 # 生成批處理配置
-node scripts/generate-batch-configs.js
+npx tsx scripts/generate-batch-configs.ts
 
 # 執行批量爬取
-node scripts/run-yahoo-finance-batch.js
+npx tsx scripts/run-yahoo-finance-batch.ts
 ```
 
 ## 架構說明
@@ -145,7 +145,7 @@ graph LR
 
 2. 重新生成配置：
 ```bash
-node scripts/generate-batch-configs.js
+npx tsx scripts/generate-batch-configs.ts
 ```
 
 3. 執行爬取：

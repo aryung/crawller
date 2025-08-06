@@ -1,7 +1,35 @@
-#!/usr/bin/env node
+#!/usr/bin/env tsx
 
-const fs = require('fs');
-const path = require('path');
+import * as fs from 'fs';
+import * as path from 'path';
+
+interface StockCode {
+  stockCode: string;
+  companyName: string;
+  sector: string;
+}
+
+interface ConfigTemplate {
+  templateType?: string;
+  url: string;
+  variables?: Record<string, any>;
+  export?: {
+    filename?: string;
+    [key: string]: any;
+  };
+  _note?: string;
+  stockInfo?: {
+    stockCode: string;
+    companyName: string;
+    sector: string;
+  };
+  [key: string]: any;
+}
+
+interface ProcessedTemplate {
+  type: string;
+  count: number;
+}
 
 // 解析命令行參數
 const args = process.argv.slice(2);
@@ -23,7 +51,7 @@ if (templateFiles.length === 0) {
 
 // 讀取股票代碼數據
 const stockCodesPath = path.join(__dirname, '../data/yahoo-finance-jp-stockcodes.json');
-const stockCodes = JSON.parse(fs.readFileSync(stockCodesPath, 'utf8'));
+const stockCodes: StockCode[] = JSON.parse(fs.readFileSync(stockCodesPath, 'utf8'));
 
 // 確保目錄存在
 const activeDir = path.join(__dirname, '../config/active');
@@ -32,13 +60,13 @@ if (!fs.existsSync(activeDir)) {
   fs.mkdirSync(activeDir, { recursive: true });
 }
 
-let processedTemplates = [];
+const processedTemplates: ProcessedTemplate[] = [];
 let totalConfigs = 0;
 
 // 處理每個模板
 templateFiles.forEach(templateFile => {
   const templatePath = path.join(templatesDir, templateFile);
-  const template = JSON.parse(fs.readFileSync(templatePath, 'utf8'));
+  const template: ConfigTemplate = JSON.parse(fs.readFileSync(templatePath, 'utf8'));
   
   const templateType = template.templateType || templateFile.replace('yahoo-finance-jp-', '').replace('.json', '');
   
@@ -65,19 +93,24 @@ templateFiles.forEach(templateFile => {
   
   // 為每個股票代碼生成配置文件
   stockCodes.forEach(stock => {
-    const config = JSON.parse(JSON.stringify(template)); // 深拷貝
+    const config: ConfigTemplate = JSON.parse(JSON.stringify(template)); // 深拷貝
     
     // 替換 URL 中的變數
     config.url = config.url.replace('${stockCode}', stock.stockCode);
     
     // 更新變數
+    if (!config.variables) {
+      config.variables = {};
+    }
     config.variables.stockCode = stock.stockCode;
     
     // 更新註釋
     config._note = `Yahoo Finance Japan ${templateType} data for ${stock.companyName} - ${stock.stockCode} (${stock.sector})`;
     
     // 更新導出文件名
-    config.export.filename = `yahoo_finance_jp_${templateType}_${stock.stockCode.replace('.', '')}`;
+    if (config.export) {
+      config.export.filename = `yahoo_finance_jp_${templateType}_${stock.stockCode.replace('.', '')}`;
+    }
     
     // 添加股票信息到配置中
     config.stockInfo = {
@@ -121,6 +154,6 @@ console.log(`📁 配置文件位置: config/ 和 config/active/`);
 if (processedTemplates.length > 1) {
   console.log(`\n💡 使用方法:`);
   processedTemplates.forEach(template => {
-    console.log(`   - ${template.type}: node scripts/run-yahoo-finance-${template.type}-batch.js`);
+    console.log(`   - ${template.type}: npx tsx scripts/run-yahoo-finance-${template.type}-batch.ts`);
   });
 }

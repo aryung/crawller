@@ -57,8 +57,8 @@ graph TD
 
 /scripts/
 ├── generate-yahoo-us-configs.js          # 配置生成器
-├── run-yahoo-us-cashflow-batch.js        # Cash Flow 批量執行
-└── run-yahoo-us-financials-batch.js      # Financials 批量執行
+├── run-yahoo-us-cashflow-batch.ts        # Cash Flow 批量執行
+└── run-yahoo-us-financials-batch.ts      # Financials 批量執行
 ```
 
 ---
@@ -399,13 +399,13 @@ vi data/yahoo-finance-us-stockcodes.json
 #### 2. 生成配置文件
 ```bash
 # 生成 Cash Flow 配置
-node scripts/generate-yahoo-us-configs.js --type=cashflow
+npx tsx scripts/generate-yahoo-us-configs.ts --type=cashflow
 
 # 生成 Financials 配置
-node scripts/generate-yahoo-us-configs.js --type=financials
+npx tsx scripts/generate-yahoo-us-configs.ts --type=financials
 
 # 生成所有類型配置
-node scripts/generate-yahoo-us-configs.js
+npx tsx scripts/generate-yahoo-us-configs.ts
 ```
 
 #### 3. 測試單一配置
@@ -420,10 +420,10 @@ npm run crawl yahoo-finance-us-financials-新股票代碼
 #### 4. 批量執行
 ```bash
 # 執行 Cash Flow 批量處理
-node scripts/run-yahoo-us-cashflow-batch.js
+npx tsx scripts/run-yahoo-us-cashflow-batch.ts
 
 # 執行 Financials 批量處理
-node scripts/run-yahoo-us-financials-batch.js
+npx tsx scripts/run-yahoo-us-financials-batch.ts
 ```
 
 ### 🔄 新增數據類型流程
@@ -531,7 +531,7 @@ npm run crawl yahoo-finance-us-financials-MSFT
 #### 3. 批量測試
 ```bash
 # 測試小批量處理
-node scripts/run-yahoo-us-cashflow-batch.js --limit=3
+npx tsx scripts/run-yahoo-us-cashflow-batch.ts --limit=3
 ```
 
 ### 🚨 常見問題排除

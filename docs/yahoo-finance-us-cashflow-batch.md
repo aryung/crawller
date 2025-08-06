@@ -17,10 +17,10 @@
 
 ```bash
 # 1. 生成所有配置檔案
-node scripts/generate-yahoo-us-configs.js --type=cashflow
+npx tsx scripts/generate-yahoo-us-configs.ts --type=cashflow
 
 # 2. 執行批量爬取
-node scripts/run-yahoo-us-cashflow-batch.js
+npx tsx scripts/run-yahoo-us-cashflow-batch.ts
 
 # 3. 檢查結果
 ls output/yahoo_finance_us_cashflow_*.json
@@ -56,12 +56,12 @@ ls output/yahoo_finance_us_cashflow_*.json
 
 **生成所有 Cash Flow 配置**：
 ```bash
-node scripts/generate-yahoo-us-configs.js --type=cashflow
+npx tsx scripts/generate-yahoo-us-configs.ts --type=cashflow
 ```
 
 **生成所有美國股票配置**：
 ```bash
-node scripts/generate-yahoo-us-configs.js
+npx tsx scripts/generate-yahoo-us-configs.ts
 ```
 
 ### 📁 生成的檔案結構
@@ -131,16 +131,16 @@ config/
 
 **完整批量執行**：
 ```bash
-node scripts/run-yahoo-us-cashflow-batch.js
+npx tsx scripts/run-yahoo-us-cashflow-batch.ts
 ```
 
 **限制執行數量**（測試用）：
 ```bash
 # 只執行前 3 個配置
-node scripts/run-yahoo-us-cashflow-batch.js --limit=3
+npx tsx scripts/run-yahoo-us-cashflow-batch.ts --limit=3
 
 # 只執行前 5 個配置
-node scripts/run-yahoo-us-cashflow-batch.js --limit=5
+npx tsx scripts/run-yahoo-us-cashflow-batch.ts --limit=5
 ```
 
 ### ⏱️ 執行時間預估
@@ -274,7 +274,7 @@ cat output/yahoo_finance_us_cashflow_AAPL.json | jq '.structuredCashFlowData[0]'
 **解決方案**：
 ```bash
 # 重新生成配置檔案
-node scripts/generate-yahoo-us-configs.js --type=cashflow
+npx tsx scripts/generate-yahoo-us-configs.ts --type=cashflow
 
 # 確認檔案生成成功
 ls config/yahoo-finance-us-cashflow-*.json
@@ -314,7 +314,7 @@ vi config/templates/yahoo-finance-us-cashflow.json
 **啟用詳細日誌**：
 ```bash
 export DEBUG=crawler:*
-node scripts/run-yahoo-us-cashflow-batch.js --limit=1
+npx tsx scripts/run-yahoo-us-cashflow-batch.ts --limit=1
 ```
 
 **單一配置測試**：
@@ -335,16 +335,16 @@ cat output/yahoo_finance_us_cashflow_AAPL.json | jq
 1. **測試先行**：
    ```bash
    # 先測試少量配置
-   node scripts/run-yahoo-us-cashflow-batch.js --limit=3
+   npx tsx scripts/run-yahoo-us-cashflow-batch.ts --limit=3
    
    # 確認無誤後執行完整批量
-   node scripts/run-yahoo-us-cashflow-batch.js
+   npx tsx scripts/run-yahoo-us-cashflow-batch.ts
    ```
 
 2. **分批執行**：
    ```bash
    # 分批執行避免過載
-   node scripts/run-yahoo-us-cashflow-batch.js --limit=5
+   npx tsx scripts/run-yahoo-us-cashflow-batch.ts --limit=5
    # 等待完成後繼續下一批
    ```
 
@@ -354,7 +354,7 @@ cat output/yahoo_finance_us_cashflow_AAPL.json | jq
    vi data/yahoo-finance-us-stockcodes.json
    
    # 重新生成配置
-   node scripts/generate-yahoo-us-configs.js --type=cashflow
+   npx tsx scripts/generate-yahoo-us-configs.ts --type=cashflow
    ```
 
 ### 🔄 自動化腳本
@@ -363,10 +363,10 @@ cat output/yahoo_finance_us_cashflow_AAPL.json | jq
 ```bash
 # 新增到 crontab
 # 每日早上 9:00 執行
-0 9 * * * cd /path/to/crawler && node scripts/run-yahoo-us-cashflow-batch.js
+0 9 * * * cd /path/to/crawler && npx tsx scripts/run-yahoo-us-cashflow-batch.ts
 
 # 每週一重新生成配置
-0 8 * * 1 cd /path/to/crawler && node scripts/generate-yahoo-us-configs.js --type=cashflow
+0 8 * * 1 cd /path/to/crawler && npx tsx scripts/generate-yahoo-us-configs.ts --type=cashflow
 ```
 
 ### 📊 數據驗證

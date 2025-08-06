@@ -1,8 +1,23 @@
-#!/usr/bin/env node
+#!/usr/bin/env tsx
 
-const { chromium } = require('playwright');
-const fs = require('fs');
-const path = require('path');
+import { chromium, Browser, BrowserContext, Page } from 'playwright';
+import * as fs from 'fs';
+import * as path from 'path';
+
+interface CategoryLink {
+  name: string;
+  url: string;
+  categoryId: string;
+}
+
+interface CategoriesData {
+  [category: string]: CategoryLink[];
+}
+
+interface DefaultCategory {
+  name: string;
+  categoryId: string;
+}
 
 /**
  * Yahoo Japan 股票分類爬蟲腳本
@@ -10,11 +25,11 @@ const path = require('path');
  * 輸出格式: {分類名: [{name: "子分類名", url: "連結", categoryId: "分類ID"}]}
  */
 
-async function scrapeYahooJpStockCategories() {
+async function scrapeYahooJpStockCategories(): Promise<CategoriesData> {
   console.log('🔍 Yahoo Japan 股票分類爬蟲啟動');
   console.log('====================================');
   
-  let browser;
+  let browser: Browser | null = null;
   try {
     // 啟動瀏覽器
     browser = await chromium.launch({ 
@@ -22,12 +37,12 @@ async function scrapeYahooJpStockCategories() {
       timeout: 30000 
     });
     
-    const context = await browser.newContext({
+    const context: BrowserContext = await browser.newContext({
       userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
       viewport: { width: 1920, height: 1080 }
     });
     
-    const page = await context.newPage();
+    const page: Page = await context.newPage();
     
     // 首先嘗試從搜索頁面獲取分類信息
     console.log('📄 正在載入頁面: https://finance.yahoo.co.jp/search/');
@@ -43,9 +58,9 @@ async function scrapeYahooJpStockCategories() {
     console.log('🔍 開始分析日股分類結構...');
     
     // 提取分類數據
-    const categoriesData = await page.evaluate(() => {
-      const result = {};
-      const categories = [];
+    const categoriesData: CategoriesData = await page.evaluate(() => {
+      const result: CategoriesData = {};
+      const categories: CategoryLink[] = [];
       
       console.log('開始尋找日股分類...');
       
@@ -59,7 +74,7 @@ async function scrapeYahooJpStockCategories() {
         '.category-item'              // 分類項目
       ];
       
-      let foundCategories = [];
+      let foundCategories: CategoryLink[] = [];
       
       for (const selector of categorySelectors) {
         const elements = document.querySelectorAll(selector);
@@ -73,18 +88,20 @@ async function scrapeYahooJpStockCategories() {
             
             if (element.tagName === 'OPTION') {
               // 處理下拉選單選項
-              categoryId = element.value;
-              categoryName = element.textContent.trim();
+              const optionElement = element as HTMLOptionElement;
+              categoryId = optionElement.value;
+              categoryName = optionElement.textContent?.trim() || '';
               if (categoryId && categoryName && categoryId !== '') {
                 categoryUrl = `https://finance.yahoo.co.jp/search/qi/?ids=${categoryId}&page=1`;
               }
-            } else if (element.href) {
+            } else if ((element as HTMLAnchorElement).href) {
               // 處理連結元素
-              const urlMatch = element.href.match(/ids=([^&]+)/);
+              const linkElement = element as HTMLAnchorElement;
+              const urlMatch = linkElement.href.match(/ids=([^&]+)/);
               if (urlMatch) {
                 categoryId = urlMatch[1];
-                categoryName = element.textContent.trim();
-                categoryUrl = element.href;
+                categoryName = linkElement.textContent?.trim() || '';
+                categoryUrl = linkElement.href;
                 
                 // 確保 URL 包含 page 參數
                 if (!categoryUrl.includes('page=')) {
@@ -96,7 +113,7 @@ async function scrapeYahooJpStockCategories() {
               const dataCategory = element.getAttribute('data-category');
               if (dataCategory) {
                 categoryId = dataCategory;
-                categoryName = element.textContent.trim();
+                categoryName = element.textContent?.trim() || '';
                 categoryUrl = `https://finance.yahoo.co.jp/search/qi/?ids=${categoryId}&page=1`;
               }
             }
@@ -125,7 +142,7 @@ async function scrapeYahooJpStockCategories() {
       // 如果沒有找到分類，嘗試手動構建一些常見的分類
       if (foundCategories.length === 0) {
         console.log('⚠️  未找到自動分類，使用預設分類列表');
-        const defaultCategories = [
+        const defaultCategories: DefaultCategory[] = [
           { name: '建設・資材', categoryId: '0050' },
           { name: '食料品', categoryId: '1050' },
           { name: '繊維製品', categoryId: '3050' },
@@ -159,8 +176,8 @@ async function scrapeYahooJpStockCategories() {
       }
       
       // 去重處理
-      const uniqueCategories = [];
-      const seenIds = new Set();
+      const uniqueCategories: CategoryLink[] = [];
+      const seenIds = new Set<string>();
       
       foundCategories.forEach(category => {
         if (!seenIds.has(category.categoryId)) {
@@ -205,7 +222,7 @@ async function scrapeYahooJpStockCategories() {
     
     return categoriesData;
     
-  } catch (error) {
+  } catch (error: any) {
     console.error('❌ 爬取過程中發生錯誤:', error.message);
     throw error;
   } finally {
@@ -228,4 +245,4 @@ if (require.main === module) {
     });
 }
 
-module.exports = { scrapeYahooJpStockCategories };
+export { scrapeYahooJpStockCategories };

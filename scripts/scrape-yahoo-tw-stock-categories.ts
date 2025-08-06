@@ -1,8 +1,17 @@
-#!/usr/bin/env node
+#!/usr/bin/env tsx
 
-const { chromium } = require('playwright');
-const fs = require('fs');
-const path = require('path');
+import { chromium, Browser, BrowserContext, Page } from 'playwright';
+import * as fs from 'fs';
+import * as path from 'path';
+
+interface CategoryLink {
+  name: string;
+  url: string;
+}
+
+interface CategoriesData {
+  [category: string]: CategoryLink[];
+}
 
 /**
  * Yahoo 股票分類爬蟲腳本
@@ -10,11 +19,11 @@ const path = require('path');
  * 輸出格式: {分類名: [{name: "子分類名", url: "連結"}]}
  */
 
-async function scrapeYahooStockCategories() {
+async function scrapeYahooStockCategories(): Promise<CategoriesData> {
   console.log('🔍 Yahoo 股票分類爬蟲啟動');
   console.log('====================================');
   
-  let browser;
+  let browser: Browser | null = null;
   try {
     // 啟動瀏覽器
     browser = await chromium.launch({ 
@@ -22,12 +31,12 @@ async function scrapeYahooStockCategories() {
       timeout: 30000 
     });
     
-    const context = await browser.newContext({
+    const context: BrowserContext = await browser.newContext({
       userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
       viewport: { width: 1920, height: 1080 }
     });
     
-    const page = await context.newPage();
+    const page: Page = await context.newPage();
     
     console.log('📄 正在載入頁面: https://tw.stock.yahoo.com/class/');
     
@@ -43,15 +52,15 @@ async function scrapeYahooStockCategories() {
     console.log('🔍 開始提取股票分類數據...');
     
     // 提取所有分類數據
-    const categoriesData = await page.evaluate(() => {
-      const result = {};
+    const categoriesData: CategoriesData = await page.evaluate(() => {
+      const result: CategoriesData = {};
       
       // 獲取所有包含股票分類的連結
       const allCategoryLinks = document.querySelectorAll('a[href*="class-quote"]');
       console.log(`發現 ${allCategoryLinks.length} 個分類連結`);
       
       // 分類邏輯：根據實際頁面內容分類
-      const linksByCategory = {
+      const linksByCategory: CategoriesData = {
         '上市類股': [],
         '上櫃類股': [],
         '電子產業': []
@@ -64,7 +73,7 @@ async function scrapeYahooStockCategories() {
       const otcKeywords = ['櫃'];
       
       allCategoryLinks.forEach(link => {
-        const href = link.href;
+        const href = (link as HTMLAnchorElement).href;
         const text = link.textContent ? link.textContent.trim() : '';
         
         if (text && href && text !== '類股報價') {
@@ -98,8 +107,8 @@ async function scrapeYahooStockCategories() {
       
       // 過濾重複項目並返回
       Object.keys(linksByCategory).forEach(category => {
-        const uniqueLinks = [];
-        const seen = new Set();
+        const uniqueLinks: CategoryLink[] = [];
+        const seen = new Set<string>();
         
         linksByCategory[category].forEach(item => {
           const key = `${item.name}|${item.url}`;
@@ -141,7 +150,7 @@ async function scrapeYahooStockCategories() {
     
     return categoriesData;
     
-  } catch (error) {
+  } catch (error: any) {
     console.error('❌ 爬取過程中發生錯誤:', error.message);
     throw error;
   } finally {
@@ -164,4 +173,4 @@ if (require.main === module) {
     });
 }
 
-module.exports = { scrapeYahooStockCategories };
+export { scrapeYahooStockCategories };
