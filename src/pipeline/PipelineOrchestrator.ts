@@ -57,7 +57,7 @@ export class PipelineOrchestrator {
   constructor(config: PipelineConfig = {}) {
     this.config = {
       dataDir: config.dataDir || 'data',
-      configDir: config.configDir || 'configs',
+      configDir: config.configDir || 'config',
       outputDir: config.outputDir || 'output',
       scriptsDir: config.scriptsDir || 'scripts',
       batchSize: config.batchSize || 100,

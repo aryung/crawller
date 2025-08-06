@@ -33,7 +33,7 @@ crawler/
 │   │       └── yahoo-finance-us.ts # Yahoo Finance 美國
 │   ├── types/                      # 型別定義
 │   └── utils/                      # 工具函數
-├── configs/                        # 爬蟲配置檔案
+├── config/                         # 爬蟲配置檔案
 ├── output/                         # 輸出結果
 └── docs/                          # 技術文檔
 ```
@@ -508,11 +508,11 @@ if (!isNaN(eps) &&
 ## 常用命令
 
 ```bash
-# 執行特定配置 (configs/ 目錄中的配置)
+# 執行特定配置 (config/ 目錄中的配置)
 npm run crawl yahoo-finance-tw-eps-2454_TW-simple
 
 # 執行 active/ 目錄中的配置 (需要使用 --config 參數)
-npx tsx src/cli.ts --config configs/active/test-eps.json
+npx tsx src/cli.ts --config config/active/test-eps.json
 
 # 檢查 TypeScript 錯誤
 npm run typecheck
@@ -532,7 +532,7 @@ npm run clean:output
 **目標**: 識別數據提取中的問題模式
 ```bash
 # 執行爬蟲並檢查輸出
-npx tsx src/cli.ts --config configs/active/test-config.json
+npx tsx src/cli.ts --config config/active/test-config.json
 
 # 常見問題指標:
 # - 缺失期間數據 (如 2020-Q2 missing)
@@ -602,7 +602,7 @@ extract{DataType}FromPosition: (content: string | string[]): DataType[] => {
 ```bash
 # 1. 執行完整測試
 node scripts/generate-yahoo-tw-configs.js --type=cash-flow-statement
-npx tsx src/cli.ts --config configs/yahoo-finance-tw-cash-flow-statement-2454_TW.json
+npx tsx src/cli.ts --config config/yahoo-finance-tw-cash-flow-statement-2454_TW.json
 
 # 2. 驗證關鍵指標
 # ✅ 期間完整性: 檢查是否包含所有預期期間 (如 2020-Q2)
@@ -644,8 +644,8 @@ npm run typecheck
 #### 3. 配置模板測試流程
 ```bash
 # 1. 在 active/ 目錄中測試單一配置
-cp configs/templates/yahoo-finance-tw-cash-flow-statement.json configs/active/test-cashflow.json
-npx tsx src/cli.ts --config configs/active/test-cashflow.json
+cp config/templates/yahoo-finance-tw-cash-flow-statement.json config/active/test-cashflow.json
+npx tsx src/cli.ts --config config/active/test-cashflow.json
 
 # 2. 檢查輸出結果結構
 cat output/test-cashflow_*.json | jq '.results[0].data.independentCashFlowData[0]'
@@ -664,10 +664,10 @@ node scripts/generate-yahoo-tw-configs.js --type=cash-flow-statement
 npx tsx src/cli.ts crawl yahoo-finance-tw-cash-flow-statement-2330_TW
 
 # 檢查所有生成的配置文件
-ls configs/yahoo-finance-tw-cash-flow-statement-*.json | wc -l  # 應該是 15
+ls config/yahoo-finance-tw-cash-flow-statement-*.json | wc -l  # 應該是 15
 
 # 批量測試 (選擇性)
-for config in configs/yahoo-finance-tw-cash-flow-statement-233*; do
+for config in config/yahoo-finance-tw-cash-flow-statement-233*; do
   echo "測試: $(basename $config)"
   npx tsx src/cli.ts --config "$config" > /dev/null && echo "✅ 成功" || echo "❌ 失敗"
 done
@@ -814,7 +814,7 @@ document.querySelectorAll("table td, tbody td, div[class*='table'] div, li div, 
 
 ```
 crawler/
-├── configs/
+├── config/
 │   ├── templates/                    # 配置模板目錄
 │   │   ├── yahoo-finance-tw-balance-sheet.json
 │   │   ├── yahoo-finance-tw-eps.json
@@ -838,9 +838,9 @@ crawler/
 
 ### 🔧 開發環境配置
 
-#### configs/active/ 目錄用途
+#### config/active/ 目錄用途
 
-`configs/active/` 目錄是開發者專用的測試環境，用於：
+`config/active/` 目錄是開發者專用的測試環境，用於：
 
 - **手動配置測試**: 放置手動修改的配置文件進行測試
 - **模板原型開發**: 在批量生成前的單一配置原型測試
@@ -849,20 +849,20 @@ crawler/
 
 #### 開發工作流程
 
-**重要**: 執行 `configs/active/` 目錄中的配置文件時，必須使用 `--config` 參數指定完整路徑，而不能使用 `npm run crawl` 命令。
+**重要**: 執行 `config/active/` 目錄中的配置文件時，必須使用 `--config` 參數指定完整路徑，而不能使用 `npm run crawl` 命令。
 
 ```bash
 # 1️⃣ 在 active/ 目錄中創建或複製測試配置
-cp configs/yahoo-finance-tw-eps-2454_TW.json configs/active/test-eps.json
+cp config/yahoo-finance-tw-eps-2454_TW.json config/active/test-eps.json
 
 # 2️⃣ 修改 active/ 中的配置進行測試
-vim configs/active/test-eps.json
+vim config/active/test-eps.json
 
 # 3️⃣ 測試修改後的配置 (使用 --config 參數指定 active 目錄中的配置)
-npx tsx src/cli.ts --config configs/active/test-eps.json
+npx tsx src/cli.ts --config config/active/test-eps.json
 
 # 4️⃣ 確認修改有效後，更新對應的模板
-vim configs/templates/yahoo-finance-tw-eps.json
+vim config/templates/yahoo-finance-tw-eps.json
 
 # 5️⃣ 重新生成所有相關配置
 node scripts/generate-yahoo-tw-configs.js --type=eps
@@ -872,13 +872,13 @@ node scripts/generate-yahoo-tw-configs.js --type=eps
 - `active/` 目錄的配置不會被生成器覆蓋
 - 適合放置實驗性或一次性的配置修改
 - 正式修改應該同步到對應的模板文件
-- **使用 `--config` 參數**: 執行 active 目錄中的配置必須使用 `npx tsx src/cli.ts --config configs/active/<配置名>.json` 方式
+- **使用 `--config` 參數**: 執行 active 目錄中的配置必須使用 `npx tsx src/cli.ts --config config/active/<配置名>.json` 方式
 
 ### 🛠️ 模板開發流程
 
 #### 1. 創建配置模板
 
-**位置**: `configs/templates/yahoo-finance-{region}-{type}.json`
+**位置**: `config/templates/yahoo-finance-{region}-{type}.json`
 
 **模板範例** (Balance Sheet):
 ```json
@@ -987,7 +987,7 @@ node scripts/generate-yahoo-jp-configs.js --type=performance
 
 #### 核心流程
 
-1. **模板發現**: 自動掃描 `configs/templates/` 目錄中的模板檔案
+1. **模板發現**: 自動掃描 `config/templates/` 目錄中的模板檔案
 2. **股票代碼載入**: 讀取對應地區的股票代碼數據源
 3. **變數替換**: 將模板中的 `${symbolCode}` 替換為實際股票代碼
 4. **批量生成**: 為每個股票代碼生成獨立的配置文件
@@ -1023,17 +1023,17 @@ config.export.filename = config.export.filename.replace(
 node scripts/generate-yahoo-tw-configs.js --type=balance-sheet
 
 # 檢查生成的配置數量和內容
-ls configs/yahoo-finance-tw-balance-sheet-*.json | wc -l
+ls config/yahoo-finance-tw-balance-sheet-*.json | wc -l
 ```
 
 #### 2. 單一配置功能測試
 
 ```bash
-# 測試生成的配置 (configs/ 目錄中的配置)
+# 測試生成的配置 (config/ 目錄中的配置)
 npm run crawl yahoo-finance-tw-balance-sheet-2454_TW
 
 # 測試 active/ 目錄中的配置 (使用 --config 參數)
-npx tsx src/cli.ts --config configs/active/test-balance-sheet.json
+npx tsx src/cli.ts --config config/active/test-balance-sheet.json
 
 # 驗證輸出結果
 cat output/yahoo-finance-tw-balance-sheet-2454_TW_*.json | jq '.results[0].data'
@@ -1073,7 +1073,7 @@ ls output/yahoo-finance-tw-balance-sheet-*_*.json
    ```
    ❌ 沒有找到 Yahoo Finance Taiwan 模板文件
    ```
-   **解決**: 確認 `configs/templates/` 目錄中存在對應的模板文件
+   **解決**: 確認 `config/templates/` 目錄中存在對應的模板文件
 
 2. **股票代碼數據源缺失**:
    ```
@@ -1091,11 +1091,11 @@ ls output/yahoo-finance-tw-balance-sheet-*_*.json
 
 ```bash
 # 檢查模板結構
-cat configs/templates/yahoo-finance-tw-balance-sheet.json | jq '.'
+cat config/templates/yahoo-finance-tw-balance-sheet.json | jq '.'
 
 # 測試變數替換
 node -e "
-const template = require('./configs/templates/yahoo-finance-tw-balance-sheet.json');
+const template = require('./config/templates/yahoo-finance-tw-balance-sheet.json');
 console.log('URL:', template.url);
 console.log('Variables:', template.variables);
 "
@@ -1141,7 +1141,7 @@ node scripts/generate-yahoo-tw-configs.js --type=balance-sheet | head -20
 📊 dividend: 15 個配置文件
 
 🎯 總計: 45 個配置文件
-📁 輸出目錄: configs/
+📁 輸出目錄: config/
 ```
 
 ### 📋 快速參考指令
@@ -1201,11 +1201,11 @@ node scripts/generate-yahoo-jp-configs.js --type=performance
 
 - **v1.1.0** (2025-08-05): 配置生成器架構統一化
   - **新增**: 創建 `generate-yahoo-jp-configs.js` 日本配置生成器
-  - **統一**: 所有三個區域生成器使用扁平結構輸出到 `configs/`
+  - **統一**: 所有三個區域生成器使用扁平結構輸出到 `config/`
   - **改進**: 標準化生成器輸出格式和命令行參數
-  - **文檔**: 新增 `configs/active/` 開發環境說明
+  - **文檔**: 新增 `config/active/` 開發環境說明
   - **完成**: yahoo-tw、yahoo-jp、yahoo-us 三區域配置生成器完整支援
-  - **說明**: 使用 `configs/active/` 目錄中的配置需要 `--config` 參數指定完整路徑
+  - **說明**: 使用 `config/active/` 目錄中的配置需要 `--config` 參數指定完整路徑
 
 - **v1.0.0** (2025-08-04): 初始版本
   - 實現純動態 EPS 提取
@@ -1223,7 +1223,7 @@ node scripts/generate-yahoo-jp-configs.js --type=performance
 ## 聯繫資訊
 
 - **專案路徑**: `/Users/aryung/Downloads/Workshop/crawler`
-- **配置目錄**: `configs/`
+- **配置目錄**: `config/`
 - **輸出目錄**: `output/`
 - **文檔目錄**: `docs/`
 

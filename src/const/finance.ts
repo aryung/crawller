@@ -361,7 +361,7 @@ export const TW_REVENUE_DATA_CONSTANTS = {
   
   // 數值基本檢查 - 基於台灣上市公司實際營收範圍
   MIN_REASONABLE_VALUE: 1,         // 最小合理數值 (避免0或負數)
-  MAX_REASONABLE_REVENUE: 800000000000, // 最大合理營收 (8000億，基於台積電等大型公司)
+  MAX_REASONABLE_REVENUE: 1500000000000, // 最大合理營收 (1.5兆，考慮台積電等超大型公司月營收)
   MAX_DIGITS: 15,                  // 避免超大數字錯誤
   
   // 動態驗證參數 (替代硬編碼位數檢測)
@@ -369,7 +369,7 @@ export const TW_REVENUE_DATA_CONSTANTS = {
     // 基於數值範圍而非字符串長度的檢測
     SUSPICIOUS_MULTIPLIER: 100,     // 如果數值超過合理範圍100倍，可能是串接
     MIN_VALID_REVENUE: 1000,        // 最小有效營收 (千元)
-    MAX_SINGLE_COMPANY: 1000000000000 // 單一公司最大可能營收 (1兆)
+    MAX_SINGLE_COMPANY: 2000000000000 // 智能分離觸發閾值 (2兆，超過合理範圍即觸發修正)
   }
 } as const;
 

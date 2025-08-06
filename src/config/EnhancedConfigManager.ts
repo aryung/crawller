@@ -9,7 +9,7 @@ export class EnhancedConfigManager {
   private configPath: string;
   private configCache: Map<string, EnhancedCrawlerConfig> = new Map();
 
-  constructor(configPath: string = 'configs') {
+  constructor(configPath: string = 'config') {
     this.configPath = configPath;
   }
 
