@@ -1,7 +1,7 @@
 {
   "templateType": "tw-revenue",
   "url": "https://tw.stock.yahoo.com/quote/${symbolCode}/revenue",
-  "_note": "IMPROVED: This config extracts simplified revenue data using independent selectors following CLAUDE.md principles. Only extracts fiscalPeriod and revenue fields to avoid complex parsing issues and digit truncation problems.",
+  "_note": "INDEPENDENT SELECTORS: This config follows CLAUDE.md principles by using independent selectors for each revenue data field (periods, values, growth rates) to avoid data extraction errors and improve accuracy.",
   "actions": [
     {
       "type": "wait",
@@ -9,8 +9,14 @@
       "description": "等待頁面初始載入"
     },
     {
+      "type": "scroll",
+      "direction": "down",
+      "distance": 1000,
+      "description": "向下滾動確保所有營收歷史數據載入"
+    },
+    {
       "type": "wait",
-      "timeout": 3000,
+      "timeout": 4000,
       "description": "等待營收數據完全載入"
     }
   ],
@@ -19,20 +25,20 @@
       "selector": "h1, .symbol, .stock-name",
       "transform": "cleanStockSymbol"
     },
-    "fiscalPeriods": {
-      "selector": "table td, tbody td, div[class*='table'] div, li div, [class*='cell'], .table-cell",
+    "revenuePeriods": {
+      "selector": "table, tbody tr, div[data-symbol], .table, .data-table, [class*='revenue'], [class*='financial'], li, div[class*='row'], span[class*='value'], span[class*='period']",
       "multiple": true,
-      "transform": "extractTWRevenueFiscalPeriodsFromPosition"
+      "transform": "extractRevenuePeriodsSeparately"
     },
-    "revenueData": {
-      "selector": "table td, tbody td, div[class*='table'] div, li div, [class*='cell'], .table-cell", 
+    "revenueValues": {
+      "selector": "table, tbody tr, div[data-symbol], .table, .data-table, [class*='revenue'], [class*='financial'], li, div[class*='row'], span[class*='value'], span[class*='period']",
       "multiple": true,
-      "transform": "extractTWRevenueValuesFromPosition"
+      "transform": "extractRevenueValuesSeparately"
     },
-    "simpleRevenueData": {
+    "data": {
       "selector": "body",
       "multiple": false,
-      "transform": "combineSimpleTWRevenueData"
+      "transform": "combineSimpleRevenueData"
     }
   },
   "headers": {

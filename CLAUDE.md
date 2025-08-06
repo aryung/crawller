@@ -44,30 +44,99 @@ crawler/
 
 **核心概念**: 每個數據欄位使用獨立的 CSS 選擇器，避免字串解析和拼接問題。
 
-#### 錯誤做法
+#### ❌ 實際錯誤範例 (yahoo-finance-tw-revenue.json)
+
+**問題描述**: 使用通用選擇器和複雜解析導致數據提取錯誤
+
 ```json
 {
-  "combinedData": {
-    "selector": "tr td",
-    "multiple": true,
-    "transform": "parseRowData"
+  "selectors": {
+    "allData": {
+      "selector": "table td, tbody td, div[class*='table'] div, li div, [class*='cell'], .table-cell",
+      "multiple": true,
+      "transform": "extractAllTableData"
+    },
+    "periods": {
+      "selector": "table thead th, li div:first-child",
+      "multiple": true,
+      "transform": "extractPeriods"
+    },
+    "values": {
+      "selector": "table tbody td, li div:nth-child(2)",
+      "multiple": true,
+      "transform": "extractValues"
+    },
+    "data": {
+      "selector": "body",
+      "multiple": false,
+      "transform": "transformRevenueData"
+    }
   }
 }
 ```
 
-#### 正確做法
+**導致的問題**:
+- **數據混淆**: `allData` 選擇器提取所有表格內容，包含股價、營收、其他財務數據
+- **錯誤提取**: 營收數據 56,433,621 被誤認為股價數據 1,125,000
+- **期間缺失**: 2024-2025 數據完全遺失
+- **複雜解析**: `transformRevenueData` 函數需要複雜邏輯解析混合數據
+
+**相同錯誤範例還包括**:
+- `yahoo-finance-tw-income-statement.json` - 使用相同的通用選擇器模式
+- `yahoo-finance-tw-dividend.json` - 同樣依賴複雜的 `extractPeriods` 和 `extractValues`
+- `yahoo-finance-tw-cash-flow-statement.json` - 通用選擇器導致現金流類型混淆
+- `yahoo-finance-us-financials.json` - 使用 `structureUSFinancialDataFromCells` 進行複雜解析
+- `yahoo-finance-jp-financials.json` - 使用 `structureFinancialDataFromAllTableCells` 解析全表格
+
+#### ✅ 正確做法 (獨立選擇器方法)
+
+**每個數據欄位使用專門的 CSS 選擇器**:
+
 ```json
 {
-  "fiscalPeriods": {
-    "selector": "li div:first-child",
-    "multiple": true,
-    "transform": "debugFieldExtraction"
-  },
-  "epsValues": {
-    "selector": "li div:nth-child(2)", 
-    "multiple": true,
-    "transform": "debugFieldExtraction"
+  "selectors": {
+    "stockSymbol": {
+      "selector": "h1 .symbol, .stock-name .symbol",
+      "multiple": false,
+      "transform": "extractStockSymbol"
+    },
+    "revenuePeriods": {
+      "selector": "table.revenue-table thead th.period, .revenue-periods .period-cell",
+      "multiple": true,
+      "transform": "extractRevenuePeriods"
+    },
+    "revenueValues": {
+      "selector": "table.revenue-table tbody td.revenue-amount, .revenue-data .amount-cell",
+      "multiple": true,
+      "transform": "extractRevenueValues"
+    },
+    "revenueGrowthRates": {
+      "selector": "table.revenue-table tbody td.growth-rate, .revenue-data .growth-cell",
+      "multiple": true,
+      "transform": "extractGrowthRates"
+    },
+    "data": {
+      "selector": "body",
+      "multiple": false,
+      "transform": "combineIndependentRevenueData"
+    }
   }
+}
+```
+
+**對應的轉換函數**:
+```typescript
+// 每個欄位獨立提取，避免數據混淆
+extractRevenuePeriods: (content: string | string[]): string[] => {
+  // 專門提取營收期間數據 (如 2025-Q1, 2024-Q4...)
+},
+
+extractRevenueValues: (content: string | string[]): number[] => {
+  // 專門提取營收數值 (如 56,433,621, 42,851,513...)
+},
+
+combineIndependentRevenueData: (content: any, context?: any): UnifiedFinancialData[] => {
+  // 組合已提取的獨立數據，確保精確對應
 }
 ```
 
