@@ -8899,63 +8899,55 @@ function combineIncomeStatementData(content: any, context?: any): UnifiedFinanci
 
 /**
  * 提取股利所屬期間 (獨立選擇器)
- * 提取年度(2025, 2024)和半年度(2024H2, 2024H1)期間
+ * 提取季度(2025Q1, 2024Q4)、半年度(2024H2, 2024H1)和年度(2023, 2022)期間
  * 忽略發放期間欄位（第一個值）
  */
 function extractDividendPeriodsSeparately(content: string | string[]): string[] {
-  console.log('[Extract Dividend Periods] 🔍 開始提取股利所屬期間（季度優先）...');
+  console.log('[Extract Dividend Periods] 🔍 開始提取股利所屬期間...');
   
   const contentArray = Array.isArray(content) ? content : [content];
   const periods: string[] = [];
-  const processedPeriods = new Set<string>();
   
-  // 🎯 基於 DOM 分析結果，專門提取季度股利數據
-  // 項目格式: "2025Q15.00-0.44%1,1252025/09/16-2025/10/09--"
   for (let i = 0; i < contentArray.length; i++) {
     const item = contentArray[i]?.toString().trim();
     if (!item) continue;
     
-    // ✅ 精確匹配季度股利數據模式 (使用 :has 概念來排除年度總計)
-    // 季度格式特徵: 包含 Q1-Q4，並且包含股利數值和日期信息
-    const quarterlyDividendMatch = item.match(/^(20\d{2})Q([1-4])(\d+\.?\d*)/);
-    if (quarterlyDividendMatch) {
-      const year = quarterlyDividendMatch[1];
-      const quarter = quarterlyDividendMatch[2];
+    console.log(`[Extract Dividend Periods] 🔍 處理項目 ${i}: "${item}"`);
+    
+    // 匹配季度格式: 2025Q1, 2024Q4 等
+    const quarterMatch = item.match(/^(20\d{2})Q([1-4])$/);
+    if (quarterMatch) {
+      const year = quarterMatch[1];
+      const quarter = quarterMatch[2];
       const period = `${year}-Q${quarter}`;
-      
-      if (!processedPeriods.has(period)) {
-        periods.push(period);
-        processedPeriods.add(period);
-        console.log(`[Extract Dividend Periods] ✅ 找到季度股利: ${period} (位置 ${i})`);
-      }
+      periods.push(period);
+      console.log(`[Extract Dividend Periods] ✅ 找到季度期間: ${period}`);
       continue;
     }
     
-    // 匹配半年度格式: 2024H2, 2024H1 (如果季度數據不可用)
-    const halfYearMatch = item.match(/^(20\d{2})H([12])(\d+\.?\d*)/);
+    // 匹配半年度格式: 2024H2, 2024H1
+    const halfYearMatch = item.match(/^(20\d{2})H([12])$/);
     if (halfYearMatch) {
       const year = halfYearMatch[1];
       const half = halfYearMatch[2];
       const period = `${year}-H${half}`;
-      
-      if (!processedPeriods.has(period)) {
-        periods.push(period);
-        processedPeriods.add(period);
-        console.log(`[Extract Dividend Periods] ✅ 找到半年度股利: ${period} (位置 ${i})`);
-      }
+      periods.push(period);
+      console.log(`[Extract Dividend Periods] ✅ 找到半年度期間: ${period}`);
       continue;
     }
     
-    // ❌ 明確排除年度總計格式 
-    // 年度總計特徵: 只有年份數字，沒有Q或H標識，且通常格式更簡單
-    const yearlyTotalMatch = item.match(/^(20\d{2})(\d+\.?\d*)-.+%$/);
-    if (yearlyTotalMatch) {
-      console.log(`[Extract Dividend Periods] ❌ 跳過年度總計: ${yearlyTotalMatch[1]} (位置 ${i})`);
+    // 匹配年度格式: 2023, 2022, etc. (只有數字)
+    const yearMatch = item.match(/^(20\d{2})$/);
+    if (yearMatch) {
+      const year = yearMatch[1];
+      const period = `${year}`;
+      periods.push(period);
+      console.log(`[Extract Dividend Periods] ✅ 找到年度期間: ${period}`);
       continue;
     }
   }
   
-  console.log(`[Extract Dividend Periods] ✅ 總共提取 ${periods.length} 個季度/半年度期間`);
+  console.log(`[Extract Dividend Periods] ✅ 總共提取 ${periods.length} 個期間`);
   return periods;
 }
 
@@ -8968,47 +8960,29 @@ function extractCashDividendsSeparately(content: string | string[]): number[] {
   const contentArray = Array.isArray(content) ? content : [content];
   const dividends: number[] = [];
   
-  // 🎯 直接從股利數據字符串中提取現金股利，避免依賴期間匹配
   for (let i = 0; i < contentArray.length; i++) {
     const item = contentArray[i]?.toString().trim();
     if (!item) continue;
     
-    // ✅ 精確匹配季度股利數據並提取現金股利數值
-    // 格式: "2025Q15.00-0.44%1,1252025/09/16-2025/10/09--"
-    const quarterlyDividendMatch = item.match(/^(20\d{2})Q([1-4])(\d+\.?\d*)/);
-    if (quarterlyDividendMatch) {
-      const year = quarterlyDividendMatch[1];
-      const quarter = quarterlyDividendMatch[2];
-      const cashDividend = parseFloat(quarterlyDividendMatch[3]);
-      const period = `${year}-Q${quarter}`;
+    console.log(`[Extract Cash Dividends] 🔍 處理項目 ${i}: "${item}"`);
+    
+    // 直接解析數字作為現金股利
+    // 處理純數字格式 (8.00, 7.00, 6.00 等)
+    const numericMatch = item.match(/^(\d+\.?\d*)$/);
+    if (numericMatch) {
+      const cashDividend = parseFloat(numericMatch[1]);
       
       if (cashDividend >= 0 && cashDividend <= 200) { // 合理範圍檢查
         dividends.push(cashDividend);
-        console.log(`[Extract Cash Dividends] ✅ ${period} -> ${cashDividend} 元 (位置 ${i})`);
+        console.log(`[Extract Cash Dividends] ✅ 找到現金股利: ${cashDividend} 元 (位置 ${i})`);
       }
       continue;
     }
     
-    // ✅ 半年度股利數據提取
-    // 格式: "2024H15.50-1.2%..."
-    const halfYearDividendMatch = item.match(/^(20\d{2})H([12])(\d+\.?\d*)/);
-    if (halfYearDividendMatch) {
-      const year = halfYearDividendMatch[1];
-      const half = halfYearDividendMatch[2];
-      const cashDividend = parseFloat(halfYearDividendMatch[3]);
-      const period = `${year}-H${half}`;
-      
-      if (cashDividend >= 0 && cashDividend <= 200) { // 合理範圍檢查
-        dividends.push(cashDividend);
-        console.log(`[Extract Cash Dividends] ✅ ${period} -> ${cashDividend} 元 (位置 ${i})`);
-      }
-      continue;
-    }
-    
-    // ❌ 跳過年度總計（已在期間提取中排除，這裡再次確認）
-    const yearlyTotalMatch = item.match(/^(20\d{2})(\d+\.?\d*)-.+%$/);
-    if (yearlyTotalMatch && !item.includes('Q') && !item.includes('H')) {
-      console.log(`[Extract Cash Dividends] ❌ 跳過年度總計股利: ${yearlyTotalMatch[1]} (位置 ${i})`);
+    // 處理 "-" 符號（表示無股利）
+    if (item === '-' || item === '--') {
+      dividends.push(0);
+      console.log(`[Extract Cash Dividends] ✅ 找到無股利: 0 元 (位置 ${i})`);
       continue;
     }
   }
@@ -9025,51 +8999,31 @@ function extractStockDividendsSeparately(content: string | string[]): number[] {
   
   const contentArray = Array.isArray(content) ? content : [content];
   const dividends: number[] = [];
-  const periods = extractDividendPeriodsSeparately(content);
   
-  // 基於期間位置動態查找對應的股票股利
-  for (const period of periods) {
-    let foundValue = false;
+  for (let i = 0; i < contentArray.length; i++) {
+    const item = contentArray[i]?.toString().trim();
+    if (!item) continue;
     
-    // 查找期間在數組中的位置
-    for (let i = 0; i < contentArray.length; i++) {
-      const item = contentArray[i]?.toString().trim();
+    console.log(`[Extract Stock Dividends] 🔍 處理項目 ${i}: "${item}"`);
+    
+    // 直接解析數字作為股票股利
+    // 處理純數字格式 (0.05, 0.0504, 4.00 等)
+    const numericMatch = item.match(/^(\d+\.?\d*)$/);
+    if (numericMatch) {
+      const stockDividend = parseFloat(numericMatch[1]);
       
-      if (item === period || (period.includes('H') && item === period)) {
-        // 找到期間，股票股利通常在現金股利後1個位置（期間後的2-3個位置）
-        for (let offset = 2; offset <= 4; offset++) {
-          const valueItem = contentArray[i + offset]?.toString().trim();
-          if (!valueItem) continue;
-          
-          // 股票股利通常是 "-" 或小數值
-          if (valueItem === '-') {
-            dividends.push(0);
-            foundValue = true;
-            console.log(`[Extract Stock Dividends] ${period} -> 0 股`);
-            break;
-          }
-          
-          // 檢查是否為有效的股票股利數值（通常較小）
-          const valueMatch = valueItem.match(/^(\d+\.?\d*)$/);
-          if (valueMatch) {
-            const value = parseFloat(valueMatch[1]);
-            if (value >= 0 && value <= 10) { // 股票股利通常較小
-              dividends.push(value);
-              foundValue = true;
-              console.log(`[Extract Stock Dividends] ${period} -> ${value} 股`);
-              break;
-            }
-          }
-        }
-        
-        if (foundValue) break;
+      if (stockDividend >= 0 && stockDividend <= 20) { // 股票股利通常較小
+        dividends.push(stockDividend);
+        console.log(`[Extract Stock Dividends] ✅ 找到股票股利: ${stockDividend} 股 (位置 ${i})`);
       }
+      continue;
     }
     
-    // 如果沒找到，添加0
-    if (!foundValue) {
+    // 處理 "-" 符號（表示無股利）
+    if (item === '-' || item === '--') {
       dividends.push(0);
-      console.log(`[Extract Stock Dividends] ${period} -> 0 股 (未找到)`);
+      console.log(`[Extract Stock Dividends] ✅ 找到無股利: 0 股 (位置 ${i})`);
+      continue;
     }
   }
   
@@ -9115,10 +9069,23 @@ function combineSimpleDividendData(content: any, context?: any): UnifiedFinancia
       symbolCode = context.variables.symbolCode.replace('.TW', '');
     }
     
-    // 組合數據
-    const maxLength = Math.max(periods.length, cashDividends.length, stockDividends.length);
+    // 確保數據對齊 - 使用期間數量作為基準
+    const periodsCount = periods.length;
+    const cashDividendsCount = cashDividends.length;
+    const stockDividendsCount = stockDividends.length;
     
-    for (let i = 0; i < maxLength; i++) {
+    console.log(`[Combine Dividend] 數據對齊檢查: 期間=${periodsCount}, 現金=${cashDividendsCount}, 股票=${stockDividendsCount}`);
+    
+    // 如果數據數量不匹配，嘗試調整
+    if (cashDividendsCount > periodsCount || stockDividendsCount > periodsCount) {
+      console.log(`[Combine Dividend] ⚠️ 數據數量不匹配，截取到期間數量: ${periodsCount}`);
+      // 只使用與期間數量相同的數據
+      cashDividends.length = periodsCount;
+      stockDividends.length = periodsCount;
+    }
+    
+    // 組合數據 - 使用期間數量作為基準
+    for (let i = 0; i < periodsCount; i++) {
       const period = periods[i];
       const cashDiv = cashDividends[i] || 0;
       const stockDiv = stockDividends[i] || 0;
@@ -9183,12 +9150,10 @@ function combineSimpleDividendData(content: any, context?: any): UnifiedFinancia
         exchangeArea: 'TPE',
         reportDate,
         fiscalYear,
-        fiscalQuarter: undefined,
-        fiscalMonth, // 新增 fiscalMonth，移除 undefined
+        fiscalMonth,
         reportType: reportType as any,
         dataSource: 'yahoo-finance-tw',
         lastUpdated: new Date().toISOString(),
-        // 移除 currencyCode: 'TWD'
         cashDividend: cashDiv,
         stockDividend: stockDiv
       };
