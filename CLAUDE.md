@@ -677,7 +677,7 @@ card:has(.status-active) .details               /* 選取啟用狀態卡片的�
 
 ### 獨立選擇器 (Independent Selectors)
 
-**核心概念**: 每個數據欄位使用獨立的 CSS 選擇器，避免字串解析和拼接問題。
+**核心概念**: 每個**最終輸出欄位**使用獨立的 CSS 選擇器，選擇器應直接選取該欄位對應的數據，避免選取後再進行複雜解析。選擇器的設計應基於**最終 data 結構的欄位需求**，而非強制依照 DOM 結構分離。
 
 #### ❌ 實際錯誤範例 (yahoo-finance-tw-revenue.json)
 
@@ -723,7 +723,72 @@ card:has(.status-active) .details               /* 選取啟用狀態卡片的�
 - `yahoo-finance-us-financials.json` - 使用 `structureUSFinancialDataFromCells` 進行複雜解析
 - `yahoo-finance-jp-financials.json` - 使用 `structureFinancialDataFromAllTableCells` 解析全表格
 
-#### ✅ 正確做法 (獨立選擇器方法)
+#### 📋 選擇器設計決策框架
+
+根據 DOM 結構特性和最終輸出欄位需求，選擇最適合的獨立選擇器策略：
+
+**情況A: DOM 中數據已自然分離**
+```json
+// ✅ 理想情況 - 直接獨立選擇器對應輸出欄位
+{
+  "cashDividend": {
+    "selector": ".dividend-cash .amount",
+    "transform": "cleanNumber"
+  },
+  "dividendYieldRate": {
+    "selector": ".dividend-yield .rate", 
+    "transform": "cleanPercentage"
+  },
+  "fiscalYear": {
+    "selector": ".dividend-period .year",
+    "transform": "cleanYear"
+  }
+}
+```
+
+**情況B: DOM 中數據混合但可分離選取**
+```json
+// ✅ 可接受 - 用精確選擇器分別選取各輸出欄位
+{
+  "cashDividend": {
+    "selector": "li:has(:contains('現金股利')) .amount",
+    "transform": "cleanNumber"
+  },
+  "stockDividend": {
+    "selector": "li:has(:contains('股票股利')) .amount",
+    "transform": "cleanNumber"  
+  },
+  "fiscalYear": {
+    "selector": "li:has(:contains('發放年度')) .year",
+    "transform": "cleanYear"
+  }
+}
+```
+
+**情況C: DOM 中數據完全混合無法分離**
+```json
+// ⚠️ 最後選擇 - 單一選擇器 + 結構化解析
+{
+  "dividendRecords": {
+    "selector": "li .dividend-record-complete",
+    "multiple": true,
+    "transform": "extractAllDividendFields" // 直接返回包含所有欄位的結構化數據
+  }
+}
+```
+
+```typescript
+// 情況C的轉換函數必須直接返回完整的輸出欄位結構
+extractAllDividendFields: (content: string[]): DividendData[] => {
+  return content.map(record => ({
+    fiscalYear: extractYear(record),      // 直接提取年份欄位
+    cashDividend: extractAmount(record),  // 直接提取股利金額欄位
+    dividendYieldRate: extractRate(record) // 直接提取殖利率欄位
+  }));
+}
+```
+
+#### ✅ 正確做法範例
 
 **每個數據欄位使用專門的 CSS 選擇器**:
 
