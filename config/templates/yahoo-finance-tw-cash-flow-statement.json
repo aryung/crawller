@@ -1,7 +1,7 @@
 {
   "templateType": "tw-cash-flow-statement",
   "url": "https://tw.stock.yahoo.com/quote/${symbolCode}/cash-flow-statement",
-  "_note": "INDEPENDENT SELECTORS IMPLEMENTATION: Following CLAUDE.md principles, this configuration uses a single comprehensive selector to capture all cash flow data, then applies intelligent vertical structure parsing with corrected data mapping. The combineIndependentCashFlowFields function detects vertical data arrangement and properly maps: period 0=latest quarter data, period 1=previous quarter, etc. This fixes the 2020-Q3 incorrect values and 2020-Q2 missing data issues by correctly parsing Yahoo Finance's vertical data structure.",
+  "_note": "UNIFIED: This config extracts cash flow statement data using unified selectors and transforms following the new standardized architecture. Outputs UnifiedFinancialData format directly compatible with FundamentalDataEntity.",
   "actions": [
     {
       "type": "wait",
@@ -36,45 +36,35 @@
       "selector": "h1, .symbol, .stock-name",
       "transform": "cleanStockSymbol"
     },
-    "allTableCells": {
-      "selector": "table td, tbody td, div[class*='table'] div, li div, [class*='cell'], .table-cell",
+    "operationCashflow": {
+      "selector": "div.table-header > div.table-header-wrapper > div:nth-child(n+2)",
       "multiple": true,
-      "transform": "debugFieldExtraction"
+      "transform": "extractIncomeStatementPeriodsSeparately"
     },
-    "fiscalPeriods": {
-      "selector": "table td, tbody td, div[class*='table'] div, li div, [class*='cell'], .table-cell",
+    "investmentCashflow": {
+      "selector": "ul > li:nth-child(1) > div > div:nth-child(n+2)",
       "multiple": true,
-      "transform": "extractFiscalPeriodsFromPosition"
+      "transform": "extractIncomeStatementValuesSeparately"
     },
-    "operatingCashFlowRow": {
-      "selector": "table td, tbody td, div[class*='table'] div, li div, [class*='cell'], .table-cell",
+    "financialCashflow": {
+      "selector": "ul > li:nth-child(2) > div > div:nth-child(n+2)",
       "multiple": true,
-      "transform": "extractOperatingCashFlowFromPosition"
+      "transform": "extractIncomeStatementValuesSeparately"
     },
-    "investingCashFlowRow": {
-      "selector": "table td, tbody td, div[class*='table'] div, li div, [class*='cell'], .table-cell",
+    "freeCashflow": {
+      "selector": "ul > li:nth-child(3) > div > div:nth-child(n+2)",
       "multiple": true,
-      "transform": "extractInvestingCashFlowFromPosition"
+      "transform": "extractIncomeStatementValuesSeparately"
     },
-    "financingCashFlowRow": {
-      "selector": "table td, tbody td, div[class*='table'] div, li div, [class*='cell'], .table-cell",
+    "netCashflow": {
+      "selector": "ul > li:nth-child(4) > div > div:nth-child(n+2)",
       "multiple": true,
-      "transform": "extractFinancingCashFlowFromPosition"
+      "transform": "extractIncomeStatementValuesSeparately"
     },
-    "freeCashFlowRow": {
-      "selector": "table td, tbody td, div[class*='table'] div, li div, [class*='cell'], .table-cell",
-      "multiple": true,
-      "transform": "extractFreeCashFlowFromPosition"
-    },
-    "netCashFlowRow": {
-      "selector": "table td, tbody td, div[class*='table'] div, li div, [class*='cell'], .table-cell",
-      "multiple": true,
-      "transform": "extractNetCashFlowFromPosition"
-    },
-    "independentCashFlowData": {
+    "data": {
       "selector": "body",
       "multiple": false,
-      "transform": "combineIndependentCashFlowData"
+      "transform": "transformCashFlowData"
     }
   },
   "headers": {
@@ -102,10 +92,8 @@
     "sector": "半導體業"
   },
   "export": {
-    "formats": [
-      "json",
-      "csv"
-    ],
+    "formats": ["json", "csv"],
     "filename": "yahoo_finance_tw_cash_flow_statement_${symbolCode}"
   }
 }
+
