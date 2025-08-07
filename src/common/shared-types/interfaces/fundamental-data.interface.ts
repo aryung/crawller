@@ -2,6 +2,7 @@ export enum FiscalReportType {
   MONTHLY = 'monthly',
   QUARTERLY = 'quarterly',
   ANNUAL = 'annual',
+  HALF = 'half-yearly',
 }
 
 // 新增月度數據專用的週期標識

@@ -21,11 +21,22 @@ export enum FiscalReportType {
 @Index('IDX_fundamental_data_symbol_exchange', ['symbolCode', 'exchangeArea'])
 @Index('IDX_fundamental_data_fiscal_period', [
   'symbolCode',
-  'fiscalYear',
-  'fiscalQuarter',
+  'exchangeArea',
+  'fiscalYear', 
   'fiscalMonth',
   'reportType',
 ])
+@Index('IDX_fundamental_data_quarterly', [
+  'symbolCode',
+  'exchangeArea',
+  'fiscalYear',
+  'fiscalMonth'
+], { where: "report_type = 'quarterly'" })
+@Index('IDX_fundamental_data_monthly', [
+  'symbolCode',
+  'fiscalYear',
+  'fiscalMonth'
+], { where: "report_type = 'monthly'" })
 export class FundamentalDataEntity {
   @PrimaryColumn({
     type: 'uuid',
@@ -63,18 +74,12 @@ export class FundamentalDataEntity {
   @Index()
   fiscalYear!: number;
 
-  @Column({
-    name: 'fiscal_quarter',
-    type: 'integer',
-    nullable: true,
-  })
-  @Index()
-  fiscalQuarter?: number;
 
   @Column({
     name: 'fiscal_month',
     type: 'integer',
     nullable: true,
+    comment: '財務月份: quarterly(1-4表示Q1-Q4), monthly(1-12), annual(12)',
   })
   @Index()
   fiscalMonth?: number;
@@ -94,6 +99,7 @@ export class FundamentalDataEntity {
     precision: 15,
     scale: 2,
     nullable: true,
+    comment: '營業收入，以仟元為單位',
   })
   revenue?: number;
 

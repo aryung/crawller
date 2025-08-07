@@ -303,7 +303,8 @@ export class UniversalCrawler {
         } else if (typeof selector === 'object' && selector !== null) {
           const selectorObj = selector as EnhancedSelectorItem;
           if (selectorObj.selector || selectorObj.extract) {
-            data[key] = await this.processEnhancedSelector($, selectorObj, config);
+            // Pass accumulated data to enable context for transform functions
+            data[key] = await this.processEnhancedSelector($, selectorObj, config, data);
           }
         }
       } catch (selectorError) {
@@ -315,13 +316,13 @@ export class UniversalCrawler {
     return data;
   }
 
-  private async processEnhancedSelector($: CheerioAPI, selectorObj: EnhancedSelectorItem, config: EnhancedCrawlerConfig): Promise<unknown> {
+  private async processEnhancedSelector($: CheerioAPI, selectorObj: EnhancedSelectorItem, config: EnhancedCrawlerConfig, accumulatedData?: Record<string, unknown>): Promise<unknown> {
     const { selector, multiple, extract, attribute, transform } = selectorObj;
 
     if (extract) {
       const cleanSelector = selector ? selector.replace(':multiple', '') : '';
       const isMultiple = Boolean(multiple || (selector && selector.includes(':multiple')));
-      return await this.processExtractConfig($, { selector: cleanSelector, multiple: isMultiple, extract }, config);
+      return await this.processExtractConfig($, { selector: cleanSelector, multiple: isMultiple, extract }, config, accumulatedData);
     }
 
     if (!selector) {
@@ -338,7 +339,7 @@ export class UniversalCrawler {
         : $(cleanSelector).attr(attribute);
 
       if (transform) {
-        values = await this.applyTransform(values, transform as string, config) as string | string[] | undefined;
+        values = await this.applyTransform(values, transform as string, config, accumulatedData) as string | string[] | undefined;
       }
       return values;
     } else {
@@ -347,13 +348,13 @@ export class UniversalCrawler {
         : $(cleanSelector).text().trim();
 
       if (transform) {
-        values = await this.applyTransform(values, transform as string, config) as string | string[];
+        values = await this.applyTransform(values, transform as string, config, accumulatedData) as string | string[];
       }
       return values;
     }
   }
 
-  private async processExtractConfig($: CheerioAPI, selectorConfig: { selector: string; multiple: boolean; extract: ExtractConfig }, config: EnhancedCrawlerConfig): Promise<unknown> {
+  private async processExtractConfig($: CheerioAPI, selectorConfig: { selector: string; multiple: boolean; extract: ExtractConfig }, config: EnhancedCrawlerConfig, accumulatedData?: Record<string, unknown>): Promise<unknown> {
     const { selector, multiple, extract } = selectorConfig;
     const matchedElements = $(selector);
 
@@ -368,7 +369,7 @@ export class UniversalCrawler {
         const element = matchedElements.eq(i);
         const result: Record<string, unknown> = {};
         for (const [key, extractConfig] of Object.entries(extract)) {
-          result[key] = await this.extractSingleValue($, element, extractConfig, config);
+          result[key] = await this.extractSingleValue($, element, extractConfig, config, accumulatedData);
         }
         results.push(result);
       }
@@ -379,13 +380,13 @@ export class UniversalCrawler {
 
       const result: Record<string, unknown> = {};
       for (const [key, extractConfig] of Object.entries(extract)) {
-        result[key] = await this.extractSingleValue($, element, extractConfig, config);
+        result[key] = await this.extractSingleValue($, element, extractConfig, config, accumulatedData);
       }
       return result;
     }
   }
 
-  private async extractSingleValue($: CheerioAPI, element: ReturnType<CheerioAPI>, extractConfig: string | { attribute?: string; transform?: string | TransformFunction | ((value: string) => unknown) }, config: EnhancedCrawlerConfig): Promise<unknown> {
+  private async extractSingleValue($: CheerioAPI, element: ReturnType<CheerioAPI>, extractConfig: string | { attribute?: string; transform?: string | TransformFunction | ((value: string) => unknown) }, config: EnhancedCrawlerConfig, accumulatedData?: Record<string, unknown>): Promise<unknown> {
     let value: unknown;
 
     if (typeof extractConfig === 'string') {
@@ -403,19 +404,20 @@ export class UniversalCrawler {
       }
 
       if (transform) {
-        value = await this.applyTransform(value, typeof transform === 'string' ? transform : 'identity', config);
+        value = await this.applyTransform(value, typeof transform === 'string' ? transform : 'identity', config, accumulatedData);
       }
     }
 
     return value;
   }
 
-  private async applyTransform(value: unknown, transformName: string, config: EnhancedCrawlerConfig): Promise<unknown> {
+  private async applyTransform(value: unknown, transformName: string, config: EnhancedCrawlerConfig, accumulatedData?: Record<string, unknown>): Promise<unknown> {
     try {
       const context = {
         url: config.url,
         baseUrl: config.variables?.baseUrl || config.url,
-        templateType: (config as any).templateType
+        templateType: (config as any).templateType,
+        ...accumulatedData // Include accumulated data in context
       };
 
       const transformFn = getTransformFunction(transformName, context);

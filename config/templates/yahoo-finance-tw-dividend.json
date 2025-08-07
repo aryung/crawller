@@ -1,7 +1,7 @@
 {
   "templateType": "tw-dividend",
   "url": "https://tw.stock.yahoo.com/quote/${symbolCode}/dividend",
-  "_note": "This config extracts structured dividend data from Yahoo Finance Taiwan dividend page. Extracts dividend distribution information including cash dividends, stock dividends, yield rates, and ex-dividend dates. Use with Taiwan stock codes like 2330.TW, 1101.TW, etc.",
+  "_note": "INDEPENDENT SELECTORS: This config follows CLAUDE.md principles by using independent selectors for each dividend data field (periods, cash dividends, stock dividends) to avoid data extraction errors and improve accuracy.",
   "actions": [
     {
       "type": "wait",
@@ -9,8 +9,14 @@
       "description": "等待頁面初始載入"
     },
     {
+      "type": "scroll",
+      "direction": "down",
+      "distance": 1000,
+      "description": "向下滾動確保所有股利歷史數據載入"
+    },
+    {
       "type": "wait",
-      "timeout": 3000,
+      "timeout": 4000,
       "description": "等待股利數據完全載入"
     }
   ],
@@ -19,10 +25,25 @@
       "selector": "h1, .symbol, .stock-name",
       "transform": "cleanStockSymbol"
     },
-    "structuredDividendData": {
+    "dividendPeriods": {
+      "selector": "table td, tbody td, div[class*='table'] div, li div, [class*='cell'], .table-cell",
+      "multiple": true,
+      "transform": "extractDividendPeriodsSeparately"
+    },
+    "cashDividends": {
+      "selector": "table td, tbody td, div[class*='table'] div, li div, [class*='cell'], .table-cell",
+      "multiple": true,
+      "transform": "extractCashDividendsSeparately"
+    },
+    "stockDividends": {
+      "selector": "table td, tbody td, div[class*='table'] div, li div, [class*='cell'], .table-cell",
+      "multiple": true,
+      "transform": "extractStockDividendsSeparately"
+    },
+    "data": {
       "selector": "body",
       "multiple": false,
-      "transform": "structureTWDividendDataFromCells"
+      "transform": "combineSimpleDividendData"
     }
   },
   "headers": {

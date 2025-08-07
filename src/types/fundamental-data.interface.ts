@@ -1,6 +1,7 @@
 export enum FiscalReportType {
   MONTHLY = 'monthly',
   QUARTERLY = 'quarterly',
+  HALF = 'half-yearly',
   ANNUAL = 'annual',
 }
 

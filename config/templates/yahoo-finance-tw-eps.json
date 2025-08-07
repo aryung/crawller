@@ -1,7 +1,7 @@
 {
   "templateType": "tw-eps",
   "url": "https://tw.stock.yahoo.com/quote/${symbolCode}/eps",
-  "_note": "IMPROVED: This config extracts structured EPS data using independent selectors following CLAUDE.md principles. Dynamically extracts quarterly EPS data including EPS values, quarterly growth rates, year-over-year growth rates, and average prices without hard-coded data. Use with Taiwan stock codes like 2330.TW, 1101.TW, etc.",
+  "_note": "INDEPENDENT SELECTORS: This config follows CLAUDE.md principles by using independent selectors for each EPS data field (periods, values) to avoid data extraction errors and improve accuracy. Supports quarterly (Q1-Q4), half-yearly (H1-H2), and annual data with unified fiscalMonth format.",
   "actions": [
     {
       "type": "wait",
@@ -19,35 +19,20 @@
       "selector": "h1, .symbol, .stock-name",
       "transform": "cleanStockSymbol"
     },
-    "epsHeaders": {
-      "selector": "li div:first-child",
+    "epsPeriods": {
+      "selector": "table td, tbody td, div[class*='table'] div, li div, [class*='cell'], .table-cell",
       "multiple": true,
-      "transform": "extractEPSHeaders"
+      "transform": "extractEPSPeriodsSeparately"
     },
     "epsValues": {
-      "selector": "li div:nth-child(2)",
+      "selector": "table td, tbody td, div[class*='table'] div, li div, [class*='cell'], .table-cell",
       "multiple": true,
-      "transform": "extractEPSRow"
+      "transform": "extractEPSValuesSeparately"
     },
-    "epsGrowthQuarterly": {
-      "selector": "li div:nth-child(3)",
-      "multiple": true,
-      "transform": "extractEPSRow"
-    },
-    "epsGrowthYearly": {
-      "selector": "li div:nth-child(4)",
-      "multiple": true,
-      "transform": "extractEPSRow"
-    },
-    "epsPrices": {
-      "selector": "li div:nth-child(5)",
-      "multiple": true,
-      "transform": "extractEPSRow"
-    },
-    "structuredEPSData": {
+    "data": {
       "selector": "body",
       "multiple": false,
-      "transform": "combineEPSData"
+      "transform": "combineSimpleEPSData"
     }
   },
   "headers": {
