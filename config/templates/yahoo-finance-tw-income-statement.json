@@ -1,7 +1,7 @@
 {
   "templateType": "tw-income-statement",
   "url": "https://tw.stock.yahoo.com/quote/${symbolCode}/income-statement",
-  "_note": "This config extracts structured income statement data from Yahoo Finance Taiwan income statement page. Extracts quarterly and annual financial data including revenue, operating income, net income, and EPS. All values are automatically converted from '仟元' (thousands) to actual values. Use with Taiwan stock codes like 2330.TW, 1101.TW, etc.",
+  "_note": "UNIFIED: This config extracts income statement data using unified selectors and transforms following the new standardized architecture. Outputs UnifiedFinancialData format directly compatible with FundamentalDataEntity.",
   "actions": [
     {
       "type": "wait",
@@ -19,10 +19,39 @@
       "selector": "h1, .symbol, .stock-name",
       "transform": "cleanStockSymbol"
     },
-    "structuredIncomeStatementData": {
+    "periods": {
+      "selector": "div.table-header > div.table-header-wrapper > div:nth-child(n+2)",
+      "multiple": true,
+      "transform": "extractPeriods"
+    },
+    "revenue": {
+      "selector": "ul > li:nth-child(1) > div > div:nth-child(n+2)",
+      "multiple": true,
+      "transform": "extractRevenue"
+    },
+    "operatingIncome": {
+      "selector": "ul > li:nth-child(2) > div > div:nth-child(n+2)",
+      "multiple": true,
+      "transform": "extractRevenue"
+    },
+    "operationExpense"": {
+      "selector": "ul > li:nth-child(3) > div > div:nth-child(n+2)",
+      "multiple": true,
+      "transform": "extractRevenue"
+    },
+    "operatingIncome": {
+      "selector": "ul > li:nth-child(4) > div > div:nth-child(n+2)",
+      "multiple": true,
+      "transform": "extractRevenue"
+    },
+    "incomeAfterTax": {
+      "selector": "ul > li:nth-child(5) > div > div:nth-child(n+2)",
+      "multiple": true,
+      "transform": "extractRevenue"
+    },
+    "data": {
       "selector": "body",
-      "multiple": false,
-      "transform": "structureTWIncomeStatementDataFromCells"
+      "transform": "transformIncomeStatementData"
     }
   },
   "headers": {
