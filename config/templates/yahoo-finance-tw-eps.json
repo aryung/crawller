@@ -1,7 +1,14 @@
 {
   "templateType": "tw-eps",
   "url": "https://tw.stock.yahoo.com/quote/${symbolCode}/eps",
-  "_note": "INDEPENDENT SELECTORS: This config follows CLAUDE.md principles by using independent selectors for each EPS data field (periods, values) to avoid data extraction errors and improve accuracy. Supports quarterly (Q1-Q4), half-yearly (H1-H2), and annual data with unified fiscalMonth format.",
+  "_note": "EXCLUDE SELECTOR PREPROCESSING + PRECISE POSITION EXTRACTION: Uses exclude selectors to remove interfering elements first, then applies precise DOM position analysis to extract EPS data. The excludeSelectors remove ads, navigation, and social content, while precise position functions target exact positions for periods and values.",
+  "excludeSelectors": [
+    ".advertisement, [data-module='ad'], [class*='ad-'], [id*='ad-']",
+    ".navigation, .nav-menu, .breadcrumb, [role='navigation']",
+    ".sidebar, .related-news, .trending-topics, .recommendations",
+    ".social-share, .share-buttons, .social-media",
+    ".popup, .modal, .overlay, .banner-notification"
+  ],
   "actions": [
     {
       "type": "wait",
@@ -19,20 +26,20 @@
       "selector": "h1, .symbol, .stock-name",
       "transform": "cleanStockSymbol"
     },
-    "epsPeriods": {
-      "selector": "table td, tbody td, div[class*='table'] div, li div, [class*='cell'], .table-cell",
+    "epsPeriodsWithPrecisePosition": {
+      "selector": "li div",
       "multiple": true,
-      "transform": "extractEPSPeriodsSeparately"
+      "transform": "extractEPSPeriodsWithPrecisePosition"
     },
-    "epsValues": {
-      "selector": "table td, tbody td, div[class*='table'] div, li div, [class*='cell'], .table-cell",
+    "epsValuesWithPrecisePosition": {
+      "selector": "li div",
       "multiple": true,
-      "transform": "extractEPSValuesSeparately"
+      "transform": "extractEPSValuesWithPrecisePosition"
     },
     "data": {
-      "selector": "body",
-      "multiple": false,
-      "transform": "combineSimpleEPSData"
+      "selector": "li div",
+      "multiple": true,
+      "transform": "combineSimpleEPSDataWithPrecisePosition"
     }
   },
   "headers": {
