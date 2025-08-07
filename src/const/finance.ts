@@ -376,18 +376,22 @@ export const TW_REVENUE_DATA_CONSTANTS = {
 // 台灣EPS數據處理常數 - 基於實際EPS範圍的動態驗證
 export const TW_EPS_DATA_CONSTANTS = {
   // EPS 基本檢查 - 基於台灣上市公司實際EPS範圍
-  MIN_REASONABLE_EPS: -50,         // 最小合理EPS (-50元，考慮虧損公司)
+  MIN_REASONABLE_EPS: -100,        // 最小合理EPS (-100元，考慮虧損公司)
   MAX_REASONABLE_EPS: 100,         // 最大合理EPS (100元，基於高獲利公司如台積電)
+  
+  // 股價數據排除閾值 - 核心功能
+  STOCK_PRICE_THRESHOLD: 150,      // 股價通常超過此值 (台積電 ~600-1000元)
+  MIN_STOCK_PRICE: 50,             // 最小股價範圍 (避免誤判低價股)
   
   // 精度控制 (替代硬編碼小數位檢測)
   MAX_DECIMAL_PLACES: 2,           // EPS 最多2位小數
-  SUSPICIOUS_EPS_THRESHOLD: 1000,  // 超過此值可能是串接錯誤
+  SUSPICIOUS_EPS_THRESHOLD: 200,   // 超過此值可能是股價數據
   
   // 動態分離參數
   CONCATENATION_DETECTION: {
-    VALUE_RATIO_THRESHOLD: 100,    // 如果EPS超過合理範圍100倍，可能是串接
-    MIN_VALID_EPS: 0.01,           // 最小有效EPS
-    MAX_SINGLE_COMPANY_EPS: 200    // 單一公司最大可能EPS
+    VALUE_RATIO_THRESHOLD: 50,     // 如果數值超過合理範圍50倍，可能是股價
+    MIN_VALID_EPS: -100,           // 最小有效EPS (包含虧損)
+    MAX_SINGLE_COMPANY_EPS: 100    // 單一公司最大可能EPS
   }
 } as const;
 

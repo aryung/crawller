@@ -4,12 +4,17 @@ import { SelectorConfig, SelectorItem } from '../types';
 import { parseSelector, logger } from '../utils';
 
 export class DataExtractor {
-  async extractData(page: Page, selectors: SelectorConfig = {}): Promise<Record<string, unknown>> {
+  async extractData(page: Page, selectors: SelectorConfig = {}, excludeSelectors: string[] = []): Promise<Record<string, unknown>> {
     const data: Record<string, unknown> = {};
 
     try {
       const content = await page.content();
       const $ = load(content);
+
+      // 執行 DOM 預處理 - 移除干擾元素
+      if (excludeSelectors && excludeSelectors.length > 0) {
+        this.removeExcludedElementsCheerio($, excludeSelectors);
+      }
 
       for (const [key, selectorConfig] of Object.entries(selectors)) {
         const selectorItem = parseSelector(selectorConfig);
@@ -220,5 +225,23 @@ export class DataExtractor {
       logger.error('Failed to extract financial performance data:', error);
       return [];
     }
+  }
+
+  private removeExcludedElementsCheerio($: CheerioAPI, excludeSelectors: string[]): void {
+    if (!excludeSelectors || excludeSelectors.length === 0) return;
+    
+    let totalRemoved = 0;
+    
+    for (const selector of excludeSelectors) {
+      try {
+        const removedCount = $(selector).remove().length;
+        totalRemoved += removedCount;
+        logger.debug(`Removed ${removedCount} elements matching: ${selector}`);
+      } catch (error) {
+        logger.warn(`Failed to remove elements with selector "${selector}":`, error);
+      }
+    }
+    
+    logger.info(`Preprocessed DOM: removed ${totalRemoved} elements using ${excludeSelectors.length} exclude selector patterns`);
   }
 }

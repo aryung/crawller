@@ -5,6 +5,7 @@ export * from './fundamental-data.interface';
 export interface CrawlerConfig {
   url: string;
   selectors?: SelectorConfig;
+  excludeSelectors?: string[];
   headers?: Record<string, string>;
   cookies?: CookieConfig;
   options?: CrawlerOptions;

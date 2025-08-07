@@ -106,6 +106,11 @@ export class PlaywrightCrawler {
         await this.executeActions(page, config.actions);
       }
 
+      // 執行 DOM 預處理 - 移除干擾元素
+      if (config.excludeSelectors && config.excludeSelectors.length > 0) {
+        await this.removeExcludedElements(page, config.excludeSelectors);
+      }
+
       // 提取資料 - 支援 Enhanced Selectors
       const data = await this.extractDataWithEnhancedSelectors(page, config.selectors || {}, config);
 
@@ -413,6 +418,33 @@ export class PlaywrightCrawler {
     }
     
     logger.info('All dynamic actions completed');
+  }
+
+  private async removeExcludedElements(page: Page, excludeSelectors: string[]): Promise<void> {
+    if (!excludeSelectors || excludeSelectors.length === 0) return;
+    
+    let totalRemoved = 0;
+    
+    for (const selector of excludeSelectors) {
+      try {
+        const removedCount = await page.evaluate((sel: string) => {
+          const elements = document.querySelectorAll(sel);
+          let count = 0;
+          elements.forEach((el: Element) => {
+            el.remove();
+            count++;
+          });
+          return count;
+        }, selector);
+        
+        totalRemoved += removedCount;
+        logger.debug(`Removed ${removedCount} elements matching: ${selector}`);
+      } catch (error) {
+        logger.warn(`Failed to remove elements with selector "${selector}":`, error);
+      }
+    }
+    
+    logger.info(`Preprocessed DOM: removed ${totalRemoved} elements using ${excludeSelectors.length} exclude selector patterns`);
   }
 
   async cleanup(): Promise<void> {
