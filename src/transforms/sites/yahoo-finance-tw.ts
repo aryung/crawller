@@ -8435,31 +8435,22 @@ function combineIndependentRevenueData(content: any, context?: any): UnifiedFina
 }
 
 /**
- * 🎯 簡化版期間提取函數 (基於 DOM 分析結果)
- * 根據 debugFieldExtraction 結果找到專門存放期間的位置
+ * 🎯 簡化版期間提取函數 (直接處理選擇器結果)
+ * 處理來自 "ul > li > div > div:nth-child(1)" 選擇器的直接結果
  */
 function extractRevenuePeriodsSeparately(content: string | string[]): string[] {
-  console.log('[Separate Revenue Periods] 🔍 開始精確提取營收期間...');
+  console.log('[Separate Revenue Periods] 🔍 處理直接選擇器結果...');
   
   const contentArray = Array.isArray(content) ? content : [content];
   const periods: string[] = [];
   
-  // 基於 DOM 分析結果的精確位置範圍：期間位置 134, 144, 154, 164, 174, 184...
-  // 期間數據以每10個位置為間隔出現
-  const PERIOD_START_INDEX = 134;  // 從 DOM 分析發現第一個期間位置
-  const PERIOD_STEP = 10;          // 每10個位置有一個期間
-  const MAX_PERIODS = 120;         // 增加至120個月 (10年數據)
+  console.log(`[Separate Revenue Periods] 📊 處理 ${contentArray.length} 個直接選擇器結果`);
   
-  console.log(`[Separate Revenue Periods] 📊 搜尋範圍: 從位置 ${PERIOD_START_INDEX} 開始，每 ${PERIOD_STEP} 個位置檢查期間`);
-  
-  for (let i = 0; i < MAX_PERIODS; i++) {
-    const position = PERIOD_START_INDEX + (i * PERIOD_STEP);
-    if (position >= contentArray.length) break;
+  contentArray.forEach((item, index) => {
+    const content_item = item?.toString().trim();
+    if (!content_item) return;
     
-    const content_item = contentArray[position]?.toString().trim();
-    if (!content_item) continue;
-    
-    console.log(`[Separate Revenue Periods] 🔍 檢查位置 ${position}: "${content_item}"`);
+    console.log(`[Separate Revenue Periods] 🔍 處理項目 ${index}: "${content_item}"`);
     
     // 精確的期間格式匹配 (只包含年月，不包含數值)
     const periodPatterns = [
@@ -8477,49 +8468,41 @@ function extractRevenuePeriodsSeparately(content: string | string[]): string[] {
         
         if (!periods.includes(formattedPeriod)) {
           periods.push(formattedPeriod);
-          console.log(`[Separate Revenue Periods] ✅ Found period: ${formattedPeriod} at position ${position}`);
+          console.log(`[Separate Revenue Periods] ✅ Found period: ${formattedPeriod} from "${content_item}"`);
         }
         break;
       }
     }
-  }
+  });
   
   console.log(`[Separate Revenue Periods] 🎯 提取完成，找到 ${periods.length} 個期間`);
   return periods.sort((a, b) => b.localeCompare(a)); // 最新期間在前
 }
 
 /**
- * 🎯 簡化版數值提取函數 (基於 DOM 分析結果)
- * 根據 debugFieldExtraction 結果找到專門存放營收數值的位置
+ * 🎯 簡化版數值提取函數 (直接處理選擇器結果)
+ * 處理來自 "ul > li > div > div:nth-child(2)" 選擇器的直接結果
  */
 function extractRevenueValuesSeparately(content: string | string[]): number[] {
-  console.log('[Separate Revenue Values] 💰 開始精確提取營收數值...');
+  console.log('[Separate Revenue Values] 💰 處理直接選擇器結果...');
   
   const contentArray = Array.isArray(content) ? content : [content];
   const values: number[] = [];
   
-  // 基於 DOM 分析結果的精確位置範圍：營收數值位置 135, 145, 155, 165, 175, 185...
-  // 營收數值在期間位置+1 (即每10個位置為間隔，從135開始)
-  const VALUE_START_INDEX = 135;   // 從 DOM 分析發現第一個營收數值位置
-  const VALUE_STEP = 10;           // 每10個位置有一個數值
-  const MAX_VALUES = 120;          // 增加至120個月 (10年數據)
+  console.log(`[Separate Revenue Values] 📊 處理 ${contentArray.length} 個直接選擇器結果`);
   
-  console.log(`[Separate Revenue Values] 📊 搜尋範圍: 從位置 ${VALUE_START_INDEX} 開始，每 ${VALUE_STEP} 個位置檢查數值`);
-  
-  for (let i = 0; i < MAX_VALUES; i++) {
-    const position = VALUE_START_INDEX + (i * VALUE_STEP);
-    if (position >= contentArray.length) break;
+  contentArray.forEach((item, index) => {
+    const content_item = item?.toString().trim();
+    if (!content_item) return;
     
-    const content_item = contentArray[position]?.toString().trim();
-    if (!content_item) continue;
+    console.log(`[Separate Revenue Values] 🔍 處理項目 ${index}: "${content_item}"`);
     
-    console.log(`[Separate Revenue Values] 🔍 檢查位置 ${position}: "${content_item}"`);
-    
-    // 精確的數值格式匹配 (純數字，不包含期間或百分比)
+    // 從測試結果看到格式是: "263,708,978-17.72%207,868,69326.86%"
+    // 需要提取第一個數字 (月營收)
     const valuePatterns = [
-      /^([\d,]{4,})$/,                    // 純數字格式: 263,708,978
-      /^([\d,]{4,})\s*仟元?$/,            // 仟元格式: 263,708,978 仟元  
-      /^([\d,]{4,})\s*千元?$/,            // 千元格式: 263,708,978 千元
+      /^([\d,]{4,})/,                     // 提取開頭的大數字: 263,708,978
+      /^([\d,]{4,})\s*仟元?/,             // 仟元格式: 263,708,978 仟元  
+      /^([\d,]{4,})\s*千元?/,             // 千元格式: 263,708,978 千元
     ];
     
     for (const pattern of valuePatterns) {
@@ -8534,12 +8517,12 @@ function extractRevenueValuesSeparately(content: string | string[]): number[] {
           // 保持千元單位，不轉換
           values.push(numValue);
           
-          console.log(`[Separate Revenue Values] ✅ Found value: ${numValue.toLocaleString()} 千元 at position ${position}`);
+          console.log(`[Separate Revenue Values] ✅ Found value: ${numValue.toLocaleString()} 千元 from "${content_item}"`);
         }
         break;
       }
     }
-  }
+  });
   
   console.log(`[Separate Revenue Values] 💰 提取完成，找到 ${values.length} 個營收數值`);
   return values;

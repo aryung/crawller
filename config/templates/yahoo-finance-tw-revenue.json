@@ -1,23 +1,23 @@
 {
   "templateType": "tw-revenue",
   "url": "https://tw.stock.yahoo.com/quote/${symbolCode}/revenue",
-  "_note": "INDEPENDENT SELECTORS: This config follows CLAUDE.md principles by using independent selectors for each revenue data field (periods, values, growth rates) to avoid data extraction errors and improve accuracy.",
+  "_note": "PRECISE INDEPENDENT SELECTORS (2025-08-07): Uses exact DOM structure selectors based on EPS success case. revenuePeriods: 'ul > li > div > div:nth-child(1)', revenueValues: 'ul > li > div > div:nth-child(2)'. Follows CLAUDE.md principle of independent selectors for each output field.",
   "actions": [
     {
       "type": "wait",
-      "timeout": 5000,
-      "description": "等待頁面初始載入"
+      "timeout": 8000,
+      "description": "增加初始載入等待時間"
     },
     {
       "type": "scroll",
       "direction": "down",
-      "distance": 1000,
-      "description": "向下滾動確保所有營收歷史數據載入"
+      "distance": 1500,
+      "description": "滾動觸發 Revenue 數據載入"
     },
     {
       "type": "wait",
-      "timeout": 4000,
-      "description": "等待營收數據完全載入"
+      "timeout": 6000,
+      "description": "等待 Revenue 數據完全載入"
     }
   ],
   "selectors": {
@@ -26,18 +26,17 @@
       "transform": "cleanStockSymbol"
     },
     "revenuePeriods": {
-      "selector": "table, tbody tr, div[data-symbol], .table, .data-table, [class*='revenue'], [class*='financial'], li, div[class*='row'], span[class*='value'], span[class*='period']",
+      "selector": "ul > li > div > div:nth-child(1)",
       "multiple": true,
       "transform": "extractRevenuePeriodsSeparately"
     },
     "revenueValues": {
-      "selector": "table, tbody tr, div[data-symbol], .table, .data-table, [class*='revenue'], [class*='financial'], li, div[class*='row'], span[class*='value'], span[class*='period']",
+      "selector": "ul > li > div > div:nth-child(2)",
       "multiple": true,
       "transform": "extractRevenueValuesSeparately"
     },
     "data": {
       "selector": "body",
-      "multiple": false,
       "transform": "combineSimpleRevenueData"
     }
   },
@@ -49,13 +48,15 @@
     "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
   },
   "options": {
-    "timeout": 30000,
+    "timeout": 45000,
     "retries": 3,
     "headless": true,
     "screenshot": true,
     "encoding": "utf-8",
     "domainDelay": 5000,
-    "waitFor": 8000,
+    "waitFor": 10000,
+    "waitForNetworkIdle": true,
+    "networkIdleTimeout": 3000,
     "engine": "playwright"
   },
   "variables": {
@@ -70,3 +71,4 @@
     }
   }
 }
+
