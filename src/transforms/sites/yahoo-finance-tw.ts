@@ -76,7 +76,7 @@ export interface YahooFinanceTWTransforms {
   // === 各類型保持自己的轉換函數 (避免複雜的 switch/case) ===
   transformRevenueData: (content: any, context?: any) => UnifiedFinancialData[];
   transformEPSData: (content: any, context?: any) => UnifiedFinancialData[];
-  transformBalanceSheetData: (content: any, context?: any) => UnifiedFinancialData[];
+  combineBalanceSheetData: (content: any, context?: any) => UnifiedFinancialData[];
   transformCashFlowData: (content: any, context?: any) => UnifiedFinancialData[];
   transformDividendData: (content: any, context?: any) => UnifiedFinancialData[];
   transformIncomeStatementData: (content: any, context?: any) => UnifiedFinancialData[];
@@ -8418,8 +8418,7 @@ function combineIndependentRevenueData(content: any, context?: any): UnifiedFina
           roa: undefined,
           debtToEquity: undefined,
           currentRatio: undefined,
-          priceToBook: undefined,
-          priceToEarnings: undefined,
+          // 移除未定義的欄位
           grossMargin: undefined,
           operatingMargin: undefined,
           netMargin: undefined,
@@ -8613,8 +8612,7 @@ function combineSimpleRevenueData(content: any, context?: any): UnifiedFinancial
           roa: undefined,
           debtToEquity: undefined,
           currentRatio: undefined,
-          priceToBook: undefined,
-          priceToEarnings: undefined,
+          // 移除未定義的欄位
           grossMargin: undefined,
           operatingMargin: undefined,
           netMargin: undefined,
@@ -8825,8 +8823,7 @@ function combineIncomeStatementData(content: any, context?: any): UnifiedFinanci
           roa: undefined,
           debtToEquity: undefined,
           currentRatio: undefined,
-          priceToBook: undefined,
-          priceToEarnings: undefined,
+          // 移除未定義的欄位
           grossMargin: grossProfit && revenue ? (grossProfit / revenue) : undefined,
           operatingMargin: operatingIncome && revenue ? (operatingIncome / revenue) : undefined,
           netMargin: netIncome && revenue ? (netIncome / revenue) : undefined,
@@ -10193,91 +10190,116 @@ function extractRevenueValuesFromData(content: string | string[]): (number | nul
  * @param context - 包含配置變數等額外上下文
  * @returns UnifiedFinancialData[] 格式的資產負債表數據
  */
-function transformBalanceSheetData(content: any, context?: any): UnifiedFinancialData[] {
-  console.log('[Transform Balance Sheet] 🚀 開始轉換資產負債表數據為 UnifiedFinancialData 格式');
+function combineBalanceSheetData(content: any, context?: any): UnifiedFinancialData[] {
+  console.log('[Combine Balance Sheet] 🔗 開始組合資產負債表數據...');
   
   const results: UnifiedFinancialData[] = [];
   
   try {
-    // 提取 symbolCode (使用與 transformRevenueData 相同的邏輯)
-    let symbolCode = '0000';
+    // 從 context 獲取獨立提取的數據
+    const periods: string[] = context?.balanceSheetPeriods || [];
+    const totalAssetsValues: number[] = context?.totalAssetsValues || [];
+    const totalLiabilitiesValues: number[] = context?.totalLiabilitiesValues || [];
+    const shareholdersEquityValues: number[] = context?.shareholdersEquityValues || [];
+    const currentAssetsValues: number[] = context?.currentAssetsValues || [];
+    const currentLiabilitiesValues: number[] = context?.currentLiabilitiesValues || [];
     
-    // 方法1: 從 context 中獲取
-    if (context?.symbolCode) {
-      symbolCode = context.symbolCode.replace('.TW', '');
-      console.log(`[Transform Balance Sheet] 從 context 獲取 symbolCode: ${symbolCode}`);
-    }
-    // 方法2: 從配置變數中獲取
-    else if (context?.variables?.symbolCode) {
-      symbolCode = context.variables.symbolCode.replace('.TW', '');
-      console.log(`[Transform Balance Sheet] 從 variables 獲取 symbolCode: ${symbolCode}`);
-    }
-    // 方法3: 從 URL 中提取
-    else if (context?.url) {
-      const urlMatch = context.url.match(/quote\/([^\/]+)\//);
+    console.log(`[Combine Balance Sheet] 📊 Input data:`);
+    console.log(`  Periods: ${periods.length} items`);
+    console.log(`  Total Assets: ${totalAssetsValues.length} items`);
+    console.log(`  Total Liabilities: ${totalLiabilitiesValues.length} items`);
+    console.log(`  Shareholders Equity: ${shareholdersEquityValues.length} items`);
+    console.log(`  Current Assets: ${currentAssetsValues.length} items`);
+    console.log(`  Current Liabilities: ${currentLiabilitiesValues.length} items`);
+    
+    // 提取 symbolCode - 從 URL 中提取而非 stockInfo
+    let symbolCode = '0000';
+    if (context?.url) {
+      // 從 URL 中提取股票代碼：https://tw.stock.yahoo.com/quote/2330.TW/balance-sheet
+      const urlMatch = context.url.match(/\/quote\/(\d{4})\.TW/);
       if (urlMatch) {
-        symbolCode = urlMatch[1].replace('.TW', '');
-        console.log(`[Transform Balance Sheet] 從 URL 提取 symbolCode: ${symbolCode}`);
+        symbolCode = urlMatch[1];
+        console.log(`[Combine Balance Sheet] 🔍 從 URL 提取到股票代碼: ${symbolCode}`);
       }
     }
     
-    // 從 context 獲取已提取的數據
-    const allData = context?.allData || [];
-    if (!allData || allData.length === 0) {
-      console.warn('[Transform Balance Sheet] ⚠️ 沒有找到 allData，無法處理資產負債表數據');
+    // 確保期間和數值數量匹配
+    const minLength = Math.min(periods.length, totalAssetsValues.length, totalLiabilitiesValues.length, 
+                              shareholdersEquityValues.length, currentAssetsValues.length, currentLiabilitiesValues.length);
+    
+    if (minLength === 0) {
+      console.warn('[Combine Balance Sheet] ⚠️ 沒有找到匹配的期間和數值數據');
       return results;
     }
     
-    console.log(`[Transform Balance Sheet] 📊 處理 ${allData.length} 項原始數據`);
+    console.log(`[Combine Balance Sheet] 🔄 Processing ${minLength} aligned data sets`);
     
-    // 尋找資產負債表相關數據
-    // 這裡實現基本的框架，具體的數據提取邏輯需要根據實際頁面結構調整
-    const balanceSheetKeywords = ['總資產', '流動資產', '非流動資產', '總負債', '股東權益'];
-    const foundData: any[] = [];
-    
-    for (const item of allData) {
-      const text = item?.toString().trim();
-      if (!text) continue;
+    for (let i = 0; i < minLength; i++) {
+      const period = periods[i];
+      const totalAssets = totalAssetsValues[i];
+      const totalLiabilities = totalLiabilitiesValues[i];
+      const shareholdersEquity = shareholdersEquityValues[i];
+      const currentAssets = currentAssetsValues[i];
+      const currentLiabilities = currentLiabilitiesValues[i];
       
-      // 檢查是否包含資產負債表關鍵字
-      const hasKeyword = balanceSheetKeywords.some(keyword => text.includes(keyword));
-      if (hasKeyword) {
-        foundData.push(text);
+      if (period && totalAssets !== undefined) {
+        // 解析期間信息 (季度數據)
+        const { year, quarter } = parseUnifiedFiscalPeriod(period);
+        
+        // 生成正確的報告日期 (季末日期)
+        if (quarter !== undefined) {
+          const quarterEndMonths = { 1: 3, 2: 6, 3: 9, 4: 12 };
+          const endMonth = quarterEndMonths[quarter as keyof typeof quarterEndMonths];
+          const daysInMonth = new Date(year, endMonth, 0).getDate();
+          const reportDate = `${year}-${endMonth.toString().padStart(2, '0')}-${daysInMonth.toString().padStart(2, '0')}`;
+        
+        const unifiedData: UnifiedFinancialData = {
+          // === 必要識別欄位 ===
+          symbolCode: symbolCode,
+          exchangeArea: "TPE",
+          reportDate: reportDate,
+          fiscalYear: year,
+          fiscalMonth: quarterEndMonths[quarter as keyof typeof quarterEndMonths],
+          reportType: "quarterly",
+          
+          // === 資產負債表相關欄位 ===
+          totalAssets: totalAssets,
+          totalLiabilities: totalLiabilities,
+          shareholdersEquity: shareholdersEquity,
+          currentAssets: currentAssets,
+          currentLiabilities: currentLiabilities,
+          
+          // === 其他欄位設為 undefined ===
+          revenue: undefined,
+          operatingIncome: undefined,
+          netIncome: undefined,
+          eps: undefined,
+          operatingCashFlow: undefined,
+          freeCashFlow: undefined,
+          dividendYield: undefined,
+          bookValuePerShare: undefined,
+          roe: undefined,
+          roa: undefined,
+          
+          // === 計算財務比率 ===
+          debtToEquity: totalLiabilities && shareholdersEquity ? (totalLiabilities / shareholdersEquity) : undefined,
+          currentRatio: currentLiabilities && currentLiabilities > 0 ? (currentAssets / currentLiabilities) : undefined,
+          grossMargin: undefined,
+          operatingMargin: undefined,
+          netMargin: undefined,
+        };
+        
+        results.push(unifiedData);
+        console.log(`[Combine Balance Sheet] ✅ Combined ${period}: Assets=${totalAssets.toLocaleString()}, Equity=${shareholdersEquity.toLocaleString()} TWD`);
+        }
       }
     }
     
-    console.log(`[Transform Balance Sheet] 💼 找到 ${foundData.length} 項相關數據`);
-    
-    // 基本的統一數據結構
-    const currentDate = new Date();
-    const reportDate = `${currentDate.getFullYear()}-12-31`;
-    
-    if (foundData.length > 0) {
-      const unifiedData: UnifiedFinancialData = {
-        symbolCode,
-        exchangeArea: 'TPE',
-        reportDate,
-        fiscalYear: currentDate.getFullYear(),
-        reportType: 'annual',
-        dataSource: 'yahoo-finance-tw',
-        lastUpdated: new Date().toISOString(),
-        currencyCode: 'TWD',
-        // 資產負債表欄位 (先設為佔位符，需根據實際數據調整)
-        totalAssets: 0,
-        currentAssets: 0,
-        totalLiabilities: 0,
-        shareholdersEquity: 0
-      };
-      
-      results.push(unifiedData);
-      console.log(`[Transform Balance Sheet] ✅ 轉換: ${symbolCode} → 資產負債表數據`);
-    }
-    
   } catch (error) {
-    console.error('[Transform Balance Sheet] ❌ 轉換過程中發生錯誤:', error);
+    console.error('[Combine Balance Sheet] ❌ 組合過程中發生錯誤:', error);
   }
   
-  console.log(`[Transform Balance Sheet] 🎯 成功轉換 ${results.length} 筆資產負債表數據`);
+  console.log(`[Combine Balance Sheet] 🎯 組合完成，產生 ${results.length} 筆 UnifiedFinancialData 記錄`);
   return results;
 }
 
@@ -10504,7 +10526,7 @@ Object.assign(yahooFinanceTWTransforms, {
   
   transformRevenueData,
   transformEPSData,
-  transformBalanceSheetData,
+  combineBalanceSheetData,
   transformCashFlowData,
   transformDividendData,
   transformIncomeStatementData,

@@ -1,16 +1,22 @@
 {
   "templateType": "tw-balance-sheet",
   "url": "https://tw.stock.yahoo.com/quote/${symbolCode}/balance-sheet",
-  "_note": "UNIFIED: This config extracts balance sheet data using unified selectors and transforms following the new standardized architecture. Outputs UnifiedFinancialData format directly compatible with FundamentalDataEntity.",
+  "_note": "INDEPENDENT SELECTORS: Uses precise position-based selectors for each balance sheet item, following the successful income statement pattern. Based on 5 rows: 總資產, 總負債, 股東權益(淨值), 流動資產, 流動負債.",
   "actions": [
     {
       "type": "wait",
-      "timeout": 5000,
-      "description": "等待頁面初始載入"
+      "timeout": 8000,
+      "description": "增加初始載入等待時間"
+    },
+    {
+      "type": "scroll",
+      "direction": "down",
+      "distance": 1500,
+      "description": "滾動觸發資產負債表數據載入"
     },
     {
       "type": "wait",
-      "timeout": 4000,
+      "timeout": 6000,
       "description": "等待資產負債表數據完全載入"
     }
   ],
@@ -19,34 +25,39 @@
       "selector": "h1, .symbol, .stock-name",
       "transform": "cleanStockSymbol"
     },
-    "totalAsset": {
+    "balanceSheetPeriods": {
       "selector": "div.table-header > div.table-header-wrapper > div:nth-child(n+2)",
       "multiple": true,
       "transform": "extractIncomeStatementPeriodsSeparately"
     },
-    "totalLiability": {
+    "totalAssetsValues": {
       "selector": "ul > li:nth-child(1) > div > div:nth-child(n+2)",
       "multiple": true,
       "transform": "extractIncomeStatementValuesSeparately"
     },
-    "netShareEquity": {
+    "totalLiabilitiesValues": {
       "selector": "ul > li:nth-child(2) > div > div:nth-child(n+2)",
       "multiple": true,
       "transform": "extractIncomeStatementValuesSeparately"
     },
-    "currentAsset": {
+    "shareholdersEquityValues": {
       "selector": "ul > li:nth-child(3) > div > div:nth-child(n+2)",
       "multiple": true,
       "transform": "extractIncomeStatementValuesSeparately"
     },
-    "currentLiability": {
+    "currentAssetsValues": {
       "selector": "ul > li:nth-child(4) > div > div:nth-child(n+2)",
+      "multiple": true,
+      "transform": "extractIncomeStatementValuesSeparately"
+    },
+    "currentLiabilitiesValues": {
+      "selector": "ul > li:nth-child(5) > div > div:nth-child(n+2)",
       "multiple": true,
       "transform": "extractIncomeStatementValuesSeparately"
     },
     "data": {
       "selector": "body",
-      "transform": "transformBalanceSheetData"
+      "transform": "combineBalanceSheetData"
     }
   },
   "headers": {
@@ -76,4 +87,3 @@
     "filename": "yahoo_finance_tw_balance_sheet_${symbolCode}"
   }
 }
-
