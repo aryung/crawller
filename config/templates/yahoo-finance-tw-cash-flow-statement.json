@@ -1,34 +1,23 @@
 {
   "templateType": "tw-cash-flow-statement",
   "url": "https://tw.stock.yahoo.com/quote/${symbolCode}/cash-flow-statement",
-  "_note": "UNIFIED: This config extracts cash flow statement data using unified selectors and transforms following the new standardized architecture. Outputs UnifiedFinancialData format directly compatible with FundamentalDataEntity.",
+  "_note": "INDEPENDENT SELECTORS: Uses precise position-based selectors for each cash flow item, following the successful balance sheet pattern. Based on 5 rows: 營業現金流, 投資現金流, 融資現金流, 自由現金流, 淨現金流.",
   "actions": [
     {
       "type": "wait",
-      "timeout": 5000,
-      "description": "等待頁面初始載入"
+      "timeout": 8000,
+      "description": "增加初始載入等待時間"
     },
     {
       "type": "scroll",
       "direction": "down",
-      "distance": 2000,
-      "description": "向下滾動載入更多歷史數據"
+      "distance": 1500,
+      "description": "滾動觸發現金流量表數據載入"
     },
     {
       "type": "wait",
-      "timeout": 3000,
-      "description": "等待歷史數據載入"
-    },
-    {
-      "type": "scroll",
-      "direction": "down",
-      "distance": 3000,
-      "description": "繼續向下滾動載入完整歷史數據"
-    },
-    {
-      "type": "wait",
-      "timeout": 4000,
-      "description": "等待現金流量表完整歷史數據載入"
+      "timeout": 6000,
+      "description": "等待現金流量表數據完全載入"
     }
   ],
   "selectors": {
@@ -36,35 +25,39 @@
       "selector": "h1, .symbol, .stock-name",
       "transform": "cleanStockSymbol"
     },
-    "operationCashflow": {
+    "cashFlowPeriods": {
       "selector": "div.table-header > div.table-header-wrapper > div:nth-child(n+2)",
       "multiple": true,
       "transform": "extractIncomeStatementPeriodsSeparately"
     },
-    "investmentCashflow": {
+    "operatingCashFlowValues": {
       "selector": "ul > li:nth-child(1) > div > div:nth-child(n+2)",
       "multiple": true,
-      "transform": "extractIncomeStatementValuesSeparately"
+      "transform": "extractCashFlowValuesSeparately"
     },
-    "financialCashflow": {
+    "investingCashFlowValues": {
       "selector": "ul > li:nth-child(2) > div > div:nth-child(n+2)",
       "multiple": true,
-      "transform": "extractIncomeStatementValuesSeparately"
+      "transform": "extractCashFlowValuesSeparately"
     },
-    "freeCashflow": {
+    "financingCashFlowValues": {
       "selector": "ul > li:nth-child(3) > div > div:nth-child(n+2)",
       "multiple": true,
-      "transform": "extractIncomeStatementValuesSeparately"
+      "transform": "extractCashFlowValuesSeparately"
     },
-    "netCashflow": {
+    "freeCashFlowValues": {
       "selector": "ul > li:nth-child(4) > div > div:nth-child(n+2)",
       "multiple": true,
-      "transform": "extractIncomeStatementValuesSeparately"
+      "transform": "extractCashFlowValuesSeparately"
+    },
+    "netCashFlowValues": {
+      "selector": "ul > li:nth-child(5) > div > div:nth-child(n+2)",
+      "multiple": true,
+      "transform": "extractCashFlowValuesSeparately"
     },
     "data": {
       "selector": "body",
-      "multiple": false,
-      "transform": "transformCashFlowData"
+      "transform": "combineCashFlowData"
     }
   },
   "headers": {
@@ -87,13 +80,10 @@
   },
   "variables": {
     "symbolCode": "2330.TW",
-    "baseUrl": "https://tw.stock.yahoo.com",
-    "companyName": "台灣積體電路製造股份有限公司",
-    "sector": "半導體業"
+    "baseUrl": "https://tw.stock.yahoo.com"
   },
   "export": {
     "formats": ["json", "csv"],
     "filename": "yahoo_finance_tw_cash_flow_statement_${symbolCode}"
   }
 }
-

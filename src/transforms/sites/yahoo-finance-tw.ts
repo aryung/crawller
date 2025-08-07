@@ -52,6 +52,10 @@ export interface YahooFinanceTWTransforms {
   extractIncomeStatementValuesSeparately: (content: string | string[]) => number[];
   combineIncomeStatementData: (content: any, context?: any) => UnifiedFinancialData[];
   
+  // === 現金流獨立選擇器 (支援負數現金流) ===
+  extractCashFlowValuesSeparately: (content: string | string[]) => number[];
+  combineCashFlowData: (content: any, context?: any) => UnifiedFinancialData[];
+  
   // === EPS獨立選擇器 (遵循 CLAUDE.md 原則) ===
   extractEPSPeriodsSeparately: (content: string | string[]) => string[];
   extractEPSValuesSeparately: (content: string | string[]) => number[];
@@ -77,7 +81,7 @@ export interface YahooFinanceTWTransforms {
   transformRevenueData: (content: any, context?: any) => UnifiedFinancialData[];
   transformEPSData: (content: any, context?: any) => UnifiedFinancialData[];
   combineBalanceSheetData: (content: any, context?: any) => UnifiedFinancialData[];
-  transformCashFlowData: (content: any, context?: any) => UnifiedFinancialData[];
+  combineCashFlowData: (content: any, context?: any) => UnifiedFinancialData[];
   transformDividendData: (content: any, context?: any) => UnifiedFinancialData[];
   transformIncomeStatementData: (content: any, context?: any) => UnifiedFinancialData[];
   
@@ -8730,6 +8734,55 @@ function extractIncomeStatementValuesSeparately(content: string | string[]): num
 }
 
 /**
+ * 📊 現金流數值提取函數 (支援負數)
+ * 專門處理現金流量表的數值，包含負數現金流
+ */
+function extractCashFlowValuesSeparately(content: string | string[]): number[] {
+  console.log('[Cash Flow Values] 💰 處理現金流直接選擇器結果...');
+  
+  const contentArray = Array.isArray(content) ? content : [content];
+  const values: number[] = [];
+  
+  console.log(`[Cash Flow Values] 📊 處理 ${contentArray.length} 個直接選擇器結果`);
+  
+  contentArray.forEach((item, index) => {
+    const content_item = item?.toString().trim();
+    if (!content_item) return;
+    
+    console.log(`[Cash Flow Values] 🔍 處理項目 ${index}: "${content_item}"`);
+    
+    // 現金流數值格式匹配 (支援負數)
+    const valuePatterns = [
+      /^(-?[\d,]{4,})$/,                     // 提取數字 (含負數): -153,312,237 或 153,312,237
+      /^(-?[\d,]{4,})\s*千元?$/,             // 千元格式: -153,312,237 千元  
+      /^(-?[\d,]{4,})\s*仟元?$/,             // 仟元格式: -153,312,237 仟元
+    ];
+    
+    for (const pattern of valuePatterns) {
+      const match = pattern.exec(content_item);
+      if (match) {
+        const numberStr = match[1];
+        const cleanValue = numberStr.replace(/[^\d-]/g, '');
+        const numValue = parseInt(cleanValue);
+        
+        // 驗證是否為合理的現金流金額 (絕對值大於100萬)
+        if (!isNaN(numValue) && Math.abs(numValue) >= 1000000) {
+          values.push(numValue);
+          
+          console.log(`[Cash Flow Values] ✅ Found value: ${numValue.toLocaleString()} 千元 from "${content_item}"`);
+        } else {
+          console.log(`[Cash Flow Values] ⚠️ Skipped small value: ${numValue} from "${content_item}"`);
+        }
+        break;
+      }
+    }
+  });
+  
+  console.log(`[Cash Flow Values] 💰 提取完成，找到 ${values.length} 個現金流數值`);
+  return values;
+}
+
+/**
  * 🎯 收益表數據組合函數 (季度數據處理)
  * 將期間和各項收益表數值組合成 UnifiedFinancialData 格式
  */
@@ -10304,59 +10357,114 @@ function combineBalanceSheetData(content: any, context?: any): UnifiedFinancialD
 }
 
 /**
- * 轉換現金流量表數據為統一格式
- * @param content 原始內容數據
- * @param context 額外的上下文數據 (包含配置信息等)
+ * 組合現金流量表數據為統一格式 (基於成功的資產負債表架構)
+ * @param content 原始內容數據  
+ * @param context 額外的上下文數據 (包含各選擇器提取的數據)
  * @returns UnifiedFinancialData[] 統一格式的現金流數據
  */
-function transformCashFlowData(content: any, context?: any): UnifiedFinancialData[] {
-  console.log('[Transform Cash Flow] 🚀 開始轉換現金流量表數據為 UnifiedFinancialData 格式');
+function combineCashFlowData(content: any, context?: any): UnifiedFinancialData[] {
+  console.log('[Combine Cash Flow] 🔗 開始組合現金流量表數據...');
+  console.log('[Combine Cash Flow] 🔍 Context variables:', context?.variables);
+  console.log('[Combine Cash Flow] 🔍 Context stockInfo:', context?.stockInfo);
   
-  const results: UnifiedFinancialData[] = [];
-  
-  try {
-    // 提取基本信息
-    let symbolCode = "0000";
-    if (context?.variables?.symbolCode) {
-      symbolCode = context.variables.symbolCode.replace('.TW', '');
-      console.log(`[Transform Cash Flow] 從 context.variables 獲取 symbolCode: ${symbolCode}`);
-    } else if (context?.stockInfo && typeof context.stockInfo === 'string') {
-      const stockMatch = context.stockInfo.match(/(\d{4})/);
-      if (stockMatch) {
-        symbolCode = stockMatch[1];
-        console.log(`[Transform Cash Flow] 從 stockInfo 提取 symbolCode: ${symbolCode}`);
-      }
+  // 提取 symbolCode - 從 URL 中提取而非 stockInfo
+  let symbolCode = '0000';
+  if (context?.url) {
+    // 從 URL 中提取股票代碼：https://tw.stock.yahoo.com/quote/2330.TW/cash-flow-statement
+    const urlMatch = context.url.match(/\/quote\/(\d{4})\.TW/);
+    if (urlMatch) {
+      symbolCode = urlMatch[1];
+      console.log(`[Combine Cash Flow] 🔍 從 URL 提取到股票代碼: ${symbolCode}`);
     }
-    
-    if (symbolCode && symbolCode !== "0000") {
-      // 創建一筆基本的現金流數據記錄
-      const currentYear = new Date().getFullYear();
-      const unifiedData: UnifiedFinancialData = {
-        symbolCode: symbolCode,
-        exchangeArea: 'TPE',
-        reportDate: `${currentYear}-12-31`,
-        fiscalYear: currentYear,
-        reportType: 'annual',
-        dataSource: 'yahoo-finance-tw',
-        lastUpdated: new Date().toISOString(),
-        currencyCode: 'TWD',
-        // 現金流量表欄位 (先設為佔位符，需根據實際數據調整)
-        operatingCashFlow: 0,
-        investingCashFlow: 0,
-        financingCashFlow: 0,
-        freeCashFlow: 0,
-        netCashFlow: 0
-      };
-      
-      results.push(unifiedData);
-      console.log(`[Transform Cash Flow] ✅ 轉換: ${symbolCode} → 現金流量表數據`);
-    }
-    
-  } catch (error) {
-    console.error('[Transform Cash Flow] ❌ 轉換過程中發生錯誤:', error);
   }
-  
-  console.log(`[Transform Cash Flow] 🎯 成功轉換 ${results.length} 筆現金流量表數據`);
+
+  // 獲取各項數據
+  const periods = context?.cashFlowPeriods || [];
+  const operatingCashFlowValues = context?.operatingCashFlowValues || [];
+  const investingCashFlowValues = context?.investingCashFlowValues || [];
+  const financingCashFlowValues = context?.financingCashFlowValues || [];
+  const freeCashFlowValues = context?.freeCashFlowValues || [];
+  const netCashFlowValues = context?.netCashFlowValues || [];
+
+  console.log('[Combine Cash Flow] 📊 Input data:');
+  console.log(`  Periods: ${periods.length} items`);
+  console.log(`  Operating Cash Flow: ${operatingCashFlowValues.length} items`);
+  console.log(`  Investing Cash Flow: ${investingCashFlowValues.length} items`);
+  console.log(`  Financing Cash Flow: ${financingCashFlowValues.length} items`);
+  console.log(`  Free Cash Flow: ${freeCashFlowValues.length} items`);
+  console.log(`  Net Cash Flow: ${netCashFlowValues.length} items`);
+
+  if (periods.length === 0 || operatingCashFlowValues.length === 0) {
+    console.log('[Combine Cash Flow] ⚠️ 沒有找到匹配的期間和數值數據');
+    return [];
+  }
+
+  // 季度到月份的映射
+  const quarterEndMonths = {
+    'Q1': 3,
+    'Q2': 6, 
+    'Q3': 9,
+    'Q4': 12
+  };
+
+  const results: UnifiedFinancialData[] = [];
+  const minLength = Math.min(
+    periods.length,
+    operatingCashFlowValues.length,
+    investingCashFlowValues.length,
+    financingCashFlowValues.length,
+    freeCashFlowValues.length,
+    netCashFlowValues.length
+  );
+
+  console.log(`[Combine Cash Flow] 🔄 Processing ${minLength} aligned data sets`);
+
+  for (let i = 0; i < minLength; i++) {
+    const period = periods[i];
+    const operatingCashFlow = operatingCashFlowValues[i];
+    const investingCashFlow = investingCashFlowValues[i];
+    const financingCashFlow = financingCashFlowValues[i];
+    const freeCashFlow = freeCashFlowValues[i];
+    const netCashFlow = netCashFlowValues[i];
+
+    // 解析期間 (如: "2025-Q1")
+    const periodMatch = period.match(/(\d{4})-Q([1-4])/);
+    if (!periodMatch) {
+      console.log(`[Combine Cash Flow] ⚠️ 無法解析期間格式: ${period}`);
+      continue;
+    }
+
+    const year = parseInt(periodMatch[1]);
+    const quarter = `Q${periodMatch[2]}` as keyof typeof quarterEndMonths;
+    const month = quarterEndMonths[quarter];
+    
+    // 構建報告日期
+    const reportDate = `${year}-${String(month).padStart(2, '0')}-${month === 3 ? '31' : month === 6 ? '30' : month === 9 ? '30' : '31'}`;
+
+    const unifiedData: UnifiedFinancialData = {
+      symbolCode: symbolCode,
+      exchangeArea: "TPE",
+      reportDate: reportDate,
+      fiscalYear: year,
+      fiscalMonth: month,
+      reportType: "quarterly",
+      dataSource: 'yahoo-finance-tw',
+      lastUpdated: new Date().toISOString(),
+      currencyCode: 'TWD',
+      
+      // === 現金流量表相關欄位 ===
+      operatingCashFlow: operatingCashFlow,
+      investingCashFlow: investingCashFlow,
+      financingCashFlow: financingCashFlow,
+      freeCashFlow: freeCashFlow,
+      netCashFlow: netCashFlow,
+    };
+
+    results.push(unifiedData);
+    console.log(`[Combine Cash Flow] ✅ Combined ${period}: Operating=${operatingCashFlow}, Free=${freeCashFlow} TWD`);
+  }
+
+  console.log(`[Combine Cash Flow] 🎯 組合完成，產生 ${results.length} 筆 UnifiedFinancialData 記錄`);
   return results;
 }
 
@@ -10503,6 +10611,10 @@ Object.assign(yahooFinanceTWTransforms, {
   extractIncomeStatementValuesSeparately,
   combineIncomeStatementData,
   
+  // === 現金流獨立選擇器 (支援負數現金流) ===
+  extractCashFlowValuesSeparately,
+  combineCashFlowData,
+  
   // === EPS獨立選擇器 (遵循 CLAUDE.md 原則) ===
   extractEPSPeriodsSeparately,
   extractEPSValuesSeparately,
@@ -10527,7 +10639,7 @@ Object.assign(yahooFinanceTWTransforms, {
   transformRevenueData,
   transformEPSData,
   combineBalanceSheetData,
-  transformCashFlowData,
+  combineCashFlowData,
   transformDividendData,
   transformIncomeStatementData,
   
