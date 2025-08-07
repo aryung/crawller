@@ -40,6 +40,641 @@ crawler/
 
 ## 核心開發原則
 
+### 獨立選擇器搭配 :has() 偽類 (Independent Selectors with :has() Pseudo-class)
+
+**核心概念**: 每個數據欄位使用獨立的 CSS 選擇器搭配 `:has()` 偽類，直接選取正確的值，徹底避免字串解析、拼接和大量比對邏輯。
+
+#### ⭐ 新增核心原則: 使用 :has() 精確定位
+
+**最高優先原則**: 採用 `:has()` 偽類搭配獨立選擇器，直接鎖定包含特定內容的元素，避免提取後再進行複雜比對。
+
+#### ✅ 推薦做法 (:has() 精確選擇器)
+
+**使用 :has() 直接選取包含特定文字的元素**:
+
+```json
+{
+  "selectors": {
+    "currentPrice": {
+      "selector": "tr:has(td:contains('目前股價')) td:nth-child(2)",
+      "multiple": false,
+      "transform": "cleanNumericValue"
+    },
+    "revenueRow2025Q1": {
+      "selector": "tr:has(td:contains('2025')) td:contains('Q1') + td",
+      "multiple": false,
+      "transform": "extractRevenueValue"
+    },
+    "operatingCashFlowHeader": {
+      "selector": "th:has(:contains('營業活動之現金流量'))",
+      "multiple": false,
+      "transform": "extractCashFlowHeader"
+    },
+    "balanceSheetAssets": {
+      "selector": "tbody tr:has(td:contains('總資產')) td:last-child",
+      "multiple": false,
+      "transform": "cleanFinancialValue"
+    }
+  }
+}
+```
+
+**對應的簡化轉換函數**:
+```typescript
+// 大幅簡化的轉換邏輯 - 無需複雜比對
+cleanNumericValue: (content: string | string[]): number => {
+  // 直接處理已精確選取的數值，無需搜索和比對
+  const cleanStr = content.toString().replace(/[^\d.-]/g, '');
+  return parseFloat(cleanStr) || 0;
+},
+
+extractRevenueValue: (content: string | string[]): number => {
+  // 已選取到精確位置，直接轉換即可
+  const value = content.toString().replace(/[^\d,.-]/g, '');
+  return parseInt(value.replace(/,/g, '')) || 0;
+}
+```
+
+#### 📋 :has() 選擇器應用場景
+
+| 應用場景 | 傳統方法問題 | :has() 解決方案 |
+|----------|--------------|-----------------|
+| **表格行定位** | 提取所有行再逐一比對標題 | `tr:has(td:contains('營收'))` 直接選取營收行 |
+| **特定期間數據** | 提取所有數據再匹配期間 | `td:has(:contains('2025-Q1')) + td` 直接選取對應數值 |
+| **標題下的數據** | 複雜的相鄰元素查找邏輯 | `th:contains('EPS') ~ td` 直接選取 EPS 數據列 |
+| **條件性元素** | 多步驟篩選和驗證邏輯 | `div:has(.positive-value)` 直接選取包含正值的區塊 |
+
+#### 🔧 實際應用範例
+
+**場景**: Yahoo Finance 財務報表數據提取
+
+**❌ 傳統複雜比對方法**:
+```json
+{
+  "allTableData": {
+    "selector": "table tr td",
+    "multiple": true,
+    "transform": "complexFinancialDataExtraction"
+  }
+}
+```
+
+```typescript
+// 複雜的提取邏輯 - 需要大量比對代碼
+complexFinancialDataExtraction: (content: string | string[]): FinancialData[] => {
+  const results: FinancialData[] = [];
+  const contentArray = Array.isArray(content) ? content : [content];
+  
+  // 複雜的搜尋和比對邏輯
+  for (let i = 0; i < contentArray.length; i++) {
+    const cell = contentArray[i]?.toString().trim();
+    
+    // 判斷是否為期間標題
+    if (cell?.match(/(20\d{2})\s*[Qq]([1-4])/)) {
+      // 尋找對應的數值（複雜的相對位置計算）
+      const valueIndex = findCorrespondingValue(contentArray, i);
+      if (valueIndex !== -1) {
+        // 更多比對和驗證邏輯...
+        results.push(extractDataFromPosition(contentArray, valueIndex));
+      }
+    }
+  }
+  
+  return results;
+}
+```
+
+**✅ :has() 精確選擇器方法**:
+```json
+{
+  "revenue2025Q1": {
+    "selector": "tr:has(td:contains('2025')) td:contains('Q1') + td",
+    "multiple": false,
+    "transform": "cleanFinancialValue"
+  },
+  "revenue2024Q4": {
+    "selector": "tr:has(td:contains('2024')) td:contains('Q4') + td", 
+    "multiple": false,
+    "transform": "cleanFinancialValue"
+  },
+  "totalAssets": {
+    "selector": "tr:has(td:contains('總資產')) td:last-child",
+    "multiple": false,
+    "transform": "cleanFinancialValue"
+  },
+  "operatingCashFlow": {
+    "selector": "tr:has(td:contains('營業活動')) td:nth-last-child(2)",
+    "multiple": false,
+    "transform": "cleanFinancialValue"
+  }
+}
+```
+
+```typescript
+// 極度簡化的轉換邏輯 - 無需比對
+cleanFinancialValue: (content: string | string[]): number => {
+  // 已精確選取，直接清理和轉換即可
+  const cleanStr = content.toString().replace(/[^\d,.-]/g, '');
+  const numericValue = parseFloat(cleanStr.replace(/,/g, ''));
+  return isNaN(numericValue) ? 0 : numericValue;
+}
+```
+
+#### 🚫 禁止捉取錯誤資料再事後過濾 (No Wrong Data Extraction + Post-filtering)
+
+**核心概念**: 選擇器必須直接捉取正確的資料，絕對禁止先捉取混雜的資料再透過轉換函數進行過濾，這會大幅增加轉換函數的複雜度。
+
+#### ❌ 錯誤做法 (捉錯再過濾)
+
+**問題**: 使用通用選擇器捉取大量混雜資料，再在轉換函數中進行複雜過濾
+
+```json
+{
+  "mixedTableData": {
+    "selector": "table td, .data-cell, li, span",
+    "multiple": true, 
+    "transform": "complexFilterAndExtract"
+  }
+}
+```
+
+```typescript
+// ❌ 複雜的過濾轉換函數 - 大幅增加函數複雜度
+complexFilterAndExtract: (content: string | string[]): FinancialData[] => {
+  const contentArray = Array.isArray(content) ? content : [content];
+  const results: FinancialData[] = [];
+  
+  // 大量的過濾邏輯
+  for (let i = 0; i < contentArray.length; i++) {
+    const item = contentArray[i]?.toString().trim();
+    
+    // 過濾掉不需要的資料類型
+    if (isStockPrice(item)) continue;      // 過濾股價
+    if (isCompanyNews(item)) continue;     // 過濾新聞
+    if (isAdvertisement(item)) continue;   // 過濾廣告
+    if (isNavigation(item)) continue;      // 過濾導航
+    
+    // 判斷資料類型並分類處理
+    if (isRevenueData(item)) {
+      // 更多複雜的判斷和轉換...
+      const revenue = parseRevenueData(item);
+      if (isValidRevenue(revenue)) {
+        results.push(revenue);
+      }
+    } else if (isEPSData(item)) {
+      // EPS 資料處理...
+    } else if (isDividendData(item)) {
+      // 股息資料處理...
+    }
+    // 更多資料類型判斷...
+  }
+  
+  // 事後排序和清理
+  return filterValidResults(sortByPeriod(results));
+}
+
+// 輔助函數激增 - 維護噩夢
+function isStockPrice(content: string): boolean { /* 複雜判斷邏輯 */ }
+function isCompanyNews(content: string): boolean { /* 複雜判斷邏輯 */ }
+function isRevenueData(content: string): boolean { /* 複雜判斷邏輯 */ }
+function parseRevenueData(content: string): RevenueData { /* 複雜解析邏輯 */ }
+// 10+ 個輔助函數...
+```
+
+#### ✅ 正確做法 (精確捉取 + 格式轉換)
+
+**原則**: 選擇器直接捉取目標資料，轉換函數只負責格式調整，不進行資料過濾
+
+```json
+{
+  "revenueQ1Data": {
+    "selector": "tr:has(td:contains('營收')) td:contains('Q1') + td",
+    "multiple": false,
+    "transform": "cleanFinancialNumber"
+  },
+  "epsCurrentQuarter": {
+    "selector": "section.eps-data tr:has(th:contains('本季')) td:last-child",
+    "multiple": false,
+    "transform": "cleanEPSValue"
+  },
+  "dividendYield": {
+    "selector": "div.dividend-info span:has(:contains('殖利率')) + span",
+    "multiple": false,
+    "transform": "cleanPercentageValue"
+  }
+}
+```
+
+```typescript
+// ✅ 簡化的格式轉換函數 - 無需過濾邏輯
+cleanFinancialNumber: (content: string | string[]): number => {
+  // 只負責格式清理，不判斷資料類型
+  const cleanStr = content.toString().replace(/[^\d,.-]/g, '');
+  return parseFloat(cleanStr.replace(/,/g, '')) || 0;
+},
+
+cleanEPSValue: (content: string | string[]): number => {
+  // 已知是 EPS 資料，只需格式調整
+  const epsStr = content.toString().replace(/[^\d.-]/g, '');
+  const eps = parseFloat(epsStr);
+  return Math.round(eps * 100) / 100; // 控制精度到2位小數
+},
+
+cleanPercentageValue: (content: string | string[]): number => {
+  // 已知是百分比資料，只需轉換
+  const percentStr = content.toString().replace(/[^\d.-]/g, '');
+  return parseFloat(percentStr) / 100; // 轉為小數
+}
+```
+
+#### 📊 複雜度對比表
+
+| 方面 | 錯誤做法 (捉錯再過濾) | 正確做法 (精確捉取) |
+|------|---------------------|------------------|
+| **選擇器複雜度** | 簡單通用選擇器 | 精確語義選擇器 |
+| **轉換函數複雜度** | 極高 (100+ 行) | 極低 (5-10 行) |
+| **輔助函數數量** | 10+ 個判斷函數 | 0-2 個格式函數 |
+| **維護難度** | 噩夢級別 | 容易維護 |
+| **除錯難度** | 極高 | 極低 |
+| **效能** | 差 (大量判斷) | 好 (直接轉換) |
+| **錯誤率** | 高 (多步驟錯誤累積) | 低 (單純格式轉換) |
+
+#### 🔧 實際問題範例
+
+**場景**: 提取 Yahoo Finance 營收資料時同時捉到股價、廣告、新聞資料
+
+**❌ 錯誤方式的問題**:
+```typescript
+// 捉取到混雜資料
+const mixedData = [
+  "營收 Q1: 56,433,621",      // ✓ 需要的資料
+  "股價: 1,125.50",           // ✗ 不需要的資料
+  "廣告：投資理財專家...",      // ✗ 不需要的資料  
+  "新聞：公司宣布...",         // ✗ 不需要的資料
+  "營收 Q2: 58,234,112",      // ✓ 需要的資料
+  "熱門搜尋: 台積電股價",       // ✗ 不需要的資料
+];
+
+// 轉換函數變得極其複雜
+function extractRevenue(mixedData) {
+  // 需要複雜的判斷邏輯來過濾不相關資料
+  // 容易誤判，維護困難
+  // 性能較差
+}
+```
+
+**✅ 正確方式的解決**:
+```json
+{
+  "revenueQ1": {
+    "selector": "table.financial-data tr:has(td:contains('營收')) td:nth-child(2)",
+    "transform": "cleanFinancialNumber"
+  },
+  "revenueQ2": {
+    "selector": "table.financial-data tr:has(td:contains('營收')) td:nth-child(3)", 
+    "transform": "cleanFinancialNumber"
+  }
+}
+```
+
+```typescript
+// 直接捉取到: ["56,433,621", "58,234,112"]
+// 轉換函數超級簡單
+cleanFinancialNumber: (content: string): number => {
+  return parseFloat(content.replace(/,/g, ''));
+}
+```
+
+### Exclude Selector 預處理 (Exclude Selector Preprocessing)
+
+**核心概念**: 在數據提取前使用 exclude 選擇器預先移除干擾元素，確保主選擇器只選取到目標數據，進一步減少比對代碼和提升選擇器精確度。
+
+#### ⭐ 第六核心原則: DOM 預處理優化
+
+**最高效率原則**: 通過 exclude 選擇器在提取階段前預先清除廣告、導航、無關內容等干擾元素，讓主選擇器更精確，避免後續複雜的過濾比對邏輯。
+
+#### ✅ Exclude Selector 配置語法
+
+**在配置模板中添加 excludeSelectors 欄位**:
+
+```json
+{
+  "templateType": "tw-eps-clean",
+  "url": "https://tw.stock.yahoo.com/quote/${symbolCode}/eps",
+  "excludeSelectors": [
+    ".advertisement, .ad-banner, [class*='ad-']",
+    ".navigation, .nav-menu, .breadcrumb",
+    ".sidebar, .related-news, .trending",
+    ".footer-content, .social-sharing",
+    ".popup, .overlay, .modal"
+  ],
+  "selectors": {
+    "cleanEPSData": {
+      "selector": "tr:has(td:contains('每股盈餘')) td:last-child",
+      "multiple": false,
+      "transform": "cleanEPSValue"
+    },
+    "fiscalPeriods": {
+      "selector": "table.financial-data th:contains('Q')",
+      "multiple": true,
+      "transform": "extractCleanPeriods"
+    }
+  }
+}
+```
+
+#### 📋 Exclude Selector 應用場景
+
+| 應用場景 | 干擾問題 | Exclude 解決方案 | 效益 |
+|----------|----------|-----------------|------|
+| **廣告清理** | 廣告文字混入財務數據 | `.advertisement, [class*='ad-']` | 消除廣告數字干擾 |
+| **導航清理** | 導航選單文字污染 | `.navigation, .nav-menu, .breadcrumb` | 精確定位表格數據 |
+| **新聞清理** | 相關新聞標題混淆 | `.related-news, .news-sidebar` | 避免新聞標題中的數字 |
+| **彈窗清理** | 彈窗內容影響選擇器 | `.popup, .overlay, .modal` | 確保主內容選擇精確 |
+| **社群清理** | 分享按鈕文字干擾 | `.social-sharing, .share-buttons` | 移除社群相關干擾 |
+
+#### 🔧 技術實作架構
+
+**Playwright 引擎實現**:
+```typescript
+// PlaywrightCrawler.ts 中新增的預處理方法
+private async removeExcludedElements(page: Page, excludeSelectors: string[]): Promise<void> {
+  if (!excludeSelectors || excludeSelectors.length === 0) return;
+  
+  for (const selector of excludeSelectors) {
+    try {
+      await page.evaluate((sel) => {
+        const elements = document.querySelectorAll(sel);
+        elements.forEach(el => el.remove());
+      }, selector);
+      
+      logger.debug(`Removed elements matching: ${selector}`);
+    } catch (error) {
+      logger.warn(`Failed to remove elements with selector "${selector}":`, error);
+    }
+  }
+  
+  logger.info(`Preprocessed DOM: removed ${excludeSelectors.length} exclude selector patterns`);
+}
+```
+
+**Cheerio 引擎實現**:
+```typescript
+// DataExtractor.ts 中新增的預處理方法
+private removeExcludedElementsCheerio($: CheerioAPI, excludeSelectors: string[]): void {
+  if (!excludeSelectors || excludeSelectors.length === 0) return;
+  
+  for (const selector of excludeSelectors) {
+    try {
+      const removedCount = $(selector).remove().length;
+      logger.debug(`Removed ${removedCount} elements matching: ${selector}`);
+    } catch (error) {
+      logger.warn(`Failed to remove elements with selector "${selector}":`, error);
+    }
+  }
+  
+  logger.info(`Preprocessed DOM: processed ${excludeSelectors.length} exclude selector patterns`);
+}
+```
+
+#### 💡 實際應用範例
+
+**場景**: Yahoo Finance EPS 頁面包含大量廣告和推薦內容
+
+**❌ 傳統方法問題**:
+```json
+{
+  "epsData": {
+    "selector": "td",  // 選取到廣告中的數字: "立即投資", "99%用戶推薦", "廣告 3.2%"
+    "multiple": true,
+    "transform": "complexEPSFilterFunction"  // 需要複雜過濾邏輯
+  }
+}
+```
+
+```typescript
+// 複雜的過濾函數
+complexEPSFilterFunction: (content: string[]): EPSData[] => {
+  const results: EPSData[] = [];
+  
+  for (const item of content) {
+    // 大量過濾邏輯
+    if (item.includes('廣告')) continue;
+    if (item.includes('推薦')) continue;
+    if (item.includes('投資')) continue;
+    if (item.includes('立即')) continue;
+    // 10+ 個過濾條件...
+    
+    // 複雜的數據驗證
+    if (isValidEPSData(item)) {
+      results.push(parseEPSData(item));
+    }
+  }
+  
+  return results;
+}
+```
+
+**✅ Exclude Selector 方法**:
+```json
+{
+  "templateType": "tw-eps-clean",
+  "url": "https://tw.stock.yahoo.com/quote/${symbolCode}/eps",
+  "excludeSelectors": [
+    ".advertisement, [data-module='ad'], [class*='ad-']",
+    ".recommendation, .suggest, [class*='recommend']", 
+    ".sidebar, .related-content, .trending-topics",
+    ".social-share, .share-buttons, .social-media",
+    ".popup-banner, .promotion, .marketing-content"
+  ],
+  "selectors": {
+    "cleanEPSData": {
+      "selector": "table.financial-data td:contains('每股盈餘') + td",
+      "multiple": false,
+      "transform": "simpleEPSClean"  // 極簡轉換函數
+    },
+    "quarterlyEPS": {
+      "selector": "tr:has(th:contains('季度')) td:nth-last-child(-n+4)",
+      "multiple": true,
+      "transform": "cleanNumericArray"
+    }
+  }
+}
+```
+
+```typescript
+// 極簡的轉換函數 - 無需過濾邏輯
+simpleEPSClean: (content: string): number => {
+  // DOM 已預先清理，直接處理數值格式即可
+  const cleanStr = content.replace(/[^\d.-]/g, '');
+  return Math.round(parseFloat(cleanStr) * 100) / 100;
+},
+
+cleanNumericArray: (content: string[]): number[] => {
+  // 已清理過的內容，只需格式轉換
+  return content.map(item => parseFloat(item.replace(/[^\d.-]/g, '')) || 0);
+}
+```
+
+#### 🚀 Exclude Selector 優勢對比
+
+| 方面 | 無預處理 (傳統) | Exclude Selector 預處理 |
+|------|-----------------|------------------------|
+| **DOM 複雜度** | 高 (包含所有干擾元素) | 低 (預先清理干擾) |
+| **選擇器精確度** | 低 (需要複雜條件避開干擾) | 高 (直接選取目標) |
+| **轉換函數複雜度** | 極高 (大量過濾邏輯) | 極低 (純格式轉換) |
+| **維護難度** | 困難 (多層邏輯交錯) | 簡單 (清晰分層) |
+| **調試效率** | 低 (難以定位問題源頭) | 高 (預處理 + 提取分離) |
+| **效能表現** | 差 (JavaScript 大量運算) | 好 (瀏覽器原生 DOM 操作) |
+| **擴展性** | 差 (添加新邏輯困難) | 優 (獨立添加排除規則) |
+
+#### 🎯 Exclude Selector 模式庫
+
+```css
+/* 廣告清理模式 */
+.advertisement, [data-module="ad"], [class*="ad-"], [id*="ad-"]
+.banner, .promotion, .marketing, [class*="promo"]
+.sponsored, [data-sponsored], [class*="sponsor"]
+
+/* 導航清理模式 */
+.navigation, .nav-menu, .navbar, [role="navigation"]
+.breadcrumb, .breadcrumbs, .path-navigation
+.menu, .header-menu, .footer-menu
+
+/* 內容清理模式 */
+.sidebar, .aside, .related-content, .recommendations
+.social-share, .share-buttons, .social-media
+.comments, .comment-section, .user-comments
+
+/* 彈窗清理模式 */
+.popup, .modal, .overlay, .lightbox
+.notification, .alert-banner, .toast
+.cookie-notice, .gdpr-notice
+
+/* 新聞清理模式 */
+.news, .article, .blog-post, [class*="news"]
+.trending, .popular, .featured, .highlight
+.related-articles, .more-stories
+
+/* Yahoo Finance 特定模式 */
+.quote-summary, .market-summary, .trending-tickers
+.news-stream, .research-reports, .analyst-ratings
+.options-data, .historical-data:not(.target-data)
+```
+
+#### 🔧 配置整合最佳實踐
+
+**模板結構標準化**:
+```json
+{
+  "templateType": "standardized-template",
+  "url": "https://example.com/${symbolCode}",
+  
+  "_preprocessing": {
+    "description": "DOM 預處理階段 - 清理干擾元素",
+    "excludeSelectors": [
+      "// 廣告相關",
+      ".advertisement, [data-module='ad']",
+      "// 導航相關", 
+      ".navigation, .breadcrumb",
+      "// 社群相關",
+      ".social-share, .share-buttons"
+    ]
+  },
+  
+  "_extraction": {
+    "description": "數據提取階段 - 精確選擇器",
+    "selectors": {
+      "targetData": {
+        "selector": "cleaned-dom-specific-selector",
+        "transform": "simpleFormatFunction"
+      }
+    }
+  }
+}
+```
+
+**分層配置原則**:
+1. **第一層**: Exclude Selectors - DOM 預處理清理
+2. **第二層**: Main Selectors - 精確數據選擇
+3. **第三層**: Transform Functions - 純格式轉換
+
+#### 🧪 測試與驗證工作流程
+
+**1. 預處理效果驗證**:
+```bash
+# 生成測試配置
+npx tsx scripts/generate-yahoo-tw-configs.ts --type=eps
+
+# 啟用詳細日誌模式測試
+npx tsx src/cli.ts --config config/active/test-eps-exclude.json --verbose
+
+# 檢查日誌中的預處理資訊
+# [INFO] Preprocessed DOM: removed 5 exclude selector patterns
+# [DEBUG] Removed 23 elements matching: .advertisement, [data-module='ad']
+# [DEBUG] Removed 8 elements matching: .navigation, .breadcrumb
+```
+
+**2. 選擇器精確度測試**:
+```javascript
+// 在瀏覽器控制台中驗證預處理效果
+// 手動執行 exclude selectors
+document.querySelectorAll('.advertisement, [data-module="ad"]').forEach(el => el.remove());
+document.querySelectorAll('.navigation, .breadcrumb').forEach(el => el.remove());
+
+// 驗證主選擇器結果
+const results = document.querySelectorAll('tr:has(td:contains("每股盈餘")) td:last-child');
+console.log('清理後選擇器結果:', results.length, results[0]?.textContent);
+```
+
+**3. 效能提升測試**:
+```typescript
+// 測試轉換函數複雜度 (前後對比)
+// 無預處理: 50+ 行過濾邏輯 + 複雜判斷
+// 有預處理: 3-5 行格式轉換
+
+function benchmarkTransformComplexity() {
+  const withoutPreprocess = measureComplexity(complexEPSFilterFunction);
+  const withPreprocess = measureComplexity(simpleEPSClean);
+  
+  console.log(`複雜度降低: ${((withoutPreprocess - withPreprocess) / withoutPreprocess * 100).toFixed(1)}%`);
+}
+```
+
+#### 🎯 :has() 選擇器優勢
+
+1. **精確定位**: 直接選取包含特定內容的元素，無需後續搜尋
+2. **零比對邏輯**: 轉換函數只需處理清理工作，無需複雜比對
+3. **零過濾邏輯**: 選擇器保證資料正確性，無需事後過濾
+4. **高可讀性**: 選擇器本身就說明了要選取什麼數據
+5. **低維護成本**: DOM 結構變化時只需調整選擇器，無需改動轉換邏輯
+6. **效能提升**: 避免 JavaScript 中的大量陣列遍歷和字串比對
+7. **函數簡化**: 轉換函數只負責格式調整，不負責資料篩選
+
+#### 📝 :has() 選擇器模式庫
+
+```css
+/* 表格行選擇模式 */
+tr:has(td:contains('關鍵字'))                    /* 選取包含關鍵字的行 */
+tr:has(th:contains('標題')) + tr                 /* 選取標題下一行 */
+tr:has(td:contains('條件')) td:nth-child(n)      /* 選取符合條件行的第n列 */
+
+/* 相鄰元素選擇模式 */
+th:contains('標題') + td                         /* 選取標題後的數據格 */
+td:contains('標籤') ~ td                         /* 選取標籤後的所有同級數據格 */
+label:contains('欄位名') + input                 /* 選取標籤對應的輸入框 */
+
+/* 父子層級選擇模式 */
+div:has(.specific-class) .data-value             /* 選取包含特定類別的容器內的數據 */
+section:has(h2:contains('標題')) .content        /* 選取特定標題區段的內容 */
+li:has(span:contains('項目')) .value             /* 選取特定項目的數值 */
+
+/* 條件性選擇模式 */
+tr:has(td.positive) td:last-child                /* 選取包含正值的行的最後一欄 */
+div:has(.error-indicator):not(.hidden)           /* 選取有錯誤指示且可見的元素 */
+card:has(.status-active) .details               /* 選取啟用狀態卡片的詳細資訊 */
+```
+
 ### 獨立選擇器 (Independent Selectors)
 
 **核心概念**: 每個數據欄位使用獨立的 CSS 選擇器，避免字串解析和拼接問題。
@@ -1250,7 +1885,96 @@ npx tsx scripts/generate-yahoo-jp-configs.ts --type=financials
 npx tsx scripts/generate-yahoo-jp-configs.ts --type=performance
 ```
 
+#### 🎯 Exclude Selector 整合驗證
+
+**完整測試指令**:
+```bash
+# 1. 測試新的 exclude selector 功能 (使用 --config 參數)
+npx tsx src/cli.ts --config config/active/test-eps-exclude.json
+
+# 2. 驗證預處理日誌
+# 查找類似以下的日誌訊息:
+# [INFO] Preprocessed DOM: removed 45 elements using 6 exclude selector patterns
+# [DEBUG] Removed 23 elements matching: .advertisement, [data-module='ad']
+# [DEBUG] Removed 8 elements matching: .navigation, .nav-menu, .breadcrumb
+
+# 3. 對比無預處理的結果 (使用原始配置)
+npx tsx src/cli.ts --config config/yahoo-finance-tw-eps-2330_TW.json
+
+# 4. 檢查輸出差異
+diff output/demo_exclude_selector_eps_2330_TW_*.json output/yahoo_finance_tw_eps_2330_TW_*.json
+```
+
+**成功指標**:
+- **預處理日誌**: 顯示移除的元素數量和模式
+- **選擇器精確度**: 無廣告或導航內容混入財務數據  
+- **數據質量**: EPS 數據更加純淨和準確
+- **效能提升**: 轉換函數執行時間縮短
+
+#### 🚀 最佳實踐整合
+
+**六大核心原則的協同效應**:
+
+1. **:has() 偽類選擇器** + **Exclude Selector** = 雙重精確定位
+2. **禁止錯誤數據捉取** + **DOM 預處理** = 源頭品質保證
+3. **動態提取** + **預處理清理** = 完全自動化流程
+4. **真實常數** + **精確選擇** = 可靠數據驗證
+
+**完整配置範例 (整合六大原則)**:
+```json
+{
+  "templateType": "comprehensive-best-practice",
+  "url": "https://tw.stock.yahoo.com/quote/${symbolCode}/eps",
+  
+  "_principle1_exclude_preprocessing": {
+    "excludeSelectors": [
+      ".advertisement, [data-module='ad']",
+      ".navigation, .breadcrumb", 
+      ".social-share, .popup"
+    ]
+  },
+  
+  "_principle2_has_selectors": {
+    "precisePeriods": "tr:has(td:contains('Q')) th:contains('20')",
+    "preciseEPS": "tr:has(td:contains('每股盈餘')) td:nth-last-child(-n+4)"
+  },
+  
+  "_principle3_no_wrong_data": {
+    "note": "No generic selectors, no post-filtering transforms"
+  },
+  
+  "_principle4_independent_selectors": {
+    "note": "Each data field has dedicated selector"
+  },
+  
+  "_principle5_dynamic_timeline": {
+    "note": "All periods extracted dynamically, no hardcoded dates"
+  },
+  
+  "_principle6_real_constants": {
+    "note": "Use TW_REVENUE_DATA_CONSTANTS for validation"
+  }
+}
+```
+
 ## 版本記錄
+
+- **v1.3.0** (2025-08-07): Exclude Selector 預處理完整實現
+  - **核心新增**: 第六核心原則 - Exclude Selector 預處理
+  - **技術實現**:
+    - ✅ PlaywrightCrawler.ts 新增 `removeExcludedElements()` 方法
+    - ✅ DataExtractor.ts 新增 `removeExcludedElementsCheerio()` 方法  
+    - ✅ CrawlerConfig 介面擴展 `excludeSelectors?: string[]` 屬性
+    - ✅ 雙引擎支援: Playwright `page.evaluate()` + Cheerio `.remove()`
+  - **文檔完善**: 
+    - 完整的 Exclude Selector 原則說明和應用場景
+    - 技術實作架構和效能對比表
+    - 實際應用範例和測試驗證工作流程
+    - Exclude Selector 模式庫和配置整合指南
+  - **範例配置**: 
+    - 更新 `yahoo-finance-tw-eps.json` 模板包含 excludeSelectors
+    - 創建 `test-eps-exclude.json` 示範配置
+  - **驗證結果**: 六大核心原則完整整合，DOM 預處理 → 精確選擇 → 格式轉換的三層架構
 
 - **v1.2.0** (2025-08-05): 位置獨立選擇器方法完善
   - **重大突破**: 完成位置獨立選擇器 (Position-Based Independent Selectors) 方法
@@ -1303,4 +2027,8 @@ npx tsx scripts/generate-yahoo-jp-configs.ts --type=performance
 **核心功能**: Yahoo Finance 多地區財務數據爬取完成
 
 ### 重要提醒
-遵循三大核心原則: **獨立選擇器**、**禁止硬編碼時間軸**、**使用真實數值常數**，確保代碼的可維護性和可擴展性。
+遵循六大核心原則: **獨立選擇器搭配 :has() 偽類**、**禁止捉取錯誤資料再事後過濾**、**Exclude Selector 預處理**、**獨立選擇器**、**禁止硬編碼時間軸**、**使用真實數值常數**，確保代碼的可維護性和可擴展性。
+
+**✨ 最高優先原則**: 優先使用 `:has()` 偽類選擇器直接定位包含特定內容的元素，避免大量比對邏輯，減少 parse 錯誤。
+
+**🚫  嚴禁原則**: 絕對禁止使用通用選擇器捉取混雜資料再透過轉換函數進行過濾，這會大幅增加轉換函數的複雜度並降低可維護性。轉換函數只能進行格式調整，不能進行資料篩選。
