@@ -1,17 +1,23 @@
 {
   "templateType": "tw-income-statement",
   "url": "https://tw.stock.yahoo.com/quote/${symbolCode}/income-statement",
-  "_note": "UNIFIED: This config extracts income statement data using unified selectors and transforms following the new standardized architecture. Outputs UnifiedFinancialData format directly compatible with FundamentalDataEntity.",
+  "_note": "INDEPENDENT SELECTORS (2025-08-07): Uses precise independent selectors for each income statement item, following the successful Revenue/EPS pattern. Based on actual screenshot analysis with 5 rows: 營業收入, 營業毛利, 營業費用, 營業利益, 稅後淨利.",
   "actions": [
     {
       "type": "wait",
-      "timeout": 5000,
-      "description": "等待頁面初始載入"
+      "timeout": 8000,
+      "description": "增加初始載入等待時間"
+    },
+    {
+      "type": "scroll",
+      "direction": "down",
+      "distance": 1500,
+      "description": "滾動觸發收益表數據載入"
     },
     {
       "type": "wait",
-      "timeout": 4000,
-      "description": "等待損益表數據完全載入"
+      "timeout": 6000,
+      "description": "等待收益表數據完全載入"
     }
   ],
   "selectors": {
@@ -19,39 +25,39 @@
       "selector": "h1, .symbol, .stock-name",
       "transform": "cleanStockSymbol"
     },
-    "periods": {
+    "incomeStatementPeriods": {
       "selector": "div.table-header > div.table-header-wrapper > div:nth-child(n+2)",
       "multiple": true,
-      "transform": "extractPeriods"
+      "transform": "extractIncomeStatementPeriodsSeparately"
     },
-    "revenue": {
+    "revenueValues": {
       "selector": "ul > li:nth-child(1) > div > div:nth-child(n+2)",
       "multiple": true,
-      "transform": "extractRevenue"
+      "transform": "extractIncomeStatementValuesSeparately"
     },
-    "operatingIncome": {
+    "grossProfitValues": {
       "selector": "ul > li:nth-child(2) > div > div:nth-child(n+2)",
       "multiple": true,
-      "transform": "extractRevenue"
+      "transform": "extractIncomeStatementValuesSeparately"
     },
-    "operationExpense"": {
+    "operatingExpenseValues": {
       "selector": "ul > li:nth-child(3) > div > div:nth-child(n+2)",
       "multiple": true,
-      "transform": "extractRevenue"
+      "transform": "extractIncomeStatementValuesSeparately"
     },
-    "operatingIncome": {
+    "operatingIncomeValues": {
       "selector": "ul > li:nth-child(4) > div > div:nth-child(n+2)",
       "multiple": true,
-      "transform": "extractRevenue"
+      "transform": "extractIncomeStatementValuesSeparately"
     },
-    "incomeAfterTax": {
+    "netIncomeValues": {
       "selector": "ul > li:nth-child(5) > div > div:nth-child(n+2)",
       "multiple": true,
-      "transform": "extractRevenue"
+      "transform": "extractIncomeStatementValuesSeparately"
     },
     "data": {
       "selector": "body",
-      "transform": "transformIncomeStatementData"
+      "transform": "combineIncomeStatementData"
     }
   },
   "headers": {

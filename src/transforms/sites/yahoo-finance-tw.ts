@@ -47,6 +47,11 @@ export interface YahooFinanceTWTransforms {
   extractStockDividendsSeparately: (content: string | string[]) => number[];
   combineSimpleDividendData: (content: any, context?: any) => UnifiedFinancialData[];
   
+  // === 收益表獨立選擇器 (遵循 CLAUDE.md 原則) ===
+  extractIncomeStatementPeriodsSeparately: (content: string | string[]) => string[];
+  extractIncomeStatementValuesSeparately: (content: string | string[]) => number[];
+  combineIncomeStatementData: (content: any, context?: any) => UnifiedFinancialData[];
+  
   // === EPS獨立選擇器 (遵循 CLAUDE.md 原則) ===
   extractEPSPeriodsSeparately: (content: string | string[]) => string[];
   extractEPSValuesSeparately: (content: string | string[]) => number[];
@@ -8631,6 +8636,219 @@ function combineSimpleRevenueData(content: any, context?: any): UnifiedFinancial
 }
 
 /**
+ * 🎯 收益表期間提取函數 (直接處理選擇器結果)
+ * 處理來自 "ul > li > div > div:nth-child(1)" 選擇器的直接結果
+ * 提取季度期間 (2025 Q1, 2024 Q4 等)
+ */
+function extractIncomeStatementPeriodsSeparately(content: string | string[]): string[] {
+  console.log('[Income Statement Periods] 🔍 處理直接選擇器結果...');
+  
+  const contentArray = Array.isArray(content) ? content : [content];
+  const periods: string[] = [];
+  
+  console.log(`[Income Statement Periods] 📊 處理 ${contentArray.length} 個直接選擇器結果`);
+  
+  contentArray.forEach((item, index) => {
+    const content_item = item?.toString().trim();
+    if (!content_item) return;
+    
+    console.log(`[Income Statement Periods] 🔍 處理項目 ${index}: "${content_item}"`);
+    
+    // 精確的季度期間格式匹配
+    const quarterPatterns = [
+      /^(20\d{2})\s+Q([1-4])$/,           // 2025 Q1
+      /^(20\d{2})\s*Q([1-4])$/,           // 2025Q1  
+      /^(20\d{2})\s*年\s*第\s*([1-4])\s*季$/  // 2025年第1季
+    ];
+    
+    for (const pattern of quarterPatterns) {
+      const match = pattern.exec(content_item);
+      if (match) {
+        const year = match[1];
+        const quarter = match[2];
+        const formattedPeriod = `${year}-Q${quarter}`;
+        
+        if (!periods.includes(formattedPeriod)) {
+          periods.push(formattedPeriod);
+          console.log(`[Income Statement Periods] ✅ Found period: ${formattedPeriod} from "${content_item}"`);
+        }
+        break;
+      }
+    }
+  });
+  
+  console.log(`[Income Statement Periods] 🎯 提取完成，找到 ${periods.length} 個期間`);
+  return periods.sort((a, b) => b.localeCompare(a)); // 最新期間在前
+}
+
+/**
+ * 🎯 收益表數值提取函數 (直接處理選擇器結果)
+ * 處理來自各個 ul > li:nth-child(n) > div > div:nth-child(n+2) 選擇器的直接結果
+ * 提取財務數值 (千元單位)
+ */
+function extractIncomeStatementValuesSeparately(content: string | string[]): number[] {
+  console.log('[Income Statement Values] 💰 處理直接選擇器結果...');
+  
+  const contentArray = Array.isArray(content) ? content : [content];
+  const values: number[] = [];
+  
+  console.log(`[Income Statement Values] 📊 處理 ${contentArray.length} 個直接選擇器結果`);
+  
+  contentArray.forEach((item, index) => {
+    const content_item = item?.toString().trim();
+    if (!content_item) return;
+    
+    console.log(`[Income Statement Values] 🔍 處理項目 ${index}: "${content_item}"`);
+    
+    // 財務數值格式匹配 (千元單位)
+    const valuePatterns = [
+      /^([\d,]{4,})$/,                     // 提取純數字: 153,312,237
+      /^([\d,]{4,})\s*千元?$/,             // 千元格式: 153,312,237 千元  
+      /^([\d,]{4,})\s*仟元?$/,             // 仟元格式: 153,312,237 仟元
+    ];
+    
+    for (const pattern of valuePatterns) {
+      const match = pattern.exec(content_item);
+      if (match) {
+        const numberStr = match[1];
+        const cleanValue = numberStr.replace(/[^\d]/g, '');
+        const numValue = parseInt(cleanValue);
+        
+        // 驗證是否為合理的財務金額 (大於100萬，避免小數值干擾)
+        if (!isNaN(numValue) && numValue >= 1000000) {
+          values.push(numValue);
+          
+          console.log(`[Income Statement Values] ✅ Found value: ${numValue.toLocaleString()} 千元 from "${content_item}"`);
+        } else {
+          console.log(`[Income Statement Values] ⚠️ Skipped small value: ${numValue} from "${content_item}"`);
+        }
+        break;
+      }
+    }
+  });
+  
+  console.log(`[Income Statement Values] 💰 提取完成，找到 ${values.length} 個財務數值`);
+  return values;
+}
+
+/**
+ * 🎯 收益表數據組合函數 (季度數據處理)
+ * 將期間和各項收益表數值組合成 UnifiedFinancialData 格式
+ */
+function combineIncomeStatementData(content: any, context?: any): UnifiedFinancialData[] {
+  console.log('[Combine Income Statement] 🔗 開始組合收益表數據...');
+  
+  const results: UnifiedFinancialData[] = [];
+  
+  try {
+    // 從 context 獲取獨立提取的數據
+    const periods: string[] = context?.incomeStatementPeriods || [];
+    const revenueValues: number[] = context?.revenueValues || [];
+    const grossProfitValues: number[] = context?.grossProfitValues || [];
+    const operatingExpenseValues: number[] = context?.operatingExpenseValues || [];
+    const operatingIncomeValues: number[] = context?.operatingIncomeValues || [];
+    const netIncomeValues: number[] = context?.netIncomeValues || [];
+    
+    console.log(`[Combine Income Statement] 📊 Input data:`);
+    console.log(`  Periods: ${periods.length} items`);
+    console.log(`  Revenue: ${revenueValues.length} items`);
+    console.log(`  Gross Profit: ${grossProfitValues.length} items`);
+    console.log(`  Operating Expense: ${operatingExpenseValues.length} items`);
+    console.log(`  Operating Income: ${operatingIncomeValues.length} items`);
+    console.log(`  Net Income: ${netIncomeValues.length} items`);
+    
+    // 提取 symbolCode - 從 URL 中提取而非 stockInfo
+    let symbolCode = '0000';
+    if (context?.url) {
+      // 從 URL 中提取股票代碼：https://tw.stock.yahoo.com/quote/2330.TW/income-statement
+      const urlMatch = context.url.match(/\/quote\/(\d{4})\.TW/);
+      if (urlMatch) {
+        symbolCode = urlMatch[1];
+        console.log(`[Combine Income Statement] 🔍 從 URL 提取到股票代碼: ${symbolCode}`);
+      }
+    }
+    
+    // 確保期間和數值數量匹配
+    const minLength = Math.min(periods.length, revenueValues.length, grossProfitValues.length, 
+                              operatingExpenseValues.length, operatingIncomeValues.length, netIncomeValues.length);
+    
+    if (minLength === 0) {
+      console.warn('[Combine Income Statement] ⚠️ 沒有找到匹配的期間和數值數據');
+      return results;
+    }
+    
+    console.log(`[Combine Income Statement] 🔄 Processing ${minLength} aligned data sets`);
+    
+    for (let i = 0; i < minLength; i++) {
+      const period = periods[i];
+      const revenue = revenueValues[i];
+      const grossProfit = grossProfitValues[i];
+      const operatingExpense = operatingExpenseValues[i];
+      const operatingIncome = operatingIncomeValues[i];
+      const netIncome = netIncomeValues[i];
+      
+      if (period && revenue !== undefined) {
+        // 解析期間信息 (季度數據)
+        const { year, quarter } = parseUnifiedFiscalPeriod(period);
+        
+        // 生成正確的報告日期 (季末日期)
+        if (quarter !== undefined) {
+          const quarterEndMonths = { 1: 3, 2: 6, 3: 9, 4: 12 };
+          const endMonth = quarterEndMonths[quarter as keyof typeof quarterEndMonths];
+          const daysInMonth = new Date(year, endMonth, 0).getDate();
+          const reportDate = `${year}-${endMonth.toString().padStart(2, '0')}-${daysInMonth.toString().padStart(2, '0')}`;
+        
+        const unifiedData: UnifiedFinancialData = {
+          // === 必要識別欄位 ===
+          symbolCode: symbolCode,
+          exchangeArea: "TPE",
+          reportDate: reportDate,
+          fiscalYear: year,
+          fiscalQuarter: quarter,
+          fiscalMonth: undefined, // 季度數據不需要月份
+          reportType: "quarterly",
+          
+          // === 收益表相關欄位 ===
+          revenue: revenue,
+          operatingIncome: operatingIncome,
+          netIncome: netIncome,
+          
+          // === 其他欄位設為 undefined ===
+          totalAssets: undefined,
+          totalLiabilities: undefined,
+          shareholdersEquity: undefined,
+          eps: undefined,
+          operatingCashFlow: undefined,
+          freeCashFlow: undefined,
+          dividendYield: undefined,
+          bookValuePerShare: undefined,
+          roe: undefined,
+          roa: undefined,
+          debtToEquity: undefined,
+          currentRatio: undefined,
+          priceToBook: undefined,
+          priceToEarnings: undefined,
+          grossMargin: grossProfit && revenue ? (grossProfit / revenue) : undefined,
+          operatingMargin: operatingIncome && revenue ? (operatingIncome / revenue) : undefined,
+          netMargin: netIncome && revenue ? (netIncome / revenue) : undefined,
+        };
+        
+        results.push(unifiedData);
+        console.log(`[Combine Income Statement] ✅ Combined ${period}: Revenue=${revenue.toLocaleString()}, NetIncome=${netIncome.toLocaleString()} TWD`);
+        }
+      }
+    }
+    
+    console.log(`[Combine Income Statement] 🎯 組合完成，產生 ${results.length} 筆 UnifiedFinancialData 記錄`);
+    
+  } catch (error) {
+    console.error('[Combine Income Statement] ❌ 數據組合失敗:', error);
+  }
+  
+  return results;
+}
+
+/**
  * 提取股利所屬期間 (獨立選擇器)
  * 提取年度(2025, 2024)和半年度(2024H2, 2024H1)期間
  * 忽略發放期間欄位（第一個值）
@@ -10258,6 +10476,11 @@ Object.assign(yahooFinanceTWTransforms, {
   extractCashDividendsSeparately,
   extractStockDividendsSeparately,
   combineSimpleDividendData,
+  
+  // === 收益表獨立選擇器 (遵循 CLAUDE.md 原則) ===
+  extractIncomeStatementPeriodsSeparately,
+  extractIncomeStatementValuesSeparately,
+  combineIncomeStatementData,
   
   // === EPS獨立選擇器 (遵循 CLAUDE.md 原則) ===
   extractEPSPeriodsSeparately,
