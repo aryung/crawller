@@ -395,6 +395,32 @@ export const TW_EPS_DATA_CONSTANTS = {
   }
 } as const;
 
+// 台灣股息數據處理常數 - 基於實際股息分佈的動態驗證
+export const TW_DIVIDEND_DATA_CONSTANTS = {
+  // 股息基本檢查 - 基於台灣上市公司實際股息範圍
+  MIN_REASONABLE_DIVIDEND: 0.1,       // 最小合理股息 (0.1元，避免雜訊)
+  MAX_REASONABLE_DIVIDEND: 200,        // 最大合理股息 (200元，基於高股息股票如金融股)
+  
+  // 年份數據排除閾值 - 核心功能
+  YEAR_VALUE_THRESHOLD: 1980,         // 年份通常超過此值 (1980-2030)
+  MAX_VALID_YEAR: 2030,               // 最大有效年份
+  MIN_VALID_YEAR: 1990,               // 最小有效年份 (台灣股市電子化)
+  
+  // 動態檢測參數
+  CONCATENATION_DETECTION: {
+    SUSPICIOUS_PATTERN_THRESHOLD: 1000, // 超過此值可能是年份或錯誤數據
+    MIN_VALID_DIVIDEND: 0.01,          // 最小有效股息
+    MAX_SINGLE_COMPANY_DIVIDEND: 150   // 單一公司最大可能股息
+  },
+  
+  // 期間格式檢查
+  PERIOD_VALIDATION: {
+    VALID_HALF_YEAR_PATTERN: /^(20\d{2})-H[12]$/,  // 2024-H1, 2024-H2
+    VALID_YEAR_PATTERN: /^(20\d{2})$/,              // 2024, 2025
+    VALID_QUARTER_PATTERN: /^(20\d{2})-Q[1-4]$/    // 2024-Q1 (備用)
+  }
+} as const;
+
 // Dividend 欄位到表格標題的映射
 export const TW_DIVIDEND_DATA_FIELD_MAPPING = {
   cashDividend: YAHOO_FINANCE_TW_DIVIDEND_HEADERS.CASH_DIVIDEND,
