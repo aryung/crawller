@@ -7,10 +7,59 @@
       "selector": "h1, .symbol",
       "transform": "cleanStockSymbol"
     },
-    "structuredFinancialData": {
-      "selector": "table td, table th",
-      "multiple": true,
-      "transform": "structureFinancialDataFromAllTableCells"
+    "period":{
+      "selector": "tbody > tr > th",
+      "multiple": false,
+      "transform": "extractFreeCashflow"
+    },
+    "eps":{
+      "selector": "tbody > tr > td:nth-child(1) > span",
+      "multiple": false,
+      "transform": "extractFreeCashflow"
+    },
+    "bps": {
+      "selector": "tbody > tr > td:nth-child(2) > span",
+      "multiple": false,
+      "transform": "extractOperatingCashflow"
+    },
+    "roa": {
+      "selector": "tbody > tr > td:nth-child(3) > span",
+      "multiple": false,
+      "transform": "extractInvestingCashflow"
+    },
+    "roe": {
+      "selector": "tbody > tr > td:nth-child(4) > span",
+      "multiple": false,
+      "transform": "extractFinancingCashflow"
+    },
+    "totalAssets": {
+      "selector": "tbody > tr > td:nth-child(5) > span",
+      "multiple": false,
+      "transform": "extractFinancingCashflow"
+    },
+    "equityRatio": {
+      "selector": "tbody > tr > td:nth-child(6) > span",
+      "multiple": false,
+      "transform": "extractFinancingCashflow"
+    },
+    "shareCapital": {
+      "selector": "tbody > tr > td:nth-child(7) > span",
+      "multiple": false,
+      "transform": "extractFinancingCashflow"
+    },
+    "interestBearingDebt": {
+      "selector": "tbody > tr > td:nth-child(8) > span",
+      "multiple": false,
+      "transform": "extractFinancingCashflow"
+    },
+    "cureentReceivables": {
+      "selector": "tbody > tr > td:nth-child(9) > span",
+      "multiple": false,
+      "transform": "extractFinancingCashflow"
+    },
+    "data": {
+      "selector"": "body",
+      "transform"": "extractTableData",
     }
   },
   "headers": {

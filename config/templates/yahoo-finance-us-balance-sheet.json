@@ -31,63 +31,78 @@
       "multiple": false,
       "transform": "extractFreeCashflow"
     },
-    "operatingCashflow": {
+    "totalAssets": {
       "selector": "div.table > div.tableBody > div:nth-child(1) > div > div:nth-child(n+2)",
       "multiple": false,
       "transform": "extractOperatingCashflow"
     },
-    "investingCashflow": {
+    "totalLiabilities": {
       "selector": "div.table > div.tableBody > div:nth-child(2) > div > div:nth-child(n+2)",
       "multiple": false,
       "transform": "extractInvestingCashflow"
     },
-    "financingCashflow": {
+    "totalEquity": {
       "selector": "div.table > div.tableBody > div:nth-child(3) > div > div:nth-child(n+2)",
       "multiple": false,
       "transform": "extractFinancingCashflow"
     },
-    "endCashPosition": {
+    "totalCapitalization": {
       "selector": "div.table > div.tableBody > div:nth-child(4) > div > div:nth-child(n+2)",
       "multiple": false,
       "transform": "extractFinancingCashflow"
     },
-    "incomeTaxPaidSupplementalData":{
+    "commonStockEquity":{
       "selector": "div.table > div.tableBody > div:nth-child(5) > div > div:nth-child(n+2)",
       "multiple": false,
       "transform": "extractFreeCashflow"
     },
-    "interestPaidSupplementalData":{
+    "capitalLeaseObligations":{
       "selector": "div.table > div.tableBody > div:nth-child(6) > div > div:nth-child(n+2)",
       "multiple": false,
       "transform": "extractFreeCashflow"
     },
-    "capitalExpenditure":{
+    "netTangibleAssets":{
       "selector": "div.table > div.tableBody > div:nth-child(7) > div > div:nth-child(n+2)",
       "multiple": false,
       "transform": "extractFreeCashflow"
     },
-    "issuanceOfCapitalStock":{
+    "workingCapital":{
       "selector": "div.table > div.tableBody > div:nth-child(8) > div > div:nth-child(n+2)",
       "multiple": false,
       "transform": "extractFreeCashflow"
     },
-    "issuanceOfDept":{
+    "investedCapital":{
       "selector": "div.table > div.tableBody > div:nth-child(9) > div > div:nth-child(n+2)",
       "multiple": false,
       "transform": "extractFreeCashflow"
     },
-    "repaymentOfDebt":{
+    "tangibleBookValue":{
       "selector": "div.table > div.tableBody > div:nth-child(10) > div > div:nth-child(n+2)",
       "multiple": false,
       "transform": "extractFreeCashflow"
     },
-    "repaymentOfCapitalStock":{
+    "totalDept":{
       "selector": "div.table > div.tableBody > div:nth-child(11) > div > div:nth-child(n+2)",
       "multiple": false,
       "transform": "extractFreeCashflow"
     },
-    "freeCashflow":{
+    "netDept":{
       "selector": "div.table > div.tableBody > div:nth-child(12) > div > div:nth-child(n+2)",
+      "multiple": false,
+      "transform": "extractFreeCashflow"
+    },
+    "shareIssued":{
+      "selector": "div.table > div.tableBody > div:nth-child(13) > div > div:nth-child(n+2)",
+      "multiple": false,
+      "transform": "extractFreeCashflow"
+    },
+    "ordinarySharesNumber":{
+      "selector": "div.table > div.tableBody > div:nth-child(14) > div > div:nth-child(n+2)",
+      "multiple": false,
+      "transform": "extractFreeCashflow"
+    },
+    "treasurySharesNumber":{
+      "selector": "div.table > div.tableBody > div:nth-child(15) > div > div:nth-child(n+2)",
       "multiple": false,
       "transform": "extractFreeCashflow"
     },

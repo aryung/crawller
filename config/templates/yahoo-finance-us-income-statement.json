@@ -31,63 +31,108 @@
       "multiple": false,
       "transform": "extractFreeCashflow"
     },
-    "operatingCashflow": {
+    "totalRevenue": {
       "selector": "div.table > div.tableBody > div:nth-child(1) > div > div:nth-child(n+2)",
       "multiple": false,
       "transform": "extractOperatingCashflow"
     },
-    "investingCashflow": {
+    "costOfRevenue": {
       "selector": "div.table > div.tableBody > div:nth-child(2) > div > div:nth-child(n+2)",
       "multiple": false,
       "transform": "extractInvestingCashflow"
     },
-    "financingCashflow": {
+    "grossProfit": {
       "selector": "div.table > div.tableBody > div:nth-child(3) > div > div:nth-child(n+2)",
       "multiple": false,
       "transform": "extractFinancingCashflow"
     },
-    "endCashPosition": {
+    "operatingExpense": {
       "selector": "div.table > div.tableBody > div:nth-child(4) > div > div:nth-child(n+2)",
       "multiple": false,
       "transform": "extractFinancingCashflow"
     },
-    "incomeTaxPaidSupplementalData":{
+    "operatingIncome":{
       "selector": "div.table > div.tableBody > div:nth-child(5) > div > div:nth-child(n+2)",
       "multiple": false,
       "transform": "extractFreeCashflow"
     },
-    "interestPaidSupplementalData":{
+    "netNonOperatingInterestIncome":{
       "selector": "div.table > div.tableBody > div:nth-child(6) > div > div:nth-child(n+2)",
       "multiple": false,
       "transform": "extractFreeCashflow"
     },
-    "capitalExpenditure":{
+    "otherIncomeExpense":{
       "selector": "div.table > div.tableBody > div:nth-child(7) > div > div:nth-child(n+2)",
       "multiple": false,
       "transform": "extractFreeCashflow"
     },
-    "issuanceOfCapitalStock":{
+    "pretaxIncome":{
       "selector": "div.table > div.tableBody > div:nth-child(8) > div > div:nth-child(n+2)",
       "multiple": false,
       "transform": "extractFreeCashflow"
     },
-    "issuanceOfDept":{
+    "TaxProvision":{
       "selector": "div.table > div.tableBody > div:nth-child(9) > div > div:nth-child(n+2)",
       "multiple": false,
       "transform": "extractFreeCashflow"
     },
-    "repaymentOfDebt":{
+    "netIncomeCommonStockholder":{
       "selector": "div.table > div.tableBody > div:nth-child(10) > div > div:nth-child(n+2)",
       "multiple": false,
       "transform": "extractFreeCashflow"
     },
-    "repaymentOfCapitalStock":{
+    "dilutedNIAvailableToComStock":{
       "selector": "div.table > div.tableBody > div:nth-child(11) > div > div:nth-child(n+2)",
       "multiple": false,
       "transform": "extractFreeCashflow"
     },
-    "freeCashflow":{
+    "basicEps":{
       "selector": "div.table > div.tableBody > div:nth-child(12) > div > div:nth-child(n+2)",
+      "multiple": false,
+      "transform": "extractFreeCashflow"
+    },
+    "dilutedEps":{
+      "selector": "div.table > div.tableBody > div:nth-child(12) > div > div:nth-child(n+2)",
+      "multiple": false,
+      "transform": "extractFreeCashflow"
+    },
+    "basicAverageShares":{
+      "selector": "div.table > div.tableBody > div:nth-child(13) > div > div:nth-child(n+2)",
+      "multiple": false,
+      "transform": "extractFreeCashflow"
+    },
+    "dilutedAverageShares":{
+      "selector": "div.table > div.tableBody > div:nth-child(14) > div > div:nth-child(n+2)",
+      "multiple": false,
+      "transform": "extractFreeCashflow"
+    },
+    "totalOperatingIncome":{
+      "selector": "div.table > div.tableBody > div:nth-child(15) > div > div:nth-child(n+2)",
+      "multiple": false,
+      "transform": "extractFreeCashflow"
+    },
+    "totalExpense":{
+      "selector": "div.table > div.tableBody > div:nth-child(16) > div > div:nth-child(n+2)",
+      "multiple": false,
+      "transform": "extractFreeCashflow"
+    },
+    "netIncomeFromContinuingAndDiscontinuedOperation":{
+      "selector": "div.table > div.tableBody > div:nth-child(17) > div > div:nth-child(n+2)",
+      "multiple": false,
+      "transform": "extractFreeCashflow"
+    },
+    "normalizedEBITDA":{
+      "selector": "div.table > div.tableBody > div:nth-child(18) > div > div:nth-child(n+2)",
+      "multiple": false,
+      "transform": "extractFreeCashflow"
+    },
+    "taxRateForCalcs":{
+      "selector": "div.table > div.tableBody > div:nth-child(19) > div > div:nth-child(n+2)",
+      "multiple": false,
+      "transform": "extractFreeCashflow"
+    },
+    "taxEffectOfUnusualItems":{
+      "selector": "div.table > div.tableBody > div:nth-child(20) > div > div:nth-child(n+2)",
       "multiple": false,
       "transform": "extractFreeCashflow"
     },
