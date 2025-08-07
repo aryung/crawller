@@ -1,23 +1,34 @@
 {
-  "templateType": "tw-dividend",
+  "templateType": "tw-dividend-precise-selectors",
   "url": "https://tw.stock.yahoo.com/quote/${symbolCode}/dividend",
-  "_note": "INDEPENDENT SELECTORS: This config follows CLAUDE.md principles by using independent selectors for each dividend data field (periods, cash dividends, stock dividends) to avoid data extraction errors and improve accuracy.",
+  "_note": "PRECISE :has() SELECTOR ARCHITECTURE: Following CLAUDE.md principles, uses independent :has() selectors for each data field - fiscalPeriod, cashDividend, and dividendYieldRate. No mixed data extraction.",
+  "excludeSelectors": [
+    ".advertisement, [data-module='ad'], [class*='ad-'], [id*='ad-']",
+    ".navigation, .nav-menu, .breadcrumb, [role='navigation']",
+    ".sidebar, .related-news, .trending-topics, .recommendations",
+    ".social-share, .share-buttons, .social-media",
+    ".popup, .modal, .overlay, .banner-notification",
+    ".stock-list, .ranking-list, .trending-list, [class*='ranking']",
+    ".popular-stocks, .hot-stocks, [class*='popular'], [class*='hot']",
+    ".news-section, .analyst-rating, .performance-data",
+    ".market-summary, .market-index, .market-overview"
+  ],
   "actions": [
     {
       "type": "wait",
-      "timeout": 5000,
-      "description": "等待頁面初始載入"
+      "timeout": 8000,
+      "description": "等待頁面完全載入"
     },
     {
       "type": "scroll",
       "direction": "down",
-      "distance": 1000,
-      "description": "向下滾動確保所有股利歷史數據載入"
+      "distance": 1500,
+      "description": "滾動確保股息歷史數據完全載入"
     },
     {
       "type": "wait",
       "timeout": 4000,
-      "description": "等待股利數據完全載入"
+      "description": "等待動態內容穩定"
     }
   ],
   "selectors": {
@@ -25,49 +36,43 @@
       "selector": "h1, .symbol, .stock-name",
       "transform": "cleanStockSymbol"
     },
-    "dividendPeriods": {
-      "selector": "table td, tbody td, div[class*='table'] div, li div, [class*='cell'], .table-cell",
+    "period": {
+      "selector": "ul> li > div.table-row > div:nth-child(2):not(:empty)",
       "multiple": true,
-      "transform": "extractDividendPeriodsSeparately"
+      "transform": "extractFiscalPeriod"
     },
-    "cashDividends": {
-      "selector": "table td, tbody td, div[class*='table'] div, li div, [class*='cell'], .table-cell",
-      "multiple": true,
-      "transform": "extractCashDividendsSeparately"
+    "cashDividend": {
+      "selector": "ul > li > div.table-row:has(div:nth-child(2):not(:empty)) div:nth-child(3)",
+      "transform": "extract2024H2CashDividend"
     },
-    "stockDividends": {
-      "selector": "table td, tbody td, div[class*='table'] div, li div, [class*='cell'], .table-cell",
-      "multiple": true,
-      "transform": "extractStockDividendsSeparately"
+    "stockDividend": {
+      "selector": "ul > li > div.table-row:has(div:nth-child(2):not(:empty)) div:nth-child(4)",
+      "transform": "extract2024H1CashDividend"
     },
     "data": {
-      "selector": "body",
-      "multiple": false,
+      "multiple": true,
       "transform": "combineSimpleDividendData"
     }
   },
   "headers": {
-    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
     "Accept-Language": "zh-TW,zh;q=0.9,en;q=0.8",
-    "Accept-Encoding": "gzip, deflate, br",
-    "Cache-Control": "no-cache",
-    "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+    "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36"
   },
   "options": {
-    "timeout": 30000,
-    "retries": 3,
+    "timeout": 45000,
+    "retries": 2,
     "headless": true,
     "screenshot": false,
-    "encoding": "utf-8",
-    "domainDelay": 5000,
-    "waitFor": 5000
+    "waitFor": 8000,
+    "forceEngine": "playwright"
   },
   "variables": {
-    "symbolCode": "1101.TW",
+    "symbolCode": "2454.TW",
     "baseUrl": "https://tw.stock.yahoo.com"
   },
   "export": {
-    "formats": ["json", "csv"],
+    "formats": ["json"],
     "filename": "yahoo_finance_tw_dividend_${symbolCode}"
   }
 }
