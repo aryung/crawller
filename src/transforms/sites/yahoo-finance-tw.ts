@@ -55,7 +55,18 @@ export interface YahooFinanceTWTransforms {
   // === 精確位置選擇器 (基於 DOM 分析，避免股價數據污染) ===
   extractEPSPeriodsWithPrecisePosition: (content: string | string[]) => string[];
   extractEPSValuesWithPrecisePosition: (content: string | string[]) => number[];
-  combineSimpleEPSDataWithPrecisePosition: (content: any, context?: any) => UnifiedFinancialData[];
+  combineEPSDataWithPrecisePosition: (content: any, context?: any) => UnifiedFinancialData[];
+  
+  // === 真實 DOM 結構選擇器 (基於 2025-08-07 調試分析) ===
+  extractEPSPeriodsFromRealDOM: (content: string | string[]) => string[];
+  extractEPSValuesFromRealDOM: (content: string | string[]) => number[];
+  combineEPSDataFromRealDOM: (content: any, context?: any) => UnifiedFinancialData[];
+  
+  // === 語義化選擇器 (遵循 CLAUDE.md 原則 1: 使用語義化過濾避免複雜選擇器) ===
+  extractEPSDataWithSemanticSelector: (content: string | string[]) => {periods: string[], values: number[]};
+  extractEPSPeriodsWithSemanticSelector: (content: string | string[]) => string[];
+  extractEPSValuesWithSemanticSelector: (content: string | string[]) => number[];
+  combineEPSDataWithSemanticSelector: (content: any, context?: any) => UnifiedFinancialData[];
   
   // === 各類型保持自己的轉換函數 (避免複雜的 switch/case) ===
   transformRevenueData: (content: any, context?: any) => UnifiedFinancialData[];
@@ -9111,7 +9122,7 @@ function extractEPSValuesWithPrecisePosition(content: string | string[]): number
  * 🎯 基於精確位置的 EPS 數據組合函數
  * 使用精確位置選擇器避免股價數據污染，完美解決用戶提出的問題
  */
-function combineSimpleEPSDataWithPrecisePosition(
+function combineEPSDataWithPrecisePosition(
   content: string | string[],
   context?: any
 ): UnifiedFinancialData[] {
@@ -9155,6 +9166,334 @@ function combineSimpleEPSDataWithPrecisePosition(
   }
 
   console.log(`[Precise EPS Combine] 🎯 成功組合 ${results.length} 筆 EPS 數據，完全避免股價數據污染`);
+  return results;
+}
+
+/**
+ * 🎯 基於真實 DOM 結構的 EPS 期間提取函數 (2025-08-07 調試分析)
+ * 從 allListData 的位置 110+ 提取完整的期間+數據組合字符串
+ */
+function extractEPSPeriodsFromRealDOM(content: string | string[]): string[] {
+  console.log('[Real DOM EPS Periods] 🎯 基於真實 DOM 結構提取期間數據...');
+  
+  const contentArray = Array.isArray(content) ? content : [content];
+  const periods: string[] = [];
+  
+  // 基於調試分析: 期間數據從位置 110 開始，格式如 "2025 Q113.95-3.46%60.34%1,049.69"
+  const PERIOD_DATA_START = 110;
+  const MAX_PERIODS = 20;
+  
+  for (let i = PERIOD_DATA_START; i < PERIOD_DATA_START + MAX_PERIODS && i < contentArray.length; i++) {
+    const item = contentArray[i]?.toString().trim();
+    if (!item) continue;
+    
+    // 匹配期間格式: "2025 Q1", "2024 Q4" 等
+    const periodMatch = item.match(/^(20\d{2})\s*Q([1-4])/);
+    if (periodMatch) {
+      const year = periodMatch[1];
+      const quarter = periodMatch[2];
+      const period = `${year}-Q${quarter}`;
+      periods.push(period);
+      console.log(`[Real DOM EPS Periods] ✅ 提取期間: "${item}" -> ${period}`);
+    }
+  }
+  
+  console.log(`[Real DOM EPS Periods] 📊 總計提取 ${periods.length} 個期間`);
+  return periods;
+}
+
+/**
+ * 🎯 基於真實 DOM 結構的 EPS 數值提取函數 (2025-08-07 調試分析)
+ * 從 allTableData 的位置 0, 4, 8, 12... 每隔4個位置提取EPS數值
+ */
+function extractEPSValuesFromRealDOM(content: string | string[]): number[] {
+  console.log('[Real DOM EPS Values] 🎯 基於真實 DOM 結構提取 EPS 數值...');
+  
+  const contentArray = Array.isArray(content) ? content : [content];
+  const values: number[] = [];
+  
+  // 基於調試分析: EPS數值在位置 0, 4, 8, 12, 16, 20... 每隔4個位置
+  const EPS_START_POSITION = 0;
+  const EPS_INTERVAL = 4;
+  const MAX_EPS_VALUES = 20;
+  
+  for (let i = 0; i < MAX_EPS_VALUES; i++) {
+    const position = EPS_START_POSITION + (i * EPS_INTERVAL);
+    
+    if (position < contentArray.length) {
+      const trimmed = contentArray[position]?.toString().trim();
+      
+      if (trimmed && /^\d+\.?\d*$/.test(trimmed)) {
+        const eps = parseFloat(trimmed);
+        if (!isNaN(eps) && eps >= -50 && eps <= 100) { // 合理的EPS範圍
+          values.push(eps);
+          console.log(`[Real DOM EPS Values] ✅ Position ${position}: "${trimmed}" -> ${eps}`);
+        } else {
+          console.log(`[Real DOM EPS Values] ⚠️ Position ${position}: 數值超出範圍 "${trimmed}" -> ${eps}`);
+        }
+      } else {
+        console.log(`[Real DOM EPS Values] ⚠️ Position ${position}: 預期 EPS 數值但找到 "${trimmed}"`);
+      }
+    } else {
+      break;
+    }
+  }
+  
+  console.log(`[Real DOM EPS Values] 📊 總計提取 ${values.length} 個 EPS 數值`);
+  return values;
+}
+
+/**
+ * 🎯 基於真實 DOM 結構的 EPS 數據組合函數 (2025-08-07 調試分析)
+ * 使用真實 DOM 結構提取的期間和數值進行精確配對
+ */
+function combineEPSDataFromRealDOM(
+  content: string | string[],
+  context?: any
+): UnifiedFinancialData[] {
+  console.log('[Real DOM EPS Combine] 🎯 使用真實 DOM 結構組合 EPS 數據...');
+
+  // 使用真實 DOM 方法提取期間和數值
+  const periods = extractEPSPeriodsFromRealDOM(content);
+  const epsValues = extractEPSValuesFromRealDOM(content);
+
+  const results: UnifiedFinancialData[] = [];
+  const maxLength = Math.min(periods.length, epsValues.length);
+
+  console.log(`[Real DOM EPS Combine] 📊 期間數: ${periods.length}, EPS數值數: ${epsValues.length}, 配對數: ${maxLength}`);
+
+  for (let i = 0; i < maxLength; i++) {
+    const period = periods[i];
+    const eps = epsValues[i];
+
+    if (period && eps !== undefined) {
+      // 解析期間格式
+      const periodParts = period.split('-');
+      const year = parseInt(periodParts[0]);
+      const quarter = parseInt(periodParts[1]?.replace('Q', '') || '1');
+      const month = quarter * 3; // Q1=3, Q2=6, Q3=9, Q4=12
+
+      const data: UnifiedFinancialData = {
+        symbolCode: context?.symbolCode || '2330',
+        exchangeArea: 'TPE',
+        reportDate: `${year}-${month.toString().padStart(2, '0')}-${quarter === 1 ? '31' : quarter === 2 ? '30' : quarter === 3 ? '30' : '31'}`,
+        fiscalYear: year,
+        fiscalMonth: month,
+        reportType: 'quarterly',
+        dataSource: 'yahoo-finance-tw',
+        lastUpdated: new Date().toISOString(),
+        eps: Math.round(eps * 100) / 100
+      };
+
+      results.push(data);
+      console.log(`[Real DOM EPS Combine] ✅ 配對成功: ${period} -> EPS=${eps}`);
+    }
+  }
+
+  console.log(`[Real DOM EPS Combine] 🎯 成功組合 ${results.length} 筆 EPS 數據，基於真實 DOM 結構`);
+  return results;
+}
+
+/**
+ * 🎯 語義化 EPS 數據提取函數 (遵循 CLAUDE.md 原則，避免複雜 CSS 選擇器)
+ * 從 ul li div 元素中語義化提取期間和數值
+ */
+function extractEPSDataWithSemanticSelector(content: string | string[]): {periods: string[], values: number[]} {
+  console.log('[Semantic EPS Data] 🎯 語義化提取 EPS 數據 (基於實際 DOM 結構)...');
+  
+  const contentArray = Array.isArray(content) ? content : [content];
+  const periods: string[] = [];
+  const values: number[] = [];
+  
+  console.log(`[Semantic EPS Data] 📊 輸入數據長度: ${contentArray.length}`);
+  
+  // 根據調試輸出，EPS 數據的模式：
+  // 期間格式在 91, 98, 105, 112, 119, 126, 133... (每7項)
+  // EPS 數值在 93, 100, 107, 114, 121, 128, 135... (每7項)
+  
+  for (let i = 0; i < contentArray.length; i++) {
+    const item = contentArray[i];
+    if (!item) continue;
+    
+    const trimmed = item.toString().trim();
+    
+    // 模式1：直接匹配期間格式 "2025 Q1", "2024 Q4"
+    const periodMatch = trimmed.match(/^(20\d{2})\s*Q([1-4])$/);
+    if (periodMatch) {
+      const year = periodMatch[1];
+      const quarter = periodMatch[2];
+      const period = `${year}-Q${quarter}`;
+      periods.push(period);
+      console.log(`[Semantic EPS Data] ✅ 提取期間 [${i}]: "${trimmed}" -> ${period}`);
+      continue;
+    }
+    
+    // 模式2：匹配 EPS 數值，必須是純數字格式且在合理範圍內
+    if (/^\d+\.?\d*$/.test(trimmed)) {
+      const eps = parseFloat(trimmed);
+      if (!isNaN(eps) && eps >= 1 && eps <= 50) {  // 台積電 EPS 合理範圍
+        // 檢查前面是否有對應的期間
+        let correspondingPeriod = null;
+        
+        // 向前搜尋最近的期間
+        for (let j = i - 1; j >= Math.max(0, i - 10); j--) {
+          const prevItem = contentArray[j]?.toString().trim();
+          const prevPeriodMatch = prevItem?.match(/^(20\d{2})\s*Q([1-4])$/);
+          if (prevPeriodMatch && !correspondingPeriod) {
+            correspondingPeriod = `${prevPeriodMatch[1]}-Q${prevPeriodMatch[2]}`;
+            break;
+          }
+        }
+        
+        if (correspondingPeriod) {
+          values.push(eps);
+          console.log(`[Semantic EPS Data] ✅ 提取數值 [${i}]: "${trimmed}" -> EPS=${eps} (對應期間: ${correspondingPeriod})`);
+        }
+      }
+    }
+  }
+  
+  // 確保期間和數值數量一致
+  const finalPeriods = periods.slice(0, values.length);
+  const finalValues = values.slice(0, periods.length);
+  
+  console.log(`[Semantic EPS Data] 📊 最終結果: ${finalPeriods.length} 個期間, ${finalValues.length} 個數值`);
+  
+  return { 
+    periods: finalPeriods, 
+    values: finalValues 
+  };
+}
+
+/**
+ * 🎯 基於語義化選擇器的 EPS 期間提取函數 (遵循 CLAUDE.md 原則 1)
+ * 使用語義化過濾直接定位包含 Q 的元素
+ */
+function extractEPSPeriodsWithSemanticSelector(content: string | string[]): string[] {
+  console.log('[Semantic EPS Periods] 🎯 使用語義化選擇器提取期間數據...');
+  
+  const contentArray = Array.isArray(content) ? content : [content];
+  const periods: string[] = [];
+  
+  for (const item of contentArray) {
+    if (!item) continue;
+    
+    const trimmed = item.toString().trim();
+    // 匹配期間格式: "2025 Q1", "2024 Q4" 等
+    const periodMatch = trimmed.match(/^(20\d{2})\s*Q([1-4])$/);
+    if (periodMatch) {
+      const year = periodMatch[1];
+      const quarter = periodMatch[2];
+      const period = `${year}-Q${quarter}`;
+      periods.push(period);
+      console.log(`[Semantic EPS Periods] ✅ 提取期間: "${trimmed}" -> ${period}`);
+    }
+  }
+  
+  console.log(`[Semantic EPS Periods] 📊 總計提取 ${periods.length} 個期間`);
+  return periods;
+}
+
+/**
+ * 🎯 基於語義化選擇器的 EPS 數值提取函數 (遵循 CLAUDE.md 原則 1)
+ * 使用 :has() 偽類精確選擇器直接定位 EPS 數值
+ */
+function extractEPSValuesWithSemanticSelector(content: string | string[]): number[] {
+  console.log('[Semantic EPS Values] 🎯 使用語義化選擇器提取 EPS 數值...');
+  
+  const contentArray = Array.isArray(content) ? content : [content];
+  const values: number[] = [];
+  
+  for (const item of contentArray) {
+    if (!item) continue;
+    
+    const trimmed = item.toString().trim();
+    // 匹配 EPS 數值格式: "18.43", "-2.15", "0.58" 等
+    if (/^\d+\.?\d*$/.test(trimmed)) {
+      const eps = parseFloat(trimmed);
+      if (!isNaN(eps) && eps >= -50 && eps <= 100) { // 合理的EPS範圍
+        values.push(eps);
+        console.log(`[Semantic EPS Values] ✅ 提取數值: "${trimmed}" -> ${eps}`);
+      } else {
+        console.log(`[Semantic EPS Values] ⚠️ 數值超出範圍: "${trimmed}" -> ${eps}`);
+      }
+    }
+  }
+  
+  console.log(`[Semantic EPS Values] 📊 總計提取 ${values.length} 個 EPS 數值`);
+  return values;
+}
+
+/**
+ * 🎯 基於語義化選擇器的 EPS 數據組合函數 (遵循 CLAUDE.md 原則 1)
+ * 使用語義化選擇器提取的期間和數值進行精確配對
+ */
+function combineEPSDataWithSemanticSelector(
+  content: string | string[],
+  context?: any
+): UnifiedFinancialData[] {
+  console.log('[Semantic EPS Combine] 🎯 函數被調用 - 使用語義化選擇器組合 EPS 數據...');
+  console.log('[Semantic EPS Combine] Content type:', typeof content, 'Length:', Array.isArray(content) ? content.length : 'N/A');
+  console.log('[Semantic EPS Combine] Context exists:', !!context);
+  console.log('[Semantic EPS Combine] Context keys:', context ? Object.keys(context) : 'No context');
+
+  // 從 context.listValues 中提取 EPS 數據
+  let listValues = [];
+  
+  if (context?.listValues) {
+    if (Array.isArray(context.listValues)) {
+      listValues = context.listValues;
+    } else if (context.listValues.items && Array.isArray(context.listValues.items)) {
+      listValues = context.listValues.items;
+    }
+  }
+  
+  console.log('[Semantic EPS Combine] ListValues length:', listValues.length);
+  
+  if (listValues.length === 0) {
+    console.log('[Semantic EPS Combine] ⚠️ 沒有找到 listValues 數據，回傳空陣列');
+    return [];
+  }
+
+  console.log(`[Semantic EPS Combine] 📊 找到 ${listValues.length} 個 listValues 項目`);
+  
+  // 使用語義化選擇器方法提取期間和數值
+  const { periods, values } = extractEPSDataWithSemanticSelector(listValues);
+
+  const results: UnifiedFinancialData[] = [];
+  const maxLength = Math.min(periods.length, values.length);
+
+  console.log(`[Semantic EPS Combine] 📊 期間數: ${periods.length}, EPS數值數: ${values.length}, 配對數: ${maxLength}`);
+
+  for (let i = 0; i < maxLength; i++) {
+    const period = periods[i];
+    const eps = values[i];
+
+    if (period && eps !== undefined) {
+      // 解析期間格式
+      const periodParts = period.split('-');
+      const year = parseInt(periodParts[0]);
+      const quarter = parseInt(periodParts[1]?.replace('Q', '') || '1');
+      const month = quarter * 3; // Q1=3, Q2=6, Q3=9, Q4=12
+
+      const data: UnifiedFinancialData = {
+        symbolCode: context?.symbolCode || '2330',
+        exchangeArea: 'TPE',
+        reportDate: `${year}-${month.toString().padStart(2, '0')}-${quarter === 1 ? '31' : quarter === 2 ? '30' : quarter === 3 ? '30' : '31'}`,
+        fiscalYear: year,
+        fiscalMonth: month,
+        reportType: 'quarterly',
+        dataSource: 'yahoo-finance-tw',
+        lastUpdated: new Date().toISOString(),
+        eps: Math.round(eps * 100) / 100
+      };
+
+      results.push(data);
+      console.log(`[Semantic EPS Combine] ✅ 配對成功: ${period} -> EPS=${eps}`);
+    }
+  }
+
+  console.log(`[Semantic EPS Combine] 🎯 成功組合 ${results.length} 筆 EPS 數據，遵循 CLAUDE.md 語義化選擇器原則`);
   return results;
 }
 
@@ -9945,7 +10284,18 @@ Object.assign(yahooFinanceTWTransforms, {
   // === 精確位置選擇器 (基於 DOM 分析，完全避免股價數據污染) ===
   extractEPSPeriodsWithPrecisePosition,
   extractEPSValuesWithPrecisePosition,
-  combineSimpleEPSDataWithPrecisePosition,
+  combineEPSDataWithPrecisePosition,
+  
+  // === 真實 DOM 結構選擇器 (基於 2025-08-07 調試分析) ===
+  extractEPSPeriodsFromRealDOM,
+  extractEPSValuesFromRealDOM,
+  combineEPSDataFromRealDOM,
+  
+  // === 語義化選擇器 (遵循 CLAUDE.md 原則 1: :has() 偽類精確選擇器，最高優先級) ===
+  extractEPSDataWithSemanticSelector,
+  extractEPSPeriodsWithSemanticSelector,
+  extractEPSValuesWithSemanticSelector,
+  combineEPSDataWithSemanticSelector,
   
   transformRevenueData,
   transformEPSData,

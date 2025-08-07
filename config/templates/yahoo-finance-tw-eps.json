@@ -1,14 +1,7 @@
 {
   "templateType": "tw-eps",
   "url": "https://tw.stock.yahoo.com/quote/${symbolCode}/eps",
-  "_note": "EXCLUDE SELECTOR PREPROCESSING + PRECISE POSITION EXTRACTION: Uses exclude selectors to remove interfering elements first, then applies precise DOM position analysis to extract EPS data. The excludeSelectors remove ads, navigation, and social content, while precise position functions target exact positions for periods and values.",
-  "excludeSelectors": [
-    ".advertisement, [data-module='ad'], [class*='ad-'], [id*='ad-']",
-    ".navigation, .nav-menu, .breadcrumb, [role='navigation']",
-    ".sidebar, .related-news, .trending-topics, .recommendations",
-    ".social-share, .share-buttons, .social-media",
-    ".popup, .modal, .overlay, .banner-notification"
-  ],
+  "_note": "INDEPENDENT SELECTOR STRATEGY (2025-08-07): Uses independent selectors for fiscal periods and EPS values based on DOM structure analysis. fiscalPeriods: 'div > ul > li > div > div:nth-child(1)', epsValues: 'div > ul > li > div > div:nth-child(2)'. This follows CLAUDE.md principle of independent selectors for each output field.",
   "actions": [
     {
       "type": "wait",
@@ -26,20 +19,19 @@
       "selector": "h1, .symbol, .stock-name",
       "transform": "cleanStockSymbol"
     },
-    "epsPeriodsWithPrecisePosition": {
-      "selector": "li div",
+    "epsPeriods": {
+      "selector": "div > ul > li > div > div:nth-child(1)",
       "multiple": true,
-      "transform": "extractEPSPeriodsWithPrecisePosition"
+      "transform": "extractEPSPeriodsSeparately"
     },
-    "epsValuesWithPrecisePosition": {
-      "selector": "li div",
+    "epsValues": {
+      "selector": "div > ul > li > div > div:nth-child(2)",
       "multiple": true,
-      "transform": "extractEPSValuesWithPrecisePosition"
+      "transform": "extractEPSValuesSeparately"
     },
     "data": {
-      "selector": "li div",
-      "multiple": true,
-      "transform": "combineSimpleEPSDataWithPrecisePosition"
+      "selector": "body",
+      "transform": "combineSimpleEPSData"
     }
   },
   "headers": {
@@ -69,3 +61,4 @@
     "filename": "yahoo_finance_tw_eps_${symbolCode}"
   }
 }
+
