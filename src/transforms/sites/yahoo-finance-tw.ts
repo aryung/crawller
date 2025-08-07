@@ -8130,8 +8130,8 @@ function parseUnifiedFiscalPeriod(value: string): { year: number; quarter?: numb
     return { year, month: month >= 1 && month <= 12 ? month : undefined };
   }
   
-  // 季度格式：2025-Q1, 2025Q1
-  const quarterMatch = value.match(/(20\d{2})[年\s]*Q([1-4])/);
+  // 季度格式：2025-Q1, 2025Q1, 2025年Q1
+  const quarterMatch = value.match(/(20\d{2})[-年\s]*Q([1-4])/);
   if (quarterMatch) {
     const year = parseInt(quarterMatch[1]);
     const quarter = parseInt(quarterMatch[2]);
@@ -8804,8 +8804,7 @@ function combineIncomeStatementData(content: any, context?: any): UnifiedFinanci
           exchangeArea: "TPE",
           reportDate: reportDate,
           fiscalYear: year,
-          fiscalQuarter: quarter,
-          fiscalMonth: undefined, // 季度數據不需要月份
+          fiscalMonth: quarterEndMonths[quarter as keyof typeof quarterEndMonths],
           reportType: "quarterly",
           
           // === 收益表相關欄位 ===
