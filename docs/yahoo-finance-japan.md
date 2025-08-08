@@ -54,10 +54,10 @@ npm run crawl yahoo-finance-jp-7901_T
 
 ```bash
 # 生成批處理配置
-node scripts/generate-batch-configs.js
+npx tsx scripts/generate-batch-configs.ts
 
 # 執行批量爬取
-node scripts/run-yahoo-finance-batch.js
+npx tsx scripts/run-yahoo-finance-batch.ts
 ```
 
 ## 架構說明
@@ -66,7 +66,7 @@ node scripts/run-yahoo-finance-batch.js
 
 ```
 /crawler/
-├── configs/
+├── config/
 │   ├── templates/                              # 配置模板
 │   │   └── yahoo-finance-jp-performance.json   # 主要模板
 │   ├── active/                                 # 生成的配置
@@ -120,7 +120,7 @@ graph LR
 ```
 
 ### 配置模板
-文件位置：`configs/templates/yahoo-finance-jp-performance.json`
+文件位置：`config/templates/yahoo-finance-jp-performance.json`
 
 主要配置項目：
 - **URL 模板**：`https://finance.yahoo.co.jp/quote/${stockCode}/performance?styl=performance`
@@ -145,7 +145,7 @@ graph LR
 
 2. 重新生成配置：
 ```bash
-node scripts/generate-batch-configs.js
+npx tsx scripts/generate-batch-configs.ts
 ```
 
 3. 執行爬取：
@@ -155,7 +155,7 @@ npm run crawl yahoo-finance-jp-4755_T
 
 ### 案例 2：修改輸出格式
 
-編輯模板文件 `configs/templates/yahoo-finance-jp-performance.json`：
+編輯模板文件 `config/templates/yahoo-finance-jp-performance.json`：
 
 ```json
 {

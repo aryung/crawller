@@ -1,5 +1,5 @@
 import { chromium, Browser, Page } from 'playwright';
-import { CrawlerConfig, CrawlerResult, CrawlerOptions, EnhancedCrawlerConfig } from '../types';
+import { CrawlerConfig, CrawlerResult, CrawlerOptions, EnhancedCrawlerConfig, ActionItem } from '../types';
 import { DataExtractor } from './DataExtractor';
 import { logger, delay, validateCrawlerConfig } from '../utils';
 import { builtinTransforms, getTransformFunction } from '../transforms';
@@ -87,15 +87,28 @@ export class PlaywrightCrawler {
         await page.context().addCookies(cookies);
       }
 
-      // 導航到目標頁面
+      // 導航到目標頁面 - 根據配置選擇等待策略
+      const waitUntil = options.waitForNetworkIdle === false ? 'domcontentloaded' : 'networkidle';
+      console.log(`[Playwright] Using wait strategy: ${waitUntil}`);
+      
       await page.goto(config.url, { 
-        waitUntil: 'networkidle',
+        waitUntil: waitUntil as 'domcontentloaded' | 'networkidle',
         timeout: options.timeout 
       });
 
       // 等待指定時間
       if (options.waitFor) {
         await page.waitForTimeout(options.waitFor);
+      }
+
+      // 執行動態操作序列 (如點擊按鈕)
+      if ('actions' in config && config.actions && config.actions.length > 0) {
+        await this.executeActions(page, config.actions);
+      }
+
+      // 執行 DOM 預處理 - 移除干擾元素
+      if (config.excludeSelectors && config.excludeSelectors.length > 0) {
+        await this.removeExcludedElements(page, config.excludeSelectors);
       }
 
       // 提取資料 - 支援 Enhanced Selectors
@@ -148,7 +161,8 @@ export class PlaywrightCrawler {
           
           if (selectorObj.selector || selectorObj.extract) {
             // 這是 EnhancedSelectorItem 格式或有 extract 配置
-            data[key] = await this.processEnhancedSelectorPlaywright(page, selectorObj, config);
+            // Pass accumulated data as context for transforms that need it
+            data[key] = await this.processEnhancedSelectorPlaywright(page, selectorObj, config, data);
           }
         }
       } catch (selectorError) {
@@ -160,14 +174,14 @@ export class PlaywrightCrawler {
     return data;
   }
 
-  private async processEnhancedSelectorPlaywright(page: Page, selectorObj: any, config: any): Promise<any> {
+  private async processEnhancedSelectorPlaywright(page: Page, selectorObj: any, config: any, accumulatedData?: Record<string, any>): Promise<any> {
     const { selector, multiple, extract, attribute, transform } = selectorObj;
     
     if (extract) {
       // 有 extract 配置 - 提取多個屬性
       const cleanSelector = selector ? selector.replace(':multiple', '') : '';
       const isMultiple = multiple || (selector && selector.includes(':multiple'));
-      return await this.processExtractConfigPlaywright(page, { selector: cleanSelector, multiple: isMultiple, extract }, config);
+      return await this.processExtractConfigPlaywright(page, { selector: cleanSelector, multiple: isMultiple, extract }, config, accumulatedData);
     }
     
     if (!selector) {
@@ -195,7 +209,7 @@ export class PlaywrightCrawler {
 
       // 應用轉換
       if (transform) {
-        values = await this.applyTransformPlaywright(values, transform, config);
+        values = await this.applyTransformPlaywright(values, transform, config, accumulatedData);
       }
 
       return values;
@@ -216,14 +230,14 @@ export class PlaywrightCrawler {
 
       // 應用轉換
       if (transform) {
-        values = await this.applyTransformPlaywright(values, transform, config);
+        values = await this.applyTransformPlaywright(values, transform, config, accumulatedData);
       }
 
       return values;
     }
   }
 
-  private async processExtractConfigPlaywright(page: Page, selectorConfig: any, config: any): Promise<any> {
+  private async processExtractConfigPlaywright(page: Page, selectorConfig: any, config: any, accumulatedData?: Record<string, any>): Promise<any> {
     const { selector, multiple, extract } = selectorConfig;
     const isMultiple = multiple || selector.includes(':multiple');
     const cleanSelector = selector.replace(':multiple', '');
@@ -241,7 +255,7 @@ export class PlaywrightCrawler {
       for (const element of matchedElements) {
         const result: any = {};
         for (const [key, extractConfig] of Object.entries(extract)) {
-          result[key] = await this.extractSingleValuePlaywright(page, element, extractConfig, config);
+          result[key] = await this.extractSingleValuePlaywright(page, element, extractConfig, config, accumulatedData);
         }
         results.push(result);
       }
@@ -253,13 +267,13 @@ export class PlaywrightCrawler {
 
       const result: any = {};
       for (const [key, extractConfig] of Object.entries(extract)) {
-        result[key] = await this.extractSingleValuePlaywright(page, element, extractConfig, config);
+        result[key] = await this.extractSingleValuePlaywright(page, element, extractConfig, config, accumulatedData);
       }
       return result;
     }
   }
 
-  private async extractSingleValuePlaywright(page: Page, element: any, extractConfig: any, config: any): Promise<any> {
+  private async extractSingleValuePlaywright(page: Page, element: any, extractConfig: any, config: any, accumulatedData?: Record<string, any>): Promise<any> {
     let value: any;
 
     if (typeof extractConfig === 'string') {
@@ -281,20 +295,24 @@ export class PlaywrightCrawler {
 
       // 應用轉換
       if (transform) {
-        value = await this.applyTransformPlaywright(value, transform, config);
+        value = await this.applyTransformPlaywright(value, transform, config, accumulatedData);
       }
     }
 
     return value;
   }
 
-  private async applyTransformPlaywright(value: any, transformName: string, config: any): Promise<any> {
+  private async applyTransformPlaywright(value: any, transformName: string, config: any, accumulatedData?: Record<string, any>): Promise<any> {
     try {
-      // 創建 context 用於轉換函數
+      // 創建 context 用於轉換函數，包含累積的選擇器數據
       const context = {
         url: config.url,
         baseUrl: config.variables?.baseUrl || config.url,
-        templateType: config.templateType
+        templateType: config.templateType,
+        variables: {
+          ...config.variables, // 保留原有的配置變數
+          ...accumulatedData   // 將累積數據合併到 variables 中
+        }
       };
       
       // 檢查是否為內建轉換函數或網站特定轉換函數
@@ -336,6 +354,100 @@ export class PlaywrightCrawler {
         path: '/'
       };
     });
+  }
+
+  private async executeActions(page: Page, actions: ActionItem[]): Promise<void> {
+    logger.info(`Executing ${actions.length} dynamic actions`);
+    
+    for (let i = 0; i < actions.length; i++) {
+      const action = actions[i];
+      logger.debug(`Executing action ${i + 1}/${actions.length}: ${action.type}`, action.description || '');
+      
+      try {
+        switch (action.type) {
+          case 'click':
+            if (action.selector) {
+              await page.waitForSelector(action.selector, { timeout: action.timeout || 10000 });
+              await page.click(action.selector);
+              logger.debug(`Clicked element: ${action.selector}`);
+            }
+            break;
+            
+          case 'type':
+            if (action.selector && action.value) {
+              await page.waitForSelector(action.selector, { timeout: action.timeout || 10000 });
+              await page.fill(action.selector, action.value);
+              logger.debug(`Typed "${action.value}" into: ${action.selector}`);
+            }
+            break;
+            
+          case 'wait':
+            const waitTime = action.timeout || parseInt(action.value || '1000');
+            await page.waitForTimeout(waitTime);
+            logger.debug(`Waited for ${waitTime}ms`);
+            break;
+            
+          case 'scroll':
+            if (action.selector) {
+              await page.waitForSelector(action.selector, { timeout: action.timeout || 10000 });
+              await page.locator(action.selector).scrollIntoViewIfNeeded();
+              logger.debug(`Scrolled to element: ${action.selector}`);
+            } else {
+              // 滾動到頁面底部
+              await page.evaluate(() => (globalThis as any).window.scrollTo(0, (globalThis as any).document.body.scrollHeight));
+              logger.debug('Scrolled to bottom of page');
+            }
+            break;
+            
+          case 'select':
+            if (action.selector && action.value) {
+              await page.waitForSelector(action.selector, { timeout: action.timeout || 10000 });
+              await page.selectOption(action.selector, action.value);
+              logger.debug(`Selected "${action.value}" in: ${action.selector}`);
+            }
+            break;
+            
+          default:
+            logger.warn(`Unknown action type: ${action.type}`);
+        }
+        
+        // 每個操作之後稍微等待一下，模擬真實用戶操作
+        await page.waitForTimeout(500);
+        
+      } catch (error) {
+        logger.error(`Error executing action ${i + 1} (${action.type}):`, error);
+        // 繼續執行下一個動作，不中斷流程
+      }
+    }
+    
+    logger.info('All dynamic actions completed');
+  }
+
+  private async removeExcludedElements(page: Page, excludeSelectors: string[]): Promise<void> {
+    if (!excludeSelectors || excludeSelectors.length === 0) return;
+    
+    let totalRemoved = 0;
+    
+    for (const selector of excludeSelectors) {
+      try {
+        const removedCount = await page.evaluate((sel: string) => {
+          const elements = document.querySelectorAll(sel);
+          let count = 0;
+          elements.forEach((el: Element) => {
+            el.remove();
+            count++;
+          });
+          return count;
+        }, selector);
+        
+        totalRemoved += removedCount;
+        logger.debug(`Removed ${removedCount} elements matching: ${selector}`);
+      } catch (error) {
+        logger.warn(`Failed to remove elements with selector "${selector}":`, error);
+      }
+    }
+    
+    logger.info(`Preprocessed DOM: removed ${totalRemoved} elements using ${excludeSelectors.length} exclude selector patterns`);
   }
 
   async cleanup(): Promise<void> {

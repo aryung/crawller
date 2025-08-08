@@ -1,0 +1,84 @@
+{
+  "templateType": "tw-dividend-precise-selectors",
+  "url": "https://tw.stock.yahoo.com/quote/${symbolCode}/dividend",
+  "forcePlaywright": true,
+  "_note": "PRECISE :has() SELECTOR ARCHITECTURE: Following CLAUDE.md principles, uses independent :has() selectors for each data field - fiscalPeriod, cashDividend, and dividendYieldRate. No mixed data extraction.",
+  "excludeSelectors": [
+    ".advertisement, [data-module='ad'], [class*='ad-'], [id*='ad-']",
+    ".navigation, .nav-menu, .breadcrumb, [role='navigation']",
+    ".sidebar, .related-news, .trending-topics, .recommendations",
+    ".social-share, .share-buttons, .social-media",
+    ".popup, .modal, .overlay, .banner-notification",
+    ".stock-list, .ranking-list, .trending-list, [class*='ranking']",
+    ".popular-stocks, .hot-stocks, [class*='popular'], [class*='hot']",
+    ".news-section, .analyst-rating, .performance-data",
+    ".market-summary, .market-index, .market-overview"
+  ],
+  "actions": [
+    {
+      "type": "wait",
+      "timeout": 8000,
+      "description": "等待頁面完全載入"
+    },
+    {
+      "type": "scroll",
+      "direction": "down",
+      "distance": 1500,
+      "description": "滾動確保股息歷史數據完全載入"
+    },
+    {
+      "type": "wait",
+      "timeout": 4000,
+      "description": "等待動態內容穩定"
+    }
+  ],
+  "selectors": {
+    "stockInfo": {
+      "selector": "h1, .symbol, .stock-name",
+      "transform": "cleanStockSymbol"
+    },
+    "dividendPeriods": {
+      "selector": "ul > li > div.table-row > div:nth-child(2):not(:empty)",
+      "multiple": true,
+      "transform": "extractDividendPeriodsSeparately"
+    },
+    "cashDividends": {
+      "selector": "ul > li > div.table-row:has(> div:nth-child(2):not(:empty)) > div:nth-child(3)",
+      "multiple": true,
+      "transform": "extractCashDividendsSeparately"
+    },
+    "stockDividends": {
+      "selector": "ul > li > div.table-row:has(> div:nth-child(2):not(:empty)) > div:nth-child(4)",
+      "multiple": true,
+      "transform": "extractStockDividendsSeparately"
+    },
+    "data": {
+      "selector": "body",
+      "transform": "combineSimpleDividendData"
+    }
+  },
+  "headers": {
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+    "Accept-Language": "zh-TW,zh;q=0.9,en;q=0.8",
+    "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36"
+  },
+  "options": {
+    "timeout": 45000,
+    "retries": 2,
+    "headless": true,
+    "screenshot": false,
+    "waitFor": 8000,
+    "forceEngine": "playwright",
+    "engine": "playwright",
+    "waitForNetworkIdle": false,
+    "skipHttpMode": true
+  },
+  "variables": {
+    "symbolCode": "2454.TW",
+    "baseUrl": "https://tw.stock.yahoo.com"
+  },
+  "export": {
+    "formats": ["json"],
+    "filename": "yahoo_finance_tw_dividend_${symbolCode}"
+  }
+}

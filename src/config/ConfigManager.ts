@@ -7,7 +7,7 @@ export class ConfigManager {
   private configPath: string;
   private configs: Map<string, CrawlerConfig> = new Map();
 
-  constructor(configPath: string = 'configs') {
+  constructor(configPath: string = 'config') {
     this.configPath = configPath;
   }
 

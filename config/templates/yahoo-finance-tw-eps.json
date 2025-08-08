@@ -1,0 +1,63 @@
+{
+  "templateType": "tw-eps",
+  "url": "https://tw.stock.yahoo.com/quote/${symbolCode}/eps",
+  "_note": "INDEPENDENT SELECTOR STRATEGY (2025-08-07): Uses independent selectors for fiscal periods and EPS values based on DOM structure analysis. fiscalPeriods: 'div > ul > li > div > div:nth-child(1)', epsValues: 'div > ul > li > div > div:nth-child(2)'. This follows CLAUDE.md principle of independent selectors for each output field.",
+  "actions": [
+    {
+      "type": "wait",
+      "timeout": 5000,
+      "description": "等待頁面初始載入"
+    },
+    {
+      "type": "wait",
+      "timeout": 3000,
+      "description": "等待EPS數據完全載入"
+    }
+  ],
+  "selectors": {
+    "stockInfo": {
+      "selector": "h1, .symbol, .stock-name",
+      "transform": "cleanStockSymbol"
+    },
+    "epsPeriods": {
+      "selector": "div#layout-col1 ul li > div > div:first-child",
+      "multiple": true,
+      "transform": "extractEPSPeriodsSeparately"
+    },
+    "epsValues": {
+      "selector": "div#layout-col1 ul > li > div:nth-child(1) > div:nth-child(2) > span",
+      "multiple": true,
+      "transform": "extractEPSValuesSeparately"
+    },
+    "data": {
+      "selector": "body",
+      "transform": "combineSimpleEPSData"
+    }
+  },
+  "headers": {
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
+    "Accept-Language": "zh-TW,zh;q=0.9,en;q=0.8",
+    "Accept-Encoding": "gzip, deflate, br",
+    "Cache-Control": "no-cache",
+    "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+  },
+  "options": {
+    "timeout": 30000,
+    "retries": 3,
+    "headless": true,
+    "screenshot": true,
+    "encoding": "utf-8",
+    "domainDelay": 5000,
+    "waitFor": 8000,
+    "engine": "playwright",
+    "waitForNetworkIdle": false
+  },
+  "variables": {
+    "symbolCode": "2330.TW",
+    "baseUrl": "https://tw.stock.yahoo.com"
+  },
+  "export": {
+    "formats": ["json", "csv"],
+    "filename": "yahoo_finance_tw_eps_${symbolCode}"
+  }
+}

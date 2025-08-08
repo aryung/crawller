@@ -1,0 +1,89 @@
+{
+  "templateType": "tw-balance-sheet",
+  "url": "https://tw.stock.yahoo.com/quote/${symbolCode}/balance-sheet",
+  "_note": "INDEPENDENT SELECTORS: Uses precise position-based selectors for each balance sheet item, following the successful income statement pattern. Based on 5 rows: 總資產, 總負債, 股東權益(淨值), 流動資產, 流動負債.",
+  "actions": [
+    {
+      "type": "wait",
+      "timeout": 8000,
+      "description": "增加初始載入等待時間"
+    },
+    {
+      "type": "scroll",
+      "direction": "down",
+      "distance": 1500,
+      "description": "滾動觸發資產負債表數據載入"
+    },
+    {
+      "type": "wait",
+      "timeout": 6000,
+      "description": "等待資產負債表數據完全載入"
+    }
+  ],
+  "selectors": {
+    "stockInfo": {
+      "selector": "h1, .symbol, .stock-name",
+      "transform": "cleanStockSymbol"
+    },
+    "balanceSheetPeriods": {
+      "selector": "div.table-header > div.table-header-wrapper > div:nth-child(n+2)",
+      "multiple": true,
+      "transform": "extractIncomeStatementPeriodsSeparately"
+    },
+    "totalAssetsValues": {
+      "selector": "ul > li:nth-child(1) > div > div:nth-child(n+2)",
+      "multiple": true,
+      "transform": "extractIncomeStatementValuesSeparately"
+    },
+    "totalLiabilitiesValues": {
+      "selector": "ul > li:nth-child(2) > div > div:nth-child(n+2)",
+      "multiple": true,
+      "transform": "extractIncomeStatementValuesSeparately"
+    },
+    "shareholdersEquityValues": {
+      "selector": "ul > li:nth-child(3) > div > div:nth-child(n+2)",
+      "multiple": true,
+      "transform": "extractIncomeStatementValuesSeparately"
+    },
+    "currentAssetsValues": {
+      "selector": "ul > li:nth-child(4) > div > div:nth-child(n+2)",
+      "multiple": true,
+      "transform": "extractIncomeStatementValuesSeparately"
+    },
+    "currentLiabilitiesValues": {
+      "selector": "ul > li:nth-child(5) > div > div:nth-child(n+2)",
+      "multiple": true,
+      "transform": "extractIncomeStatementValuesSeparately"
+    },
+    "data": {
+      "selector": "body",
+      "transform": "combineBalanceSheetData"
+    }
+  },
+  "headers": {
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
+    "Accept-Language": "zh-TW,zh;q=0.9,en;q=0.8",
+    "Accept-Encoding": "gzip, deflate, br",
+    "Cache-Control": "no-cache",
+    "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+  },
+  "options": {
+    "timeout": 30000,
+    "retries": 3,
+    "headless": true,
+    "screenshot": true,
+    "encoding": "utf-8",
+    "domainDelay": 5000,
+    "waitFor": 8000,
+    "engine": "playwright",
+    "waitForNetworkIdle": false
+  },
+  "variables": {
+    "symbolCode": "2330.TW",
+    "baseUrl": "https://tw.stock.yahoo.com"
+  },
+  "export": {
+    "formats": ["json", "csv"],
+    "filename": "yahoo_finance_tw_balance_sheet_${symbolCode}"
+  }
+}

@@ -1,0 +1,89 @@
+{
+  "templateType": "tw-cash-flow-statement",
+  "url": "https://tw.stock.yahoo.com/quote/${symbolCode}/cash-flow-statement",
+  "_note": "INDEPENDENT SELECTORS: Uses precise position-based selectors for each cash flow item, following the successful balance sheet pattern. Based on 5 rows: 營業現金流, 投資現金流, 融資現金流, 自由現金流, 淨現金流.",
+  "actions": [
+    {
+      "type": "wait",
+      "timeout": 8000,
+      "description": "增加初始載入等待時間"
+    },
+    {
+      "type": "scroll",
+      "direction": "down",
+      "distance": 1500,
+      "description": "滾動觸發現金流量表數據載入"
+    },
+    {
+      "type": "wait",
+      "timeout": 6000,
+      "description": "等待現金流量表數據完全載入"
+    }
+  ],
+  "selectors": {
+    "stockInfo": {
+      "selector": "h1, .symbol, .stock-name",
+      "transform": "cleanStockSymbol"
+    },
+    "cashFlowPeriods": {
+      "selector": "div.table-header > div.table-header-wrapper > div:nth-child(n+2)",
+      "multiple": true,
+      "transform": "extractIncomeStatementPeriodsSeparately"
+    },
+    "operatingCashFlowValues": {
+      "selector": "ul > li:nth-child(1) > div > div:nth-child(n+2)",
+      "multiple": true,
+      "transform": "extractCashFlowValuesSeparately"
+    },
+    "investingCashFlowValues": {
+      "selector": "ul > li:nth-child(2) > div > div:nth-child(n+2)",
+      "multiple": true,
+      "transform": "extractCashFlowValuesSeparately"
+    },
+    "financingCashFlowValues": {
+      "selector": "ul > li:nth-child(3) > div > div:nth-child(n+2)",
+      "multiple": true,
+      "transform": "extractCashFlowValuesSeparately"
+    },
+    "freeCashFlowValues": {
+      "selector": "ul > li:nth-child(4) > div > div:nth-child(n+2)",
+      "multiple": true,
+      "transform": "extractCashFlowValuesSeparately"
+    },
+    "netCashFlowValues": {
+      "selector": "ul > li:nth-child(5) > div > div:nth-child(n+2)",
+      "multiple": true,
+      "transform": "extractCashFlowValuesSeparately"
+    },
+    "data": {
+      "selector": "body",
+      "transform": "combineCashFlowData"
+    }
+  },
+  "headers": {
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
+    "Accept-Language": "zh-TW,zh;q=0.9,en;q=0.8",
+    "Accept-Encoding": "gzip, deflate, br",
+    "Cache-Control": "no-cache",
+    "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+  },
+  "options": {
+    "timeout": 30000,
+    "retries": 3,
+    "headless": true,
+    "screenshot": true,
+    "encoding": "utf-8",
+    "domainDelay": 5000,
+    "waitFor": 8000,
+    "engine": "playwright",
+    "waitForNetworkIdle": false
+  },
+  "variables": {
+    "symbolCode": "2330.TW",
+    "baseUrl": "https://tw.stock.yahoo.com"
+  },
+  "export": {
+    "formats": ["json", "csv"],
+    "filename": "yahoo_finance_tw_cash_flow_statement_${symbolCode}"
+  }
+}

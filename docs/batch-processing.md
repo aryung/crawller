@@ -21,7 +21,7 @@
 
 ```
 /crawler/
-├── configs/
+├── config/
 │   ├── templates/           # 配置模板目錄
 │   │   └── *.json          # 不會被直接執行
 │   ├── active/             # 生成的配置目錄
@@ -30,8 +30,8 @@
 ├── data/                   # 數據源目錄
 │   └── *.json              # 純數據文件
 ├── scripts/                # 自動化腳本
-│   ├── generate-*.js       # 配置生成器
-│   └── run-*.js           # 批處理執行器
+│   ├── generate-*.ts       # 配置生成器
+│   └── run-*.ts           # 批處理執行器
 └── output/                 # 批處理結果
 ```
 
@@ -39,7 +39,7 @@
 
 ### 第一步：創建配置模板
 
-在 `configs/templates/` 目錄下創建模板文件：
+在 `config/templates/` 目錄下創建模板文件：
 
 ```json
 {
@@ -87,7 +87,7 @@ const fs = require('fs');
 const path = require('path');
 
 // 讀取模板
-const templatePath = path.join(__dirname, '../configs/templates/product-template.json');
+const templatePath = path.join(__dirname, '../config/templates/product-template.json');
 const template = JSON.parse(fs.readFileSync(templatePath, 'utf8'));
 
 // 讀取數據源
@@ -110,7 +110,7 @@ products.forEach(product => {
   
   // 寫入配置文件
   const configFilename = `product-${product.itemId}.json`;
-  const configPath = path.join(__dirname, '../configs', configFilename);
+  const configPath = path.join(__dirname, '../config', configFilename);
   fs.writeFileSync(configPath, JSON.stringify(config, null, 2));
   
   console.log(`✅ 已生成配置: ${configFilename}`);
@@ -145,7 +145,7 @@ async function runCrawler(configName) {
 
 async function main() {
   // 找到所有產品配置
-  const configsDir = path.join(__dirname, '../configs');
+  const configsDir = path.join(__dirname, '../config');
   const configFiles = fs.readdirSync(configsDir)
     .filter(file => file.startsWith('product-') && file.endsWith('.json'))
     .map(file => file.replace('.json', ''));
@@ -184,7 +184,7 @@ main().catch(console.error);
 ## 實際案例：Yahoo Finance Japan
 
 ### 配置模板
-`configs/templates/yahoo-finance-jp-performance.json`
+`config/templates/yahoo-finance-jp-performance.json`
 
 ```json
 {
@@ -232,10 +232,10 @@ main().catch(console.error);
 
 ```bash
 # 生成配置
-node scripts/generate-batch-configs.js
+npx tsx scripts/generate-batch-configs.ts
 
 # 執行批處理
-node scripts/run-yahoo-finance-batch.js
+npx tsx scripts/run-yahoo-finance-batch.ts
 ```
 
 ## 進階功能
@@ -310,7 +310,7 @@ async function runBatchConcurrent(configNames) {
 
 ```bash
 # 建議的命名規則
-configs/templates/
+config/templates/
 ├── yahoo-finance-jp-performance.json      # 主模板
 ├── ecommerce-product-detail.json          # 電商產品
 └── news-article-content.json              # 新聞文章
@@ -420,14 +420,14 @@ function checkSystemResources() {
 
 ```bash
 # 測試單一配置
-node scripts/generate-batch-configs.js
+npx tsx scripts/generate-batch-configs.ts
 npm run crawl generated-config-name
 
 # 檢查生成的配置
-cat configs/generated-config-name.json
+cat config/generated-config-name.json
 
 # 啟用詳細日誌
-DEBUG=true node scripts/run-batch-processor.js
+DEBUG=true npx tsx scripts/run-batch-processor.ts
 ```
 
 ## 擴展功能

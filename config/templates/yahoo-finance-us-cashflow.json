@@ -1,0 +1,116 @@
+{
+  "templateType": "us-cashflow",
+  "url": "https://finance.yahoo.com/quote/${symbolCode}/cash-flow/",
+  "_note": "US CASHFLOW CONFIG (Unified Array Selectors): Extracts quarterly cash flow data from Yahoo Finance US. Each field uses independent array selectors with multiple:true for unified data extraction. Values are kept in thousands (original format, no conversion). Based on JP template architecture.",
+  "actions": [
+    {
+      "type": "wait",
+      "timeout": 5000,
+      "description": "等待頁面載入"
+    }
+  ],
+  "selectors": {
+    "stockInfo": {
+      "selector": "h1, section h1, div h1",
+      "transform": "cleanStockSymbol"
+    },
+    "fiscalPeriodsArray": {
+      "selector": ".tableHeader > div > div:nth-child(n+2), thead > tr > th:nth-child(n+2)",
+      "multiple": true,
+      "transform": "parseUSFinancialPeriodsArray"
+    },
+    "operatingCashflowValues": {
+      "selector": ".tableBody > div:nth-child(1) > div:nth-child(n+2), tbody > tr:nth-child(1) > td:nth-child(n+2)",
+      "multiple": true,
+      "transform": "parseUSFinancialValuesArray"
+    },
+    "investingCashflowValues": {
+      "selector": ".tableBody > div:nth-child(2) > div:nth-child(n+2), tbody > tr:nth-child(2) > td:nth-child(n+2)",
+      "multiple": true,
+      "transform": "parseUSFinancialValuesArray"
+    },
+    "financingCashflowValues": {
+      "selector": ".tableBody > div:nth-child(3) > div:nth-child(n+2), tbody > tr:nth-child(3) > td:nth-child(n+2)",
+      "multiple": true,
+      "transform": "parseUSFinancialValuesArray"
+    },
+    "endCashPositionValues": {
+      "selector": ".tableBody > div:nth-child(4) > div:nth-child(n+2), tbody > tr:nth-child(4) > td:nth-child(n+2)",
+      "multiple": true,
+      "transform": "parseUSFinancialValuesArray"
+    },
+    "incomeTaxPaidValues": {
+      "selector": ".tableBody > div:nth-child(5) > div:nth-child(n+2), tbody > tr:nth-child(5) > td:nth-child(n+2)",
+      "multiple": true,
+      "transform": "parseUSFinancialValuesArray"
+    },
+    "interestPaidValues": {
+      "selector": ".tableBody > div:nth-child(6) > div:nth-child(n+2), tbody > tr:nth-child(6) > td:nth-child(n+2)",
+      "multiple": true,
+      "transform": "parseUSFinancialValuesArray"
+    },
+    "capitalExpenditureValues": {
+      "selector": ".tableBody > div:nth-child(7) > div:nth-child(n+2), tbody > tr:nth-child(7) > td:nth-child(n+2)",
+      "multiple": true,
+      "transform": "parseUSFinancialValuesArray"
+    },
+    "issuanceOfCapitalStockValues": {
+      "selector": ".tableBody > div:nth-child(8) > div:nth-child(n+2), tbody > tr:nth-child(8) > td:nth-child(n+2)",
+      "multiple": true,
+      "transform": "parseUSFinancialValuesArray"
+    },
+    "issuanceOfDebtValues": {
+      "selector": ".tableBody > div:nth-child(9) > div:nth-child(n+2), tbody > tr:nth-child(9) > td:nth-child(n+2)",
+      "multiple": true,
+      "transform": "parseUSFinancialValuesArray"
+    },
+    "repaymentOfDebtValues": {
+      "selector": ".tableBody > div:nth-child(10) > div:nth-child(n+2), tbody > tr:nth-child(10) > td:nth-child(n+2)",
+      "multiple": true,
+      "transform": "parseUSFinancialValuesArray"
+    },
+    "repurchaseOfCapitalStockValues": {
+      "selector": ".tableBody > div:nth-child(11) > div:nth-child(n+2), tbody > tr:nth-child(11) > td:nth-child(n+2)",
+      "multiple": true,
+      "transform": "parseUSFinancialValuesArray"
+    },
+    "freeCashflowValues": {
+      "selector": ".tableBody > div:nth-child(12) > div:nth-child(n+2), tbody > tr:nth-child(12) > td:nth-child(n+2)",
+      "multiple": true,
+      "transform": "parseUSFinancialValuesArray"
+    },
+    "data": {
+      "selector": "body",
+      "transform": "combineUSCashFlowData"
+    }
+  },
+  "headers": {
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
+    "Accept-Language": "en-US,en;q=0.9",
+    "Accept-Encoding": "gzip, deflate, br",
+    "Cache-Control": "no-cache",
+    "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+  },
+  "options": {
+    "timeout": 30000,
+    "retries": 2,
+    "headless": true,
+    "screenshot": false,
+    "encoding": "utf-8",
+    "domainDelay": 5000,
+    "waitFor": 3000,
+    "waitUntil": "domcontentloaded",
+    "viewport": {
+      "width": 1920,
+      "height": 1080
+    }
+  },
+  "variables": {
+    "symbolCode": "AAPL",
+    "baseUrl": "https://finance.yahoo.com"
+  },
+  "export": {
+    "formats": ["json", "csv"],
+    "filename": "yahoo_finance_us_cashflow_${symbolCode}"
+  }
+}

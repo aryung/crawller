@@ -1,0 +1,89 @@
+{
+  "templateType": "tw-income-statement",
+  "url": "https://tw.stock.yahoo.com/quote/${symbolCode}/income-statement",
+  "_note": "INDEPENDENT SELECTORS (2025-08-07): Uses precise independent selectors for each income statement item, following the successful Revenue/EPS pattern. Based on actual screenshot analysis with 5 rows: 營業收入, 營業毛利, 營業費用, 營業利益, 稅後淨利.",
+  "actions": [
+    {
+      "type": "wait",
+      "timeout": 8000,
+      "description": "增加初始載入等待時間"
+    },
+    {
+      "type": "scroll",
+      "direction": "down",
+      "distance": 1500,
+      "description": "滾動觸發收益表數據載入"
+    },
+    {
+      "type": "wait",
+      "timeout": 6000,
+      "description": "等待收益表數據完全載入"
+    }
+  ],
+  "selectors": {
+    "stockInfo": {
+      "selector": "h1, .symbol, .stock-name",
+      "transform": "cleanStockSymbol"
+    },
+    "incomeStatementPeriods": {
+      "selector": "div#layout-col1 div.table-header > div.table-header-wrapper > div:nth-child(n+2)",
+      "multiple": true,
+      "transform": "extractEPSPeriodsSeparately"
+    },
+    "revenueValues": {
+      "selector": "div#layout-col1 ul > li:nth-child(1) > div > div:nth-child(n+2)",
+      "multiple": true,
+      "transform": "extractIncomeStatementValuesSeparately"
+    },
+    "grossProfitValues": {
+      "selector": "div#layout-col1 ul > li:nth-child(2) > div > div:nth-child(n+2)",
+      "multiple": true,
+      "transform": "extractIncomeStatementValuesSeparately"
+    },
+    "operatingExpenseValues": {
+      "selector": "div#layout-col1 ul > li:nth-child(3) > div > div:nth-child(n+2)",
+      "multiple": true,
+      "transform": "extractIncomeStatementValuesSeparately"
+    },
+    "operatingIncomeValues": {
+      "selector": "div#layout-col1 ul > li:nth-child(4) > div > div:nth-child(n+2)",
+      "multiple": true,
+      "transform": "extractIncomeStatementValuesSeparately"
+    },
+    "netIncomeValues": {
+      "selector": "div#layout-col1 ul > li:nth-child(5) > div > div:nth-child(n+2)",
+      "multiple": true,
+      "transform": "extractIncomeStatementValuesSeparately"
+    },
+    "data": {
+      "selector": "body",
+      "transform": "combineIncomeStatementData"
+    }
+  },
+  "headers": {
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
+    "Accept-Language": "zh-TW,zh;q=0.9,en;q=0.8",
+    "Accept-Encoding": "gzip, deflate, br",
+    "Cache-Control": "no-cache",
+    "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+  },
+  "options": {
+    "timeout": 30000,
+    "retries": 3,
+    "headless": true,
+    "screenshot": true,
+    "encoding": "utf-8",
+    "domainDelay": 5000,
+    "waitFor": 8000,
+    "engine": "playwright",
+    "waitForNetworkIdle": false
+  },
+  "variables": {
+    "symbolCode": "2330.TW",
+    "baseUrl": "https://tw.stock.yahoo.com"
+  },
+  "export": {
+    "formats": ["json", "csv"],
+    "filename": "yahoo_finance_tw_income_statement_${symbolCode}"
+  }
+}

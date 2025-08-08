@@ -242,16 +242,16 @@ interface CrawlerConfig {
 
 詳細的型別定義請參考 `src/types/index.ts`。
 
-## 範例
+## 使用範例
 
-查看 `examples/` 目錄獲得更多使用範例：
+系統提供豐富的使用方式，包括：
 
-- `basic-usage.ts` - 基本使用
-- `multiple-sites.ts` - 批量爬蟲
-- `cookie-login.ts` - Cookie 和登入
-- `config-management.ts` - 配置管理
-- `advanced-selectors.ts` - 進階選擇器
-- `playwright-vs-puppeteer.ts` - 引擎比較
+- 基本爬蟲操作
+- 批量多網站爬取
+- Cookie 認證和自動登入
+- JSON 配置檔案管理
+- 進階選擇器和數據轉換
+- 多種爬蟲引擎支援
 
 ## 腳本命令
 
@@ -273,7 +273,7 @@ output/
 ├── screenshots/    # 截圖檔案
 └── *.md           # 統計報告
 
-configs/
+config/
 └── *.json         # 配置檔案
 
 logs/

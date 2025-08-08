@@ -1,0 +1,77 @@
+[
+  {
+    "stockCode": "BRK-B",
+    "companyName": "Berkshire Hathaway Inc.",
+    "sector": "Financial Services"
+  },
+  {
+    "stockCode": "AAPL",
+    "companyName": "Apple Inc.",
+    "sector": "Technology"
+  },
+  {
+    "stockCode": "MSFT",
+    "companyName": "Microsoft Corporation",
+    "sector": "Technology"
+  },
+  {
+    "stockCode": "GOOGL",
+    "companyName": "Alphabet Inc. (Class A)",
+    "sector": "Technology"
+  },
+  {
+    "stockCode": "AMZN",
+    "companyName": "Amazon.com Inc.",
+    "sector": "Consumer Discretionary"
+  },
+  {
+    "stockCode": "NVDA",
+    "companyName": "NVIDIA Corporation",
+    "sector": "Technology"
+  },
+  {
+    "stockCode": "TSLA",
+    "companyName": "Tesla Inc.",
+    "sector": "Consumer Discretionary"
+  },
+  {
+    "stockCode": "META",
+    "companyName": "Meta Platforms Inc.",
+    "sector": "Technology"
+  },
+  {
+    "stockCode": "JPM",
+    "companyName": "JPMorgan Chase & Co.",
+    "sector": "Financial Services"
+  },
+  {
+    "stockCode": "V",
+    "companyName": "Visa Inc.",
+    "sector": "Financial Services"
+  },
+  {
+    "stockCode": "JNJ",
+    "companyName": "Johnson & Johnson",
+    "sector": "Healthcare"
+  },
+  {
+    "stockCode": "WMT",
+    "companyName": "Walmart Inc.",
+    "sector": "Consumer Staples"
+  },
+  {
+    "stockCode": "UNH",
+    "companyName": "UnitedHealth Group Incorporated",
+    "sector": "Healthcare"
+  },
+  {
+    "stockCode": "PG", 
+    "companyName": "The Procter & Gamble Company",
+    "sector": "Consumer Staples"
+  },
+  {
+    "stockCode": "HD",
+    "companyName": "The Home Depot Inc.",
+    "sector": "Consumer Discretionary"
+  }
+]

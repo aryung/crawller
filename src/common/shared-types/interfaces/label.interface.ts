@@ -1,0 +1,4 @@
+export enum LabelType {
+  SYSTEM_DEFINED = 'SYSTEM_DEFINED',
+  USER_CUSTOM = 'USER_CUSTOM',
+}

@@ -1,0 +1,73 @@
+{
+  "templateType": "tw-revenue",
+  "url": "https://tw.stock.yahoo.com/quote/${symbolCode}/revenue",
+  "_note": "REVENUE-FOCUSED CONFIG (2025-08-08): Optimized configuration specifically for monthly revenue data extraction. Only processes revenue and fiscalMonth fields, following single responsibility principle. Uses exact DOM selectors: revenuePeriods: 'ul > li > div > div:nth-child(1)', revenueValues: 'ul > li > div > div:nth-child(2)'. Excludes grossProfit, operatingIncome, netIncome, eps to maintain focus on revenue data only.",
+  "actions": [
+    {
+      "type": "wait",
+      "timeout": 8000,
+      "description": "增加初始載入等待時間"
+    },
+    {
+      "type": "scroll",
+      "direction": "down",
+      "distance": 1500,
+      "description": "滾動觸發 Revenue 數據載入"
+    },
+    {
+      "type": "wait",
+      "timeout": 6000,
+      "description": "等待 Revenue 數據完全載入"
+    }
+  ],
+  "selectors": {
+    "stockInfo": {
+      "selector": "h1, .symbol, .stock-name",
+      "transform": "cleanStockSymbol"
+    },
+    "revenuePeriods": {
+      "selector": "div#layout-col1 ul > li > div > div:nth-child(1)",
+      "multiple": true,
+      "transform": "extractRevenuePeriodsSeparately"
+    },
+    "revenueValues": {
+      "selector": "div#layout-col1 ul > li > div > div:nth-child(2) > ul > li:nth-child(1)",
+      "multiple": true,
+      "transform": "extractRevenueValuesSeparately"
+    },
+    "data": {
+      "selector": "body",
+      "transform": "combineSimpleRevenueData"
+    }
+  },
+  "headers": {
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
+    "Accept-Language": "zh-TW,zh;q=0.9,en;q=0.8",
+    "Accept-Encoding": "gzip, deflate, br",
+    "Cache-Control": "no-cache",
+    "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+  },
+  "options": {
+    "timeout": 45000,
+    "retries": 3,
+    "headless": true,
+    "screenshot": true,
+    "encoding": "utf-8",
+    "domainDelay": 5000,
+    "waitFor": 10000,
+    "waitForNetworkIdle": true,
+    "networkIdleTimeout": 3000,
+    "engine": "playwright"
+  },
+  "variables": {
+    "symbolCode": "2330.TW",
+    "baseUrl": "https://tw.stock.yahoo.com"
+  },
+  "export": {
+    "formats": ["json"],
+    "filename": "yahoo_finance_tw_revenue_${symbolCode}",
+    "structure": {
+      "revenueData": "fiscalPeriods,revenueData"
+    }
+  }
+}

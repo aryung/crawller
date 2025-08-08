@@ -1,0 +1,77 @@
+[
+  {
+    "stockCode": "2330.TW",
+    "companyName": "台灣積體電路製造股份有限公司",
+    "sector": "半導體業"
+  },
+  {
+    "stockCode": "2317.TW", 
+    "companyName": "鴻海精密工業股份有限公司",
+    "sector": "電子零組件業"
+  },
+  {
+    "stockCode": "2454.TW",
+    "companyName": "聯發科技股份有限公司", 
+    "sector": "半導體業"
+  },
+  {
+    "stockCode": "1101.TW",
+    "companyName": "台灣水泥股份有限公司",
+    "sector": "水泥工業"
+  },
+  {
+    "stockCode": "1216.TW",
+    "companyName": "統一企業股份有限公司",
+    "sector": "食品工業"
+  },
+  {
+    "stockCode": "2002.TW",
+    "companyName": "中國鋼鐵股份有限公司", 
+    "sector": "鋼鐵工業"
+  },
+  {
+    "stockCode": "2412.TW",
+    "companyName": "中華電信股份有限公司",
+    "sector": "通信網路業"
+  },
+  {
+    "stockCode": "3008.TW",
+    "companyName": "大立光電股份有限公司",
+    "sector": "光電業"
+  },
+  {
+    "stockCode": "2881.TW",
+    "companyName": "富邦金融控股股份有限公司",
+    "sector": "金融保險業"
+  },
+  {
+    "stockCode": "2882.TW",
+    "companyName": "國泰金融控股股份有限公司",
+    "sector": "金融保險業"
+  },
+  {
+    "stockCode": "2303.TW",
+    "companyName": "聯華電子股份有限公司",
+    "sector": "半導體業"
+  },
+  {
+    "stockCode": "2308.TW",
+    "companyName": "台達電子工業股份有限公司",
+    "sector": "電子零組件業"
+  },
+  {
+    "stockCode": "2886.TW",
+    "companyName": "兆豐金融控股股份有限公司",
+    "sector": "金融保險業"
+  },
+  {
+    "stockCode": "2891.TW",
+    "companyName": "中國信託金融控股股份有限公司",
+    "sector": "金融保險業"
+  },
+  {
+    "stockCode": "2892.TW",
+    "companyName": "第一金融控股股份有限公司",
+    "sector": "金融保險業"
+  }
+]

@@ -1,0 +1,104 @@
+{
+  "templateType": "financials",
+  "url": "https://finance.yahoo.co.jp/quote/${symbolCode}/performance?styl=financials",
+  "_note": "JP FINANCIALS CONFIG (Unified Naming): Simple independent selectors following CLAUDE.md principles. Each field uses its own CSS selector for precise data extraction.",
+  "selectors": {
+    "stockInfo": {
+      "selector": "h1, .symbol",
+      "transform": "cleanStockSymbol"
+    },
+    "periodsArray": {
+      "selector": "tbody > tr > th",
+      "multiple": true,
+      "transform": "parseUnifiedFiscalPeriodsArray"
+    },
+    "epsValues": {
+      "selector": "tbody > tr > td:nth-child(2) > span",
+      "multiple": true,
+      "transform": "parseJapaneseFinancialValuesArray"
+    },
+    "bpsValues": {
+      "selector": "tbody > tr > td:nth-child(3) > span",
+      "multiple": true,
+      "transform": "parseJapaneseFinancialValuesArray"
+    },
+    "roaValues": {
+      "selector": "tbody > tr > td:nth-child(4) > span",
+      "multiple": true,
+      "transform": "parseJapaneseFinancialValuesArray"
+    },
+    "roeValues": {
+      "selector": "tbody > tr > td:nth-child(5) > span",
+      "multiple": true,
+      "transform": "parseJapaneseFinancialValuesArray"
+    },
+    "totalAssetsValues": {
+      "selector": "tbody > tr > td:nth-child(6) > span",
+      "multiple": true,
+      "transform": "parseJapaneseFinancialValuesArray"
+    },
+    "equityRatioValues": {
+      "selector": "tbody > tr > td:nth-child(7) > span",
+      "multiple": true,
+      "transform": "parseJapaneseFinancialValuesArray"
+    },
+    "shareCapitalValues": {
+      "selector": "tbody > tr > td:nth-child(8) > span",
+      "multiple": true,
+      "transform": "parseJapaneseFinancialValuesArray"
+    },
+    "interestBearingDebtValues": {
+      "selector": "tbody > tr > td:nth-child(9) > span",
+      "multiple": true,
+      "transform": "parseJapaneseFinancialValuesArray"
+    },
+    "currentReceivablesValues": {
+      "selector": "tbody > tr > td:nth-child(10) > span",
+      "multiple": true,
+      "transform": "parseJapaneseFinancialValuesArray"
+    },
+    "totalSharesValues": {
+      "selector": "tbody > tr > td:nth-child(11) > span",
+      "multiple": true,
+      "transform": "parseJapaneseFinancialValuesArray"
+    },
+    "data": {
+      "selector": "body",
+      "transform": "combineJapaneseFinancialData"
+    }
+  },
+  "headers": {
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
+    "Accept-Language": "ja,en-US;q=0.9,en;q=0.8",
+    "Accept-Encoding": "gzip, deflate, br",
+    "Cache-Control": "no-cache",
+    "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+  },
+  "options": {
+    "timeout": 45000,
+    "retries": 3,
+    "headless": true,
+    "screenshot": true,
+    "encoding": "utf-8",
+    "domainDelay": 5000,
+    "waitFor": 8000,
+    "waitForNetworkIdle": true,
+    "networkIdleTimeout": 3000,
+    "engine": "playwright",
+    "viewport": {
+      "width": 1920,
+      "height": 1080
+    }
+  },
+  "variables": {
+    "symbolCode": "7901.T",
+    "baseUrl": "https://finance.yahoo.co.jp"
+  },
+  "export": {
+    "formats": ["json"],
+    "filename": "yahoo_finance_jp_financials_${symbolCode}",
+    "structure": {
+      "financialsData": "financialsPeriods,financialsData"
+    }
+  }
+}
