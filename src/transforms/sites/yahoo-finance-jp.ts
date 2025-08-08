@@ -3,6 +3,8 @@
  * 遵循 CLAUDE.md 獨立選擇器原則，只提供基礎解析函數
  */
 
+import { UNIT_MULTIPLIERS } from '../../const/finance';
+
 /**
  * Yahoo Finance JP 轉換函數接口 (簡化版本)
  * 只保留模板中實際使用的函數
@@ -11,6 +13,7 @@ export interface YahooFinanceJPTransforms {
   cleanStockSymbol: (value: string) => string;
   parseJapaneseFinancialValue: (value: string) => number;
   parseJapaneseFinancialValuesArray: (content: string | string[]) => number[];
+  parseJapaneseFinancialDatesArray: (content: string | string[]) => string[];
   parseUnifiedFiscalPeriod: (value: string) => {
     year: number;
     quarter?: number;
@@ -48,8 +51,9 @@ export const yahooFinanceJPTransforms: YahooFinanceJPTransforms = {
     
     const str = value.toString().trim();
     
-    // 處理缺失值
-    if (str === '---' || str === '—' || str === '--' || str === '') {
+    // 加強缺失值檢測 - 支援更多日文網站常見格式，包括 --- 連續破折號
+    const missingValueRegex = /^[-—－\-*・\s　]*$|^(N\/A|n\/a|NA|該当なし|なし|---)$/;
+    if (missingValueRegex.test(str)) {
       return 0;
     }
     
@@ -98,8 +102,10 @@ export const yahooFinanceJPTransforms: YahooFinanceJPTransforms = {
       
       const str = item.toString().trim();
       
-      // 處理缺失值
-      if (str === '---' || str === '—' || str === '--' || str === '') {
+      // 加強缺失值檢測 - 支援更多日文網站常見格式，包括 --- 連續破折號
+      const missingValueRegex = /^[-—－\-*・\s　]*$|^(N\/A|n\/a|NA|該当なし|なし|---)$/;
+      if (missingValueRegex.test(str)) {
+        console.log(`[JP Values Array] 🔍 檢測到缺失值: "${str}" -> 轉換為 0`);
         values.push(0);
         continue;
       }
@@ -183,6 +189,40 @@ export const yahooFinanceJPTransforms: YahooFinanceJPTransforms = {
   },
 
   /**
+   * 解析日文財務日期陣列
+   * 處理 "2025/7/23" 格式轉換為標準日期格式
+   */
+  parseJapaneseFinancialDatesArray: (content: string | string[]): string[] => {
+    console.log('[JP Dates Array] 📅 處理日文財務日期陣列...');
+    const contentArray = Array.isArray(content) ? content : [content];
+    const dates: string[] = [];
+
+    for (const item of contentArray) {
+      if (!item || typeof item !== 'string') continue;
+      
+      const str = item.toString().trim();
+      
+      // 日文財務日期格式: 2025/7/23
+      const dateMatch = str.match(/(\d{4})\/(\d{1,2})\/(\d{1,2})/);
+      if (dateMatch) {
+        const [, year, month, day] = dateMatch;
+        // 轉換為標準格式 YYYY-MM-DD
+        const standardDate = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+        dates.push(standardDate);
+        console.log(`[JP Dates Array] ✅ 轉換日期: "${str}" -> "${standardDate}"`);
+      } else {
+        // 如果無法解析，使用當前日期
+        const fallbackDate = new Date().toISOString().split('T')[0];
+        dates.push(fallbackDate);
+        console.log(`[JP Dates Array] ⚠️ 無法解析日期: "${str}"，使用預設: "${fallbackDate}"`);
+      }
+    }
+    
+    console.log(`[JP Dates Array] ✅ 成功處理 ${dates.length} 個日期:`, dates);
+    return dates;
+  },
+
+  /**
    * 解析統一的會計年度期間陣列
    */
   parseUnifiedFiscalPeriodsArray: (content: string | string[]): Array<{
@@ -231,6 +271,9 @@ export const yahooFinanceJPTransforms: YahooFinanceJPTransforms = {
     const revenueArray = vars.revenueValues || (Array.isArray(vars.revenue) ? vars.revenue : [vars.revenue]);
     const operationProfitArray = vars.operationProfitValues || (Array.isArray(vars.operationProfit) ? vars.operationProfit : [vars.operationProfit]);
     
+    // 獲取財務更新日期陣列
+    const financialUpdateDatesArray = vars.financialUpdateDates || [];
+    
     // 檢查是否為陣列數據 (financials 相關)  
     const epsArray = vars.epsValues || (Array.isArray(vars.eps) ? vars.eps : [vars.eps]);
     const bpsArray = vars.bpsValues || (Array.isArray(vars.bps) ? vars.bps : [vars.bps]);
@@ -245,7 +288,8 @@ export const yahooFinanceJPTransforms: YahooFinanceJPTransforms = {
       revenueArray.length,
       operationProfitArray.length,
       epsArray.length,
-      bpsArray.length
+      bpsArray.length,
+      financialUpdateDatesArray.length
     );
     
     // 如果所有陣列都是單一值，則預設為 1
@@ -257,10 +301,13 @@ export const yahooFinanceJPTransforms: YahooFinanceJPTransforms = {
     for (let i = 0; i < maxLength; i++) {
       const currentYear = new Date().getFullYear();
       
+      // 使用實際的財務更新日期，如果有的話
+      const actualReportDate = financialUpdateDatesArray[i] || `${currentYear - i}-03-31`;
+      
       const financialData: any = {
         symbolCode: symbolCode.replace('.T', ''),
         exchangeArea: 'JP',
-        reportDate: `${currentYear - i}-03-31`, // 日本會計年度通常3月結束
+        reportDate: actualReportDate,
         fiscalYear: currentYear - i,
         reportType: 'annual',
         dataSource: 'yahoo-finance-jp',
@@ -278,24 +325,37 @@ export const yahooFinanceJPTransforms: YahooFinanceJPTransforms = {
       // 檢查 performance 相關欄位
       else if (revenueArray[0] !== undefined || operationProfitArray[0] !== undefined) {
         financialData.revenue = revenueArray[i] || 0;
-        financialData.grossProfitMargin = (vars.grossProfitMarginValues || [])[i] || vars.grossProfitMargin || 0;
+        financialData.grossProfit = (vars.grossProfitValues || [])[i] || vars.grossProfit || 0;
+        
+        // 應用百分比轉換：所有 margin 欄位從 % 格式轉為小數格式
+        financialData.grossProfitMargin = ((vars.grossProfitMarginValues || [])[i] || vars.grossProfitMargin || 0) * UNIT_MULTIPLIERS.PERCENTAGE;
+        
         financialData.operatingProfit = operationProfitArray[i] || 0;
-        financialData.operatingMargin = (vars.operationProfitMarginValues || [])[i] || vars.operationProfitMargin || 0;
+        financialData.operatingMargin = ((vars.operationProfitMarginValues || [])[i] || vars.operationProfitMargin || 0) * UNIT_MULTIPLIERS.PERCENTAGE;
+        
         financialData.ordinaryProfit = (vars.ordinaryProfitValues || [])[i] || vars.ordinaryProfit || 0;
-        financialData.ordinaryMargin = (vars.ordinaryProfitMarginValues || [])[i] || vars.ordinaryProfitMargin || 0;
+        financialData.ordinaryMargin = ((vars.ordinaryProfitMarginValues || [])[i] || vars.ordinaryProfitMargin || 0) * UNIT_MULTIPLIERS.PERCENTAGE;
+        
         financialData.netProfit = (vars.netProfitValues || [])[i] || vars.netProfit || 0;
+        // netProfitMargin 欄位已移除，因為表格中沒有此數據
       }
       // 檢查 financials 相關欄位
       else if (epsArray[0] !== undefined || bpsArray[0] !== undefined) {
         financialData.eps = epsArray[i] || 0;
         financialData.bookValuePerShare = bpsArray[i] || 0;
-        financialData.returnOnAssets = (vars.roaValues || [])[i] || vars.roa || 0;
-        financialData.returnOnEquity = (vars.roeValues || [])[i] || vars.roe || 0;
+        
+        // 應用百分比轉換：ROA, ROE, equityRatio 從 % 格式轉為小數格式
+        financialData.returnOnAssets = ((vars.roaValues || [])[i] || vars.roa || 0) * UNIT_MULTIPLIERS.PERCENTAGE;
+        financialData.returnOnEquity = ((vars.roeValues || [])[i] || vars.roe || 0) * UNIT_MULTIPLIERS.PERCENTAGE;
+        financialData.equityRatio = ((vars.equityRatioValues || [])[i] || vars.equityRatio || 0) * UNIT_MULTIPLIERS.PERCENTAGE;
+        
         financialData.totalAssets = (vars.totalAssetsValues || [])[i] || vars.totalAssets || 0;
-        financialData.equityRatio = (vars.equityRatioValues || [])[i] || vars.equityRatio || 0;
         financialData.shareCapital = (vars.shareCapitalValues || [])[i] || vars.shareCapital || 0;
         financialData.interestBearingDebt = (vars.interestBearingDebtValues || [])[i] || vars.interestBearingDebt || 0;
         financialData.currentReceivables = (vars.currentReceivablesValues || [])[i] || vars.currentReceivables || 0;
+        
+        // 添加 totalShares 欄位處理
+        financialData.totalShares = (vars.totalSharesValues || [])[i] || vars.totalShares || 0;
       }
 
       // 處理期間信息

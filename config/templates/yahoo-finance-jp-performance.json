@@ -1,65 +1,65 @@
 {
   "templateType": "performance",
-  "url": "https://finance.yahoo.co.jp/quote/${stockCode}/performance?styl=performance",
-  "_note": "This config extracts structured financial performance data from Yahoo Finance Japan. The 'structuredPerformanceData' field contains parsed financial metrics in object format for easier processing. Use with Japanese stock codes like 143A.T, 7203.T, etc.",
+  "url": "https://finance.yahoo.co.jp/quote/${symbolCode}/performance?styl=performance",
+  "_note": "JP PERFORMANCE CONFIG (Unified Naming): Simple independent selectors following CLAUDE.md principles. Each field uses its own CSS selector for precise data extraction. Uses article:first-of-type to target only the main performance table.",
   "selectors": {
     "stockInfo": {
       "selector": "h1, .symbol",
       "transform": "cleanStockSymbol"
     },
-    "period":{
-      "selector": "tbody > tr > th",
-      "multiple": false,
-      "transform": "extractFreeCashflow"
+    "periodsArray": {
+      "selector": "article:first-of-type table tbody > tr > th",
+      "multiple": true,
+      "transform": "parseUnifiedFiscalPeriodsArray"
     },
-    "revenue":{
-      "selector": "tbody > tr > td:nth-child(1) > span",
-      "multiple": false,
-      "transform": "extractFreeCashflow"
+    "revenueValues": {
+      "selector": "article:first-of-type table tbody > tr > td:nth-child(2) > span",
+      "multiple": true,
+      "transform": "parseJapaneseFinancialValuesArray"
     },
-    "grossProfitMargin": {
-      "selector": "tbody > tr > td:nth-child(2) > span",
-      "multiple": false,
-      "transform": "extractOperatingCashflow"
+    "grossProfitValues": {
+      "selector": "article:first-of-type table tbody > tr > td:nth-child(3) > span:first-child, article:first-of-type table tbody > tr > td:nth-child(3):not(:has(span))",
+      "multiple": true,
+      "transform": "parseJapaneseFinancialValuesArray"
     },
-    "operationProfit": {
-      "selector": "tbody > tr > td:nth-child(3) > span",
-      "multiple": false,
-      "transform": "extractInvestingCashflow"
+    "grossProfitMarginValues": {
+      "selector": "article:first-of-type table tbody > tr > td:nth-child(4) > span:first-child, article:first-of-type table tbody > tr > td:nth-child(4):not(:has(span))",
+      "multiple": true,
+      "transform": "parseJapaneseFinancialValuesArray"
     },
-    "operationProfitMargin": {
-      "selector": "tbody > tr > td:nth-child(4) > span",
-      "multiple": false,
-      "transform": "extractFinancingCashflow"
+    "operationProfitValues": {
+      "selector": "article:first-of-type table tbody > tr > td:nth-child(5) > span:first-child, article:first-of-type table tbody > tr > td:nth-child(5):not(:has(span))",
+      "multiple": true,
+      "transform": "parseJapaneseFinancialValuesArray"
     },
-    "ordinaryProfit": {
-      "selector": "tbody > tr > td:nth-child(5) > span",
-      "multiple": false,
-      "transform": "extractFinancingCashflow"
+    "operationProfitMarginValues": {
+      "selector": "article:first-of-type table tbody > tr > td:nth-child(6) > span:first-child, article:first-of-type table tbody > tr > td:nth-child(6):not(:has(span))",
+      "multiple": true,
+      "transform": "parseJapaneseFinancialValuesArray"
     },
-    "ordinaryProfitMargin": {
-      "selector": "tbody > tr > td:nth-child(6) > span",
-      "multiple": false,
-      "transform": "extractFinancingCashflow"
+    "ordinaryProfitValues": {
+      "selector": "article:first-of-type table tbody > tr > td:nth-child(7) > span:first-child, article:first-of-type table tbody > tr > td:nth-child(7):not(:has(span))",
+      "multiple": true,
+      "transform": "parseJapaneseFinancialValuesArray"
     },
-    "netProfit": {
-      "selector": "tbody > tr > td:nth-child(7) > span",
-      "multiple": false,
-      "transform": "extractFinancingCashflow"
+    "ordinaryProfitMarginValues": {
+      "selector": "article:first-of-type table tbody > tr > td:nth-child(8) > span:first-child, article:first-of-type table tbody > tr > td:nth-child(8):not(:has(span))",
+      "multiple": true,
+      "transform": "parseJapaneseFinancialValuesArray"
     },
-    "accountingMethod": {
-      "selector": "tbody > tr > td:nth-child(8) > span",
-      "multiple": false,
-      "transform": "extractFinancingCashflow"
+    "netProfitValues": {
+      "selector": "article:first-of-type table tbody > tr > td:nth-child(9) > span:first-child, article:first-of-type table tbody > tr > td:nth-child(9):not(:has(span))",
+      "multiple": true,
+      "transform": "parseJapaneseFinancialValuesArray"
     },
-    "financialDataUpdateDate": {
-      "selector": "tbody > tr > td:nth-child(9) > span",
-      "multiple": false,
-      "transform": "extractFinancingCashflow"
+    "financialUpdateDates": {
+      "selector": "article:first-of-type table tbody > tr > td:nth-child(11) > span:first-child, article:first-of-type table tbody > tr > td:nth-child(11):not(:has(span))",
+      "multiple": true,
+      "transform": "parseJapaneseFinancialDatesArray"
     },
     "data": {
-      "selector"": "body",
-      "transform"": "extractTableData",
+      "selector": "body",
+      "transform": "combineJapaneseFinancialData"
     }
   },
   "headers": {
@@ -70,24 +70,30 @@
     "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
   },
   "options": {
-    "timeout": 30000,
+    "timeout": 45000,
     "retries": 3,
     "headless": true,
-    "screenshot": false,
+    "screenshot": true,
     "encoding": "utf-8",
     "domainDelay": 5000,
-    "waitFor": 5000,
+    "waitFor": 8000,
+    "waitForNetworkIdle": true,
+    "networkIdleTimeout": 3000,
+    "engine": "playwright",
     "viewport": {
       "width": 1920,
       "height": 1080
     }
   },
   "variables": {
-    "stockCode": "7901.T",
+    "symbolCode": "7901.T",
     "baseUrl": "https://finance.yahoo.co.jp"
   },
   "export": {
-    "formats": ["json", "csv"],
-    "filename": "yahoo_finance_jp_performance_${stockCode}"
+    "formats": ["json"],
+    "filename": "yahoo_finance_jp_performance_${symbolCode}",
+    "structure": {
+      "performanceData": "performancePeriods,performanceData"
+    }
   }
 }
