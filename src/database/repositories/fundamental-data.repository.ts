@@ -62,7 +62,7 @@ export class FundamentalDataRepository {
   async findBySymbolAndFiscalPeriod(
     symbolCode: string,
     fiscalYear: number,
-    fiscalQuarter?: number,
+    fiscalMonth?: number,
     reportType?: FiscalReportType,
     exchangeArea?: string
   ): Promise<FundamentalDataEntity | null> {
@@ -71,8 +71,8 @@ export class FundamentalDataRepository {
       fiscalYear: fiscalYear,
     };
 
-    if (fiscalQuarter !== undefined) {
-      whereCondition.fiscalQuarter = fiscalQuarter;
+    if (fiscalMonth !== undefined) {
+      whereCondition.fiscalMonth = fiscalMonth;
     }
 
     if (reportType) {
@@ -90,13 +90,12 @@ export class FundamentalDataRepository {
   }
 
   /**
-   * 根據特定期間查找基本面數據（支援月度、季度、年度）
+   * 根據特定期間查找基本面數據（只使用 fiscalMonth）
    */
   async findBySpecificPeriod(
     symbolCode: string,
     fiscalYear: number,
     reportType: FiscalReportType,
-    fiscalQuarter?: number,
     fiscalMonth?: number,
     exchangeArea?: string
   ): Promise<FundamentalDataEntity | null> {
@@ -106,26 +105,9 @@ export class FundamentalDataRepository {
       reportType: reportType,
     };
 
-    // 根據報表類型設定不同的查詢條件
-    switch (reportType) {
-      case FiscalReportType.MONTHLY:
-        if (fiscalMonth !== undefined) {
-          whereCondition.fiscalMonth = fiscalMonth;
-        }
-        whereCondition.fiscalQuarter = null; // 月度數據 fiscalQuarter 為 null
-        break;
-
-      case FiscalReportType.QUARTERLY:
-        if (fiscalQuarter !== undefined) {
-          whereCondition.fiscalQuarter = fiscalQuarter;
-        }
-        whereCondition.fiscalMonth = null; // 季度數據 fiscalMonth 為 null
-        break;
-
-      case FiscalReportType.ANNUAL:
-        whereCondition.fiscalQuarter = null; // 年度數據兩者都為 null
-        whereCondition.fiscalMonth = null;
-        break;
+    // 根據報表類型設定 fiscalMonth
+    if (fiscalMonth !== undefined) {
+      whereCondition.fiscalMonth = fiscalMonth;
     }
 
     if (exchangeArea) {
@@ -157,7 +139,9 @@ export class FundamentalDataRepository {
       })
       .andWhere('fd.fiscalMonth >= :startMonth', { startMonth })
       .andWhere('fd.fiscalMonth <= :endMonth', { endMonth })
-      .andWhere('fd.fiscalQuarter IS NULL'); // 確保是月度數據
+      .andWhere('fd.reportType = :monthlyType', {
+        monthlyType: FiscalReportType.MONTHLY,
+      }); // 確保是月度數據
 
     if (exchangeArea) {
       query.andWhere('fd.exchangeArea = :exchangeArea', { exchangeArea });
@@ -169,7 +153,6 @@ export class FundamentalDataRepository {
   async findPreviousYearData(
     symbolCode: string,
     currentFiscalYear: number,
-    currentFiscalQuarter: number,
     reportType: FiscalReportType,
     exchangeArea?: string,
     currentFiscalMonth?: number
@@ -185,7 +168,6 @@ export class FundamentalDataRepository {
             symbolCode,
             previousYear,
             reportType,
-            undefined,
             currentFiscalMonth,
             exchangeArea
           );
@@ -193,24 +175,25 @@ export class FundamentalDataRepository {
         return null;
 
       case FiscalReportType.QUARTERLY:
-        // 季度數據：查找去年同季
-        return this.findBySpecificPeriod(
-          symbolCode,
-          previousYear,
-          reportType,
-          currentFiscalQuarter,
-          undefined,
-          exchangeArea
-        );
+        // 季度數據：查找去年同季（使用 fiscalMonth = quarter * 3）
+        if (currentFiscalMonth !== undefined) {
+          return this.findBySpecificPeriod(
+            symbolCode,
+            previousYear,
+            reportType,
+            currentFiscalMonth,
+            exchangeArea
+          );
+        }
+        return null;
 
       case FiscalReportType.ANNUAL:
-        // 年度數據：查找去年年報
+        // 年度數據：查找去年年報 (fiscalMonth = 12)
         return this.findBySpecificPeriod(
           symbolCode,
           previousYear,
           reportType,
-          undefined,
-          undefined,
+          12,
           exchangeArea
         );
 

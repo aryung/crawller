@@ -1,7 +1,7 @@
 import { DataSource, Repository } from 'typeorm';
 import { AppDataSource, initializeDatabase } from './ormconfig.js';
-import { FundamentalDataEntity, FiscalReportType } from './entities/FundamentalDataEntity.js';
-import { StandardizedFundamentalData } from '../types/standardized.js';
+import { FundamentalDataEntity, FiscalReportType } from './entities/fundamental-data.entity.js';
+import { UnifiedFinancialData } from '../types/unified-financial-data.js';
 
 export interface ImportResult {
   total: number;
@@ -46,10 +46,10 @@ export class DatabaseImporter {
   }
 
   /**
-   * Import a batch of standardized fundamental data
+   * Import a batch of unified fundamental data
    */
   async importBatch(
-    dataArray: StandardizedFundamentalData[],
+    dataArray: UnifiedFinancialData[],
     options: ImportOptions = {}
   ): Promise<ImportResult> {
     const {
@@ -93,7 +93,6 @@ export class DatabaseImporter {
                     symbolCode: entity.symbolCode,
                     exchangeArea: entity.exchangeArea,
                     fiscalYear: entity.fiscalYear,
-                    fiscalQuarter: entity.fiscalQuarter,
                     fiscalMonth: entity.fiscalMonth,
                     reportType: entity.reportType,
                   },
@@ -133,7 +132,7 @@ export class DatabaseImporter {
    * Import a single record
    */
   async importSingle(
-    data: StandardizedFundamentalData,
+    data: UnifiedFinancialData,
     upsert: boolean = true
   ): Promise<void> {
     await this.initialize();
@@ -181,14 +180,12 @@ export class DatabaseImporter {
           'shares_outstanding',
           'regional_data',
           'data_source',
-          'currency_code',
           'updated_at',
         ],
         [
           'symbol_code',
           'exchange_area',
           'fiscal_year',
-          'fiscal_quarter',
           'fiscal_month',
           'report_type',
         ]
@@ -198,9 +195,9 @@ export class DatabaseImporter {
   }
 
   /**
-   * Convert StandardizedFundamentalData to FundamentalDataEntity
+   * Convert UnifiedFinancialData to FundamentalDataEntity
    */
-  private toEntity(data: StandardizedFundamentalData): FundamentalDataEntity {
+  private toEntity(data: UnifiedFinancialData): FundamentalDataEntity {
     const entity = new FundamentalDataEntity();
 
     // Basic fields
@@ -208,7 +205,6 @@ export class DatabaseImporter {
     entity.exchangeArea = data.exchangeArea;
     entity.reportDate = new Date(data.reportDate);
     entity.fiscalYear = data.fiscalYear;
-    entity.fiscalQuarter = data.fiscalQuarter;
     entity.fiscalMonth = data.fiscalMonth;
     entity.reportType = this.mapReportType(data.reportType);
 
@@ -265,7 +261,7 @@ export class DatabaseImporter {
   /**
    * Validate data before import
    */
-  private validateData(data: StandardizedFundamentalData): boolean {
+  private validateData(data: UnifiedFinancialData): boolean {
     // Required fields
     if (!data.symbolCode || !data.exchangeArea || !data.reportDate) {
       return false;
@@ -273,11 +269,6 @@ export class DatabaseImporter {
 
     // Valid fiscal year
     if (!data.fiscalYear || data.fiscalYear < 2000 || data.fiscalYear > 2030) {
-      return false;
-    }
-
-    // Valid fiscal quarter if present
-    if (data.fiscalQuarter && (data.fiscalQuarter < 1 || data.fiscalQuarter > 4)) {
       return false;
     }
 

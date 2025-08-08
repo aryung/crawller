@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import { DataSource } from 'typeorm';
 import { config } from 'dotenv';
-import { FundamentalDataEntity } from './entities/FundamentalDataEntity.js';
+import { FundamentalDataEntity } from './entities/fundamental-data.entity.js';
 
 // Load environment variables
 config();

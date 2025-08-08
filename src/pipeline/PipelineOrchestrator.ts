@@ -3,9 +3,8 @@ import * as fs from 'fs-extra';
 import { exec } from 'child_process';
 import { promisify } from 'util';
 import { OutputFileManager } from './OutputFileManager.js';
-import { FundamentalDataAggregator } from '../aggregator/FundamentalDataAggregator.js';
 import { DatabaseImporter, ImportResult } from '../database/DatabaseImporter.js';
-import { StandardizedFundamentalData } from '../types/standardized.js';
+import { UnifiedFinancialData } from '../types/unified-financial-data.js';
 
 const execAsync = promisify(exec);
 
@@ -50,7 +49,6 @@ export interface CrawlerProgress {
 export class PipelineOrchestrator {
   private config: Required<PipelineConfig>;
   private fileManager: OutputFileManager;
-  private aggregator: FundamentalDataAggregator;
   private importer: DatabaseImporter;
   private progressCallback?: (progress: CrawlerProgress) => void;
 
@@ -71,7 +69,6 @@ export class PipelineOrchestrator {
     };
 
     this.fileManager = new OutputFileManager(this.config.outputDir);
-    this.aggregator = new FundamentalDataAggregator(this.config.outputDir);
     this.importer = new DatabaseImporter();
   }
 
@@ -121,18 +118,18 @@ export class PipelineOrchestrator {
         result.errors.push(...crawlResult.errors);
       }
 
-      // Step 3: Aggregate data
-      let aggregatedData: StandardizedFundamentalData[] = [];
+      // Step 3: Collect crawler outputs directly (no aggregation needed for TW)
+      let unifiedData: UnifiedFinancialData[] = [];
       if (!this.config.skipAggregation) {
-        console.log('\n📊 Step 3: Aggregating data...');
-        aggregatedData = await this.aggregateData();
-        result.totalDataAggregated = aggregatedData.length;
+        console.log('\n📊 Step 3: Collecting crawler outputs...');
+        unifiedData = await this.collectUnifiedData();
+        result.totalDataAggregated = unifiedData.length;
       }
 
       // Step 4: Import to database
-      if (!this.config.skipDatabaseImport && aggregatedData.length > 0) {
+      if (!this.config.skipDatabaseImport && unifiedData.length > 0) {
         console.log('\n💾 Step 4: Importing to database...');
-        result.databaseImport = await this.importToDatabase(aggregatedData);
+        result.databaseImport = await this.importToDatabase(unifiedData);
       }
 
       result.duration = Date.now() - startTime;
@@ -292,37 +289,64 @@ export class PipelineOrchestrator {
   }
 
   /**
-   * Aggregate all crawled data
+   * Collect all crawled UnifiedFinancialData directly from output files
    */
-  private async aggregateData(): Promise<StandardizedFundamentalData[]> {
-    const allData: StandardizedFundamentalData[] = [];
+  private async collectUnifiedData(): Promise<UnifiedFinancialData[]> {
+    const allData: UnifiedFinancialData[] = [];
     
     try {
-      // Get all aggregated data for all symbols
-      const aggregatedSymbols = await this.aggregator.aggregateAllSymbols();
+      // Get all output files  
+      const outputFiles = await fs.readdir(this.config.outputDir);
       
-      for (const symbolData of aggregatedSymbols) {
-        // Convert Map to array of standardized data
-        for (const [, periodData] of symbolData.periods) {
-          if (this.aggregator.validateData(periodData)) {
-            allData.push(periodData);
+      for (const file of outputFiles) {
+        if (file.endsWith('.json') && file.includes('yahoo-finance-tw')) {
+          const filePath = path.join(this.config.outputDir, file);
+          
+          try {
+            const fileData = await fs.readJson(filePath);
+            const results = fileData.results || [];
+            
+            for (const result of results) {
+              if (result.data) {
+                // Extract different data types from Taiwan crawler output
+                const data = result.data;
+                
+                // Extract all UnifiedFinancialData arrays
+                const dataArrays = [
+                  data.revenueData || [],
+                  data.simpleEPSData || [],
+                  data.dividendData || [],
+                  data.incomeStatementData || [],
+                  data.independentCashFlowData || [],
+                  data.balanceSheetData || []
+                ];
+                
+                for (const dataArray of dataArrays) {
+                  if (Array.isArray(dataArray)) {
+                    allData.push(...dataArray);
+                  }
+                }
+              }
+            }
+          } catch (error) {
+            console.warn(`  ⚠️ Failed to process file ${file}: ${(error as Error).message}`);
           }
         }
       }
 
-      console.log(`  ✓ Aggregated ${allData.length} valid data records`);
+      console.log(`  ✓ Collected ${allData.length} unified data records from crawler outputs`);
     } catch (error) {
-      console.error('  ❌ Aggregation error:', error);
+      console.error('  ❌ Data collection error:', error);
     }
 
     return allData;
   }
 
   /**
-   * Import aggregated data to database
+   * Import unified data to database
    */
   private async importToDatabase(
-    data: StandardizedFundamentalData[]
+    data: UnifiedFinancialData[]
   ): Promise<ImportResult> {
     await this.importer.initialize();
     
