@@ -11,3 +11,5 @@ output/*.md
 logs/
 
 .env
+
+config/*.json

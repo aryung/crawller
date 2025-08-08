@@ -1,7 +1,7 @@
 {
   "templateType": "tw-revenue",
   "url": "https://tw.stock.yahoo.com/quote/${symbolCode}/revenue",
-  "_note": "PRECISE INDEPENDENT SELECTORS (2025-08-07): Uses exact DOM structure selectors based on EPS success case. revenuePeriods: 'ul > li > div > div:nth-child(1)', revenueValues: 'ul > li > div > div:nth-child(2)'. Follows CLAUDE.md principle of independent selectors for each output field.",
+  "_note": "REVENUE-FOCUSED CONFIG (2025-08-08): Optimized configuration specifically for monthly revenue data extraction. Only processes revenue and fiscalMonth fields, following single responsibility principle. Uses exact DOM selectors: revenuePeriods: 'ul > li > div > div:nth-child(1)', revenueValues: 'ul > li > div > div:nth-child(2)'. Excludes grossProfit, operatingIncome, netIncome, eps to maintain focus on revenue data only.",
   "actions": [
     {
       "type": "wait",
@@ -26,12 +26,12 @@
       "transform": "cleanStockSymbol"
     },
     "revenuePeriods": {
-      "selector": "ul > li > div > div:nth-child(1)",
+      "selector": "div#layout-col1 ul > li > div > div:nth-child(1)",
       "multiple": true,
       "transform": "extractRevenuePeriodsSeparately"
     },
     "revenueValues": {
-      "selector": "ul > li > div > div:nth-child(2) > ul > li:nth-child(1)",
+      "selector": "div#layout-col1 ul > li > div > div:nth-child(2) > ul > li:nth-child(1)",
       "multiple": true,
       "transform": "extractRevenueValuesSeparately"
     },
