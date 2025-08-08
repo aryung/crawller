@@ -1,6 +1,6 @@
 {
   "templateType": "us-income-statement",
-  "url": "https://finance.yahoo.com/quote/${stockCode}/financials/",
+  "url": "https://finance.yahoo.com/quote/${symbolCode}/financials/",
   "_note": "US INCOME STATEMENT CONFIG (Unified Array Selectors): Extracts annual income statement data from Yahoo Finance US. Each field uses independent array selectors with multiple:true for unified data extraction. Values are kept in thousands (original format, no conversion). Based on cashflow template architecture.",
   "actions": [
     {
@@ -196,11 +196,11 @@
     }
   },
   "variables": {
-    "stockCode": "AAPL",
+    "symbolCode": "AAPL",
     "baseUrl": "https://finance.yahoo.com"
   },
   "export": {
     "formats": ["json", "csv"],
-    "filename": "yahoo_finance_us_income_statement_${stockCode}"
+    "filename": "yahoo_finance_us_income_statement_${symbolCode}"
   }
 }

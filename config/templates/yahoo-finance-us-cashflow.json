@@ -1,6 +1,6 @@
 {
   "templateType": "us-cashflow",
-  "url": "https://finance.yahoo.com/quote/${stockCode}/cash-flow/",
+  "url": "https://finance.yahoo.com/quote/${symbolCode}/cash-flow/",
   "_note": "US CASHFLOW CONFIG (Unified Array Selectors): Extracts quarterly cash flow data from Yahoo Finance US. Each field uses independent array selectors with multiple:true for unified data extraction. Values are kept in thousands (original format, no conversion). Based on JP template architecture.",
   "actions": [
     {
@@ -106,11 +106,11 @@
     }
   },
   "variables": {
-    "stockCode": "AAPL",
+    "symbolCode": "AAPL",
     "baseUrl": "https://finance.yahoo.com"
   },
   "export": {
     "formats": ["json", "csv"],
-    "filename": "yahoo_finance_us_cashflow_${stockCode}"
+    "filename": "yahoo_finance_us_cashflow_${symbolCode}"
   }
 }

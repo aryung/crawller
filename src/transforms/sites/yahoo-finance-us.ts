@@ -1093,7 +1093,7 @@ Object.assign(yahooFinanceUSTransforms, {
     if (!context) return [];
 
     const results: any[] = [];
-    const symbolCode = context.variables?.stockCode || context.stockCode || 'UNKNOWN';
+    const symbolCode = context.variables?.symbolCode || context.symbolCode || 'UNKNOWN';
     const vars = context.variables || {};
     
     // 獲取期間陣列
@@ -1202,7 +1202,7 @@ Object.assign(yahooFinanceUSTransforms, {
     if (!context) return [];
 
     const results: any[] = [];
-    const symbolCode = context.variables?.stockCode || context.stockCode || 'UNKNOWN';
+    const symbolCode = context.variables?.symbolCode || context.symbolCode || 'UNKNOWN';
     const vars = context.variables || {};
     
     // 獲取期間陣列
@@ -1311,7 +1311,7 @@ Object.assign(yahooFinanceUSTransforms, {
     if (!context) return [];
 
     const results: any[] = [];
-    const symbolCode = context.variables?.stockCode || context.stockCode || 'UNKNOWN';
+    const symbolCode = context.variables?.symbolCode || context.symbolCode || 'UNKNOWN';
     const vars = context.variables || {};
     
     // 獲取期間陣列

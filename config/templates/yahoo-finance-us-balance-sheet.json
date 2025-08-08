@@ -1,6 +1,6 @@
 {
   "templateType": "us-balance-sheet",
-  "url": "https://finance.yahoo.com/quote/${stockCode}/balance-sheet/",
+  "url": "https://finance.yahoo.com/quote/${symbolCode}/balance-sheet/",
   "_note": "US BALANCE SHEET CONFIG (Unified Array Selectors): Extracts annual balance sheet data from Yahoo Finance US. Each field uses independent array selectors with multiple:true for unified data extraction. Values are kept in thousands (original format, no conversion). Based on cashflow template architecture.",
   "actions": [
     {
@@ -121,11 +121,11 @@
     }
   },
   "variables": {
-    "stockCode": "AAPL",
+    "symbolCode": "AAPL",
     "baseUrl": "https://finance.yahoo.com"
   },
   "export": {
     "formats": ["json", "csv"],
-    "filename": "yahoo_finance_us_balance_sheet_${stockCode}"
+    "filename": "yahoo_finance_us_balance_sheet_${symbolCode}"
   }
 }
