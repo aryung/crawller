@@ -1,116 +1,103 @@
 {
-  "templateType": "us-cashflow",
-  "url": "https://finance.yahoo.com/quote/${stockCode}/cash-flow/",
-  "_note": "This config extracts structured cash flow data from Yahoo Finance US cash flow page. Includes dynamic action to click 'Quarterly' button before data extraction. Note: Yahoo Finance US cash flow data is in thousands, will be converted to actual values by multiplying by 1000. Use with US stock codes like AAPL, MSFT, GOOGL, etc.",
+  "templateType": "us-balance-sheet",
+  "url": "https://finance.yahoo.com/quote/${stockCode}/balance-sheet/",
+  "_note": "US BALANCE SHEET CONFIG (Unified Array Selectors): Extracts annual balance sheet data from Yahoo Finance US. Each field uses independent array selectors with multiple:true for unified data extraction. Values are kept in thousands (original format, no conversion). Based on cashflow template architecture.",
   "actions": [
     {
       "type": "wait",
       "timeout": 5000,
-      "description": "等待頁面初始載入"
-    },
-    {
-      "type": "click", 
-      "selector": "button[data-testid=\"QUARTERLY\"], button[data-testid=\"Quarterly\"], .Quarterly, button[aria-label*=\"Quarterly\"], [data-icon=\"quarterly\"]",
-      "timeout": 3000,
-      "description": "點擊 Quarterly 按鈕以取得季度現金流數據",
-      "optional": true
-    },
-    {
-      "type": "wait",
-      "timeout": 8000,
-      "description": "等待季度現金流數據完全載入"
+      "description": "等待頁面載入"
     }
   ],
   "selectors": {
     "stockInfo": {
-      "selector": "h1[data-reactid], h1, .D\\(ib\\).Fz\\(18px\\)",
+      "selector": "h1, section h1, div h1",
       "transform": "cleanStockSymbol"
     },
-    "period":{
-      "selector": "div.table > div.tableHeader > div > div:nth-child(n+2)",
-      "multiple": false,
-      "transform": "extractFreeCashflow"
+    "fiscalPeriodsArray": {
+      "selector": ".tableHeader > div > div:nth-child(n+2), thead > tr > th:nth-child(n+2)",
+      "multiple": true,
+      "transform": "parseUSFinancialPeriodsArray"
     },
-    "totalAssets": {
-      "selector": "div.table > div.tableBody > div:nth-child(1) > div > div:nth-child(n+2)",
-      "multiple": false,
-      "transform": "extractOperatingCashflow"
+    "totalAssetsValues": {
+      "selector": ".tableBody > div:nth-child(1) > div:nth-child(n+2), tbody > tr:nth-child(1) > td:nth-child(n+2)",
+      "multiple": true,
+      "transform": "parseUSFinancialValuesArray"
     },
-    "totalLiabilities": {
-      "selector": "div.table > div.tableBody > div:nth-child(2) > div > div:nth-child(n+2)",
-      "multiple": false,
-      "transform": "extractInvestingCashflow"
+    "totalLiabilitiesValues": {
+      "selector": ".tableBody > div:nth-child(2) > div:nth-child(n+2), tbody > tr:nth-child(2) > td:nth-child(n+2)",
+      "multiple": true,
+      "transform": "parseUSFinancialValuesArray"
     },
-    "totalEquity": {
-      "selector": "div.table > div.tableBody > div:nth-child(3) > div > div:nth-child(n+2)",
-      "multiple": false,
-      "transform": "extractFinancingCashflow"
+    "totalEquityValues": {
+      "selector": ".tableBody > div:nth-child(3) > div:nth-child(n+2), tbody > tr:nth-child(3) > td:nth-child(n+2)",
+      "multiple": true,
+      "transform": "parseUSFinancialValuesArray"
     },
-    "totalCapitalization": {
-      "selector": "div.table > div.tableBody > div:nth-child(4) > div > div:nth-child(n+2)",
-      "multiple": false,
-      "transform": "extractFinancingCashflow"
+    "totalCapitalizationValues": {
+      "selector": ".tableBody > div:nth-child(4) > div:nth-child(n+2), tbody > tr:nth-child(4) > td:nth-child(n+2)",
+      "multiple": true,
+      "transform": "parseUSFinancialValuesArray"
     },
-    "commonStockEquity":{
-      "selector": "div.table > div.tableBody > div:nth-child(5) > div > div:nth-child(n+2)",
-      "multiple": false,
-      "transform": "extractFreeCashflow"
+    "commonStockEquityValues": {
+      "selector": ".tableBody > div:nth-child(5) > div:nth-child(n+2), tbody > tr:nth-child(5) > td:nth-child(n+2)",
+      "multiple": true,
+      "transform": "parseUSFinancialValuesArray"
     },
-    "capitalLeaseObligations":{
-      "selector": "div.table > div.tableBody > div:nth-child(6) > div > div:nth-child(n+2)",
-      "multiple": false,
-      "transform": "extractFreeCashflow"
+    "capitalLeaseObligationsValues": {
+      "selector": ".tableBody > div:nth-child(6) > div:nth-child(n+2), tbody > tr:nth-child(6) > td:nth-child(n+2)",
+      "multiple": true,
+      "transform": "parseUSFinancialValuesArray"
     },
-    "netTangibleAssets":{
-      "selector": "div.table > div.tableBody > div:nth-child(7) > div > div:nth-child(n+2)",
-      "multiple": false,
-      "transform": "extractFreeCashflow"
+    "netTangibleAssetsValues": {
+      "selector": ".tableBody > div:nth-child(7) > div:nth-child(n+2), tbody > tr:nth-child(7) > td:nth-child(n+2)",
+      "multiple": true,
+      "transform": "parseUSFinancialValuesArray"
     },
-    "workingCapital":{
-      "selector": "div.table > div.tableBody > div:nth-child(8) > div > div:nth-child(n+2)",
-      "multiple": false,
-      "transform": "extractFreeCashflow"
+    "workingCapitalValues": {
+      "selector": ".tableBody > div:nth-child(8) > div:nth-child(n+2), tbody > tr:nth-child(8) > td:nth-child(n+2)",
+      "multiple": true,
+      "transform": "parseUSFinancialValuesArray"
     },
-    "investedCapital":{
-      "selector": "div.table > div.tableBody > div:nth-child(9) > div > div:nth-child(n+2)",
-      "multiple": false,
-      "transform": "extractFreeCashflow"
+    "investedCapitalValues": {
+      "selector": ".tableBody > div:nth-child(9) > div:nth-child(n+2), tbody > tr:nth-child(9) > td:nth-child(n+2)",
+      "multiple": true,
+      "transform": "parseUSFinancialValuesArray"
     },
-    "tangibleBookValue":{
-      "selector": "div.table > div.tableBody > div:nth-child(10) > div > div:nth-child(n+2)",
-      "multiple": false,
-      "transform": "extractFreeCashflow"
+    "tangibleBookValues": {
+      "selector": ".tableBody > div:nth-child(10) > div:nth-child(n+2), tbody > tr:nth-child(10) > td:nth-child(n+2)",
+      "multiple": true,
+      "transform": "parseUSFinancialValuesArray"
     },
-    "totalDept":{
-      "selector": "div.table > div.tableBody > div:nth-child(11) > div > div:nth-child(n+2)",
-      "multiple": false,
-      "transform": "extractFreeCashflow"
+    "totalDebtValues": {
+      "selector": ".tableBody > div:nth-child(11) > div:nth-child(n+2), tbody > tr:nth-child(11) > td:nth-child(n+2)",
+      "multiple": true,
+      "transform": "parseUSFinancialValuesArray"
     },
-    "netDept":{
-      "selector": "div.table > div.tableBody > div:nth-child(12) > div > div:nth-child(n+2)",
-      "multiple": false,
-      "transform": "extractFreeCashflow"
+    "netDebtValues": {
+      "selector": ".tableBody > div:nth-child(12) > div:nth-child(n+2), tbody > tr:nth-child(12) > td:nth-child(n+2)",
+      "multiple": true,
+      "transform": "parseUSFinancialValuesArray"
     },
-    "shareIssued":{
-      "selector": "div.table > div.tableBody > div:nth-child(13) > div > div:nth-child(n+2)",
-      "multiple": false,
-      "transform": "extractFreeCashflow"
+    "shareIssuedValues": {
+      "selector": ".tableBody > div:nth-child(13) > div:nth-child(n+2), tbody > tr:nth-child(13) > td:nth-child(n+2)",
+      "multiple": true,
+      "transform": "parseUSFinancialValuesArray"
     },
-    "ordinarySharesNumber":{
-      "selector": "div.table > div.tableBody > div:nth-child(14) > div > div:nth-child(n+2)",
-      "multiple": false,
-      "transform": "extractFreeCashflow"
+    "ordinarySharesNumberValues": {
+      "selector": ".tableBody > div:nth-child(14) > div:nth-child(n+2), tbody > tr:nth-child(14) > td:nth-child(n+2)",
+      "multiple": true,
+      "transform": "parseUSFinancialValuesArray"
     },
-    "treasurySharesNumber":{
-      "selector": "div.table > div.tableBody > div:nth-child(15) > div > div:nth-child(n+2)",
-      "multiple": false,
-      "transform": "extractFreeCashflow"
+    "treasurySharesNumberValues": {
+      "selector": ".tableBody > div:nth-child(15) > div:nth-child(n+2), tbody > tr:nth-child(15) > td:nth-child(n+2)",
+      "multiple": true,
+      "transform": "parseUSFinancialValuesArray"
     },
     "data": {
-      "selector"": "body",
-      "transform"": "extractTableData",
+      "selector": "body",
+      "transform": "combineUSBalanceSheetData"
     }
-
   },
   "headers": {
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
@@ -125,8 +112,9 @@
     "headless": true,
     "screenshot": false,
     "encoding": "utf-8",
-    "domainDelay": 8000,
-    "waitFor": 5000,
+    "domainDelay": 5000,
+    "waitFor": 3000,
+    "waitUntil": "domcontentloaded",
     "viewport": {
       "width": 1920,
       "height": 1080
@@ -138,6 +126,6 @@
   },
   "export": {
     "formats": ["json", "csv"],
-    "filename": "yahoo_finance_us_cashflow_${stockCode}"
+    "filename": "yahoo_finance_us_balance_sheet_${stockCode}"
   }
 }

@@ -22,8 +22,13 @@ export interface YahooFinanceUSTransforms {
     year: number;
     quarter?: number;
     month?: number;
+    day?: number;
+    isTTM?: boolean;
+    originalDate?: string;
   }>;
   combineUSCashFlowData: (content: any, context?: any) => any[];
+  combineUSBalanceSheetData: (content: any, context?: any) => any[];
+  combineUSIncomeStatementData: (content: any, context?: any) => any[];
 }
 
 // 美國財務數據介面
@@ -1184,6 +1189,254 @@ Object.assign(yahooFinanceUSTransforms, {
     }
     
     console.log(`[US Combine] ✅ 成功組合 ${results.length} 筆美國現金流數據（已排除 TTM）`);
+    return results;
+  },
+
+  /**
+   * 組合美國資產負債表數據
+   * 將個別提取的數據組合成統一格式
+   */
+  combineUSBalanceSheetData: (content: any, context?: any): any[] => {
+    console.log('[US Balance Sheet] 🔗 開始組合美國資產負債表數據...', context?.variables || {});
+    
+    if (!context) return [];
+
+    const results: any[] = [];
+    const symbolCode = context.variables?.stockCode || context.stockCode || 'UNKNOWN';
+    const vars = context.variables || {};
+    
+    // 獲取期間陣列
+    const periodsArray = vars.fiscalPeriodsArray || [];
+    
+    // 獲取各項資產負債表數據陣列
+    const totalAssetsArray = vars.totalAssetsValues || [];
+    const totalLiabilitiesArray = vars.totalLiabilitiesValues || [];
+    const totalEquityArray = vars.totalEquityValues || [];
+    const totalCapitalizationArray = vars.totalCapitalizationValues || [];
+    const commonStockEquityArray = vars.commonStockEquityValues || [];
+    const capitalLeaseObligationsArray = vars.capitalLeaseObligationsValues || [];
+    const netTangibleAssetsArray = vars.netTangibleAssetsValues || [];
+    const workingCapitalArray = vars.workingCapitalValues || [];
+    const investedCapitalArray = vars.investedCapitalValues || [];
+    const tangibleBookArray = vars.tangibleBookValues || [];
+    const totalDebtArray = vars.totalDebtValues || [];
+    const netDebtArray = vars.netDebtValues || [];
+    const shareIssuedArray = vars.shareIssuedValues || [];
+    const ordinarySharesNumberArray = vars.ordinarySharesNumberValues || [];
+    const treasurySharesNumberArray = vars.treasurySharesNumberValues || [];
+    
+    // 找出最大陣列長度
+    const maxLength = Math.max(
+      periodsArray.length,
+      totalAssetsArray.length,
+      totalLiabilitiesArray.length,
+      1 // 至少處理一筆
+    );
+    
+    console.log(`[US Balance Sheet] 📊 偵測到最大陣列長度: ${maxLength}`);
+    
+    // 為每個期間創建記錄
+    for (let i = 0; i < maxLength; i++) {
+      const period = periodsArray[i] || { year: new Date().getFullYear() };
+      
+      // 跳過 TTM 資料（動態資料）
+      if (period.isTTM) {
+        console.log(`[US Balance Sheet] 跳過 TTM 動態資料`);
+        continue;
+      }
+      
+      // 構建報告日期 - 使用實際的財務年度結束日期
+      let reportDate: string;
+      if (period.day && period.month && period.year) {
+        // 使用實際的日期（例如 Apple 是 9/30）
+        reportDate = `${period.year}-${String(period.month).padStart(2, '0')}-${String(period.day).padStart(2, '0')}`;
+      } else if (period.quarter) {
+        // 季度報告：Q1->03-31, Q2->06-30, Q3->09-30, Q4->12-31
+        const quarterEndMonths = [3, 6, 9, 12];
+        const quarterEndDays = [31, 30, 30, 31];
+        const monthIndex = period.quarter - 1;
+        reportDate = `${period.year}-${String(quarterEndMonths[monthIndex]).padStart(2, '0')}-${quarterEndDays[monthIndex]}`;
+      } else if (period.month) {
+        // 月度報告
+        const lastDay = new Date(period.year, period.month, 0).getDate();
+        reportDate = `${period.year}-${String(period.month).padStart(2, '0')}-${lastDay}`;
+      } else {
+        // 年度報告 - 預設 12/31
+        reportDate = `${period.year}-12-31`;
+      }
+      
+      const balanceSheetData: any = {
+        symbolCode: symbolCode,
+        exchangeArea: 'US',
+        reportDate: reportDate,
+        fiscalYear: period.year,
+        fiscalQuarter: period.quarter,
+        fiscalMonth: period.month || (period.quarter ? period.quarter * 3 : 12),
+        reportType: period.quarter ? 'quarterly' : 'annual',
+        dataSource: 'yahoo-finance-us',
+        lastUpdated: new Date().toISOString(),
+        
+        // 主要資產負債表數據（保持千位單位）
+        totalAssets: totalAssetsArray[i] || 0,
+        totalLiabilities: totalLiabilitiesArray[i] || 0,
+        totalEquity: totalEquityArray[i] || 0,
+        totalCapitalization: totalCapitalizationArray[i] || 0,
+        commonStockEquity: commonStockEquityArray[i] || 0,
+        capitalLeaseObligations: capitalLeaseObligationsArray[i] || 0,
+        netTangibleAssets: netTangibleAssetsArray[i] || 0,
+        workingCapital: workingCapitalArray[i] || 0,
+        investedCapital: investedCapitalArray[i] || 0,
+        tangibleBookValue: tangibleBookArray[i] || 0,
+        totalDebt: totalDebtArray[i] || 0,
+        netDebt: netDebtArray[i] || 0,
+        shareIssued: shareIssuedArray[i] || 0,
+        ordinarySharesNumber: ordinarySharesNumberArray[i] || 0,
+        treasurySharesNumber: treasurySharesNumberArray[i] || 0
+      };
+
+      results.push(balanceSheetData);
+    }
+    
+    console.log(`[US Balance Sheet] ✅ 成功組合 ${results.length} 筆美國資產負債表數據（已排除 TTM）`);
+    return results;
+  },
+
+  /**
+   * 組合美國損益表數據
+   * 將個別提取的數據組合成統一格式
+   */
+  combineUSIncomeStatementData: (content: any, context?: any): any[] => {
+    console.log('[US Income Statement] 🔗 開始組合美國損益表數據...', context?.variables || {});
+    
+    if (!context) return [];
+
+    const results: any[] = [];
+    const symbolCode = context.variables?.stockCode || context.stockCode || 'UNKNOWN';
+    const vars = context.variables || {};
+    
+    // 獲取期間陣列
+    const periodsArray = vars.fiscalPeriodsArray || [];
+    
+    // 獲取各項損益表數據陣列
+    const totalRevenueArray = vars.totalRevenueValues || [];
+    const costOfRevenueArray = vars.costOfRevenueValues || [];
+    const grossProfitArray = vars.grossProfitValues || [];
+    const operatingExpenseArray = vars.operatingExpenseValues || [];
+    const operatingIncomeArray = vars.operatingIncomeValues || [];
+    const netNonOperatingInterestIncomeArray = vars.netNonOperatingInterestIncomeValues || [];
+    const otherIncomeExpenseArray = vars.otherIncomeExpenseValues || [];
+    const pretaxIncomeArray = vars.pretaxIncomeValues || [];
+    const taxProvisionArray = vars.taxProvisionValues || [];
+    const netIncomeCommonStockholdersArray = vars.netIncomeCommonStockholdersValues || [];
+    const dilutedNIAvailableArray = vars.dilutedNIAvailableValues || [];
+    const basicEPSArray = vars.basicEPSValues || [];
+    const dilutedEPSArray = vars.dilutedEPSValues || [];
+    const basicAverageSharesArray = vars.basicAverageSharesValues || [];
+    const dilutedAverageSharesArray = vars.dilutedAverageSharesValues || [];
+    const totalOperatingIncomeArray = vars.totalOperatingIncomeValues || [];
+    const totalExpensesArray = vars.totalExpensesValues || [];
+    const netIncomeFromContinuingArray = vars.netIncomeFromContinuingValues || [];
+    const normalizedIncomeArray = vars.normalizedIncomeValues || [];
+    const interestIncomeArray = vars.interestIncomeValues || [];
+    const interestExpenseArray = vars.interestExpenseValues || [];
+    const netInterestIncomeArray = vars.netInterestIncomeValues || [];
+    const ebitArray = vars.ebitValues || [];
+    const ebitdaArray = vars.ebitdaValues || [];
+    const reconciledCostOfRevenueArray = vars.reconciledCostOfRevenueValues || [];
+    const reconciledDepreciationArray = vars.reconciledDepreciationValues || [];
+    const netIncomeFromContinuingOpArray = vars.netIncomeFromContinuingOpValues || [];
+    const normalizedEBITDAArray = vars.normalizedEBITDAValues || [];
+    const taxRateForCalcsArray = vars.taxRateForCalcsValues || [];
+    const taxEffectOfUnusualItemsArray = vars.taxEffectOfUnusualItemsValues || [];
+    
+    // 找出最大陣列長度
+    const maxLength = Math.max(
+      periodsArray.length,
+      totalRevenueArray.length,
+      netIncomeCommonStockholdersArray.length,
+      1 // 至少處理一筆
+    );
+    
+    console.log(`[US Income Statement] 📊 偵測到最大陣列長度: ${maxLength}`);
+    
+    // 為每個期間創建記錄
+    for (let i = 0; i < maxLength; i++) {
+      const period = periodsArray[i] || { year: new Date().getFullYear() };
+      
+      // 跳過 TTM 資料（動態資料）
+      if (period.isTTM) {
+        console.log(`[US Income Statement] 跳過 TTM 動態資料`);
+        continue;
+      }
+      
+      // 構建報告日期 - 使用實際的財務年度結束日期
+      let reportDate: string;
+      if (period.day && period.month && period.year) {
+        // 使用實際的日期（例如 Apple 是 9/30）
+        reportDate = `${period.year}-${String(period.month).padStart(2, '0')}-${String(period.day).padStart(2, '0')}`;
+      } else if (period.quarter) {
+        // 季度報告：Q1->03-31, Q2->06-30, Q3->09-30, Q4->12-31
+        const quarterEndMonths = [3, 6, 9, 12];
+        const quarterEndDays = [31, 30, 30, 31];
+        const monthIndex = period.quarter - 1;
+        reportDate = `${period.year}-${String(quarterEndMonths[monthIndex]).padStart(2, '0')}-${quarterEndDays[monthIndex]}`;
+      } else if (period.month) {
+        // 月度報告
+        const lastDay = new Date(period.year, period.month, 0).getDate();
+        reportDate = `${period.year}-${String(period.month).padStart(2, '0')}-${lastDay}`;
+      } else {
+        // 年度報告 - 預設 12/31
+        reportDate = `${period.year}-12-31`;
+      }
+      
+      const incomeStatementData: any = {
+        symbolCode: symbolCode,
+        exchangeArea: 'US',
+        reportDate: reportDate,
+        fiscalYear: period.year,
+        fiscalQuarter: period.quarter,
+        fiscalMonth: period.month || (period.quarter ? period.quarter * 3 : 12),
+        reportType: period.quarter ? 'quarterly' : 'annual',
+        dataSource: 'yahoo-finance-us',
+        lastUpdated: new Date().toISOString(),
+        
+        // 主要損益表數據（保持千位單位）
+        totalRevenue: totalRevenueArray[i] || 0,
+        costOfRevenue: costOfRevenueArray[i] || 0,
+        grossProfit: grossProfitArray[i] || 0,
+        operatingExpense: operatingExpenseArray[i] || 0,
+        operatingIncome: operatingIncomeArray[i] || 0,
+        netNonOperatingInterestIncome: netNonOperatingInterestIncomeArray[i] || 0,
+        otherIncomeExpense: otherIncomeExpenseArray[i] || 0,
+        pretaxIncome: pretaxIncomeArray[i] || 0,
+        taxProvision: taxProvisionArray[i] || 0,
+        netIncomeCommonStockholders: netIncomeCommonStockholdersArray[i] || 0,
+        dilutedNIAvailable: dilutedNIAvailableArray[i] || 0,
+        basicEPS: basicEPSArray[i] || 0,
+        dilutedEPS: dilutedEPSArray[i] || 0,
+        basicAverageShares: basicAverageSharesArray[i] || 0,
+        dilutedAverageShares: dilutedAverageSharesArray[i] || 0,
+        totalOperatingIncome: totalOperatingIncomeArray[i] || 0,
+        totalExpenses: totalExpensesArray[i] || 0,
+        netIncomeFromContinuing: netIncomeFromContinuingArray[i] || 0,
+        normalizedIncome: normalizedIncomeArray[i] || 0,
+        interestIncome: interestIncomeArray[i] || 0,
+        interestExpense: interestExpenseArray[i] || 0,
+        netInterestIncome: netInterestIncomeArray[i] || 0,
+        ebit: ebitArray[i] || 0,
+        ebitda: ebitdaArray[i] || 0,
+        reconciledCostOfRevenue: reconciledCostOfRevenueArray[i] || 0,
+        reconciledDepreciation: reconciledDepreciationArray[i] || 0,
+        netIncomeFromContinuingOp: netIncomeFromContinuingOpArray[i] || 0,
+        normalizedEBITDA: normalizedEBITDAArray[i] || 0,
+        taxRateForCalcs: taxRateForCalcsArray[i] || 0,
+        taxEffectOfUnusualItems: taxEffectOfUnusualItemsArray[i] || 0
+      };
+
+      results.push(incomeStatementData);
+    }
+    
+    console.log(`[US Income Statement] ✅ 成功組合 ${results.length} 筆美國損益表數據（已排除 TTM）`);
     return results;
   }
 });
