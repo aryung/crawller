@@ -25,31 +25,62 @@ crawler/
 
 ## 六大核心開發原則
 
-### 1. :has() 偽類精確選擇器 ⭐
+### 1. 結構化選擇器優先原則 ⭐
 
-**最高優先原則**: 使用 `:has()` 偽類直接定位包含特定內容的元素，避免複雜比對邏輯。
+**最高優先原則**: 優先使用結構化的位置選擇器，避免依賴文字內容。
+
+#### 選擇器優先級順序：
+
+1. **位置選擇器** (最優先)
+   - 使用 `nth-child()`, `nth-of-type()` 等結構化選擇器
+   - 基於 DOM 結構而非內容
+   - 語言無關，更加穩定
+
+2. **屬性選擇器** (次優先)
+   - 使用 `[data-testid]`, `[aria-label]` 等屬性
+   - 相對穩定的標識符
+
+3. **類別選擇器** (輔助)
+   - 使用特定的 CSS 類別
+   - 注意類別可能會變動
+
+4. **:has() 配合結構** (特殊情況)
+   - 當需要複雜邏輯時使用
+   - 盡量配合結構而非文字
+
+**❌ 避免使用 :contains()**：
+- 依賴文字內容不穩定
+- 語言相關，國際化困難
+- 相當於 hardcode 文字
 
 ```json
 {
   "selectors": {
-    "currentPrice": {
-      "selector": "tr:has(td:contains('目前股價')) td:nth-child(2)",
-      "transform": "cleanNumericValue"
+    // ✅ 好的做法：使用結構化選擇器
+    "operatingCashFlow": {
+      "selector": "section[data-testid*='table'] > div:nth-child(2) > div:nth-child(1) > div > div:nth-child(n+2)",
+      "transform": "parseFinancialValue"
     },
-    "revenue2025Q1": {
-      "selector": "tr:has(td:contains('2025')) td:contains('Q1') + td",
-      "transform": "extractRevenueValue"
+    
+    // ❌ 避免：依賴文字內容
+    "badExample": {
+      "selector": "tr:has(td:contains('Operating Cash Flow')) td:nth-child(2)",
+      "transform": "parseFinancialValue"
     }
   }
 }
 ```
 
-**:has() 選擇器模式庫**:
+**結構化選擇器範例**:
 ```css
-tr:has(td:contains('關鍵字'))                    /* 選取包含關鍵字的行 */
-th:contains('標題') + td                         /* 選取標題後的數據格 */
-div:has(.specific-class) .data-value             /* 選取包含特定類別的容器內的數據 */
-tr:has(td.positive) td:last-child                /* 選取包含正值的行的最後一欄 */
+/* 表格第一行的所有數據格 */
+table > tbody > tr:nth-child(1) > td:nth-child(n+2)
+
+/* 特定區塊的第二個子元素 */
+section[data-testid*='financials'] > div:nth-child(2)
+
+/* 使用類別和位置組合 */
+.table-container > div:first-child > div > div:nth-child(n+2)
 ```
 
 ### 2. DOM 預處理 - Exclude Selector

@@ -3,7 +3,9 @@
  * 包含針對 Yahoo Finance US 網站結構和資料格式的特殊處理邏輯
  */
 
-import { StandardizedFundamentalData, FiscalReportType } from '../../types/standardized.js';
+import { UnifiedFinancialData } from '../../types/unified-financial-data.js';
+import { FiscalReportType } from '../../common/shared-types/interfaces/fundamental-data.interface.js';
+import { MarketRegion } from '../../common/shared-types/interfaces/market-data.interface.js';
 
 export interface YahooFinanceUSTransforms {
   cleanStockSymbol: (value: string) => string;
@@ -14,6 +16,14 @@ export interface YahooFinanceUSTransforms {
   cleanFinancialText: (value: string) => string;
   structureUSFinancialDataFromCells: (cells: string[] | string, context?: any) => USFinancialData[];
   structureUSCashFlowDataFromCells: (cells: string[] | string, context?: any) => USCashFlowData[];
+  // New unified transforms for refactored template
+  parseUSFinancialValuesArray: (content: string | string[]) => number[];
+  parseUSFinancialPeriodsArray: (content: string | string[]) => Array<{
+    year: number;
+    quarter?: number;
+    month?: number;
+  }>;
+  combineUSCashFlowData: (content: any, context?: any) => any[];
 }
 
 // 美國財務數據介面
@@ -819,7 +829,7 @@ function getQuarterFromDate(dateStr: string): number | undefined {
 export function toStandardizedFromFinancials(
   data: USFinancialData,
   symbolCode: string
-): StandardizedFundamentalData {
+): UnifiedFinancialData {
   const reportDate = convertUSDateFormat(data.fiscalPeriod);
   const isTTM = data.fiscalPeriod === 'TTM';
   const fiscalYear = new Date(reportDate).getFullYear();
@@ -828,12 +838,14 @@ export function toStandardizedFromFinancials(
   return {
     // 基本資訊
     symbolCode: symbolCode, // 美國股票不需要去除後綴
-    exchangeArea: 'US',
+    exchangeArea: MarketRegion.US,
     reportDate: reportDate,
     fiscalYear: fiscalYear,
-    fiscalQuarter: fiscalQuarter,
+    fiscalMonth: fiscalQuarter ? fiscalQuarter * 3 : 12,  // Convert quarter to month (Q1→3, Q2→6, Q3→9, Q4→12)
     reportType: isTTM ? FiscalReportType.ANNUAL : 
                 (fiscalQuarter ? FiscalReportType.QUARTERLY : FiscalReportType.ANNUAL),
+    dataSource: 'yahoo-finance-us',
+    lastUpdated: new Date().toISOString(),
     
     // 損益表數據（千美元 × 1000 → 美元）
     revenue: data.totalRevenue ? data.totalRevenue * 1000 : undefined,
@@ -848,12 +860,7 @@ export function toStandardizedFromFinancials(
     
     // EPS 不需轉換
     eps: data.basicEPS || undefined,
-    dilutedEPS: data.dilutedEPS || undefined,
-    
-    // 元數據
-    dataSource: 'yahoo-finance-us',
-    lastUpdated: new Date().toISOString(),
-    currencyCode: 'USD'
+    dilutedEPS: data.dilutedEPS || undefined
   };
 }
 
@@ -866,7 +873,7 @@ export function toStandardizedFromFinancials(
 export function toStandardizedFromCashFlow(
   data: USCashFlowData,
   symbolCode: string
-): StandardizedFundamentalData {
+): UnifiedFinancialData {
   const reportDate = convertUSDateFormat(data.fiscalPeriod);
   const isTTM = data.fiscalPeriod === 'TTM';
   const fiscalYear = new Date(reportDate).getFullYear();
@@ -875,12 +882,14 @@ export function toStandardizedFromCashFlow(
   return {
     // 基本資訊
     symbolCode: symbolCode,
-    exchangeArea: 'US',
+    exchangeArea: MarketRegion.US,
     reportDate: reportDate,
     fiscalYear: fiscalYear,
-    fiscalQuarter: fiscalQuarter,
+    fiscalMonth: fiscalQuarter ? fiscalQuarter * 3 : 12,  // Convert quarter to month
     reportType: isTTM ? FiscalReportType.ANNUAL : 
                 (fiscalQuarter ? FiscalReportType.QUARTERLY : FiscalReportType.ANNUAL),
+    dataSource: 'yahoo-finance-us',
+    lastUpdated: new Date().toISOString(),
     
     // 現金流數據（單位已是美元，直接使用）
     operatingCashFlow: data.operatingCashFlow || undefined,
@@ -889,12 +898,7 @@ export function toStandardizedFromCashFlow(
     freeCashFlow: data.freeCashFlow || undefined,
     capex: data.capitalExpenditure || undefined,
     debtIssuance: data.issuanceOfDebt || undefined,
-    debtRepayment: data.repaymentOfDebt || undefined,
-    
-    // 元數據
-    dataSource: 'yahoo-finance-us',
-    lastUpdated: new Date().toISOString(),
-    currencyCode: 'USD'
+    debtRepayment: data.repaymentOfDebt || undefined
   };
 }
 
@@ -909,11 +913,11 @@ export function batchToStandardized(
   dataType: 'financials' | 'cashflow',
   dataArray: any[],
   symbolCode: string
-): StandardizedFundamentalData[] {
-  const results: StandardizedFundamentalData[] = [];
+): UnifiedFinancialData[] {
+  const results: UnifiedFinancialData[] = [];
   
   for (const data of dataArray) {
-    let standardized: StandardizedFundamentalData | null = null;
+    let standardized: UnifiedFinancialData | null = null;
     
     switch (dataType) {
       case 'financials':
@@ -931,3 +935,221 @@ export function batchToStandardized(
   
   return results;
 }
+
+/**
+ * === 新增統一轉換函數 (基於 JP 架構) ===
+ */
+
+// 將新函數添加到 yahooFinanceUSTransforms 對象
+Object.assign(yahooFinanceUSTransforms, {
+  /**
+   * 解析美國財務數值陣列
+   * 處理表格中的多個數值，保持千位單位
+   */
+  parseUSFinancialValuesArray: (content: string | string[]): number[] => {
+    console.log('[US Values Array] 💰 處理美國財務數值陣列...');
+    const contentArray = Array.isArray(content) ? content : [content];
+    const values: number[] = [];
+
+    for (const item of contentArray) {
+      if (!item || typeof item !== 'string') continue;
+      
+      const str = item.toString().trim();
+      
+      // 缺失值檢測
+      const missingValueRegex = /^[-—\-*・\s]*$|^(N\/A|n\/a|NA|--)$/;
+      if (missingValueRegex.test(str)) {
+        console.log(`[US Values Array] 🔍 檢測到缺失值: "${str}" -> 轉換為 0`);
+        values.push(0);
+        continue;
+      }
+      
+      // 移除逗號和空白
+      let cleaned = str.replace(/[,\s]/g, '');
+      
+      // 處理括號負數格式 (1,234) -> -1234
+      if (cleaned.startsWith('(') && cleaned.endsWith(')')) {
+        cleaned = '-' + cleaned.slice(1, -1);
+      }
+      
+      // 使用現有的 parseUSFinancialValue 函數
+      const parsedValue = yahooFinanceUSTransforms.parseUSFinancialValue(str);
+      if (typeof parsedValue === 'number') {
+        values.push(parsedValue);
+      } else {
+        values.push(0);
+      }
+    }
+    
+    console.log(`[US Values Array] ✅ 成功處理 ${values.length} 個數值:`, values);
+    return values;
+  },
+
+  /**
+   * 解析美國財務期間陣列
+   */
+  parseUSFinancialPeriodsArray: (content: string | string[]): Array<{
+    year: number;
+    quarter?: number;
+    month?: number;
+  }> => {
+    console.log('[US Periods Array] 📅 處理美國期間陣列...');
+    const contentArray = Array.isArray(content) ? content : [content];
+    const periods: Array<{ year: number; quarter?: number; month?: number }> = [];
+
+    for (const item of contentArray) {
+      if (!item || typeof item !== 'string') continue;
+      
+      const str = item.toString().trim();
+      
+      // TTM (Trailing Twelve Months) 特殊處理
+      if (str.toUpperCase() === 'TTM') {
+        periods.push({
+          year: new Date().getFullYear(),
+          month: new Date().getMonth() + 1
+        });
+        continue;
+      }
+      
+      // 季度格式: Q1 2024, Q2 2024 等
+      const quarterMatch = str.match(/Q([1-4])\s+(\d{4})/);
+      if (quarterMatch) {
+        periods.push({
+          year: parseInt(quarterMatch[2]),
+          quarter: parseInt(quarterMatch[1])
+        });
+        continue;
+      }
+      
+      // 月份格式: Sep 2024, Mar 2024 等
+      const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
+                         'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      const monthMatch = str.match(/([A-Za-z]{3})\s+(\d{4})/);
+      if (monthMatch) {
+        const monthIndex = monthNames.findIndex(m => 
+          m.toLowerCase() === monthMatch[1].toLowerCase()
+        );
+        if (monthIndex >= 0) {
+          periods.push({
+            year: parseInt(monthMatch[2]),
+            month: monthIndex + 1
+          });
+          continue;
+        }
+      }
+      
+      // 純年份格式: 2024
+      const yearMatch = str.match(/(\d{4})/);
+      if (yearMatch) {
+        periods.push({ year: parseInt(yearMatch[1]) });
+        continue;
+      }
+      
+      // 預設當年
+      periods.push({ year: new Date().getFullYear() });
+    }
+    
+    console.log(`[US Periods Array] ✅ 成功處理 ${periods.length} 個期間`);
+    return periods;
+  },
+
+  /**
+   * 組合美國現金流數據
+   * 將個別提取的數據組合成統一格式
+   */
+  combineUSCashFlowData: (content: any, context?: any): any[] => {
+    console.log('[US Combine] 🔗 開始組合美國現金流數據...', context?.variables || {});
+    
+    if (!context) return [];
+
+    const results: any[] = [];
+    const symbolCode = context.variables?.stockCode || context.stockCode || 'UNKNOWN';
+    const vars = context.variables || {};
+    
+    // 獲取期間陣列
+    const periodsArray = vars.fiscalPeriodsArray || [];
+    
+    // 獲取各項現金流數據陣列
+    const operatingCashflowArray = vars.operatingCashflowValues || [];
+    const investingCashflowArray = vars.investingCashflowValues || [];
+    const financingCashflowArray = vars.financingCashflowValues || [];
+    const endCashPositionArray = vars.endCashPositionValues || [];
+    const freeCashflowArray = vars.freeCashflowValues || [];
+    const capitalExpenditureArray = vars.capitalExpenditureValues || [];
+    const incomeTaxPaidArray = vars.incomeTaxPaidValues || [];
+    const interestPaidArray = vars.interestPaidValues || [];
+    const issuanceOfCapitalStockArray = vars.issuanceOfCapitalStockValues || [];
+    const issuanceOfDebtArray = vars.issuanceOfDebtValues || [];
+    const repaymentOfDebtArray = vars.repaymentOfDebtValues || [];
+    const repurchaseOfCapitalStockArray = vars.repurchaseOfCapitalStockValues || [];
+    
+    // 找出最大陣列長度
+    const maxLength = Math.max(
+      periodsArray.length,
+      operatingCashflowArray.length,
+      investingCashflowArray.length,
+      financingCashflowArray.length,
+      freeCashflowArray.length,
+      1 // 至少處理一筆
+    );
+    
+    console.log(`[US Combine] 📊 偵測到最大陣列長度: ${maxLength}`);
+    
+    // 為每個期間創建記錄
+    for (let i = 0; i < maxLength; i++) {
+      const period = periodsArray[i] || { year: new Date().getFullYear() };
+      
+      // 構建報告日期
+      let reportDate: string;
+      if (period.quarter) {
+        // 季度報告：Q1->03-31, Q2->06-30, Q3->09-30, Q4->12-31
+        const quarterEndMonths = [3, 6, 9, 12];
+        const quarterEndDays = [31, 30, 30, 31];
+        const monthIndex = period.quarter - 1;
+        reportDate = `${period.year}-${String(quarterEndMonths[monthIndex]).padStart(2, '0')}-${quarterEndDays[monthIndex]}`;
+      } else if (period.month) {
+        // 月度報告
+        const lastDay = new Date(period.year, period.month, 0).getDate();
+        reportDate = `${period.year}-${String(period.month).padStart(2, '0')}-${lastDay}`;
+      } else {
+        // 年度報告
+        reportDate = `${period.year}-12-31`;
+      }
+      
+      const cashFlowData: any = {
+        symbolCode: symbolCode,
+        exchangeArea: 'US',
+        reportDate: reportDate,
+        fiscalYear: period.year,
+        fiscalQuarter: period.quarter,
+        fiscalMonth: period.month,
+        reportType: period.quarter ? 'quarterly' : 'annual',
+        dataSource: 'yahoo-finance-us',
+        lastUpdated: new Date().toISOString(),
+        
+        // 主要現金流數據（保持千位單位）
+        operatingCashFlow: operatingCashflowArray[i] || 0,
+        investingCashFlow: investingCashflowArray[i] || 0,
+        financingCashFlow: financingCashflowArray[i] || 0,
+        freeCashFlow: freeCashflowArray[i] || 0,
+        endCashPosition: endCashPositionArray[i] || 0,
+        
+        // 補充數據
+        capitalExpenditure: capitalExpenditureArray[i] || 0,
+        incomeTaxPaid: incomeTaxPaidArray[i] || 0,
+        interestPaid: interestPaidArray[i] || 0,
+        
+        // 融資活動細項
+        issuanceOfCapitalStock: issuanceOfCapitalStockArray[i] || 0,
+        issuanceOfDebt: issuanceOfDebtArray[i] || 0,
+        repaymentOfDebt: repaymentOfDebtArray[i] || 0,
+        repurchaseOfCapitalStock: repurchaseOfCapitalStockArray[i] || 0
+      };
+
+      results.push(cashFlowData);
+    }
+    
+    console.log(`[US Combine] ✅ 成功組合 ${results.length} 筆美國現金流數據`);
+    return results;
+  }
+});
