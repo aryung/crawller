@@ -992,21 +992,38 @@ Object.assign(yahooFinanceUSTransforms, {
     year: number;
     quarter?: number;
     month?: number;
+    day?: number;
+    originalDate?: string;
+    isTTM?: boolean;
   }> => {
     console.log('[US Periods Array] 📅 處理美國期間陣列...');
     const contentArray = Array.isArray(content) ? content : [content];
-    const periods: Array<{ year: number; quarter?: number; month?: number }> = [];
+    const periods: Array<{ year: number; quarter?: number; month?: number; day?: number; originalDate?: string; isTTM?: boolean }> = [];
 
     for (const item of contentArray) {
       if (!item || typeof item !== 'string') continue;
       
       const str = item.toString().trim();
       
-      // TTM (Trailing Twelve Months) 特殊處理
+      // TTM (Trailing Twelve Months) 特殊處理 - 標記但保留
       if (str.toUpperCase() === 'TTM') {
         periods.push({
           year: new Date().getFullYear(),
-          month: new Date().getMonth() + 1
+          month: new Date().getMonth() + 1,
+          originalDate: 'TTM',
+          isTTM: true
+        });
+        continue;
+      }
+      
+      // 日期格式: M/D/YYYY 或 MM/DD/YYYY (如 9/30/2024)
+      const dateMatch = str.match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+      if (dateMatch) {
+        periods.push({
+          year: parseInt(dateMatch[3]),
+          month: parseInt(dateMatch[1]),
+          day: parseInt(dateMatch[2]),
+          originalDate: str
         });
         continue;
       }
@@ -1016,7 +1033,8 @@ Object.assign(yahooFinanceUSTransforms, {
       if (quarterMatch) {
         periods.push({
           year: parseInt(quarterMatch[2]),
-          quarter: parseInt(quarterMatch[1])
+          quarter: parseInt(quarterMatch[1]),
+          originalDate: str
         });
         continue;
       }
@@ -1032,7 +1050,8 @@ Object.assign(yahooFinanceUSTransforms, {
         if (monthIndex >= 0) {
           periods.push({
             year: parseInt(monthMatch[2]),
-            month: monthIndex + 1
+            month: monthIndex + 1,
+            originalDate: str
           });
           continue;
         }
@@ -1041,12 +1060,18 @@ Object.assign(yahooFinanceUSTransforms, {
       // 純年份格式: 2024
       const yearMatch = str.match(/(\d{4})/);
       if (yearMatch) {
-        periods.push({ year: parseInt(yearMatch[1]) });
+        periods.push({ 
+          year: parseInt(yearMatch[1]),
+          originalDate: str
+        });
         continue;
       }
       
       // 預設當年
-      periods.push({ year: new Date().getFullYear() });
+      periods.push({ 
+        year: new Date().getFullYear(),
+        originalDate: str
+      });
     }
     
     console.log(`[US Periods Array] ✅ 成功處理 ${periods.length} 個期間`);
@@ -1099,9 +1124,18 @@ Object.assign(yahooFinanceUSTransforms, {
     for (let i = 0; i < maxLength; i++) {
       const period = periodsArray[i] || { year: new Date().getFullYear() };
       
-      // 構建報告日期
+      // 跳過 TTM 資料（動態資料）
+      if (period.isTTM) {
+        console.log(`[US Combine] 跳過 TTM 動態資料`);
+        continue;
+      }
+      
+      // 構建報告日期 - 使用實際的財務年度結束日期
       let reportDate: string;
-      if (period.quarter) {
+      if (period.day && period.month && period.year) {
+        // 使用實際的日期（例如 Apple 是 9/30）
+        reportDate = `${period.year}-${String(period.month).padStart(2, '0')}-${String(period.day).padStart(2, '0')}`;
+      } else if (period.quarter) {
         // 季度報告：Q1->03-31, Q2->06-30, Q3->09-30, Q4->12-31
         const quarterEndMonths = [3, 6, 9, 12];
         const quarterEndDays = [31, 30, 30, 31];
@@ -1112,7 +1146,7 @@ Object.assign(yahooFinanceUSTransforms, {
         const lastDay = new Date(period.year, period.month, 0).getDate();
         reportDate = `${period.year}-${String(period.month).padStart(2, '0')}-${lastDay}`;
       } else {
-        // 年度報告
+        // 年度報告 - 預設 12/31
         reportDate = `${period.year}-12-31`;
       }
       
@@ -1122,7 +1156,7 @@ Object.assign(yahooFinanceUSTransforms, {
         reportDate: reportDate,
         fiscalYear: period.year,
         fiscalQuarter: period.quarter,
-        fiscalMonth: period.month,
+        fiscalMonth: period.month || (period.quarter ? period.quarter * 3 : 12),
         reportType: period.quarter ? 'quarterly' : 'annual',
         dataSource: 'yahoo-finance-us',
         lastUpdated: new Date().toISOString(),
@@ -1149,7 +1183,7 @@ Object.assign(yahooFinanceUSTransforms, {
       results.push(cashFlowData);
     }
     
-    console.log(`[US Combine] ✅ 成功組合 ${results.length} 筆美國現金流數據`);
+    console.log(`[US Combine] ✅ 成功組合 ${results.length} 筆美國現金流數據（已排除 TTM）`);
     return results;
   }
 });

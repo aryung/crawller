@@ -5,20 +5,8 @@
   "actions": [
     {
       "type": "wait",
-      "timeout": 3000,
-      "description": "等待頁面初始載入"
-    },
-    {
-      "type": "click", 
-      "selector": "div[aria-label='Quarterly'] button, button[aria-label='Quarterly'], div:nth-child(2) > button:nth-child(2)",
       "timeout": 5000,
-      "description": "點擊 Quarterly 按鈕以取得季度現金流數據",
-      "optional": true
-    },
-    {
-      "type": "wait",
-      "timeout": 5000,
-      "description": "等待季度現金流數據完全載入"
+      "description": "等待頁面載入"
     }
   ],
   "selectors": {
