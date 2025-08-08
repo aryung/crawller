@@ -309,7 +309,10 @@ export class PlaywrightCrawler {
         url: config.url,
         baseUrl: config.variables?.baseUrl || config.url,
         templateType: config.templateType,
-        ...accumulatedData // Include all previously extracted data
+        variables: {
+          ...config.variables, // 保留原有的配置變數
+          ...accumulatedData   // 將累積數據合併到 variables 中
+        }
       };
       
       // 檢查是否為內建轉換函數或網站特定轉換函數

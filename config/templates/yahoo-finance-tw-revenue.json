@@ -31,7 +31,7 @@
       "transform": "extractRevenuePeriodsSeparately"
     },
     "revenueValues": {
-      "selector": "ul > li > div > div:nth-child(2)",
+      "selector": "ul > li > div > div:nth-child(2) > ul > li:nth-child(1)",
       "multiple": true,
       "transform": "extractRevenueValuesSeparately"
     },
@@ -71,4 +71,3 @@
     }
   }
 }
-
