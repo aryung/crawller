@@ -1,0 +1,419 @@
+{
+  "exportDate": "2025-08-09T08:42:39.379Z",
+  "totalResults": 1,
+  "successCount": 1,
+  "results": [
+    {
+      "url": "https://finance.yahoo.com/quote/AAPL/financials/",
+      "data": {
+        "stockInfo": "Yahoo Finance",
+        "fiscalPeriodsArray": [
+          {
+            "year": 2025,
+            "month": 8,
+            "originalDate": "TTM",
+            "isTTM": true
+          },
+          {
+            "year": 2024,
+            "month": 9,
+            "day": 30,
+            "originalDate": "9/30/2024"
+          },
+          {
+            "year": 2023,
+            "month": 9,
+            "day": 30,
+            "originalDate": "9/30/2023"
+          },
+          {
+            "year": 2022,
+            "month": 9,
+            "day": 30,
+            "originalDate": "9/30/2022"
+          },
+          {
+            "year": 2021,
+            "month": 9,
+            "day": 30,
+            "originalDate": "9/30/2021"
+          }
+        ],
+        "totalRevenueValues": [
+          408625000,
+          391035000,
+          383285000,
+          394328000,
+          365817000
+        ],
+        "costOfRevenueValues": [
+          217886000,
+          210352000,
+          214137000,
+          223546000,
+          212981000
+        ],
+        "grossProfitValues": [
+          190739000,
+          180683000,
+          169148000,
+          170782000,
+          152836000
+        ],
+        "operatingExpenseValues": [
+          60525000,
+          57467000,
+          54847000,
+          51345000,
+          43887000
+        ],
+        "operatingIncomeValues": [
+          130214000,
+          123216000,
+          114301000,
+          119437000,
+          108949000
+        ],
+        "netNonOperatingInterestIncomeValues": [
+          0,
+          0,
+          -183000,
+          -106000,
+          198000
+        ],
+        "otherIncomeExpenseValues": [
+          -679000,
+          269000,
+          -565000,
+          -334000,
+          60000
+        ],
+        "pretaxIncomeValues": [
+          129535000,
+          123485000,
+          113736000,
+          119103000,
+          109207000
+        ],
+        "taxProvisionValues": [
+          30255000,
+          29749000,
+          16741000,
+          19300000,
+          14527000
+        ],
+        "netIncomeCommonStockholdersValues": [
+          99280000,
+          93736000,
+          96995000,
+          99803000,
+          94680000
+        ],
+        "dilutedNIAvailableValues": [
+          99280000,
+          93736000,
+          96995000,
+          99803000,
+          94680000
+        ],
+        "basicEPSValues": [
+          6.62,
+          6.11,
+          6.16,
+          6.15,
+          5.67
+        ],
+        "dilutedEPSValues": [
+          6.59,
+          6.08,
+          6.13,
+          6.11,
+          5.61
+        ],
+        "basicAverageSharesValues": [
+          15037671.25,
+          15343783,
+          15744231,
+          16215963,
+          16701272
+        ],
+        "dilutedAverageSharesValues": [
+          15099508.25,
+          15408095,
+          15812547,
+          16325819,
+          16864919
+        ],
+        "totalOperatingIncomeValues": [
+          130214000,
+          123216000,
+          114301000,
+          119437000,
+          108949000
+        ],
+        "totalExpensesValues": [
+          278411000,
+          267819000,
+          268984000,
+          274891000,
+          256868000
+        ],
+        "netIncomeFromContinuingValues": [
+          99280000,
+          93736000,
+          96995000,
+          99803000,
+          94680000
+        ],
+        "normalizedIncomeValues": [
+          99280000,
+          93736000,
+          96995000,
+          99803000,
+          94680000
+        ],
+        "interestIncomeValues": [
+          0,
+          0,
+          3750000,
+          2825000,
+          2843000
+        ],
+        "interestExpenseValues": [
+          0,
+          0,
+          3933000,
+          2931000,
+          2645000
+        ],
+        "netInterestIncomeValues": [
+          0,
+          0,
+          -183000,
+          -106000,
+          198000
+        ],
+        "ebitValues": [
+          130214000,
+          123216000,
+          114301000,
+          119437000,
+          111852000
+        ],
+        "ebitdaValues": [
+          141696000,
+          134661000,
+          125820000,
+          130541000,
+          123136000
+        ],
+        "reconciledCostOfRevenueValues": [
+          217886000,
+          210352000,
+          214137000,
+          223546000,
+          212981000
+        ],
+        "reconciledDepreciationValues": [
+          11482000,
+          11445000,
+          11519000,
+          11104000,
+          11284000
+        ],
+        "netIncomeFromContinuingOpValues": [
+          99280000,
+          93736000,
+          96995000,
+          99803000,
+          94680000
+        ],
+        "normalizedEBITDAValues": [
+          141696000,
+          134661000,
+          125820000,
+          130541000,
+          123136000
+        ],
+        "taxRateForCalcsValues": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "taxEffectOfUnusualItemsValues": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "data": [
+          {
+            "symbolCode": "AAPL",
+            "exchangeArea": "US",
+            "reportDate": "2024-09-30",
+            "fiscalYear": 2024,
+            "fiscalMonth": 9,
+            "reportType": "annual",
+            "dataSource": "yahoo-finance-us",
+            "lastUpdated": "2025-08-09T08:42:39.371Z",
+            "totalRevenue": 391035000,
+            "costOfRevenue": 210352000,
+            "grossProfit": 180683000,
+            "operatingExpense": 57467000,
+            "operatingIncome": 123216000,
+            "netNonOperatingInterestIncome": 0,
+            "otherIncomeExpense": 269000,
+            "pretaxIncome": 123485000,
+            "taxProvision": 29749000,
+            "netIncomeCommonStockholders": 93736000,
+            "dilutedNIAvailable": 93736000,
+            "basicEPS": 6.11,
+            "dilutedEPS": 6.08,
+            "basicAverageShares": 15343783,
+            "dilutedAverageShares": 15408095,
+            "totalOperatingIncome": 123216000,
+            "totalExpenses": 267819000,
+            "netIncomeFromContinuing": 93736000,
+            "normalizedIncome": 93736000,
+            "interestIncome": 0,
+            "interestExpense": 0,
+            "netInterestIncome": 0,
+            "ebit": 123216000,
+            "ebitda": 134661000,
+            "reconciledCostOfRevenue": 210352000,
+            "reconciledDepreciation": 11445000,
+            "netIncomeFromContinuingOp": 93736000,
+            "normalizedEBITDA": 134661000,
+            "taxRateForCalcs": 0,
+            "taxEffectOfUnusualItems": 0
+          },
+          {
+            "symbolCode": "AAPL",
+            "exchangeArea": "US",
+            "reportDate": "2023-09-30",
+            "fiscalYear": 2023,
+            "fiscalMonth": 9,
+            "reportType": "annual",
+            "dataSource": "yahoo-finance-us",
+            "lastUpdated": "2025-08-09T08:42:39.371Z",
+            "totalRevenue": 383285000,
+            "costOfRevenue": 214137000,
+            "grossProfit": 169148000,
+            "operatingExpense": 54847000,
+            "operatingIncome": 114301000,
+            "netNonOperatingInterestIncome": -183000,
+            "otherIncomeExpense": -565000,
+            "pretaxIncome": 113736000,
+            "taxProvision": 16741000,
+            "netIncomeCommonStockholders": 96995000,
+            "dilutedNIAvailable": 96995000,
+            "basicEPS": 6.16,
+            "dilutedEPS": 6.13,
+            "basicAverageShares": 15744231,
+            "dilutedAverageShares": 15812547,
+            "totalOperatingIncome": 114301000,
+            "totalExpenses": 268984000,
+            "netIncomeFromContinuing": 96995000,
+            "normalizedIncome": 96995000,
+            "interestIncome": 3750000,
+            "interestExpense": 3933000,
+            "netInterestIncome": -183000,
+            "ebit": 114301000,
+            "ebitda": 125820000,
+            "reconciledCostOfRevenue": 214137000,
+            "reconciledDepreciation": 11519000,
+            "netIncomeFromContinuingOp": 96995000,
+            "normalizedEBITDA": 125820000,
+            "taxRateForCalcs": 0,
+            "taxEffectOfUnusualItems": 0
+          },
+          {
+            "symbolCode": "AAPL",
+            "exchangeArea": "US",
+            "reportDate": "2022-09-30",
+            "fiscalYear": 2022,
+            "fiscalMonth": 9,
+            "reportType": "annual",
+            "dataSource": "yahoo-finance-us",
+            "lastUpdated": "2025-08-09T08:42:39.371Z",
+            "totalRevenue": 394328000,
+            "costOfRevenue": 223546000,
+            "grossProfit": 170782000,
+            "operatingExpense": 51345000,
+            "operatingIncome": 119437000,
+            "netNonOperatingInterestIncome": -106000,
+            "otherIncomeExpense": -334000,
+            "pretaxIncome": 119103000,
+            "taxProvision": 19300000,
+            "netIncomeCommonStockholders": 99803000,
+            "dilutedNIAvailable": 99803000,
+            "basicEPS": 6.15,
+            "dilutedEPS": 6.11,
+            "basicAverageShares": 16215963,
+            "dilutedAverageShares": 16325819,
+            "totalOperatingIncome": 119437000,
+            "totalExpenses": 274891000,
+            "netIncomeFromContinuing": 99803000,
+            "normalizedIncome": 99803000,
+            "interestIncome": 2825000,
+            "interestExpense": 2931000,
+            "netInterestIncome": -106000,
+            "ebit": 119437000,
+            "ebitda": 130541000,
+            "reconciledCostOfRevenue": 223546000,
+            "reconciledDepreciation": 11104000,
+            "netIncomeFromContinuingOp": 99803000,
+            "normalizedEBITDA": 130541000,
+            "taxRateForCalcs": 0,
+            "taxEffectOfUnusualItems": 0
+          },
+          {
+            "symbolCode": "AAPL",
+            "exchangeArea": "US",
+            "reportDate": "2021-09-30",
+            "fiscalYear": 2021,
+            "fiscalMonth": 9,
+            "reportType": "annual",
+            "dataSource": "yahoo-finance-us",
+            "lastUpdated": "2025-08-09T08:42:39.371Z",
+            "totalRevenue": 365817000,
+            "costOfRevenue": 212981000,
+            "grossProfit": 152836000,
+            "operatingExpense": 43887000,
+            "operatingIncome": 108949000,
+            "netNonOperatingInterestIncome": 198000,
+            "otherIncomeExpense": 60000,
+            "pretaxIncome": 109207000,
+            "taxProvision": 14527000,
+            "netIncomeCommonStockholders": 94680000,
+            "dilutedNIAvailable": 94680000,
+            "basicEPS": 5.67,
+            "dilutedEPS": 5.61,
+            "basicAverageShares": 16701272,
+            "dilutedAverageShares": 16864919,
+            "totalOperatingIncome": 108949000,
+            "totalExpenses": 256868000,
+            "netIncomeFromContinuing": 94680000,
+            "normalizedIncome": 94680000,
+            "interestIncome": 2843000,
+            "interestExpense": 2645000,
+            "netInterestIncome": 198000,
+            "ebit": 111852000,
+            "ebitda": 123136000,
+            "reconciledCostOfRevenue": 212981000,
+            "reconciledDepreciation": 11284000,
+            "netIncomeFromContinuingOp": 94680000,
+            "normalizedEBITDA": 123136000,
+            "taxRateForCalcs": 0,
+            "taxEffectOfUnusualItems": 0
+          }
+        ]
+      },
+      "timestamp": "2025-08-09T08:42:39.371Z",
+      "success": true
+    }
+  ]
+}

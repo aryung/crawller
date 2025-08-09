@@ -1,0 +1,142 @@
+{
+  "exportDate": "2025-08-09T08:40:53.708Z",
+  "totalResults": 1,
+  "successCount": 1,
+  "results": [
+    {
+      "url": "https://finance.yahoo.co.jp/quote/143A.T/performance?styl=financials",
+      "data": {
+        "stockInfo": "イシン(株)の業績・財務・キャッシュフロー",
+        "periodsArray": [
+          {
+            "year": 2025,
+            "month": 3
+          },
+          {
+            "year": 2024,
+            "month": 3
+          },
+          {
+            "year": 2023,
+            "month": 3
+          }
+        ],
+        "epsValues": [
+          92.64,
+          68.63,
+          52.36
+        ],
+        "bpsValues": [
+          626,
+          514,
+          358
+        ],
+        "roaValues": [
+          8.07,
+          6.32,
+          5.19
+        ],
+        "roeValues": [
+          14.78,
+          13.34,
+          14.62
+        ],
+        "totalAssetsValues": [
+          2201,
+          2000,
+          1613
+        ],
+        "equityRatioValues": [
+          54.58,
+          47.33,
+          35.52
+        ],
+        "shareCapitalValues": [
+          164,
+          127,
+          8
+        ],
+        "interestBearingDebtValues": [
+          0,
+          0,
+          0
+        ],
+        "currentReceivablesValues": [
+          9,
+          13,
+          12
+        ],
+        "totalSharesValues": [
+          1917,
+          1840,
+          1600
+        ],
+        "data": [
+          {
+            "symbolCode": "143A",
+            "exchangeArea": "JP",
+            "reportDate": "2025-03-31",
+            "fiscalYear": 2025,
+            "reportType": "annual",
+            "dataSource": "yahoo-finance-jp",
+            "lastUpdated": "2025-08-09T08:40:53.615Z",
+            "eps": 92.64,
+            "bookValuePerShare": 626,
+            "returnOnAssets": 0.08070000000000001,
+            "returnOnEquity": 0.1478,
+            "equityRatio": 0.5458,
+            "totalAssets": 2201,
+            "shareCapital": 164,
+            "interestBearingDebt": 0,
+            "currentReceivables": 9,
+            "totalShares": 1917,
+            "fiscalMonth": 3
+          },
+          {
+            "symbolCode": "143A",
+            "exchangeArea": "JP",
+            "reportDate": "2024-03-31",
+            "fiscalYear": 2024,
+            "reportType": "annual",
+            "dataSource": "yahoo-finance-jp",
+            "lastUpdated": "2025-08-09T08:40:53.615Z",
+            "eps": 68.63,
+            "bookValuePerShare": 514,
+            "returnOnAssets": 0.0632,
+            "returnOnEquity": 0.1334,
+            "equityRatio": 0.4733,
+            "totalAssets": 2000,
+            "shareCapital": 127,
+            "interestBearingDebt": 0,
+            "currentReceivables": 13,
+            "totalShares": 1840,
+            "fiscalMonth": 3
+          },
+          {
+            "symbolCode": "143A",
+            "exchangeArea": "JP",
+            "reportDate": "2023-03-31",
+            "fiscalYear": 2023,
+            "reportType": "annual",
+            "dataSource": "yahoo-finance-jp",
+            "lastUpdated": "2025-08-09T08:40:53.615Z",
+            "eps": 52.36,
+            "bookValuePerShare": 358,
+            "returnOnAssets": 0.0519,
+            "returnOnEquity": 0.1462,
+            "equityRatio": 0.3552,
+            "totalAssets": 1613,
+            "shareCapital": 8,
+            "interestBearingDebt": 0,
+            "currentReceivables": 12,
+            "totalShares": 1600,
+            "fiscalMonth": 3
+          }
+        ]
+      },
+      "timestamp": "2025-08-09T08:40:53.704Z",
+      "success": true,
+      "screenshot": "<Buffer 304336 bytes>"
+    }
+  ]
+}

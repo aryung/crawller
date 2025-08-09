@@ -1,0 +1,162 @@
+{
+  "exportDate": "2025-08-09T08:41:06.999Z",
+  "totalResults": 1,
+  "successCount": 1,
+  "results": [
+    {
+      "url": "https://finance.yahoo.co.jp/quote/143A.T/performance?styl=performance",
+      "data": {
+        "stockInfo": "イシン(株)の業績・財務・キャッシュフロー",
+        "periodsArray": [
+          {
+            "year": 2026,
+            "month": 3
+          },
+          {
+            "year": 2025,
+            "month": 3
+          },
+          {
+            "year": 2024,
+            "month": 3
+          },
+          {
+            "year": 2023,
+            "month": 3
+          }
+        ],
+        "revenueValues": [
+          1534,
+          1393,
+          1280,
+          1148
+        ],
+        "grossProfitValues": [
+          0,
+          1063,
+          964,
+          882
+        ],
+        "grossProfitMarginValues": [
+          0,
+          76.28,
+          75.35,
+          76.81
+        ],
+        "operationProfitValues": [
+          30,
+          245,
+          201,
+          95
+        ],
+        "operationProfitMarginValues": [
+          1.96,
+          17.59,
+          15.7,
+          8.31
+        ],
+        "ordinaryProfitValues": [
+          5,
+          233,
+          188,
+          111
+        ],
+        "ordinaryProfitMarginValues": [
+          0.33,
+          16.7,
+          14.71,
+          9.67
+        ],
+        "netProfitValues": [
+          13,
+          178,
+          126,
+          84
+        ],
+        "financialUpdateDates": [
+          "2025-08-08",
+          "2025-06-24",
+          "2024-06-28",
+          "2024-03-13"
+        ],
+        "data": [
+          {
+            "symbolCode": "143A",
+            "exchangeArea": "JP",
+            "reportDate": "2026-03-31",
+            "fiscalYear": 2026,
+            "reportType": "annual",
+            "dataSource": "yahoo-finance-jp",
+            "lastUpdated": "2025-08-09T08:41:06.884Z",
+            "revenue": 1534,
+            "grossProfit": 0,
+            "grossProfitMargin": 0,
+            "operatingProfit": 30,
+            "operatingMargin": 0.0196,
+            "ordinaryProfit": 5,
+            "ordinaryMargin": 0.0033000000000000004,
+            "netProfit": 13,
+            "fiscalMonth": 3
+          },
+          {
+            "symbolCode": "143A",
+            "exchangeArea": "JP",
+            "reportDate": "2025-03-31",
+            "fiscalYear": 2025,
+            "reportType": "annual",
+            "dataSource": "yahoo-finance-jp",
+            "lastUpdated": "2025-08-09T08:41:06.884Z",
+            "revenue": 1393,
+            "grossProfit": 1063,
+            "grossProfitMargin": 0.7628,
+            "operatingProfit": 245,
+            "operatingMargin": 0.1759,
+            "ordinaryProfit": 233,
+            "ordinaryMargin": 0.167,
+            "netProfit": 178,
+            "fiscalMonth": 3
+          },
+          {
+            "symbolCode": "143A",
+            "exchangeArea": "JP",
+            "reportDate": "2024-03-31",
+            "fiscalYear": 2024,
+            "reportType": "annual",
+            "dataSource": "yahoo-finance-jp",
+            "lastUpdated": "2025-08-09T08:41:06.884Z",
+            "revenue": 1280,
+            "grossProfit": 964,
+            "grossProfitMargin": 0.7535,
+            "operatingProfit": 201,
+            "operatingMargin": 0.157,
+            "ordinaryProfit": 188,
+            "ordinaryMargin": 0.1471,
+            "netProfit": 126,
+            "fiscalMonth": 3
+          },
+          {
+            "symbolCode": "143A",
+            "exchangeArea": "JP",
+            "reportDate": "2023-03-31",
+            "fiscalYear": 2023,
+            "reportType": "annual",
+            "dataSource": "yahoo-finance-jp",
+            "lastUpdated": "2025-08-09T08:41:06.884Z",
+            "revenue": 1148,
+            "grossProfit": 882,
+            "grossProfitMargin": 0.7681,
+            "operatingProfit": 95,
+            "operatingMargin": 0.08310000000000001,
+            "ordinaryProfit": 111,
+            "ordinaryMargin": 0.09670000000000001,
+            "netProfit": 84,
+            "fiscalMonth": 3
+          }
+        ]
+      },
+      "timestamp": "2025-08-09T08:41:06.996Z",
+      "success": true,
+      "screenshot": "<Buffer 347215 bytes>"
+    }
+  ]
+}
