@@ -321,18 +321,19 @@ export const yahooFinanceJPTransforms: YahooFinanceJPTransforms = {
       // 根據數據類型添加相應欄位
       // 檢查 cashflow 相關欄位
       if (freeCashflowArray[0] !== undefined || operatingCashflowArray[0] !== undefined) {
-        financialData.freeCashFlow = freeCashflowArray[i] || 0;
-        financialData.operatingCashFlow = operatingCashflowArray[i] || 0;
-        financialData.investingCashFlow = investingCashflowArray[i] || 0;
-        financialData.financingCashFlow = financingCashflowArray[i] || 0;
+        // Yahoo Finance JP 現金流數據單位為百萬円，需要乘以 1000000
+        financialData.freeCashFlow = (freeCashflowArray[i] || 0) * UNIT_MULTIPLIERS.MILLION_YEN;
+        financialData.operatingCashFlow = (operatingCashflowArray[i] || 0) * UNIT_MULTIPLIERS.MILLION_YEN;
+        financialData.investingCashFlow = (investingCashflowArray[i] || 0) * UNIT_MULTIPLIERS.MILLION_YEN;
+        financialData.financingCashFlow = (financingCashflowArray[i] || 0) * UNIT_MULTIPLIERS.MILLION_YEN;
       }
       // 檢查 performance 相關欄位
       else if (revenueArray[0] !== undefined || operationProfitArray[0] !== undefined) {
-        // 標準欄位
-        financialData.revenue = revenueArray[i] || 0;
-        financialData.grossProfit = (vars.grossProfitValues || [])[i] || vars.grossProfit || 0;
-        financialData.operatingIncome = operationProfitArray[i] || 0;
-        financialData.netIncome = (vars.netProfitValues || [])[i] || vars.netProfit || 0;
+        // 標準欄位 - Yahoo Finance JP 財務數據單位為百萬円，需要乘以 1000000
+        financialData.revenue = (revenueArray[i] || 0) * UNIT_MULTIPLIERS.MILLION_YEN;
+        financialData.grossProfit = ((vars.grossProfitValues || [])[i] || vars.grossProfit || 0) * UNIT_MULTIPLIERS.MILLION_YEN;
+        financialData.operatingIncome = (operationProfitArray[i] || 0) * UNIT_MULTIPLIERS.MILLION_YEN;
+        financialData.netIncome = ((vars.netProfitValues || [])[i] || vars.netProfit || 0) * UNIT_MULTIPLIERS.MILLION_YEN;
         
         // 比率欄位 (小數格式)
         financialData.grossMargin = ((vars.grossProfitMarginValues || [])[i] || vars.grossProfitMargin || 0) * UNIT_MULTIPLIERS.PERCENTAGE;
@@ -340,16 +341,16 @@ export const yahooFinanceJPTransforms: YahooFinanceJPTransforms = {
         
         // 日本特有欄位放入 regionalData
         financialData.regionalData = {
-          ordinaryProfit: (vars.ordinaryProfitValues || [])[i] || vars.ordinaryProfit || 0,
+          ordinaryProfit: ((vars.ordinaryProfitValues || [])[i] || vars.ordinaryProfit || 0) * UNIT_MULTIPLIERS.MILLION_YEN,
           ordinaryMargin: ((vars.ordinaryProfitMarginValues || [])[i] || vars.ordinaryProfitMargin || 0) * UNIT_MULTIPLIERS.PERCENTAGE,
         };
       }
       // 檢查 financials 相關欄位
       else if (epsArray[0] !== undefined || bpsArray[0] !== undefined) {
         // 標準欄位
-        financialData.eps = epsArray[i] || 0;
-        financialData.bookValuePerShare = bpsArray[i] || 0;
-        financialData.totalAssets = (vars.totalAssetsValues || [])[i] || vars.totalAssets || 0;
+        financialData.eps = epsArray[i] || 0;  // EPS 單位為円，不需轉換
+        financialData.bookValuePerShare = bpsArray[i] || 0;  // BPS 單位為円，不需轉換
+        financialData.totalAssets = ((vars.totalAssetsValues || [])[i] || vars.totalAssets || 0) * UNIT_MULTIPLIERS.MILLION_YEN;
         
         // 標準比率欄位 (小數格式)
         financialData.roa = ((vars.roaValues || [])[i] || vars.roa || 0) * UNIT_MULTIPLIERS.PERCENTAGE;
@@ -359,9 +360,9 @@ export const yahooFinanceJPTransforms: YahooFinanceJPTransforms = {
         // 日本特有欄位放入 regionalData
         financialData.regionalData = {
           equityRatio: ((vars.equityRatioValues || [])[i] || vars.equityRatio || 0) * UNIT_MULTIPLIERS.PERCENTAGE,
-          capital: (vars.shareCapitalValues || [])[i] || vars.shareCapital || 0,
-          interestBearingDebt: (vars.interestBearingDebtValues || [])[i] || vars.interestBearingDebt || 0,
-          currentReceivables: (vars.currentReceivablesValues || [])[i] || vars.currentReceivables || 0,
+          capital: ((vars.shareCapitalValues || [])[i] || vars.shareCapital || 0) * UNIT_MULTIPLIERS.MILLION_YEN,
+          interestBearingDebt: ((vars.interestBearingDebtValues || [])[i] || vars.interestBearingDebt || 0) * UNIT_MULTIPLIERS.MILLION_YEN,
+          currentReceivables: ((vars.currentReceivablesValues || [])[i] || vars.currentReceivables || 0) * UNIT_MULTIPLIERS.MILLION_YEN,
         };
       }
 

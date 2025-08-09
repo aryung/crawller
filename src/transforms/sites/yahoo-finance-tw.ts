@@ -9,6 +9,7 @@ import {
 } from '../../types/unified-financial-data';
 import { MarketRegion } from '../../common/shared-types/interfaces/market-data.interface';
 import { FiscalReportType } from '../../common/shared-types/interfaces/fundamental-data.interface';
+import { UNIT_MULTIPLIERS } from '../../const/finance';
 
 /**
  * Yahoo Finance TW 转换函数接口 (大幅清理后的版本)
@@ -819,12 +820,12 @@ function combineIncomeStatementData(
           reportType: quarter ? FiscalReportType.QUARTERLY : FiscalReportType.ANNUAL,
           dataSource: 'yahoo-finance-tw',
           lastUpdated: new Date().toISOString(),
-          // 損益表數據
-          revenue: revenue,
-          grossProfit: grossProfit,
-          operatingExpenses: operatingExpense,
-          operatingIncome: operatingIncome,
-          netIncome: netIncome,
+          // 損益表數據 - Yahoo Finance TW 數據單位為仟元，需要乘以 1000
+          revenue: revenue * UNIT_MULTIPLIERS.THOUSAND_TWD,
+          grossProfit: grossProfit * UNIT_MULTIPLIERS.THOUSAND_TWD,
+          operatingExpenses: operatingExpense * UNIT_MULTIPLIERS.THOUSAND_TWD,
+          operatingIncome: operatingIncome * UNIT_MULTIPLIERS.THOUSAND_TWD,
+          netIncome: netIncome * UNIT_MULTIPLIERS.THOUSAND_TWD,
         };
 
         results.push(unifiedData);
@@ -943,12 +944,12 @@ function combineCashFlowData(
             reportType: quarter ? FiscalReportType.QUARTERLY : FiscalReportType.ANNUAL,
             dataSource: 'yahoo-finance-tw',
             lastUpdated: new Date().toISOString(),
-            // 現金流數據
-            operatingCashFlow: operatingCF,
-            investingCashFlow: investingCF,
-            financingCashFlow: financingCF,
-            freeCashFlow: freeCF,
-            netCashFlow: netCF,
+            // 現金流數據 - Yahoo Finance TW 數據單位為仟元，需要乘以 1000
+            operatingCashFlow: operatingCF * UNIT_MULTIPLIERS.THOUSAND_TWD,
+            investingCashFlow: investingCF * UNIT_MULTIPLIERS.THOUSAND_TWD,
+            financingCashFlow: financingCF * UNIT_MULTIPLIERS.THOUSAND_TWD,
+            freeCashFlow: freeCF * UNIT_MULTIPLIERS.THOUSAND_TWD,
+            netCashFlow: netCF * UNIT_MULTIPLIERS.THOUSAND_TWD,
           };
 
           results.push(unifiedData);
@@ -1044,12 +1045,12 @@ function combineBalanceSheetData(
             reportType: quarter ? FiscalReportType.QUARTERLY : FiscalReportType.ANNUAL,
             dataSource: 'yahoo-finance-tw',
             lastUpdated: new Date().toISOString(),
-            // 資產負債表數據
-            totalAssets: totalAssets,
-            totalLiabilities: totalLiabilities,
-            shareholdersEquity: shareholdersEquity,
-            currentAssets: currentAssets,
-            currentLiabilities: currentLiabilities,
+            // 資產負債表數據 - Yahoo Finance TW 數據單位為仟元，需要乘以 1000
+            totalAssets: totalAssets * UNIT_MULTIPLIERS.THOUSAND_TWD,
+            totalLiabilities: totalLiabilities * UNIT_MULTIPLIERS.THOUSAND_TWD,
+            shareholdersEquity: shareholdersEquity * UNIT_MULTIPLIERS.THOUSAND_TWD,
+            currentAssets: currentAssets * UNIT_MULTIPLIERS.THOUSAND_TWD,
+            currentLiabilities: currentLiabilities * UNIT_MULTIPLIERS.THOUSAND_TWD,
           };
 
           results.push(unifiedData);

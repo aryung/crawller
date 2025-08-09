@@ -55,6 +55,7 @@ export const FINANCIAL_UNITS = {
 export const UNIT_MULTIPLIERS = {
   MILLION_YEN: 1000000,    // 百万円 → 実際の円
   THOUSAND_TWD: 1000,      // 仟元 → 元 (台灣)
+  THOUSAND_USD: 1000,      // 千美元 → 美元 (美國)
   PERCENTAGE: 0.01         // % → 小数 (例: 76.28% → 0.7628)
 } as const;
 

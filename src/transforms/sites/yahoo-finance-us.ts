@@ -345,26 +345,26 @@ export const yahooFinanceUSTransforms: YahooFinanceUSTransforms = {
       // 根據數據類型添加相應欄位
       // 檢查現金流相關欄位
       if (operatingCashFlowArray[0] !== undefined || freeCashFlowArray[0] !== undefined) {
-        // Yahoo Finance US 現金流數據單位為千，需要乘以 1000
-        financialData.operatingCashFlow = (operatingCashFlowArray[i] || 0) * 1000;
-        financialData.investingCashFlow = (investingCashFlowArray[i] || 0) * 1000;
-        financialData.financingCashFlow = (financingCashFlowArray[i] || 0) * 1000;
-        financialData.freeCashFlow = (freeCashFlowArray[i] || 0) * 1000;
+        // Yahoo Finance US 現金流數據單位為千，需要乘以 UNIT_MULTIPLIERS.THOUSAND_USD
+        financialData.operatingCashFlow = (operatingCashFlowArray[i] || 0) * UNIT_MULTIPLIERS.THOUSAND_USD;
+        financialData.investingCashFlow = (investingCashFlowArray[i] || 0) * UNIT_MULTIPLIERS.THOUSAND_USD;
+        financialData.financingCashFlow = (financingCashFlowArray[i] || 0) * UNIT_MULTIPLIERS.THOUSAND_USD;
+        financialData.freeCashFlow = (freeCashFlowArray[i] || 0) * UNIT_MULTIPLIERS.THOUSAND_USD;
         
         // 資本支出和其他現金流項目
-        financialData.capex = ((vars.capexValues || [])[i] || 0) * 1000;
-        financialData.debtIssuance = ((vars.debtIssuanceValues || [])[i] || 0) * 1000;
-        financialData.debtRepayment = ((vars.debtRepaymentValues || [])[i] || 0) * 1000;
+        financialData.capex = ((vars.capexValues || [])[i] || 0) * UNIT_MULTIPLIERS.THOUSAND_USD;
+        financialData.debtIssuance = ((vars.debtIssuanceValues || [])[i] || 0) * UNIT_MULTIPLIERS.THOUSAND_USD;
+        financialData.debtRepayment = ((vars.debtRepaymentValues || [])[i] || 0) * UNIT_MULTIPLIERS.THOUSAND_USD;
       }
       // 檢查損益表相關欄位
       else if (revenueArray[0] !== undefined || netIncomeArray[0] !== undefined) {
-        // Yahoo Finance US 財務數據單位為千，需要乘以 1000
-        financialData.revenue = (revenueArray[i] || 0) * 1000;
-        financialData.costOfGoodsSold = ((vars.costOfRevenueValues || [])[i] || 0) * 1000;
-        financialData.grossProfit = ((vars.grossProfitValues || [])[i] || 0) * 1000;
-        financialData.operatingIncome = ((vars.operatingIncomeValues || [])[i] || 0) * 1000;
-        financialData.netIncome = (netIncomeArray[i] || 0) * 1000;
-        financialData.ebitda = ((vars.ebitdaValues || [])[i] || 0) * 1000;
+        // Yahoo Finance US 財務數據單位為千，需要乘以 UNIT_MULTIPLIERS.THOUSAND_USD
+        financialData.revenue = (revenueArray[i] || 0) * UNIT_MULTIPLIERS.THOUSAND_USD;
+        financialData.costOfGoodsSold = ((vars.costOfRevenueValues || [])[i] || 0) * UNIT_MULTIPLIERS.THOUSAND_USD;
+        financialData.grossProfit = ((vars.grossProfitValues || [])[i] || 0) * UNIT_MULTIPLIERS.THOUSAND_USD;
+        financialData.operatingIncome = ((vars.operatingIncomeValues || [])[i] || 0) * UNIT_MULTIPLIERS.THOUSAND_USD;
+        financialData.netIncome = (netIncomeArray[i] || 0) * UNIT_MULTIPLIERS.THOUSAND_USD;
+        financialData.ebitda = ((vars.ebitdaValues || [])[i] || 0) * UNIT_MULTIPLIERS.THOUSAND_USD;
         
         // EPS 不需轉換
         financialData.eps = epsArray[i] || 0;
@@ -374,21 +374,21 @@ export const yahooFinanceUSTransforms: YahooFinanceUSTransforms = {
         financialData.regionalData = {
           basicAverageShares: (vars.basicAverageSharesValues || [])[i] || 0,
           dilutedAverageShares: (vars.dilutedAverageSharesValues || [])[i] || 0,
-          pretaxIncome: ((vars.pretaxIncomeValues || [])[i] || 0) * 1000,
-          taxProvision: ((vars.taxProvisionValues || [])[i] || 0) * 1000,
-          interestIncome: ((vars.interestIncomeValues || [])[i] || 0) * 1000,
-          interestExpense: ((vars.interestExpenseValues || [])[i] || 0) * 1000
+          pretaxIncome: ((vars.pretaxIncomeValues || [])[i] || 0) * UNIT_MULTIPLIERS.THOUSAND_USD,
+          taxProvision: ((vars.taxProvisionValues || [])[i] || 0) * UNIT_MULTIPLIERS.THOUSAND_USD,
+          interestIncome: ((vars.interestIncomeValues || [])[i] || 0) * UNIT_MULTIPLIERS.THOUSAND_USD,
+          interestExpense: ((vars.interestExpenseValues || [])[i] || 0) * UNIT_MULTIPLIERS.THOUSAND_USD
         };
       }
       // 檢查資產負債表相關欄位
       else if (totalAssetsArray[0] !== undefined || totalLiabilitiesArray[0] !== undefined) {
-        // Yahoo Finance US 資產負債表數據單位為千，需要乘以 1000
-        financialData.totalAssets = (totalAssetsArray[i] || 0) * 1000;
-        financialData.totalLiabilities = (totalLiabilitiesArray[i] || 0) * 1000;
-        financialData.shareholdersEquity = ((vars.totalEquityValues || [])[i] || 0) * 1000;
-        financialData.workingCapital = ((vars.workingCapitalValues || [])[i] || 0) * 1000;
-        financialData.totalDebt = ((vars.totalDebtValues || [])[i] || 0) * 1000;
-        financialData.cashAndEquivalents = ((vars.cashAndEquivalentsValues || [])[i] || 0) * 1000;
+        // Yahoo Finance US 資產負債表數據單位為千，需要乘以 UNIT_MULTIPLIERS.THOUSAND_USD
+        financialData.totalAssets = (totalAssetsArray[i] || 0) * UNIT_MULTIPLIERS.THOUSAND_USD;
+        financialData.totalLiabilities = (totalLiabilitiesArray[i] || 0) * UNIT_MULTIPLIERS.THOUSAND_USD;
+        financialData.shareholdersEquity = ((vars.totalEquityValues || [])[i] || 0) * UNIT_MULTIPLIERS.THOUSAND_USD;
+        financialData.workingCapital = ((vars.workingCapitalValues || [])[i] || 0) * UNIT_MULTIPLIERS.THOUSAND_USD;
+        financialData.totalDebt = ((vars.totalDebtValues || [])[i] || 0) * UNIT_MULTIPLIERS.THOUSAND_USD;
+        financialData.cashAndEquivalents = ((vars.cashAndEquivalentsValues || [])[i] || 0) * UNIT_MULTIPLIERS.THOUSAND_USD;
         
         // 每股淨值
         financialData.bookValuePerShare = (vars.bookValuePerShareValues || [])[i] || 0;
@@ -396,10 +396,10 @@ export const yahooFinanceUSTransforms: YahooFinanceUSTransforms = {
         
         // 美國特有欄位放入 regionalData
         financialData.regionalData = {
-          totalCapitalization: ((vars.totalCapitalizationValues || [])[i] || 0) * 1000,
-          commonStockEquity: ((vars.commonStockEquityValues || [])[i] || 0) * 1000,
-          netTangibleAssets: ((vars.netTangibleAssetsValues || [])[i] || 0) * 1000,
-          netDebt: ((vars.netDebtValues || [])[i] || 0) * 1000
+          totalCapitalization: ((vars.totalCapitalizationValues || [])[i] || 0) * UNIT_MULTIPLIERS.THOUSAND_USD,
+          commonStockEquity: ((vars.commonStockEquityValues || [])[i] || 0) * UNIT_MULTIPLIERS.THOUSAND_USD,
+          netTangibleAssets: ((vars.netTangibleAssetsValues || [])[i] || 0) * UNIT_MULTIPLIERS.THOUSAND_USD,
+          netDebt: ((vars.netDebtValues || [])[i] || 0) * UNIT_MULTIPLIERS.THOUSAND_USD
         };
       }
 
