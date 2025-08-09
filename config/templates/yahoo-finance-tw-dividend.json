@@ -37,20 +37,20 @@
       "selector": "h1, .symbol, .stock-name",
       "transform": "cleanStockSymbol"
     },
-    "dividendPeriods": {
+    "fiscalPeriodsArray": {
       "selector": "ul > li > div.table-row > div:nth-child(2):not(:empty)",
       "multiple": true,
-      "transform": "extractDividendPeriodsSeparately"
+      "transform": "parseTWFinancialPeriodsArray"
     },
-    "cashDividends": {
+    "cashDividendsValues": {
       "selector": "ul > li > div.table-row:has(> div:nth-child(2):not(:empty)) > div:nth-child(3)",
       "multiple": true,
-      "transform": "extractCashDividendsSeparately"
+      "transform": "parseTWFinancialValuesArray"
     },
-    "stockDividends": {
+    "stockDividendsValues": {
       "selector": "ul > li > div.table-row:has(> div:nth-child(2):not(:empty)) > div:nth-child(4)",
       "multiple": true,
-      "transform": "extractStockDividendsSeparately"
+      "transform": "parseTWFinancialValuesArray"
     },
     "data": {
       "selector": "body",

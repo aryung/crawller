@@ -25,35 +25,35 @@
       "selector": "h1, .symbol, .stock-name",
       "transform": "cleanStockSymbol"
     },
-    "incomeStatementPeriods": {
+    "fiscalPeriodsArray": {
       "selector": "div#layout-col1 div.table-header > div.table-header-wrapper > div:nth-child(n+2)",
       "multiple": true,
-      "transform": "extractEPSPeriodsSeparately"
+      "transform": "parseTWFinancialPeriodsArray"
     },
     "revenueValues": {
       "selector": "div#layout-col1 ul > li:nth-child(1) > div > div:nth-child(n+2)",
       "multiple": true,
-      "transform": "extractIncomeStatementValuesSeparately"
+      "transform": "parseTWFinancialValuesArray"
     },
     "grossProfitValues": {
       "selector": "div#layout-col1 ul > li:nth-child(2) > div > div:nth-child(n+2)",
       "multiple": true,
-      "transform": "extractIncomeStatementValuesSeparately"
+      "transform": "parseTWFinancialValuesArray"
     },
     "operatingExpenseValues": {
       "selector": "div#layout-col1 ul > li:nth-child(3) > div > div:nth-child(n+2)",
       "multiple": true,
-      "transform": "extractIncomeStatementValuesSeparately"
+      "transform": "parseTWFinancialValuesArray"
     },
     "operatingIncomeValues": {
       "selector": "div#layout-col1 ul > li:nth-child(4) > div > div:nth-child(n+2)",
       "multiple": true,
-      "transform": "extractIncomeStatementValuesSeparately"
+      "transform": "parseTWFinancialValuesArray"
     },
     "netIncomeValues": {
       "selector": "div#layout-col1 ul > li:nth-child(5) > div > div:nth-child(n+2)",
       "multiple": true,
-      "transform": "extractIncomeStatementValuesSeparately"
+      "transform": "parseTWFinancialValuesArray"
     },
     "data": {
       "selector": "body",

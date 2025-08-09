@@ -19,15 +19,15 @@
       "selector": "h1, .symbol, .stock-name",
       "transform": "cleanStockSymbol"
     },
-    "epsPeriods": {
+    "fiscalPeriodsArray": {
       "selector": "div#layout-col1 ul li > div > div:first-child",
       "multiple": true,
-      "transform": "extractEPSPeriodsSeparately"
+      "transform": "parseTWFinancialPeriodsArray"
     },
     "epsValues": {
       "selector": "div#layout-col1 ul > li > div:nth-child(1) > div:nth-child(2) > span",
       "multiple": true,
-      "transform": "extractEPSValuesSeparately"
+      "transform": "parseTWFinancialValuesArray"
     },
     "data": {
       "selector": "body",

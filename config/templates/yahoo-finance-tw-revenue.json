@@ -25,15 +25,15 @@
       "selector": "h1, .symbol, .stock-name",
       "transform": "cleanStockSymbol"
     },
-    "revenuePeriods": {
+    "fiscalPeriodsArray": {
       "selector": "div#layout-col1 ul > li > div > div:nth-child(1)",
       "multiple": true,
-      "transform": "extractRevenuePeriodsSeparately"
+      "transform": "parseTWFinancialPeriodsArray"
     },
     "revenueValues": {
       "selector": "div#layout-col1 ul > li > div > div:nth-child(2) > ul > li:nth-child(1)",
       "multiple": true,
-      "transform": "extractRevenueValuesSeparately"
+      "transform": "parseTWFinancialValuesArray"
     },
     "data": {
       "selector": "body",

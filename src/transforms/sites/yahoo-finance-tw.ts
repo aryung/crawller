@@ -72,6 +72,15 @@ export interface YahooFinanceTWTransforms {
     quarter?: number;
     month?: number;
   };
+
+  // === 新增：統一的陣列轉換函數 (與 JP/US 保持一致) ===
+  parseTWFinancialPeriodsArray: (content: string | string[]) => Array<{
+    year: number;
+    quarter?: number;
+    month?: number;
+    originalPeriod?: string;
+  }>;
+  parseTWFinancialValuesArray: (content: string | string[]) => number[];
 }
 
 /**
@@ -167,29 +176,40 @@ function combineSimpleRevenueData(
   const results: UnifiedFinancialData[] = [];
 
   try {
-    // 从上下文获取提取的数据
-    const periods = context?.variables?.revenuePeriods || [];
-    const values = context?.variables?.revenueValues || [];
+    // 从上下文获取提取的数据 - 使用新的統一變數名稱
+    const periodsArray = context?.fiscalPeriodsArray || context?.variables?.fiscalPeriodsArray || context?.variables?.revenuePeriods || [];
+    const values = context?.revenueValues || context?.variables?.revenueValues || [];
 
-    // 获取股票代码 - 支援 stockSymbol 或 symbolCode
-    const symbolCode =
-      context?.variables?.stockSymbol ||
-      context?.variables?.symbolCode ||
-      '0000';
+    // 优先从 URL 提取 symbolCode
+    let symbolCode = '0000';
+    if (context?.url) {
+      const urlMatch = context.url.match(/\/quote\/([^\/]+)\//);
+      if (urlMatch) {
+        symbolCode = urlMatch[1];
+        console.log(`[Combine Simple Revenue] 從 URL 提取 symbolCode: ${symbolCode}`);
+      }
+    }
+    if (symbolCode === '0000') {
+      symbolCode = context?.symbolCode ||
+        context?.variables?.symbolCode ||
+        context?.variables?.stockSymbol ||
+        '0000';
+    }
 
     console.log(
-      `[Combine Simple Revenue] 数据概览: ${periods.length} 个期间, ${values.length} 个数值`
+      `[Combine Simple Revenue] 数据概览: ${periodsArray.length} 个期间, ${values.length} 个数值`
     );
 
     // 组合数据
-    const minLength = Math.min(periods.length, values.length);
+    const minLength = Math.min(periodsArray.length, values.length);
     for (let i = 0; i < minLength; i++) {
-      const period = periods[i];
+      const periodData = periodsArray[i];
       const revenue = values[i];
 
-      if (period && revenue !== undefined && revenue !== null) {
-        // 解析期间信息
-        const { year, month } = parseUnifiedFiscalPeriod(period);
+      if (periodData && revenue !== undefined && revenue !== null) {
+        // 使用統一格式的期間數據
+        const year = periodData.year || new Date().getFullYear();
+        const month = periodData.month;
 
         // 生成正确的报告日期 (月底日期)
         const actualMonth = month || 12; // 默认为12月
@@ -386,26 +406,36 @@ function combineSimpleDividendData(
   const results: UnifiedFinancialData[] = [];
 
   try {
-    // 先嘗試從 variables 讀取，再從 context 根層級讀取
-    const periods: string[] = context?.variables?.dividendPeriods || context?.dividendPeriods || [];
-    const cashDividends: number[] = context?.variables?.cashDividends || context?.cashDividends || [];
-    const stockDividends: number[] = context?.variables?.stockDividends || context?.stockDividends || [];
-    const symbolCode =
-      context?.variables?.stockSymbol ||
-      context?.variables?.symbolCode ||
-      context?.stockSymbol ||
-      context?.symbolCode ||
-      '0000';
+    // 先嘗試從 context 根層級讀取，再從 variables 讀取 - 使用新的統一變數名稱
+    const periodsArray = context?.fiscalPeriodsArray || context?.variables?.fiscalPeriodsArray || context?.variables?.dividendPeriods || [];
+    const cashDividends: number[] = context?.cashDividendsValues || context?.variables?.cashDividendsValues || context?.variables?.cashDividends || [];
+    const stockDividends: number[] = context?.stockDividendsValues || context?.variables?.stockDividendsValues || context?.variables?.stockDividends || [];
+    
+    // 優先從 URL 提取 symbolCode
+    let symbolCode = '0000';
+    if (context?.url) {
+      const urlMatch = context.url.match(/\/quote\/([^\/]+)\//);
+      if (urlMatch) {
+        symbolCode = urlMatch[1];
+        console.log(`[Combine Dividend] 從 URL 提取 symbolCode: ${symbolCode}`);
+      }
+    }
+    if (symbolCode === '0000') {
+      symbolCode = context?.symbolCode ||
+        context?.variables?.symbolCode ||
+        context?.variables?.stockSymbol ||
+        '0000';
+    }
 
     console.log('[Combine Dividend] 📊 提取的數據詳情:', {
-      periods: { length: periods.length, sample: periods.slice(0, 3) },
+      periods: { length: periodsArray.length, sample: periodsArray.slice(0, 3) },
       cashDividends: { length: cashDividends.length, sample: cashDividends.slice(0, 3) },
       stockDividends: { length: stockDividends.length, sample: stockDividends.slice(0, 3) },
       symbolCode
     });
 
     // 如果所有陣列都為空，進行詳細檢查
-    if (periods.length === 0 && cashDividends.length === 0 && stockDividends.length === 0) {
+    if (periodsArray.length === 0 && cashDividends.length === 0 && stockDividends.length === 0) {
       console.error('[Combine Dividend] ❌ 所有數據陣列都為空！');
       console.log('[Combine Dividend] 🔍 所有可用的變量:', 
         context?.variables ? Object.keys(context.variables) : '無 variables'
@@ -417,53 +447,55 @@ function combineSimpleDividendData(
     }
 
     // 验证数组长度是否一致
-    if (periods.length !== cashDividends.length || periods.length !== stockDividends.length) {
+    if (periodsArray.length !== cashDividends.length || periodsArray.length !== stockDividends.length) {
       console.warn(
-        `[Combine Dividend] ⚠️ 数组长度不一致: periods=${periods.length}, cashDividends=${cashDividends.length}, stockDividends=${stockDividends.length}`
+        `[Combine Dividend] ⚠️ 数组长度不一致: periods=${periodsArray.length}, cashDividends=${cashDividends.length}, stockDividends=${stockDividends.length}`
       );
     }
 
     // 使用最短的数组长度，确保数据对齐
     const minLength = Math.min(
-      periods.length,
+      periodsArray.length,
       cashDividends.length,
       stockDividends.length
     );
 
     console.log(
-      `[Combine Dividend] 📈 处理 ${minLength} 条记录 (periods=${periods.length}, cash=${cashDividends.length}, stock=${stockDividends.length})`
+      `[Combine Dividend] 📈 处理 ${minLength} 条记录 (periods=${periodsArray.length}, cash=${cashDividends.length}, stock=${stockDividends.length})`
     );
 
     for (let i = 0; i < minLength; i++) {
-      const period = periods[i];
+      const periodData = periodsArray[i];
       const cashDividend = cashDividends[i] || 0;
       const stockDividend = stockDividends[i] || 0;
 
-      if (period) {
-        // 使用 parseUnifiedFiscalPeriod 解析完整期間信息
-        const parsed = parseUnifiedFiscalPeriod(period);
+      if (periodData && periodData.year) {
+        // 直接使用已解析的期間數據
+        const year = periodData.year;
+        const quarter = periodData.quarter;
+        const month = periodData.month;
         
-        console.log(`[Combine Dividend] 🔍 解析期間: "${period}" → Year: ${parsed.year}, Quarter: ${parsed.quarter}, Month: ${parsed.month}`);
+        console.log(`[Combine Dividend] 🔍 處理期間: Year: ${year}, Quarter: ${quarter}, Month: ${month}`);
 
         // 生成正確的報告日期
         let reportDate: string;
-        if (parsed.quarter) {
+        if (quarter) {
           // 季度數據 - 使用季度末日期
-          const quarterEndMonth = parsed.quarter * 3;
-          const lastDayOfQuarter = new Date(parsed.year, quarterEndMonth, 0).getDate();
-          reportDate = `${parsed.year}-${quarterEndMonth.toString().padStart(2, '0')}-${lastDayOfQuarter.toString().padStart(2, '0')}`;
+          const quarterEndMonth = quarter * 3;
+          const lastDayOfQuarter = new Date(year, quarterEndMonth, 0).getDate();
+          reportDate = `${year}-${quarterEndMonth.toString().padStart(2, '0')}-${lastDayOfQuarter.toString().padStart(2, '0')}`;
         } else {
           // 年度數據
-          reportDate = `${parsed.year}-12-31`;
+          reportDate = `${year}-12-31`;
         }
 
         const unifiedData: UnifiedFinancialData = {
           symbolCode: symbolCode,
           exchangeArea: MarketRegion.TPE,
           reportDate: reportDate,
-          fiscalYear: parsed.year,
-          fiscalMonth: parsed.quarter ? parsed.quarter * 3 : 12, // 新增 fiscalMonth (Q1→3, Q2→6, Q3→9, Q4→12)
-          reportType: parsed.quarter ? FiscalReportType.QUARTERLY : FiscalReportType.ANNUAL,
+          fiscalYear: year,
+          fiscalMonth: quarter ? quarter * 3 : 12, // 新增 fiscalMonth (Q1→3, Q2→6, Q3→9, Q4→12)
+          reportType: quarter ? FiscalReportType.QUARTERLY : FiscalReportType.ANNUAL,
           dataSource: 'yahoo-finance-tw',
           lastUpdated: new Date().toISOString(),
           // 股利數據專用：只處理 cashDividend 和 stockDividend
@@ -472,7 +504,7 @@ function combineSimpleDividendData(
         };
 
         results.push(unifiedData);
-        console.log(`[Combine Dividend] ✅ 組合第 ${i + 1} 筆: ${period} → ${reportDate} (現金: ${cashDividend}, 股票: ${stockDividend})`);
+        console.log(`[Combine Dividend] ✅ 組合第 ${i + 1} 筆: ${reportDate} (現金: ${cashDividend}, 股票: ${stockDividend})`);
       }
     }
 
@@ -482,7 +514,7 @@ function combineSimpleDividendData(
       console.error('[Combine Dividend] ⚠️ 警告：沒有生成任何組合數據！');
       console.log('[Combine Dividend] 🔍 檢查點:', {
         minLength,
-        hasValidPeriods: periods.some((p: string) => p && p.trim().length > 0),
+        hasValidPeriodsArray: periodsArray.some((p: any) => p && p.year),
         cashDividendsNonZero: cashDividends.some((c: number) => c !== 0),
         stockDividendsNonZero: stockDividends.some((s: number) => s !== 0)
       });
@@ -578,46 +610,62 @@ function combineSimpleEPSData(
   const results: UnifiedFinancialData[] = [];
 
   try {
-    const periods = context?.variables?.epsPeriods || [];
-    const values = context?.variables?.epsValues || [];
-    const symbolCode =
-      context?.variables?.stockSymbol ||
-      context?.variables?.symbolCode ||
-      '0000';
+    // 使用新的統一變數名稱
+    const periodsArray = context?.fiscalPeriodsArray || context?.variables?.fiscalPeriodsArray || context?.variables?.epsPeriods || [];
+    const values = context?.epsValues || context?.variables?.epsValues || [];
+    
+    // 優先從 URL 提取 symbolCode
+    let symbolCode = '0000';
+    if (context?.url) {
+      const urlMatch = context.url.match(/\/quote\/([^\/]+)\//);
+      if (urlMatch) {
+        symbolCode = urlMatch[1];
+        console.log(`[Combine EPS] 從 URL 提取 symbolCode: ${symbolCode}`);
+      }
+    }
+    if (symbolCode === '0000') {
+      symbolCode = context?.symbolCode ||
+                    context?.variables?.symbolCode ||
+                    context?.variables?.stockSymbol ||
+                    '0000';
+    }
 
-    const minLength = Math.min(periods.length, values.length);
+    const minLength = Math.min(periodsArray.length, values.length);
 
     for (let i = 0; i < minLength; i++) {
-      const period = periods[i];
+      const periodData = periodsArray[i];
       const epsValue = values[i];
 
-      if (!period || epsValue === null || epsValue === undefined) continue;
+      if (!periodData || epsValue === null || epsValue === undefined) continue;
 
-      const parsed = parseUnifiedFiscalPeriod(period);
+      // 使用統一格式的期間數據
+      const year = periodData.year || new Date().getFullYear();
+      const quarter = periodData.quarter;
+      const month = periodData.month;
 
       // 生成报告日期
       let reportDate: string;
-      if (parsed.quarter) {
+      if (quarter) {
         // 季度数据 - 使用季度末日期
-        const quarterEndMonth = parsed.quarter * 3;
+        const quarterEndMonth = quarter * 3;
         const lastDayOfQuarter = new Date(
-          parsed.year,
+          year,
           quarterEndMonth,
           0
         ).getDate();
-        reportDate = `${parsed.year}-${quarterEndMonth.toString().padStart(2, '0')}-${lastDayOfQuarter.toString().padStart(2, '0')}`;
+        reportDate = `${year}-${quarterEndMonth.toString().padStart(2, '0')}-${lastDayOfQuarter.toString().padStart(2, '0')}`;
       } else {
         // 年度数据
-        reportDate = `${parsed.year}-12-31`;
+        reportDate = `${year}-12-31`;
       }
 
       const unifiedData: UnifiedFinancialData = {
         symbolCode: symbolCode,
         exchangeArea: MarketRegion.TPE,
         reportDate: reportDate,
-        fiscalYear: parsed.year,
-        fiscalMonth: parsed.quarter ? parsed.quarter * 3 : 12, // EPS 數據轉換為月份 (Q1→3, Q2→6, Q3→9, Q4→12)
-        reportType: parsed.quarter ? FiscalReportType.QUARTERLY : FiscalReportType.ANNUAL,
+        fiscalYear: year,
+        fiscalMonth: quarter ? quarter * 3 : 12, // EPS 數據轉換為月份 (Q1→3, Q2→6, Q3→9, Q4→12)
+        reportType: quarter ? FiscalReportType.QUARTERLY : FiscalReportType.ANNUAL,
         dataSource: 'yahoo-finance-tw',
         lastUpdated: new Date().toISOString(),
         eps: epsValue,
@@ -694,37 +742,39 @@ function combineIncomeStatementData(
   const results: UnifiedFinancialData[] = [];
 
   try {
-    // 嘗試從多個可能的位置讀取數據
-    const periods = context?.incomeStatementPeriods || 
-                    context?.variables?.incomeStatementPeriods ||
-                    context?.data?.incomeStatementPeriods || [];
-    const revenueValues = context?.revenueValues || 
-                         context?.variables?.revenueValues ||
-                         context?.data?.revenueValues || [];
-    const grossProfitValues = context?.grossProfitValues || 
-                             context?.variables?.grossProfitValues ||
-                             context?.data?.grossProfitValues || [];
-    const operatingExpenseValues = context?.operatingExpenseValues || 
-                                  context?.variables?.operatingExpenseValues ||
-                                  context?.data?.operatingExpenseValues || [];
-    const operatingIncomeValues = context?.operatingIncomeValues || 
-                                 context?.variables?.operatingIncomeValues ||
-                                 context?.data?.operatingIncomeValues || [];
-    const netIncomeValues = context?.netIncomeValues || 
-                           context?.variables?.netIncomeValues ||
-                           context?.data?.netIncomeValues || [];
+    // 使用新的統一變數名稱
+    const periodsArray = context?.fiscalPeriodsArray ||
+                        context?.variables?.fiscalPeriodsArray || 
+                        context?.variables?.incomeStatementPeriods || [];
+    const revenueValues = context?.revenueValues ||
+                         context?.variables?.revenueValues || [];
+    const grossProfitValues = context?.grossProfitValues ||
+                             context?.variables?.grossProfitValues || [];
+    const operatingExpenseValues = context?.operatingExpenseValues ||
+                                  context?.variables?.operatingExpenseValues || [];
+    const operatingIncomeValues = context?.operatingIncomeValues ||
+                                 context?.variables?.operatingIncomeValues || [];
+    const netIncomeValues = context?.netIncomeValues ||
+                           context?.variables?.netIncomeValues || [];
     
-    // 從 URL 提取股票代碼
+    // 優先從 URL 提取 symbolCode
     let symbolCode = '0000';
     if (context?.url) {
-      const urlMatch = context.url.match(/\/quote\/(\d{4})\.TW/);
+      const urlMatch = context.url.match(/\/quote\/([^\/]+)\//);
       if (urlMatch) {
         symbolCode = urlMatch[1];
+        console.log(`[Combine Income Statement] 從 URL 提取 symbolCode: ${symbolCode}`);
       }
+    }
+    if (symbolCode === '0000') {
+      symbolCode = context?.symbolCode ||
+                    context?.variables?.symbolCode ||
+                    context?.variables?.stockSymbol ||
+                    '0000';
     }
 
     console.log(`[Combine Income Statement] 📊 數據統計:`);
-    console.log(`  期間: ${periods.length} 個`);
+    console.log(`  期間: ${periodsArray.length} 個`);
     console.log(`  營業收入: ${revenueValues.length} 個`);
     console.log(`  營業毛利: ${grossProfitValues.length} 個`);
     console.log(`  營業費用: ${operatingExpenseValues.length} 個`);
@@ -732,7 +782,7 @@ function combineIncomeStatementData(
     console.log(`  稅後淨利: ${netIncomeValues.length} 個`);
 
     const minLength = Math.min(
-      periods.length,
+      periodsArray.length,
       revenueValues.length,
       grossProfitValues.length,
       operatingExpenseValues.length,
@@ -743,15 +793,17 @@ function combineIncomeStatementData(
     console.log(`[Combine Income Statement] 🔄 將組合 ${minLength} 筆數據`);
 
     for (let i = 0; i < minLength; i++) {
-      const period = periods[i];
+      const periodData = periodsArray[i];
       const revenue = revenueValues[i];
       const grossProfit = grossProfitValues[i];
       const operatingExpense = operatingExpenseValues[i];
       const operatingIncome = operatingIncomeValues[i];
       const netIncome = netIncomeValues[i];
 
-      if (period && revenue !== undefined && revenue !== null) {
-        const { year, quarter } = parseUnifiedFiscalPeriod(period);
+      if (periodData && periodData.year && revenue !== undefined && revenue !== null) {
+        const year = periodData.year;
+        const quarter = periodData.quarter;
+        const month = periodData.month;
 
         // 生成正确的报告日期 (季末日期)
         const quarterEndMonth = quarter ? quarter * 3 : 12;
@@ -776,7 +828,8 @@ function combineIncomeStatementData(
         };
 
         results.push(unifiedData);
-        console.log(`[Combine Income Statement] ✅ 組合第 ${i + 1} 筆: ${period} - 營收: ${revenue.toLocaleString()}`);
+        const periodStr = quarter ? `${year}Q${quarter}` : `${year}`;
+        console.log(`[Combine Income Statement] ✅ 組合第 ${i + 1} 筆: ${periodStr} - 營收: ${revenue.toLocaleString()}`);
       }
     }
 
@@ -822,30 +875,85 @@ function combineCashFlowData(
   const results: UnifiedFinancialData[] = [];
 
   try {
-    const symbolCode =
-      context?.variables?.stockSymbol ||
-      context?.variables?.symbolCode ||
-      '0000';
-    const cashFlowValues = context?.variables?.cashFlowValues || [];
+    // 使用新的統一變數名稱
+    const periodsArray = context?.fiscalPeriodsArray ||
+                        context?.variables?.fiscalPeriodsArray || 
+                        context?.variables?.cashFlowPeriods || [];
+    const operatingCashFlowValues = context?.operatingCashFlowValues || context?.variables?.operatingCashFlowValues || [];
+    const investingCashFlowValues = context?.investingCashFlowValues || context?.variables?.investingCashFlowValues || [];
+    const financingCashFlowValues = context?.financingCashFlowValues || context?.variables?.financingCashFlowValues || [];
+    const freeCashFlowValues = context?.freeCashFlowValues || context?.variables?.freeCashFlowValues || [];
+    const netCashFlowValues = context?.netCashFlowValues || context?.variables?.netCashFlowValues || [];
+    
+    // 優先從 URL 提取 symbolCode
+    let symbolCode = '0000';
+    if (context?.url) {
+      const urlMatch = context.url.match(/\/quote\/([^\/]+)\//);
+      if (urlMatch) {
+        symbolCode = urlMatch[1];
+        console.log(`[Combine Cash Flow] 從 URL 提取 symbolCode: ${symbolCode}`);
+      }
+    }
+    if (symbolCode === '0000') {
+      symbolCode = context?.symbolCode ||
+                    context?.variables?.symbolCode ||
+                    context?.variables?.stockSymbol ||
+                    '0000';
+    }
 
-    // 生成基本的现金流数据记录
-    if (symbolCode && symbolCode !== '0000' && cashFlowValues.length > 0) {
-      const currentYear = new Date().getFullYear();
+    console.log(`[Combine Cash Flow] 📊 數據統計:`);
+    console.log(`  期間: ${periodsArray.length} 個`);
+    console.log(`  營業現金流: ${operatingCashFlowValues.length} 個`);
+    console.log(`  投資現金流: ${investingCashFlowValues.length} 個`);
+    console.log(`  融資現金流: ${financingCashFlowValues.length} 個`);
 
-      for (let i = 0; i < Math.min(cashFlowValues.length, 4); i++) {
-        const unifiedData: UnifiedFinancialData = {
-          symbolCode: symbolCode,
-          exchangeArea: MarketRegion.TPE,
-          reportDate: `${currentYear - i}-12-31`,
-          fiscalYear: currentYear - i,
-          reportType: FiscalReportType.ANNUAL,
-          dataSource: 'yahoo-finance-tw',
-          lastUpdated: new Date().toISOString(),
-          // 現金流數據專用：只處理 operatingCashFlow
-          operatingCashFlow: cashFlowValues[i] || 0,
-        };
+    // 生成现金流数据记录
+    if (symbolCode && symbolCode !== '0000' && periodsArray.length > 0) {
+      const minLength = Math.min(
+        periodsArray.length,
+        operatingCashFlowValues.length,
+        investingCashFlowValues.length,
+        financingCashFlowValues.length
+      );
 
-        results.push(unifiedData);
+      for (let i = 0; i < minLength; i++) {
+        const periodData = periodsArray[i];
+        const operatingCF = operatingCashFlowValues[i] || 0;
+        const investingCF = investingCashFlowValues[i] || 0;
+        const financingCF = financingCashFlowValues[i] || 0;
+        const freeCF = freeCashFlowValues[i] || 0;
+        const netCF = netCashFlowValues[i] || 0;
+
+        if (periodData && periodData.year) {
+          const year = periodData.year;
+          const quarter = periodData.quarter;
+          const month = periodData.month;
+
+          // 生成正确的报告日期
+          const quarterEndMonth = quarter ? quarter * 3 : 12;
+          const lastDayOfQuarter = new Date(year, quarterEndMonth, 0).getDate();
+          const reportDate = `${year}-${quarterEndMonth.toString().padStart(2, '0')}-${lastDayOfQuarter.toString().padStart(2, '0')}`;
+
+          const unifiedData: UnifiedFinancialData = {
+            symbolCode: symbolCode,
+            exchangeArea: MarketRegion.TPE,
+            reportDate: reportDate,
+            fiscalYear: year,
+            fiscalMonth: quarter ? quarter * 3 : 12,
+            reportType: quarter ? FiscalReportType.QUARTERLY : FiscalReportType.ANNUAL,
+            dataSource: 'yahoo-finance-tw',
+            lastUpdated: new Date().toISOString(),
+            // 現金流數據
+            operatingCashFlow: operatingCF,
+            investingCashFlow: investingCF,
+            financingCashFlow: financingCF,
+            freeCashFlow: freeCF,
+            netCashFlow: netCF,
+          };
+
+          results.push(unifiedData);
+          console.log(`[Combine Cash Flow] ✅ 組合第 ${i + 1} 筆: ${reportDate}`);
+        }
       }
 
       console.log(
@@ -869,31 +977,88 @@ function combineBalanceSheetData(
   const results: UnifiedFinancialData[] = [];
 
   try {
-    const symbolCode =
-      context?.variables?.stockSymbol ||
-      context?.variables?.symbolCode ||
-      '0000';
+    // 使用新的統一變數名稱
+    const periodsArray = context?.fiscalPeriodsArray ||
+                        context?.variables?.fiscalPeriodsArray || 
+                        context?.variables?.balanceSheetPeriods || [];
+    const totalAssetsValues = context?.totalAssetsValues || context?.variables?.totalAssetsValues || [];
+    const totalLiabilitiesValues = context?.totalLiabilitiesValues || context?.variables?.totalLiabilitiesValues || [];
+    const shareholdersEquityValues = context?.shareholdersEquityValues || context?.variables?.shareholdersEquityValues || [];
+    const currentAssetsValues = context?.currentAssetsValues || context?.variables?.currentAssetsValues || [];
+    const currentLiabilitiesValues = context?.currentLiabilitiesValues || context?.variables?.currentLiabilitiesValues || [];
+    
+    // 優先從 URL 提取 symbolCode
+    let symbolCode = '0000';
+    if (context?.url) {
+      const urlMatch = context.url.match(/\/quote\/([^\/]+)\//);
+      if (urlMatch) {
+        symbolCode = urlMatch[1];
+        console.log(`[Combine Balance Sheet] 從 URL 提取 symbolCode: ${symbolCode}`);
+      }
+    }
+    if (symbolCode === '0000') {
+      symbolCode = context?.symbolCode ||
+                    context?.variables?.symbolCode ||
+                    context?.variables?.stockSymbol ||
+                    '0000';
+    }
 
-    if (symbolCode && symbolCode !== '0000') {
-      // 创建一笔基本的资产负债表数据记录
-      const currentYear = new Date().getFullYear();
-      const unifiedData: UnifiedFinancialData = {
-        symbolCode: symbolCode,
-        exchangeArea: MarketRegion.TPE,
-        reportDate: `${currentYear}-12-31`,
-        fiscalYear: currentYear,
-        reportType: FiscalReportType.ANNUAL,
-        dataSource: 'yahoo-finance-tw',
-        lastUpdated: new Date().toISOString(),
-        // 資產負債表數據專用：只處理資產負債表相關字段
-        totalAssets: 0,
-        totalLiabilities: 0,
-        shareholdersEquity: 0,
-      };
+    console.log(`[Combine Balance Sheet] 📊 數據統計:`);
+    console.log(`  期間: ${periodsArray.length} 個`);
+    console.log(`  總資產: ${totalAssetsValues.length} 個`);
+    console.log(`  總負債: ${totalLiabilitiesValues.length} 個`);
+    console.log(`  股東權益: ${shareholdersEquityValues.length} 個`);
 
-      results.push(unifiedData);
+    if (symbolCode && symbolCode !== '0000' && periodsArray.length > 0) {
+      const minLength = Math.min(
+        periodsArray.length,
+        totalAssetsValues.length,
+        totalLiabilitiesValues.length,
+        shareholdersEquityValues.length
+      );
+
+      for (let i = 0; i < minLength; i++) {
+        const periodData = periodsArray[i];
+        const totalAssets = totalAssetsValues[i] || 0;
+        const totalLiabilities = totalLiabilitiesValues[i] || 0;
+        const shareholdersEquity = shareholdersEquityValues[i] || 0;
+        const currentAssets = currentAssetsValues[i] || 0;
+        const currentLiabilities = currentLiabilitiesValues[i] || 0;
+
+        if (periodData && periodData.year) {
+          const year = periodData.year;
+          const quarter = periodData.quarter;
+          const month = periodData.month;
+
+          // 生成正确的报告日期
+          const quarterEndMonth = quarter ? quarter * 3 : 12;
+          const lastDayOfQuarter = new Date(year, quarterEndMonth, 0).getDate();
+          const reportDate = `${year}-${quarterEndMonth.toString().padStart(2, '0')}-${lastDayOfQuarter.toString().padStart(2, '0')}`;
+
+          const unifiedData: UnifiedFinancialData = {
+            symbolCode: symbolCode,
+            exchangeArea: MarketRegion.TPE,
+            reportDate: reportDate,
+            fiscalYear: year,
+            fiscalMonth: quarter ? quarter * 3 : 12,
+            reportType: quarter ? FiscalReportType.QUARTERLY : FiscalReportType.ANNUAL,
+            dataSource: 'yahoo-finance-tw',
+            lastUpdated: new Date().toISOString(),
+            // 資產負債表數據
+            totalAssets: totalAssets,
+            totalLiabilities: totalLiabilities,
+            shareholdersEquity: shareholdersEquity,
+            currentAssets: currentAssets,
+            currentLiabilities: currentLiabilities,
+          };
+
+          results.push(unifiedData);
+          console.log(`[Combine Balance Sheet] ✅ 組合第 ${i + 1} 筆: ${reportDate}`);
+        }
+      }
+
       console.log(
-        `[Combine Balance Sheet] ✅ 转换: ${symbolCode} → 资产负债表数据`
+        `[Combine Balance Sheet] ✅ 成功转换 ${results.length} 筆资产负债表数据`
       );
     }
   } catch (error) {
@@ -955,6 +1120,122 @@ function parseUnifiedFiscalPeriod(value: string): {
   return { year, quarter, month };
 }
 
+/**
+ * 統一的台灣財務期間陣列解析函數
+ * 與 JP/US 保持一致的架構
+ */
+function parseTWFinancialPeriodsArray(content: string | string[]): Array<{
+  year: number;
+  quarter?: number;
+  month?: number;
+  originalPeriod?: string;
+}> {
+  console.log('[TW Periods Array] 📅 處理台灣期間陣列...');
+  const contentArray = Array.isArray(content) ? content : [content];
+  const periods: Array<{ year: number; quarter?: number; month?: number; originalPeriod?: string }> = [];
+  
+  for (const item of contentArray) {
+    if (!item || typeof item !== 'string') continue;
+    
+    const cleanText = item.trim();
+    
+    // 處理不同格式的期間
+    // 格式1: "2024H2" - 半年度格式
+    const halfYearMatch = cleanText.match(/(\d{4})\s*H([1-2])/);
+    if (halfYearMatch) {
+      const year = parseInt(halfYearMatch[1]);
+      const half = parseInt(halfYearMatch[2]);
+      const quarter = half === 1 ? 2 : 4; // H1 = Q2 (上半年結束), H2 = Q4 (下半年結束)
+      const month = quarter * 3; // Q2=6, Q4=12
+      
+      periods.push({
+        year,
+        quarter,
+        month,
+        originalPeriod: cleanText
+      });
+      console.log(`[TW Periods] 半年度格式: ${cleanText} -> ${year}Q${quarter}`);
+      continue;
+    }
+    
+    // 格式2: "2024Q3" - 季度格式
+    const quarterMatch = cleanText.match(/(\d{4})\s*Q(\d)/);
+    if (quarterMatch) {
+      periods.push({
+        year: parseInt(quarterMatch[1]),
+        quarter: parseInt(quarterMatch[2]),
+        month: parseInt(quarterMatch[2]) * 3, // Q1=3, Q2=6, Q3=9, Q4=12
+        originalPeriod: cleanText
+      });
+      continue;
+    }
+    
+    // 格式3: "2024/11" - 月份格式
+    const monthMatch = cleanText.match(/(\d{4})[\/\-](\d{1,2})/);
+    if (monthMatch) {
+      periods.push({
+        year: parseInt(monthMatch[1]),
+        month: parseInt(monthMatch[2]),
+        originalPeriod: cleanText
+      });
+      continue;
+    }
+    
+    // 格式4: "2024" - 年度格式
+    const yearMatch = cleanText.match(/^(\d{4})$/);
+    if (yearMatch) {
+      periods.push({
+        year: parseInt(yearMatch[1]),
+        originalPeriod: cleanText
+      });
+      continue;
+    }
+  }
+  
+  console.log(`[TW Periods Array] ✅ 成功處理 ${periods.length} 個期間`);
+  return periods;
+}
+
+/**
+ * 統一的台灣財務數值陣列解析函數
+ * 與 JP/US 保持一致的架構
+ */
+function parseTWFinancialValuesArray(content: string | string[]): number[] {
+  console.log('[TW Values Array] 💰 處理台灣財務數值陣列...');
+  const contentArray = Array.isArray(content) ? content : [content];
+  const values: number[] = [];
+  
+  for (const item of contentArray) {
+    if (!item || typeof item !== 'string') {
+      values.push(0);
+      continue;
+    }
+    
+    const cleanValue = item.trim()
+      .replace(/[,\s]/g, '')  // 移除逗號和空格
+      .replace(/[（()]/g, ''); // 移除括號
+    
+    // 處理 "-" 或空值
+    if (cleanValue === '-' || cleanValue === '－' || cleanValue === '') {
+      values.push(0);
+      continue;
+    }
+    
+    // 處理負數（括號表示）
+    const isNegative = item.includes('(') || item.includes('（');
+    
+    const num = parseFloat(cleanValue);
+    if (!isNaN(num)) {
+      values.push(isNegative ? -Math.abs(num) : num);
+    } else {
+      values.push(0);
+    }
+  }
+  
+  console.log(`[TW Values Array] ✅ 成功處理 ${values.length} 個數值: [${values.slice(0, 3).join(', ')}...]`);
+  return values;
+}
+
 
 /**
  * 导出对象 - 只包含实际使用的20个函数
@@ -982,6 +1263,9 @@ export const yahooFinanceTWTransforms: YahooFinanceTWTransforms = {
   detectTableOrientation,
   parseFinancialValue,
   parseUnifiedFiscalPeriod,
+  // === 新增：統一的陣列轉換函數 ===
+  parseTWFinancialPeriodsArray,
+  parseTWFinancialValuesArray,
 };
 
 export default yahooFinanceTWTransforms;

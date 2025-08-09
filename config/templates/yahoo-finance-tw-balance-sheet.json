@@ -25,35 +25,35 @@
       "selector": "h1, .symbol, .stock-name",
       "transform": "cleanStockSymbol"
     },
-    "balanceSheetPeriods": {
-      "selector": "div.table-header > div.table-header-wrapper > div:nth-child(n+2)",
+    "fiscalPeriodsArray": {
+      "selector": "div#layout-col1 div.table-header > div.table-header-wrapper > div:nth-child(n+2)",
       "multiple": true,
-      "transform": "extractIncomeStatementPeriodsSeparately"
+      "transform": "parseTWFinancialPeriodsArray"
     },
     "totalAssetsValues": {
-      "selector": "ul > li:nth-child(1) > div > div:nth-child(n+2)",
+      "selector": "div#layout-col1 ul > li:nth-child(1) > div > div:nth-child(n+2)",
       "multiple": true,
-      "transform": "extractIncomeStatementValuesSeparately"
+      "transform": "parseTWFinancialValuesArray"
     },
     "totalLiabilitiesValues": {
-      "selector": "ul > li:nth-child(2) > div > div:nth-child(n+2)",
+      "selector": "div#layout-col1 ul > li:nth-child(2) > div > div:nth-child(n+2)",
       "multiple": true,
-      "transform": "extractIncomeStatementValuesSeparately"
+      "transform": "parseTWFinancialValuesArray"
     },
     "shareholdersEquityValues": {
-      "selector": "ul > li:nth-child(3) > div > div:nth-child(n+2)",
+      "selector": "div#layout-col1 ul > li:nth-child(3) > div > div:nth-child(n+2)",
       "multiple": true,
-      "transform": "extractIncomeStatementValuesSeparately"
+      "transform": "parseTWFinancialValuesArray"
     },
     "currentAssetsValues": {
-      "selector": "ul > li:nth-child(4) > div > div:nth-child(n+2)",
+      "selector": "div#layout-col1 ul > li:nth-child(4) > div > div:nth-child(n+2)",
       "multiple": true,
-      "transform": "extractIncomeStatementValuesSeparately"
+      "transform": "parseTWFinancialValuesArray"
     },
     "currentLiabilitiesValues": {
-      "selector": "ul > li:nth-child(5) > div > div:nth-child(n+2)",
+      "selector": "div#layout-col1 ul > li:nth-child(5) > div > div:nth-child(n+2)",
       "multiple": true,
-      "transform": "extractIncomeStatementValuesSeparately"
+      "transform": "parseTWFinancialValuesArray"
     },
     "data": {
       "selector": "body",
@@ -87,3 +87,4 @@
     "filename": "yahoo_finance_tw_balance_sheet_${symbolCode}"
   }
 }
+
