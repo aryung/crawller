@@ -203,3 +203,88 @@ npm run crawl moneydj
 > **💡 提示**: 
 > - `--skip-report` 和 `--no-report` 功能完全相同，任選一個使用
 > - 直接執行方式 `npx tsx src/cli.ts config --no-report` 也完全支援所有參數
+
+## 🔧 **Debug 模式支援**
+
+針對台灣 Yahoo Finance 模板，支援 debug 模式輸出完整中間數據（包含 fiscalPeriodsArray、cashDividendsValues 等原始陣列）。
+
+### **使用環境變數控制 Debug 模式** ✅
+
+```bash
+# Debug 模式：輸出完整中間數據
+DEBUG_SELECTORS=true npm run crawl yahoo-finance-tw-dividend-2454_TW
+SHOW_INTERMEDIATE=true npm run crawl yahoo-finance-tw-eps-2330_TW
+INCLUDE_ARRAYS=true npm run crawl yahoo-finance-tw-revenue-2454_TW
+
+# 生產模式：只輸出結構化數據（預設）
+npm run crawl yahoo-finance-tw-dividend-2454_TW
+```
+
+### **支援的 Debug 環境變數**
+
+| 環境變數 | 功能說明 | 適用場景 |
+|----------|----------|----------|
+| `DEBUG_SELECTORS=true` | 輸出所有選擇器的中間數據 | 除錯選擇器問題 |
+| `SHOW_INTERMEDIATE=true` | 顯示中間處理步驟的資料 | 分析資料轉換流程 |
+| `INCLUDE_ARRAYS=true` | 在輸出中包含原始陣列數據 | 檢查數據對齊問題 |
+
+### **Debug 模式輸出差異**
+
+**🔧 Debug 模式輸出結構**：
+```json
+{
+  "data": {
+    "fiscalPeriodsArray": [...],      // 原始期間陣列
+    "cashDividendsValues": [...],     // 現金股利原始數據
+    "stockDividendsValues": [...],    // 股票股利原始數據
+    "data": {                         // 嵌套的完整結構
+      "fiscalPeriodsArray": [...],
+      "cashDividendsValues": [...],
+      "stockDividendsValues": [...],
+      "data": [...]                   // 最終結構化數據
+    }
+  }
+}
+```
+
+**🎯 生產模式輸出結構**：
+```json
+{
+  "data": [
+    {
+      "symbolCode": "2454.TW",
+      "exchangeArea": "TPE",
+      "reportDate": "2024-12-31",
+      "fiscalYear": 2024,
+      "fiscalMonth": 12,
+      "reportType": "quarterly",
+      "dataSource": "yahoo-finance-tw",
+      "lastUpdated": "2025-08-09T10:27:22.065Z",
+      "cashDividend": 25.0002,
+      "stockDividend": 0
+    }
+  ]
+}
+```
+
+### **適用的模板類型**
+
+Debug 模式目前支援以下台灣 Yahoo Finance 模板：
+- `yahoo-finance-tw-dividend-*` - 股利數據 ✅
+- `yahoo-finance-tw-eps-*` - 每股盈餘數據 (待實作)
+- `yahoo-finance-tw-revenue-*` - 營收數據 (待實作)
+- `yahoo-finance-tw-income-statement-*` - 損益表 (待實作)
+- `yahoo-finance-tw-balance-sheet-*` - 資產負債表 (待實作)
+- `yahoo-finance-tw-cash-flow-statement-*` - 現金流量表 (待實作)
+
+### **Debug 模式使用場景**
+
+1. **🔍 除錯數據提取問題**：檢查 fiscalPeriodsArray 是否正確捕捉所有期間
+2. **📊 分析數據對齊**：確認期間數量與數值數量是否一致
+3. **🧪 開發新模板**：查看中間處理步驟的原始數據
+4. **🔧 故障排除**：當輸出數據異常時，檢查原始提取數據
+
+> **⚠️ 重要提醒**: 
+> - Debug 模式會輸出較大的 JSON 檔案，包含重複的中間數據
+> - 生產環境建議使用預設模式，獲得乾淨的結構化輸出
+> - 目前只有台灣 Yahoo Finance 模板支援 debug 模式

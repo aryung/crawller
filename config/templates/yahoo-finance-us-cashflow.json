@@ -81,7 +81,7 @@
     },
     "data": {
       "selector": "body",
-      "transform": "combineUSCashFlowData"
+      "transform": "combineUSFinancialData"
     }
   },
   "headers": {

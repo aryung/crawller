@@ -120,9 +120,27 @@ export class PlaywrightCrawler {
         screenshot = await page.screenshot({ fullPage: true });
       }
 
+      // 如果 data.data 存在且是陣列，表示使用了組合轉換函數
+      // 將內部的 data 提升到頂層，避免雙重嵌套
+      let finalData = data;
+      if (data.data && Array.isArray(data.data)) {
+        // 保留其他欄位，但用 data.data 替換整個 data
+        const otherFields: Record<string, any> = {};
+        for (const key in data) {
+          if (key !== 'data') {
+            otherFields[key] = data[key];
+          }
+        }
+        // 將組合後的數據陣列和其他欄位合併
+        finalData = {
+          ...otherFields,
+          data: data.data
+        };
+      }
+
       return {
         url: config.url,
-        data,
+        data: finalData,
         timestamp: new Date(),
         success: true,
         screenshot

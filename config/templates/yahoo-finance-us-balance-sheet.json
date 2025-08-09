@@ -96,7 +96,7 @@
     },
     "data": {
       "selector": "body",
-      "transform": "combineUSBalanceSheetData"
+      "transform": "combineUSFinancialData"
     }
   },
   "headers": {

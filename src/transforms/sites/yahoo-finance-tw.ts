@@ -226,7 +226,7 @@ function combineSimpleRevenueData(
           dataSource: 'yahoo-finance-tw',
           lastUpdated: new Date().toISOString(),
           revenue: revenue,
-          // 營收數據專用：只處理 revenue 和 fiscalMonth，不包含 fiscalQuarter
+          // 營收數據專用：只處理 revenue 和 fiscalMonth
         };
 
         results.push(unifiedData);
@@ -405,11 +405,12 @@ function combineSimpleDividendData(
 
   const results: UnifiedFinancialData[] = [];
 
+  // 先嘗試從 context 根層級讀取，再從 variables 讀取 - 使用新的統一變數名稱
+  const periodsArray = context?.fiscalPeriodsArray || context?.variables?.fiscalPeriodsArray || context?.variables?.dividendPeriods || [];
+  const cashDividends: number[] = context?.cashDividendsValues || context?.variables?.cashDividendsValues || context?.variables?.cashDividends || [];
+  const stockDividends: number[] = context?.stockDividendsValues || context?.variables?.stockDividendsValues || context?.variables?.stockDividends || [];
+
   try {
-    // 先嘗試從 context 根層級讀取，再從 variables 讀取 - 使用新的統一變數名稱
-    const periodsArray = context?.fiscalPeriodsArray || context?.variables?.fiscalPeriodsArray || context?.variables?.dividendPeriods || [];
-    const cashDividends: number[] = context?.cashDividendsValues || context?.variables?.cashDividendsValues || context?.variables?.cashDividends || [];
-    const stockDividends: number[] = context?.stockDividendsValues || context?.variables?.stockDividendsValues || context?.variables?.stockDividends || [];
     
     // 優先從 URL 提取 symbolCode
     let symbolCode = '0000';
@@ -494,11 +495,11 @@ function combineSimpleDividendData(
           exchangeArea: MarketRegion.TPE,
           reportDate: reportDate,
           fiscalYear: year,
-          fiscalMonth: quarter ? quarter * 3 : 12, // 新增 fiscalMonth (Q1→3, Q2→6, Q3→9, Q4→12)
+          fiscalMonth: quarter ? quarter * 3 : 12, // Q1→3, Q2→6, Q3→9, Q4→12
           reportType: quarter ? FiscalReportType.QUARTERLY : FiscalReportType.ANNUAL,
           dataSource: 'yahoo-finance-tw',
           lastUpdated: new Date().toISOString(),
-          // 股利數據專用：只處理 cashDividend 和 stockDividend
+          // 股利數據專用
           cashDividend: cashDividend,
           stockDividend: stockDividend,
         };
@@ -664,12 +665,11 @@ function combineSimpleEPSData(
         exchangeArea: MarketRegion.TPE,
         reportDate: reportDate,
         fiscalYear: year,
-        fiscalMonth: quarter ? quarter * 3 : 12, // EPS 數據轉換為月份 (Q1→3, Q2→6, Q3→9, Q4→12)
+        fiscalMonth: quarter ? quarter * 3 : 12, // Q1→3, Q2→6, Q3→9, Q4→12
         reportType: quarter ? FiscalReportType.QUARTERLY : FiscalReportType.ANNUAL,
         dataSource: 'yahoo-finance-tw',
         lastUpdated: new Date().toISOString(),
         eps: epsValue,
-        // EPS 數據專用：只處理 eps 和 fiscalMonth，移除不相關字段
       };
 
       results.push(unifiedData);
@@ -819,7 +819,7 @@ function combineIncomeStatementData(
           reportType: quarter ? FiscalReportType.QUARTERLY : FiscalReportType.ANNUAL,
           dataSource: 'yahoo-finance-tw',
           lastUpdated: new Date().toISOString(),
-          // 損益表完整數據
+          // 損益表數據
           revenue: revenue,
           grossProfit: grossProfit,
           operatingExpenses: operatingExpense,

@@ -3,11 +3,12 @@
  *
  * This interface defines the unified format for all financial data
  * that can be directly imported into the backend FundamentalDataEntity.
- * All Yahoo Finance TW transforms should output this format.
+ * All Yahoo Finance TW/JP/US transforms should output this format.
  *
  * @author AI Assistant
- * @version 1.0.0
- * @date 2025-01-06
+ * @version 2.0.0
+ * @date 2025-08-09
+ * @changes Added missing Entity fields, standardized naming conventions
  */
 
 import { MarketRegion } from '../common/shared-types';
@@ -26,64 +27,91 @@ export interface UnifiedFinancialData {
   reportType: string; // "quarterly" | "annual" | "monthly"
 
   // === Income Statement Fields (損益表欄位) ===
+  // 基本收入數據
   revenue?: number; // 營收 (基本單位)
-  costOfGoodsSold?: number; // 銷貨成本
-  grossProfit?: number; // 營業毛利
-  operatingExpenses?: number; // 營業費用
-  operatingIncome?: number; // 營業利益
+  costOfGoodsSold?: number; // 銷貨成本 (對應 Entity: cost_of_goods_sold)
+  grossProfit?: number; // 營業毛利 (對應 Entity: gross_profit)
+  
+  // 營運數據  
+  operatingExpenses?: number; // 營業費用 (對應 Entity: 需要新增)
+  operatingIncome?: number; // 營業利益 (對應 Entity: operating_income)
+  
+  // 稅務與利息
   interestExpense?: number; // 利息支出
   taxExpense?: number; // 稅費支出
   incomeBeforeTax?: number; // 稅前淨利
   incomeTax?: number; // 所得稅
-  netIncome?: number; // 稅後淨利
+  netIncome?: number; // 稅後淨利 (對應 Entity: net_income)
+  
+  // 進階指標
   ebitda?: number; // EBITDA
-  eps?: number; // 每股盈餘
+  
+  // 每股數據
+  eps?: number; // 每股盈餘 (對應 Entity: eps)
   dilutedEPS?: number; // 稀釋每股盈餘
 
   // === Balance Sheet Fields (資產負債表欄位) ===
-  totalAssets?: number; // 總資產
+  // 資產類別
+  totalAssets?: number; // 總資產 (對應 Entity: total_assets)
   currentAssets?: number; // 流動資產
   inventory?: number; // 存貨
   accountsReceivable?: number; // 應收帳款
-  totalLiabilities?: number; // 總負債
+  propertyPlantEquipment?: number; // 不動產廠房及設備
+  intangibleAssets?: number; // 無形資產
+  cashAndEquivalents?: number; // 現金及約當現金
+  
+  // 負債類別
+  totalLiabilities?: number; // 總負債 (對應 Entity: total_liabilities)
   currentLiabilities?: number; // 流動負債
   accountsPayable?: number; // 應付帳款
-  shareholdersEquity?: number; // 股東權益
   totalDebt?: number; // 總債務
   longTermDebt?: number; // 長期借款
   shortTermDebt?: number; // 短期借款
-  cashAndEquivalents?: number; // 現金及約當現金
-  workingCapital?: number; // 營運資金
-  bookValuePerShare?: number; // 每股淨值
-  propertyPlantEquipment?: number; // 不動產廠房及設備
-  intangibleAssets?: number; // 無形資產
+  
+  // 權益類別
+  shareholdersEquity?: number; // 股東權益 (對應 Entity: shareholders_equity)
   retainedEarnings?: number; // 保留盈餘
+  
+  // 計算欄位
+  workingCapital?: number; // 營運資金
+  bookValuePerShare?: number; // 每股淨值 (對應 Entity: book_value_per_share)
 
   // === Cash Flow Statement Fields (現金流量表欄位) ===
-  operatingCashFlow?: number; // 營業現金流
-  investingCashFlow?: number; // 投資現金流
-  financingCashFlow?: number; // 融資現金流
-  netCashFlow?: number; // 淨現金流
-  freeCashFlow?: number; // 自由現金流
+  operatingCashFlow?: number; // 營業現金流 (對應 Entity: operating_cash_flow)
+  investingCashFlow?: number; // 投資現金流 (對應 Entity: investing_cash_flow) 
+  financingCashFlow?: number; // 融資現金流 (對應 Entity: financing_cash_flow)
+  netCashFlow?: number; // 淨現金流 (對應 Entity: net_cash_flow)
+  freeCashFlow?: number; // 自由現金流 (對應 Entity: free_cash_flow)
+  
+  // 投資活動細項
   capex?: number; // 資本支出
+  
+  // 融資活動細項  
   dividendPayments?: number; // 股利支付
   debtIssuance?: number; // 債務發行
   debtRepayment?: number; // 債務償還
 
   // === Financial Ratios (財務比率) ===
+  // 估值比率
   peRatio?: number; // 本益比
   pbRatio?: number; // 股價淨值比
-  roe?: number; // 股東權益報酬率 (小數格式)
-  roa?: number; // 資產報酬率 (小數格式)
+  
+  // 獲利能力比率 (對應 Entity 欄位)
+  roe?: number; // 股東權益報酬率 (小數格式，對應 Entity: roe)
+  roa?: number; // 資產報酬率 (小數格式，對應 Entity: roa)
   grossMargin?: number; // 營業毛利率 (小數格式)
   operatingMargin?: number; // 營業利益率 (小數格式)
   netMargin?: number; // 淨利率 (小數格式)
+  
+  // 財務結構比率
   currentRatio?: number; // 流動比率
   debtToEquity?: number; // 負債權益比
+  
+  // 股利相關比率
   dividendYield?: number; // 殖利率 (小數格式)
 
   // === Market Data (市場數據) ===
-  sharesOutstanding?: number; // 流通在外股數
+  sharesOutstanding?: number; // 流通在外股數 (對應 Entity: shares_outstanding)
   marketCap?: number; // 市值
   dividendPerShare?: number; // 每股股利
 
@@ -101,12 +129,18 @@ export interface UnifiedFinancialData {
     quarterlyGrowth?: number; // 季增率 (小數格式)
     yearOverYearGrowth?: number; // 年增率 (小數格式)
     averagePrice?: number; // 季均價 (EPS相關)
+    
     // Japan specific
     ordinaryProfit?: number; // 経常利益
-    ordinaryMargin?: number; // 経常利益率
-    equityRatio?: number; // 自己資本比率
+    ordinaryMargin?: number; // 経常利益率 (小數格式)
+    equityRatio?: number; // 自己資本比率 (小數格式)
     capital?: number; // 資本金
-    // Other regional specific fields...
+    
+    // US specific
+    basicAverageShares?: number; // 基本流通股數
+    dilutedAverageShares?: number; // 稀釋流通股數
+    
+    // Other regional fields...
     [key: string]: any;
   };
 

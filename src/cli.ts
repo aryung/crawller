@@ -24,6 +24,9 @@ interface CLIOptions {
   batchSize?: number;
   startFrom?: number;
   generateReport?: boolean;  // New: explicitly enable markdown report generation (default: false)
+  debugSelectors?: boolean;  // New: output all intermediate selector data (fiscalPeriodsArray, etc.)
+  showIntermediate?: boolean; // New: show intermediate processing steps data
+  includeArrays?: boolean;   // New: include raw array data in output
 }
 
 async function main() {
@@ -43,9 +46,23 @@ async function main() {
     .option('--start-from <number>', '從第幾個配置開始執行', '0')
     .option('--report', '生成 MD 格式的爬蟲報告（預設只輸出 JSON）')
     .option('-v, --verbose', '詳細日誌')
+    .option('--debug-selectors', '輸出所有選擇器的中間數據（fiscalPeriodsArray 等）')
+    .option('--show-intermediate', '顯示中間處理步驟的資料')
+    .option('--include-arrays', '在輸出中包含原始陣列數據')
     .action(async (configs: string[], options: CLIOptions) => {
       if (options.verbose) {
         process.env.LOG_LEVEL = 'debug';
+      }
+      
+      // 設置 debug 環境變數供 transform 函數使用
+      if (options.debugSelectors) {
+        process.env.DEBUG_SELECTORS = 'true';
+      }
+      if (options.showIntermediate) {
+        process.env.SHOW_INTERMEDIATE = 'true';
+      }
+      if (options.includeArrays) {
+        process.env.INCLUDE_ARRAYS = 'true';
       }
 
       // Default behavior: skip markdown report generation unless explicitly requested
@@ -155,11 +172,25 @@ async function main() {
           format: 'json',
           concurrent: 1,
           verbose: verboseIndex >= 0,
-          generateReport
+          generateReport,
+          debugSelectors: remainingArgs.includes('--debug-selectors'),
+          showIntermediate: remainingArgs.includes('--show-intermediate'),
+          includeArrays: remainingArgs.includes('--include-arrays')
         };
         
         if (options.verbose) {
           process.env.LOG_LEVEL = 'debug';
+        }
+        
+        // 設置 debug 環境變數供 transform 函數使用
+        if (options.debugSelectors) {
+          process.env.DEBUG_SELECTORS = 'true';
+        }
+        if (options.showIntermediate) {
+          process.env.SHOW_INTERMEDIATE = 'true';
+        }
+        if (options.includeArrays) {
+          process.env.INCLUDE_ARRAYS = 'true';
         }
         
         await runDirectConfigFile(configFilePath, options);
@@ -188,11 +219,25 @@ async function main() {
           format: formatIndex >= 0 && args[formatIndex + 1] ? args[formatIndex + 1] as ExportOptions['format'] : 'json',
           concurrent: concurrentIndex >= 0 && args[concurrentIndex + 1] ? Number(args[concurrentIndex + 1]) : 3,
           verbose: verboseIndex >= 0,
-          generateReport
+          generateReport,
+          debugSelectors: args.includes('--debug-selectors'),
+          showIntermediate: args.includes('--show-intermediate'),
+          includeArrays: args.includes('--include-arrays')
         };
         
         if (options.verbose) {
           process.env.LOG_LEVEL = 'debug';
+        }
+        
+        // 設置 debug 環境變數供 transform 函數使用
+        if (options.debugSelectors) {
+          process.env.DEBUG_SELECTORS = 'true';
+        }
+        if (options.showIntermediate) {
+          process.env.SHOW_INTERMEDIATE = 'true';
+        }
+        if (options.includeArrays) {
+          process.env.INCLUDE_ARRAYS = 'true';
         }
         
         await runCrawler([firstArg], options);

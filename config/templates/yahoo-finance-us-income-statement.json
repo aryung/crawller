@@ -171,7 +171,7 @@
     },
     "data": {
       "selector": "body",
-      "transform": "combineUSIncomeStatementData"
+      "transform": "combineUSFinancialData"
     }
   },
   "headers": {

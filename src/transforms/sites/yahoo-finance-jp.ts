@@ -1,9 +1,11 @@
 /**
  * Yahoo Finance Japan 網站特定的轉換函數 (簡化版本)
- * 遵循 CLAUDE.md 獨立選擇器原則，只提供基礎解析函數
+ * 遵循 CLAUDE.md 獨立選擇器原則，符合 UnifiedFinancialData 規範
  */
 
 import { UNIT_MULTIPLIERS } from '../../const/finance';
+import { UnifiedFinancialData, FiscalReportType } from '../../types/unified-financial-data';
+import { MarketRegion } from '../../common/shared-types';
 
 /**
  * Yahoo Finance JP 轉換函數接口 (簡化版本)
@@ -24,7 +26,7 @@ export interface YahooFinanceJPTransforms {
     quarter?: number;
     month?: number;
   }>;
-  combineJapaneseFinancialData: (content: any, context?: any) => any[];
+  combineJapaneseFinancialData: (content: any, context?: any) => UnifiedFinancialData[];
 }
 
 /**
@@ -246,15 +248,15 @@ export const yahooFinanceJPTransforms: YahooFinanceJPTransforms = {
   },
 
   /**
-   * 組合日本財務數據 (簡化版本)
-   * 將個別提取的數據組合成統一格式
+   * 組合日本財務數據
+   * 將個別提取的數據組合成統一的 UnifiedFinancialData 格式
    */
-  combineJapaneseFinancialData: (content: any, context?: any): any[] => {
+  combineJapaneseFinancialData: (content: any, context?: any): UnifiedFinancialData[] => {
     console.log('[JP Combine] 🔗 開始組合日本財務數據...', context?.variables || {});
     
     if (!context) return [];
 
-    const results: any[] = [];
+    const results: UnifiedFinancialData[] = [];
     const symbolCode = context.variables?.symbolCode || context.symbolCode || '0000';
     const vars = context.variables || {};
     
@@ -304,12 +306,14 @@ export const yahooFinanceJPTransforms: YahooFinanceJPTransforms = {
       // 使用實際的財務更新日期，如果有的話
       const actualReportDate = financialUpdateDatesArray[i] || `${currentYear - i}-03-31`;
       
-      const financialData: any = {
+      // 基本的 UnifiedFinancialData 結構
+      const financialData: UnifiedFinancialData = {
         symbolCode: symbolCode.replace('.T', ''),
-        exchangeArea: 'JP',
+        exchangeArea: MarketRegion.JP,
         reportDate: actualReportDate,
         fiscalYear: currentYear - i,
-        reportType: 'annual',
+        fiscalMonth: 3, // 日本財年通常結束於3月
+        reportType: FiscalReportType.ANNUAL,
         dataSource: 'yahoo-finance-jp',
         lastUpdated: new Date().toISOString(),
       };
@@ -324,38 +328,41 @@ export const yahooFinanceJPTransforms: YahooFinanceJPTransforms = {
       }
       // 檢查 performance 相關欄位
       else if (revenueArray[0] !== undefined || operationProfitArray[0] !== undefined) {
+        // 標準欄位
         financialData.revenue = revenueArray[i] || 0;
         financialData.grossProfit = (vars.grossProfitValues || [])[i] || vars.grossProfit || 0;
+        financialData.operatingIncome = operationProfitArray[i] || 0;
+        financialData.netIncome = (vars.netProfitValues || [])[i] || vars.netProfit || 0;
         
-        // 應用百分比轉換：所有 margin 欄位從 % 格式轉為小數格式
-        financialData.grossProfitMargin = ((vars.grossProfitMarginValues || [])[i] || vars.grossProfitMargin || 0) * UNIT_MULTIPLIERS.PERCENTAGE;
-        
-        financialData.operatingProfit = operationProfitArray[i] || 0;
+        // 比率欄位 (小數格式)
+        financialData.grossMargin = ((vars.grossProfitMarginValues || [])[i] || vars.grossProfitMargin || 0) * UNIT_MULTIPLIERS.PERCENTAGE;
         financialData.operatingMargin = ((vars.operationProfitMarginValues || [])[i] || vars.operationProfitMargin || 0) * UNIT_MULTIPLIERS.PERCENTAGE;
         
-        financialData.ordinaryProfit = (vars.ordinaryProfitValues || [])[i] || vars.ordinaryProfit || 0;
-        financialData.ordinaryMargin = ((vars.ordinaryProfitMarginValues || [])[i] || vars.ordinaryProfitMargin || 0) * UNIT_MULTIPLIERS.PERCENTAGE;
-        
-        financialData.netProfit = (vars.netProfitValues || [])[i] || vars.netProfit || 0;
-        // netProfitMargin 欄位已移除，因為表格中沒有此數據
+        // 日本特有欄位放入 regionalData
+        financialData.regionalData = {
+          ordinaryProfit: (vars.ordinaryProfitValues || [])[i] || vars.ordinaryProfit || 0,
+          ordinaryMargin: ((vars.ordinaryProfitMarginValues || [])[i] || vars.ordinaryProfitMargin || 0) * UNIT_MULTIPLIERS.PERCENTAGE,
+        };
       }
       // 檢查 financials 相關欄位
       else if (epsArray[0] !== undefined || bpsArray[0] !== undefined) {
+        // 標準欄位
         financialData.eps = epsArray[i] || 0;
         financialData.bookValuePerShare = bpsArray[i] || 0;
-        
-        // 應用百分比轉換：ROA, ROE, equityRatio 從 % 格式轉為小數格式
-        financialData.returnOnAssets = ((vars.roaValues || [])[i] || vars.roa || 0) * UNIT_MULTIPLIERS.PERCENTAGE;
-        financialData.returnOnEquity = ((vars.roeValues || [])[i] || vars.roe || 0) * UNIT_MULTIPLIERS.PERCENTAGE;
-        financialData.equityRatio = ((vars.equityRatioValues || [])[i] || vars.equityRatio || 0) * UNIT_MULTIPLIERS.PERCENTAGE;
-        
         financialData.totalAssets = (vars.totalAssetsValues || [])[i] || vars.totalAssets || 0;
-        financialData.shareCapital = (vars.shareCapitalValues || [])[i] || vars.shareCapital || 0;
-        financialData.interestBearingDebt = (vars.interestBearingDebtValues || [])[i] || vars.interestBearingDebt || 0;
-        financialData.currentReceivables = (vars.currentReceivablesValues || [])[i] || vars.currentReceivables || 0;
         
-        // 添加 totalShares 欄位處理
-        financialData.totalShares = (vars.totalSharesValues || [])[i] || vars.totalShares || 0;
+        // 標準比率欄位 (小數格式)
+        financialData.roa = ((vars.roaValues || [])[i] || vars.roa || 0) * UNIT_MULTIPLIERS.PERCENTAGE;
+        financialData.roe = ((vars.roeValues || [])[i] || vars.roe || 0) * UNIT_MULTIPLIERS.PERCENTAGE;
+        financialData.sharesOutstanding = (vars.totalSharesValues || [])[i] || vars.totalShares || 0;
+        
+        // 日本特有欄位放入 regionalData
+        financialData.regionalData = {
+          equityRatio: ((vars.equityRatioValues || [])[i] || vars.equityRatio || 0) * UNIT_MULTIPLIERS.PERCENTAGE,
+          capital: (vars.shareCapitalValues || [])[i] || vars.shareCapital || 0,
+          interestBearingDebt: (vars.interestBearingDebtValues || [])[i] || vars.interestBearingDebt || 0,
+          currentReceivables: (vars.currentReceivablesValues || [])[i] || vars.currentReceivables || 0,
+        };
       }
 
       // 處理期間信息
