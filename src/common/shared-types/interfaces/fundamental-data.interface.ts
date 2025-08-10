@@ -5,12 +5,11 @@ export enum FiscalReportType {
   HALF = 'half-yearly',
 }
 
-// 新增月度數據專用的週期標識
+// 財務週期標識
 export interface FiscalPeriod {
   reportType: FiscalReportType;
   fiscalYear: number;
-  fiscalQuarter?: number; // 1-4, 季度和年度使用
-  fiscalMonth?: number; // 1-12, 月度使用
+  fiscalMonth?: number; // quarterly(1-4表示Q1-Q4), monthly(1-12), annual(12), half-yearly(2或4)
 }
 
 // 財報頻率對應關係

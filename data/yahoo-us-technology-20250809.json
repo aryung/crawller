@@ -1,0 +1,2381 @@
+{
+  "metadata": {
+    "sector_filter": "technology",
+    "scraped_date": "2025-08-09T07:56:08.971Z",
+    "total_pages_scraped": 100,
+    "total_records": 9898,
+    "unique_stocks": 473,
+    "duplicates_removed": 9425,
+    "detected_total_results": null,
+    "sectors_distribution": {
+      "Technology": 9898
+    }
+  },
+  "data": [
+    {
+      "symbol": "AAOI",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:28.479Z"
+    },
+    {
+      "symbol": "AAPL",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:01.592Z"
+    },
+    {
+      "symbol": "AATC",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:38.606Z"
+    },
+    {
+      "symbol": "ACFN",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:38.606Z"
+    },
+    {
+      "symbol": "ACIW",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:10.460Z"
+    },
+    {
+      "symbol": "ACLS",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:18.511Z"
+    },
+    {
+      "symbol": "ACMR",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:18.511Z"
+    },
+    {
+      "symbol": "ACN",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:01.592Z"
+    },
+    {
+      "symbol": "ADBE",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:01.592Z"
+    },
+    {
+      "symbol": "ADEA",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:18.511Z"
+    },
+    {
+      "symbol": "ADI",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:01.592Z"
+    },
+    {
+      "symbol": "ADP",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:01.592Z"
+    },
+    {
+      "symbol": "ADSK",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:47.759Z"
+    },
+    {
+      "symbol": "ADTN",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:28.479Z"
+    },
+    {
+      "symbol": "ADTTF",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:47.759Z"
+    },
+    {
+      "symbol": "ADYEY",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:47.759Z"
+    },
+    {
+      "symbol": "ADYYF",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:47.759Z"
+    },
+    {
+      "symbol": "AEHR",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:28.479Z"
+    },
+    {
+      "symbol": "AEVA",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:28.479Z"
+    },
+    {
+      "symbol": "AEXAF",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:47.759Z"
+    },
+    {
+      "symbol": "AEXAY",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:47.759Z"
+    },
+    {
+      "symbol": "AEYE",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:38.605Z"
+    },
+    {
+      "symbol": "AGYS",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:18.511Z"
+    },
+    {
+      "symbol": "AI",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:18.511Z"
+    },
+    {
+      "symbol": "AIP",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:28.479Z"
+    },
+    {
+      "symbol": "AKAM",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:10.460Z"
+    },
+    {
+      "symbol": "ALAB",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:47.759Z"
+    },
+    {
+      "symbol": "ALGM",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:10.460Z"
+    },
+    {
+      "symbol": "ALKT",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:18.511Z"
+    },
+    {
+      "symbol": "ALLT",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:28.479Z"
+    },
+    {
+      "symbol": "ALMU",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:28.479Z"
+    },
+    {
+      "symbol": "ALNT",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:28.479Z"
+    },
+    {
+      "symbol": "ALOT",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:38.605Z"
+    },
+    {
+      "symbol": "ALRM",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:18.511Z"
+    },
+    {
+      "symbol": "ALTS",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:38.605Z"
+    },
+    {
+      "symbol": "AMADF",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:47.759Z"
+    },
+    {
+      "symbol": "AMADY",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:47.759Z"
+    },
+    {
+      "symbol": "AMAT",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:01.592Z"
+    },
+    {
+      "symbol": "AMBA",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:18.511Z"
+    },
+    {
+      "symbol": "AMBQ",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:38.606Z"
+    },
+    {
+      "symbol": "AMD",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:01.592Z"
+    },
+    {
+      "symbol": "AMKR",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:10.460Z"
+    },
+    {
+      "symbol": "AMPL",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:18.511Z"
+    },
+    {
+      "symbol": "ANET",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:01.592Z"
+    },
+    {
+      "symbol": "ANKM",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:38.606Z"
+    },
+    {
+      "symbol": "AOSL",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:28.479Z"
+    },
+    {
+      "symbol": "APH",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:01.592Z"
+    },
+    {
+      "symbol": "APLD",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:18.511Z"
+    },
+    {
+      "symbol": "APPF",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:10.460Z"
+    },
+    {
+      "symbol": "APPN",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:18.511Z"
+    },
+    {
+      "symbol": "ARAI",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:38.606Z"
+    },
+    {
+      "symbol": "ARBB",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:38.605Z"
+    },
+    {
+      "symbol": "ARM",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:47.759Z"
+    },
+    {
+      "symbol": "ARQQ",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:28.479Z"
+    },
+    {
+      "symbol": "ARRY",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:28.479Z"
+    },
+    {
+      "symbol": "ARW",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:10.460Z"
+    },
+    {
+      "symbol": "ASAN",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:18.511Z"
+    },
+    {
+      "symbol": "ASGN",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:18.511Z"
+    },
+    {
+      "symbol": "ASML",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:47.759Z"
+    },
+    {
+      "symbol": "ASMLF",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:47.759Z"
+    },
+    {
+      "symbol": "ASTC",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:38.606Z"
+    },
+    {
+      "symbol": "ASTS",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:10.460Z"
+    },
+    {
+      "symbol": "ASUR",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:28.479Z"
+    },
+    {
+      "symbol": "ATEN",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:18.511Z"
+    },
+    {
+      "symbol": "ATEYY",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:47.759Z"
+    },
+    {
+      "symbol": "ATGL",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:28.479Z"
+    },
+    {
+      "symbol": "ATHR",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:38.606Z"
+    },
+    {
+      "symbol": "AUR",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:10.460Z"
+    },
+    {
+      "symbol": "AVDX",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:18.511Z"
+    },
+    {
+      "symbol": "AVGO",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:01.592Z"
+    },
+    {
+      "symbol": "AVNW",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:28.479Z"
+    },
+    {
+      "symbol": "AVPT",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:18.511Z"
+    },
+    {
+      "symbol": "AVT",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:10.460Z"
+    },
+    {
+      "symbol": "AXIL",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:38.606Z"
+    },
+    {
+      "symbol": "AZ",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:28.479Z"
+    },
+    {
+      "symbol": "BAND",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:28.479Z"
+    },
+    {
+      "symbol": "BASE",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:28.479Z"
+    },
+    {
+      "symbol": "BBAI",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:18.511Z"
+    },
+    {
+      "symbol": "BCRD",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:38.606Z"
+    },
+    {
+      "symbol": "BDC",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:10.460Z"
+    },
+    {
+      "symbol": "BELFB",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:18.511Z"
+    },
+    {
+      "symbol": "BHE",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:18.511Z"
+    },
+    {
+      "symbol": "BILL",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:10.460Z"
+    },
+    {
+      "symbol": "BKKT",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:38.606Z"
+    },
+    {
+      "symbol": "BKTI",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:38.605Z"
+    },
+    {
+      "symbol": "BL",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:18.511Z"
+    },
+    {
+      "symbol": "BLBX",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:38.606Z"
+    },
+    {
+      "symbol": "BLKB",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:18.511Z"
+    },
+    {
+      "symbol": "BLZE",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:28.479Z"
+    },
+    {
+      "symbol": "BMI",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:10.460Z"
+    },
+    {
+      "symbol": "BOX",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:10.460Z"
+    },
+    {
+      "symbol": "BR",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:47.759Z"
+    },
+    {
+      "symbol": "BRZE",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:18.511Z"
+    },
+    {
+      "symbol": "BSQKZ",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:47.759Z"
+    },
+    {
+      "symbol": "BTDR",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:18.511Z"
+    },
+    {
+      "symbol": "BULL",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:38.606Z"
+    },
+    {
+      "symbol": "CACI",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:10.460Z"
+    },
+    {
+      "symbol": "CAJFF",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:47.759Z"
+    },
+    {
+      "symbol": "CALX",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:18.511Z"
+    },
+    {
+      "symbol": "CAMT",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:18.511Z"
+    },
+    {
+      "symbol": "CCCS",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:10.460Z"
+    },
+    {
+      "symbol": "CCRD",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:28.479Z"
+    },
+    {
+      "symbol": "CCSI",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:28.479Z"
+    },
+    {
+      "symbol": "CDNS",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:47.759Z"
+    },
+    {
+      "symbol": "CEVA",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:28.479Z"
+    },
+    {
+      "symbol": "CFLT",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:10.460Z"
+    },
+    {
+      "symbol": "CGNT",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:28.479Z"
+    },
+    {
+      "symbol": "CGNX",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:10.460Z"
+    },
+    {
+      "symbol": "CHYM",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:38.606Z"
+    },
+    {
+      "symbol": "CIEN",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:10.460Z"
+    },
+    {
+      "symbol": "CINT",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:28.479Z"
+    },
+    {
+      "symbol": "CLBT",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:18.511Z"
+    },
+    {
+      "symbol": "CLFD",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:28.479Z"
+    },
+    {
+      "symbol": "CLMB",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:28.479Z"
+    },
+    {
+      "symbol": "CNSWF",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:47.759Z"
+    },
+    {
+      "symbol": "CNXC",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:18.511Z"
+    },
+    {
+      "symbol": "CNXN",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:18.511Z"
+    },
+    {
+      "symbol": "COHU",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:28.479Z"
+    },
+    {
+      "symbol": "COMM",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:18.511Z"
+    },
+    {
+      "symbol": "CORZ",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:10.460Z"
+    },
+    {
+      "symbol": "CRCT",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:28.479Z"
+    },
+    {
+      "symbol": "CRM",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:01.592Z"
+    },
+    {
+      "symbol": "CRNC",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:28.479Z"
+    },
+    {
+      "symbol": "CRSR",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:28.479Z"
+    },
+    {
+      "symbol": "CRUS",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:10.460Z"
+    },
+    {
+      "symbol": "CRWD",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:47.759Z"
+    },
+    {
+      "symbol": "CRWV",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:38.606Z"
+    },
+    {
+      "symbol": "CSCO",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:01.592Z"
+    },
+    {
+      "symbol": "CSGS",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:18.511Z"
+    },
+    {
+      "symbol": "CSIQ",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:28.479Z"
+    },
+    {
+      "symbol": "CSPI",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:38.605Z"
+    },
+    {
+      "symbol": "CTLP",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:28.479Z"
+    },
+    {
+      "symbol": "CTS",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:28.479Z"
+    },
+    {
+      "symbol": "CTSH",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:47.759Z"
+    },
+    {
+      "symbol": "CVLT",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:10.460Z"
+    },
+    {
+      "symbol": "CWAN",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:10.460Z"
+    },
+    {
+      "symbol": "CXM",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:18.511Z"
+    },
+    {
+      "symbol": "CYN",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:38.606Z"
+    },
+    {
+      "symbol": "DAIC",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:38.606Z"
+    },
+    {
+      "symbol": "DAKT",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:28.479Z"
+    },
+    {
+      "symbol": "DASTF",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:47.759Z"
+    },
+    {
+      "symbol": "DASTY",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:47.759Z"
+    },
+    {
+      "symbol": "DAVE",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:18.511Z"
+    },
+    {
+      "symbol": "DAY",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:10.460Z"
+    },
+    {
+      "symbol": "DBD",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:18.511Z"
+    },
+    {
+      "symbol": "DBX",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:10.460Z"
+    },
+    {
+      "symbol": "DDOG",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:47.759Z"
+    },
+    {
+      "symbol": "DELL",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:47.759Z"
+    },
+    {
+      "symbol": "DFDV",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:38.606Z"
+    },
+    {
+      "symbol": "DFIN",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:18.511Z"
+    },
+    {
+      "symbol": "DGII",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:28.479Z"
+    },
+    {
+      "symbol": "DIOD",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:18.511Z"
+    },
+    {
+      "symbol": "DISPF",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:47.759Z"
+    },
+    {
+      "symbol": "DJCO",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:28.479Z"
+    },
+    {
+      "symbol": "DLO",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:18.511Z"
+    },
+    {
+      "symbol": "DMRC",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:28.479Z"
+    },
+    {
+      "symbol": "DOCN",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:18.511Z"
+    },
+    {
+      "symbol": "DOCU",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:10.460Z"
+    },
+    {
+      "symbol": "DOMO",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:28.479Z"
+    },
+    {
+      "symbol": "DOX",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:10.460Z"
+    },
+    {
+      "symbol": "DSCSY",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:47.759Z"
+    },
+    {
+      "symbol": "DSP",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:28.479Z"
+    },
+    {
+      "symbol": "DT",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:10.460Z"
+    },
+    {
+      "symbol": "DUOT",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:38.606Z"
+    },
+    {
+      "symbol": "DV",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:18.511Z"
+    },
+    {
+      "symbol": "DXC",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:18.511Z"
+    },
+    {
+      "symbol": "EEFT",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:10.460Z"
+    },
+    {
+      "symbol": "EGAN",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:38.605Z"
+    },
+    {
+      "symbol": "ELTK",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:38.606Z"
+    },
+    {
+      "symbol": "ENPH",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:10.460Z"
+    },
+    {
+      "symbol": "ENTG",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:10.460Z"
+    },
+    {
+      "symbol": "EPAM",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:10.460Z"
+    },
+    {
+      "symbol": "ESE",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:10.460Z"
+    },
+    {
+      "symbol": "ESTC",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:10.460Z"
+    },
+    {
+      "symbol": "EVCM",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:18.511Z"
+    },
+    {
+      "symbol": "EVTC",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:18.511Z"
+    },
+    {
+      "symbol": "EXLS",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:10.460Z"
+    },
+    {
+      "symbol": "EXOD",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:28.479Z"
+    },
+    {
+      "symbol": "EXTR",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:18.511Z"
+    },
+    {
+      "symbol": "FATN",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:38.606Z"
+    },
+    {
+      "symbol": "FEIM",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:28.479Z"
+    },
+    {
+      "symbol": "FI",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:47.759Z"
+    },
+    {
+      "symbol": "FICO",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:47.759Z"
+    },
+    {
+      "symbol": "FIG",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:38.606Z"
+    },
+    {
+      "symbol": "FIS",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:47.759Z"
+    },
+    {
+      "symbol": "FIVN",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:18.511Z"
+    },
+    {
+      "symbol": "FJTSF",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:47.759Z"
+    },
+    {
+      "symbol": "FJTSY",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:47.759Z"
+    },
+    {
+      "symbol": "FLYW",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:18.511Z"
+    },
+    {
+      "symbol": "FN",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:10.460Z"
+    },
+    {
+      "symbol": "FORM",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:18.511Z"
+    },
+    {
+      "symbol": "FOUR",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:10.460Z"
+    },
+    {
+      "symbol": "FOXX",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:38.606Z"
+    },
+    {
+      "symbol": "FROG",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:10.460Z"
+    },
+    {
+      "symbol": "FRSH",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:18.511Z"
+    },
+    {
+      "symbol": "FSLY",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:28.479Z"
+    },
+    {
+      "symbol": "FTNT",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:47.759Z"
+    },
+    {
+      "symbol": "G",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:10.460Z"
+    },
+    {
+      "symbol": "GAUZ",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:38.605Z"
+    },
+    {
+      "symbol": "GB",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:18.511Z"
+    },
+    {
+      "symbol": "GCT",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:28.479Z"
+    },
+    {
+      "symbol": "GDYN",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:28.479Z"
+    },
+    {
+      "symbol": "GILT",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:28.479Z"
+    },
+    {
+      "symbol": "GLOB",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:18.511Z"
+    },
+    {
+      "symbol": "GLW",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:47.759Z"
+    },
+    {
+      "symbol": "GRMN",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:47.759Z"
+    },
+    {
+      "symbol": "GRND",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:18.511Z"
+    },
+    {
+      "symbol": "GRRR",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:38.605Z"
+    },
+    {
+      "symbol": "GTLB",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:10.460Z"
+    },
+    {
+      "symbol": "GTM",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:38.606Z"
+    },
+    {
+      "symbol": "HCKT",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:28.479Z"
+    },
+    {
+      "symbol": "HLIT",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:28.479Z"
+    },
+    {
+      "symbol": "HNHPF",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:47.759Z"
+    },
+    {
+      "symbol": "HXGBF",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:47.759Z"
+    },
+    {
+      "symbol": "HXGBY",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:47.759Z"
+    },
+    {
+      "symbol": "IBEX",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:28.479Z"
+    },
+    {
+      "symbol": "IBM",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:01.592Z"
+    },
+    {
+      "symbol": "IBTA",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:28.479Z"
+    },
+    {
+      "symbol": "ICHR",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:28.479Z"
+    },
+    {
+      "symbol": "IDCC",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:10.460Z"
+    },
+    {
+      "symbol": "IFNNF",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:47.759Z"
+    },
+    {
+      "symbol": "IFNNY",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:47.759Z"
+    },
+    {
+      "symbol": "IIIV",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:28.479Z"
+    },
+    {
+      "symbol": "IMMR",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:28.479Z"
+    },
+    {
+      "symbol": "IMXI",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:28.479Z"
+    },
+    {
+      "symbol": "INFA",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:10.460Z"
+    },
+    {
+      "symbol": "INFY",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:47.759Z"
+    },
+    {
+      "symbol": "INGM",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:10.460Z"
+    },
+    {
+      "symbol": "INLX",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:38.606Z"
+    },
+    {
+      "symbol": "INOD",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:28.479Z"
+    },
+    {
+      "symbol": "INSG",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:38.605Z"
+    },
+    {
+      "symbol": "INTA",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:18.511Z"
+    },
+    {
+      "symbol": "INTC",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:47.759Z"
+    },
+    {
+      "symbol": "INTT",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:38.605Z"
+    },
+    {
+      "symbol": "INTU",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:01.592Z"
+    },
+    {
+      "symbol": "IONQ",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:10.460Z"
+    },
+    {
+      "symbol": "IPGP",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:18.511Z"
+    },
+    {
+      "symbol": "ITRI",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:10.460Z"
+    },
+    {
+      "symbol": "ITRN",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:28.479Z"
+    },
+    {
+      "symbol": "JAMF",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:28.479Z"
+    },
+    {
+      "symbol": "JKHY",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:10.460Z"
+    },
+    {
+      "symbol": "KARO",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:18.511Z"
+    },
+    {
+      "symbol": "KD",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:10.460Z"
+    },
+    {
+      "symbol": "KEYS",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:47.759Z"
+    },
+    {
+      "symbol": "KLAC",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:01.592Z"
+    },
+    {
+      "symbol": "KLIC",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:18.511Z"
+    },
+    {
+      "symbol": "KN",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:18.511Z"
+    },
+    {
+      "symbol": "KOSS",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:38.606Z"
+    },
+    {
+      "symbol": "KPLT",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:38.606Z"
+    },
+    {
+      "symbol": "KULR",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:28.479Z"
+    },
+    {
+      "symbol": "KVYO",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:10.460Z"
+    },
+    {
+      "symbol": "KYCCF",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:47.759Z"
+    },
+    {
+      "symbol": "LASR",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:28.479Z"
+    },
+    {
+      "symbol": "LFUS",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:10.460Z"
+    },
+    {
+      "symbol": "LGL",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:38.606Z"
+    },
+    {
+      "symbol": "LIF",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:10.460Z"
+    },
+    {
+      "symbol": "LINK",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:38.606Z"
+    },
+    {
+      "symbol": "LITE",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:10.460Z"
+    },
+    {
+      "symbol": "LRCX",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:01.592Z"
+    },
+    {
+      "symbol": "LSCC",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:10.460Z"
+    },
+    {
+      "symbol": "LYFT",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:10.460Z"
+    },
+    {
+      "symbol": "LYTS",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:28.479Z"
+    },
+    {
+      "symbol": "MANH",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:10.460Z"
+    },
+    {
+      "symbol": "MCHP",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:47.759Z"
+    },
+    {
+      "symbol": "MDB",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:10.460Z"
+    },
+    {
+      "symbol": "MEI",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:28.479Z"
+    },
+    {
+      "symbol": "MFI",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:28.479Z"
+    },
+    {
+      "symbol": "MIND",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:38.606Z"
+    },
+    {
+      "symbol": "MITK",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:28.479Z"
+    },
+    {
+      "symbol": "MKSI",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:10.460Z"
+    },
+    {
+      "symbol": "MLAB",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:28.479Z"
+    },
+    {
+      "symbol": "MLGO",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:18.511Z"
+    },
+    {
+      "symbol": "MLNK",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:28.479Z"
+    },
+    {
+      "symbol": "MNDY",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:10.460Z"
+    },
+    {
+      "symbol": "MNTN",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:38.606Z"
+    },
+    {
+      "symbol": "MPTI",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:38.605Z"
+    },
+    {
+      "symbol": "MPWR",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:47.759Z"
+    },
+    {
+      "symbol": "MQ",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:18.511Z"
+    },
+    {
+      "symbol": "MRAAY",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:47.759Z"
+    },
+    {
+      "symbol": "MRAM",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:38.605Z"
+    },
+    {
+      "symbol": "MRVL",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:47.759Z"
+    },
+    {
+      "symbol": "MSFT",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:01.592Z"
+    },
+    {
+      "symbol": "MSI",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:47.759Z"
+    },
+    {
+      "symbol": "MSTR",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:47.759Z"
+    },
+    {
+      "symbol": "MTSI",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:10.460Z"
+    },
+    {
+      "symbol": "MU",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:01.592Z"
+    },
+    {
+      "symbol": "MXL",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:28.479Z"
+    },
+    {
+      "symbol": "NABL",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:18.511Z"
+    },
+    {
+      "symbol": "NATL",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:18.511Z"
+    },
+    {
+      "symbol": "NCNO",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:18.511Z"
+    },
+    {
+      "symbol": "NEON",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:28.479Z"
+    },
+    {
+      "symbol": "NET",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:47.759Z"
+    },
+    {
+      "symbol": "NIQ",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:38.606Z"
+    },
+    {
+      "symbol": "NN",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:18.511Z"
+    },
+    {
+      "symbol": "NOVT",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:10.460Z"
+    },
+    {
+      "symbol": "NOW",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:01.592Z"
+    },
+    {
+      "symbol": "NSIT",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:18.511Z"
+    },
+    {
+      "symbol": "NTCT",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:18.511Z"
+    },
+    {
+      "symbol": "NTDTY",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:47.759Z"
+    },
+    {
+      "symbol": "NTGR",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:28.479Z"
+    },
+    {
+      "symbol": "NTTDF",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:47.759Z"
+    },
+    {
+      "symbol": "NVDA",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:01.591Z"
+    },
+    {
+      "symbol": "NVEC",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:28.479Z"
+    },
+    {
+      "symbol": "NVMI",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:10.460Z"
+    },
+    {
+      "symbol": "NVTS",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:28.479Z"
+    },
+    {
+      "symbol": "NXPI",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:47.759Z"
+    },
+    {
+      "symbol": "NXT",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:10.460Z"
+    },
+    {
+      "symbol": "OCC",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:38.606Z"
+    },
+    {
+      "symbol": "ODD",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:18.511Z"
+    },
+    {
+      "symbol": "OKTA",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:10.460Z"
+    },
+    {
+      "symbol": "OLED",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:10.460Z"
+    },
+    {
+      "symbol": "OLO",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:18.511Z"
+    },
+    {
+      "symbol": "ONTO",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:10.460Z"
+    },
+    {
+      "symbol": "OOMA",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:28.479Z"
+    },
+    {
+      "symbol": "ORCL",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:01.592Z"
+    },
+    {
+      "symbol": "OS",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:10.460Z"
+    },
+    {
+      "symbol": "OSIS",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:18.511Z"
+    },
+    {
+      "symbol": "OSPN",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:28.479Z"
+    },
+    {
+      "symbol": "OSS",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:38.605Z"
+    },
+    {
+      "symbol": "OUST",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:28.479Z"
+    },
+    {
+      "symbol": "PAGS",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:18.511Z"
+    },
+    {
+      "symbol": "PANW",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:47.759Z"
+    },
+    {
+      "symbol": "PAR",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:18.511Z"
+    },
+    {
+      "symbol": "PATH",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:10.460Z"
+    },
+    {
+      "symbol": "PAY",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:10.460Z"
+    },
+    {
+      "symbol": "PAYC",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:10.460Z"
+    },
+    {
+      "symbol": "PAYO",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:18.511Z"
+    },
+    {
+      "symbol": "PAYS",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:28.479Z"
+    },
+    {
+      "symbol": "PAYX",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:47.759Z"
+    },
+    {
+      "symbol": "PCOR",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:10.460Z"
+    },
+    {
+      "symbol": "PCTY",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:10.460Z"
+    },
+    {
+      "symbol": "PD",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:18.511Z"
+    },
+    {
+      "symbol": "PDFS",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:28.479Z"
+    },
+    {
+      "symbol": "PDYN",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:28.479Z"
+    },
+    {
+      "symbol": "PEGA",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:10.460Z"
+    },
+    {
+      "symbol": "PENG",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:28.479Z"
+    },
+    {
+      "symbol": "PGY",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:18.511Z"
+    },
+    {
+      "symbol": "PI",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:10.460Z"
+    },
+    {
+      "symbol": "PLAB",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:28.479Z"
+    },
+    {
+      "symbol": "PLTR",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:01.592Z"
+    },
+    {
+      "symbol": "PLUS",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:18.511Z"
+    },
+    {
+      "symbol": "PLXS",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:18.511Z"
+    },
+    {
+      "symbol": "POWI",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:18.511Z"
+    },
+    {
+      "symbol": "PRCH",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:18.511Z"
+    },
+    {
+      "symbol": "PRGS",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:18.511Z"
+    },
+    {
+      "symbol": "PRO",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:28.479Z"
+    },
+    {
+      "symbol": "PRTH",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:28.479Z"
+    },
+    {
+      "symbol": "PSFE",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:28.479Z"
+    },
+    {
+      "symbol": "PSN",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:10.460Z"
+    },
+    {
+      "symbol": "PUBM",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:28.479Z"
+    },
+    {
+      "symbol": "PXLW",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:28.479Z"
+    },
+    {
+      "symbol": "QBTS",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:18.511Z"
+    },
+    {
+      "symbol": "QCOM",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:01.592Z"
+    },
+    {
+      "symbol": "QLYS",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:10.460Z"
+    },
+    {
+      "symbol": "QMCO",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:38.606Z"
+    },
+    {
+      "symbol": "QRVO",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:10.460Z"
+    },
+    {
+      "symbol": "QTWO",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:10.460Z"
+    },
+    {
+      "symbol": "QUBT",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:18.511Z"
+    },
+    {
+      "symbol": "QUIK",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:38.605Z"
+    },
+    {
+      "symbol": "QXO",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:10.460Z"
+    },
+    {
+      "symbol": "RAL",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:38.606Z"
+    },
+    {
+      "symbol": "RAMP",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:18.511Z"
+    },
+    {
+      "symbol": "RDVT",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:28.479Z"
+    },
+    {
+      "symbol": "RDWR",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:28.479Z"
+    },
+    {
+      "symbol": "RELL",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:38.605Z"
+    },
+    {
+      "symbol": "RELY",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:18.511Z"
+    },
+    {
+      "symbol": "RGTI",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:10.460Z"
+    },
+    {
+      "symbol": "RMBS",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:10.460Z"
+    },
+    {
+      "symbol": "RNG",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:18.511Z"
+    },
+    {
+      "symbol": "ROG",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:18.511Z"
+    },
+    {
+      "symbol": "ROP",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:47.759Z"
+    },
+    {
+      "symbol": "RPAY",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:28.479Z"
+    },
+    {
+      "symbol": "RPD",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:28.479Z"
+    },
+    {
+      "symbol": "RSKD",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:28.479Z"
+    },
+    {
+      "symbol": "RUN",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:18.511Z"
+    },
+    {
+      "symbol": "S",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:10.460Z"
+    },
+    {
+      "symbol": "SAIC",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:10.460Z"
+    },
+    {
+      "symbol": "SAIH",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:38.605Z"
+    },
+    {
+      "symbol": "SAIL",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:38.606Z"
+    },
+    {
+      "symbol": "SANM",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:10.460Z"
+    },
+    {
+      "symbol": "SAP",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:47.759Z"
+    },
+    {
+      "symbol": "SAPGF",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:47.759Z"
+    },
+    {
+      "symbol": "SCSC",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:28.479Z"
+    },
+    {
+      "symbol": "SEDG",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:18.511Z"
+    },
+    {
+      "symbol": "SEMR",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:28.479Z"
+    },
+    {
+      "symbol": "SHOP",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:47.759Z"
+    },
+    {
+      "symbol": "SILC",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:38.605Z"
+    },
+    {
+      "symbol": "SITM",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:10.460Z"
+    },
+    {
+      "symbol": "SKYT",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:28.479Z"
+    },
+    {
+      "symbol": "SLAB",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:10.460Z"
+    },
+    {
+      "symbol": "SMTC",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:18.511Z"
+    },
+    {
+      "symbol": "SMWB",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:28.479Z"
+    },
+    {
+      "symbol": "SNCR",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:38.605Z"
+    },
+    {
+      "symbol": "SNDK",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:38.606Z"
+    },
+    {
+      "symbol": "SNEJF",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:47.759Z"
+    },
+    {
+      "symbol": "SNOW",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:47.759Z"
+    },
+    {
+      "symbol": "SNPS",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:47.759Z"
+    },
+    {
+      "symbol": "SNX",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:10.460Z"
+    },
+    {
+      "symbol": "SONO",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:18.511Z"
+    },
+    {
+      "symbol": "SONY",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:47.759Z"
+    },
+    {
+      "symbol": "SOUN",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:10.460Z"
+    },
+    {
+      "symbol": "SPNS",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:18.511Z"
+    },
+    {
+      "symbol": "SPSC",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:18.511Z"
+    },
+    {
+      "symbol": "SPT",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:28.479Z"
+    },
+    {
+      "symbol": "SRAD",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:10.460Z"
+    },
+    {
+      "symbol": "SSNLF",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:47.759Z"
+    },
+    {
+      "symbol": "SSTI",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:38.605Z"
+    },
+    {
+      "symbol": "SSYS",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:28.479Z"
+    },
+    {
+      "symbol": "ST",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:10.460Z"
+    },
+    {
+      "symbol": "STNE",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:10.460Z"
+    },
+    {
+      "symbol": "STX",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:47.759Z"
+    },
+    {
+      "symbol": "SUPX",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:38.606Z"
+    },
+    {
+      "symbol": "SWKS",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:10.460Z"
+    },
+    {
+      "symbol": "SYNA",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:18.511Z"
+    },
+    {
+      "symbol": "TAOX",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:38.606Z"
+    },
+    {
+      "symbol": "TASK",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:18.511Z"
+    },
+    {
+      "symbol": "TBCH",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:38.606Z"
+    },
+    {
+      "symbol": "TCX",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:28.479Z"
+    },
+    {
+      "symbol": "TDC",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:18.511Z"
+    },
+    {
+      "symbol": "TEAM",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:47.759Z"
+    },
+    {
+      "symbol": "TEL",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:47.759Z"
+    },
+    {
+      "symbol": "TENB",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:18.511Z"
+    },
+    {
+      "symbol": "TOELF",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:47.759Z"
+    },
+    {
+      "symbol": "TOELY",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:47.759Z"
+    },
+    {
+      "symbol": "TRAK",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:28.479Z"
+    },
+    {
+      "symbol": "TRT",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:38.606Z"
+    },
+    {
+      "symbol": "TSM",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:47.759Z"
+    },
+    {
+      "symbol": "TSMWF",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:47.759Z"
+    },
+    {
+      "symbol": "TSSI",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:28.479Z"
+    },
+    {
+      "symbol": "TTAN",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:38.606Z"
+    },
+    {
+      "symbol": "TTGT",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:38.605Z"
+    },
+    {
+      "symbol": "TTMI",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:10.460Z"
+    },
+    {
+      "symbol": "TWLO",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:10.460Z"
+    },
+    {
+      "symbol": "TXN",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:01.592Z"
+    },
+    {
+      "symbol": "U",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:10.460Z"
+    },
+    {
+      "symbol": "UBER",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:01.592Z"
+    },
+    {
+      "symbol": "UCTT",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:28.479Z"
+    },
+    {
+      "symbol": "UEIC",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:38.606Z"
+    },
+    {
+      "symbol": "ULY",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:38.606Z"
+    },
+    {
+      "symbol": "UMAC",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:38.605Z"
+    },
+    {
+      "symbol": "UPBD",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:28.479Z"
+    },
+    {
+      "symbol": "VECO",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:18.511Z"
+    },
+    {
+      "symbol": "VERB",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:38.606Z"
+    },
+    {
+      "symbol": "VERX",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:10.460Z"
+    },
+    {
+      "symbol": "VHC",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:38.606Z"
+    },
+    {
+      "symbol": "VIAV",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:18.511Z"
+    },
+    {
+      "symbol": "VICR",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:18.511Z"
+    },
+    {
+      "symbol": "VLDXD",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:38.606Z"
+    },
+    {
+      "symbol": "VNT",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:10.460Z"
+    },
+    {
+      "symbol": "VPG",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:28.479Z"
+    },
+    {
+      "symbol": "VRNS",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:10.460Z"
+    },
+    {
+      "symbol": "VRNT",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:18.511Z"
+    },
+    {
+      "symbol": "VRRM",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:18.511Z"
+    },
+    {
+      "symbol": "VSAT",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:18.511Z"
+    },
+    {
+      "symbol": "VSH",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:18.511Z"
+    },
+    {
+      "symbol": "VTSI",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:38.606Z"
+    },
+    {
+      "symbol": "VVPR",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:38.606Z"
+    },
+    {
+      "symbol": "VYX",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:18.511Z"
+    },
+    {
+      "symbol": "WDAY",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:47.759Z"
+    },
+    {
+      "symbol": "WEX",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:10.460Z"
+    },
+    {
+      "symbol": "WIX",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:10.460Z"
+    },
+    {
+      "symbol": "WK",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:10.460Z"
+    },
+    {
+      "symbol": "WNS",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:18.511Z"
+    },
+    {
+      "symbol": "WYFI",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:38.606Z"
+    },
+    {
+      "symbol": "XIACF",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:47.759Z"
+    },
+    {
+      "symbol": "XIACY",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:47.759Z"
+    },
+    {
+      "symbol": "XPER",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:28.479Z"
+    },
+    {
+      "symbol": "XYZ",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:38.606Z"
+    },
+    {
+      "symbol": "YEXT",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:28.479Z"
+    },
+    {
+      "symbol": "YOU",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:10.460Z"
+    },
+    {
+      "symbol": "ZENA",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:38.605Z"
+    },
+    {
+      "symbol": "ZETA",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:10.460Z"
+    },
+    {
+      "symbol": "ZS",
+      "sector": "Technology",
+      "scraped_at": "2025-08-09T07:41:47.759Z"
+    }
+  ]
+}

@@ -1,0 +1,6106 @@
+{
+  "metadata": {
+    "sector_filter": "financial",
+    "scraped_date": "2025-08-09T08:11:10.452Z",
+    "total_pages_scraped": 100,
+    "total_records": 8639,
+    "unique_stocks": 1218,
+    "duplicates_removed": 7421,
+    "detected_total_results": null,
+    "sectors_distribution": {
+      "Financial Services": 8639
+    }
+  },
+  "data": [
+    {
+      "symbol": "AACB",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:02.989Z"
+    },
+    {
+      "symbol": "AACI",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:02.989Z"
+    },
+    {
+      "symbol": "AACT",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:02.578Z"
+    },
+    {
+      "symbol": "AAGIY",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:20.406Z"
+    },
+    {
+      "symbol": "AAIGF",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:20.406Z"
+    },
+    {
+      "symbol": "AAM",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:10.874Z"
+    },
+    {
+      "symbol": "AAMI",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:02.989Z"
+    },
+    {
+      "symbol": "AB",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:34.929Z"
+    },
+    {
+      "symbol": "ABCB",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:34.929Z"
+    },
+    {
+      "symbol": "ABL",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:02.578Z"
+    },
+    {
+      "symbol": "AC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:02.578Z"
+    },
+    {
+      "symbol": "ACGBY",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:20.406Z"
+    },
+    {
+      "symbol": "ACIC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:10.874Z"
+    },
+    {
+      "symbol": "ACNB",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:19.412Z"
+    },
+    {
+      "symbol": "ACP",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:19.412Z"
+    },
+    {
+      "symbol": "ACT",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:34.929Z"
+    },
+    {
+      "symbol": "ACV",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:28.060Z"
+    },
+    {
+      "symbol": "ADX",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:43.662Z"
+    },
+    {
+      "symbol": "AEF",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:19.412Z"
+    },
+    {
+      "symbol": "AFB",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:19.412Z"
+    },
+    {
+      "symbol": "AFBI",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:44.890Z"
+    },
+    {
+      "symbol": "AFG",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:34.929Z"
+    },
+    {
+      "symbol": "AGD",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:19.412Z"
+    },
+    {
+      "symbol": "AGM-A",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:52.761Z"
+    },
+    {
+      "symbol": "AGO",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:34.929Z"
+    },
+    {
+      "symbol": "AHL",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:02.989Z"
+    },
+    {
+      "symbol": "AIFE",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:02.989Z"
+    },
+    {
+      "symbol": "AIFU",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:10.874Z"
+    },
+    {
+      "symbol": "AII",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:02.989Z"
+    },
+    {
+      "symbol": "AIO",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:02.578Z"
+    },
+    {
+      "symbol": "AIZ",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:34.929Z"
+    },
+    {
+      "symbol": "ALBY",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:53.908Z"
+    },
+    {
+      "symbol": "ALDF",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:02.989Z"
+    },
+    {
+      "symbol": "ALF",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:19.412Z"
+    },
+    {
+      "symbol": "ALIZF",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:20.406Z"
+    },
+    {
+      "symbol": "ALIZY",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:20.406Z"
+    },
+    {
+      "symbol": "ALPIB",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:28.060Z"
+    },
+    {
+      "symbol": "ALRS",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:10.874Z"
+    },
+    {
+      "symbol": "AMAL",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:02.578Z"
+    },
+    {
+      "symbol": "AMBC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:19.412Z"
+    },
+    {
+      "symbol": "AMBZ",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:10.874Z"
+    },
+    {
+      "symbol": "AMG",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:34.929Z"
+    },
+    {
+      "symbol": "AMRK",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:10.874Z"
+    },
+    {
+      "symbol": "AMSF",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:02.578Z"
+    },
+    {
+      "symbol": "AMTB",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:02.578Z"
+    },
+    {
+      "symbol": "ANSC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:10.874Z"
+    },
+    {
+      "symbol": "ANTA",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:02.989Z"
+    },
+    {
+      "symbol": "AOD",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:52.761Z"
+    },
+    {
+      "symbol": "APAM",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:43.662Z"
+    },
+    {
+      "symbol": "APO",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:25.898Z"
+    },
+    {
+      "symbol": "ARBV",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:44.890Z"
+    },
+    {
+      "symbol": "ARDC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:19.412Z"
+    },
+    {
+      "symbol": "AROW",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:10.874Z"
+    },
+    {
+      "symbol": "ARX",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:02.989Z"
+    },
+    {
+      "symbol": "ASA",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:02.578Z"
+    },
+    {
+      "symbol": "ASB",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:34.929Z"
+    },
+    {
+      "symbol": "ASG",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:19.412Z"
+    },
+    {
+      "symbol": "ASIC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:02.989Z"
+    },
+    {
+      "symbol": "ASPC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:02.989Z"
+    },
+    {
+      "symbol": "ATII",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:02.989Z"
+    },
+    {
+      "symbol": "ATLC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:02.578Z"
+    },
+    {
+      "symbol": "ATLO",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:36.558Z"
+    },
+    {
+      "symbol": "ATMC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:44.891Z"
+    },
+    {
+      "symbol": "ATMV",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:53.908Z"
+    },
+    {
+      "symbol": "AUB",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:43.662Z"
+    },
+    {
+      "symbol": "AUBN",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:44.891Z"
+    },
+    {
+      "symbol": "AVBC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:02.989Z"
+    },
+    {
+      "symbol": "AVBH",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:36.558Z"
+    },
+    {
+      "symbol": "AVK",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:10.874Z"
+    },
+    {
+      "symbol": "AWF",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:52.761Z"
+    },
+    {
+      "symbol": "AX",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:34.929Z"
+    },
+    {
+      "symbol": "AXAHF",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:20.406Z"
+    },
+    {
+      "symbol": "AXAHY",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:20.406Z"
+    },
+    {
+      "symbol": "AXIN",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:02.989Z"
+    },
+    {
+      "symbol": "AXP",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:25.898Z"
+    },
+    {
+      "symbol": "AXS",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:34.929Z"
+    },
+    {
+      "symbol": "BAC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:25.898Z"
+    },
+    {
+      "symbol": "BACC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:02.989Z"
+    },
+    {
+      "symbol": "BACHY",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:20.406Z"
+    },
+    {
+      "symbol": "BACQ",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:10.874Z"
+    },
+    {
+      "symbol": "BAFN",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:53.908Z"
+    },
+    {
+      "symbol": "BAKR",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:02.989Z"
+    },
+    {
+      "symbol": "BANC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:43.662Z"
+    },
+    {
+      "symbol": "BANF",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:34.929Z"
+    },
+    {
+      "symbol": "BANR",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:43.662Z"
+    },
+    {
+      "symbol": "BANX",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:36.558Z"
+    },
+    {
+      "symbol": "BAYA",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:53.908Z"
+    },
+    {
+      "symbol": "BBDC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:52.761Z"
+    },
+    {
+      "symbol": "BBN",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:52.761Z"
+    },
+    {
+      "symbol": "BBVA",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:20.406Z"
+    },
+    {
+      "symbol": "BBVXF",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:20.406Z"
+    },
+    {
+      "symbol": "BCAL",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:10.874Z"
+    },
+    {
+      "symbol": "BCAT",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:52.761Z"
+    },
+    {
+      "symbol": "BCBP",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:36.558Z"
+    },
+    {
+      "symbol": "BCCB",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:02.989Z"
+    },
+    {
+      "symbol": "BCDRF",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:20.406Z"
+    },
+    {
+      "symbol": "BCML",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:19.412Z"
+    },
+    {
+      "symbol": "BCOW",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:53.908Z"
+    },
+    {
+      "symbol": "BCSF",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:52.761Z"
+    },
+    {
+      "symbol": "BCTF",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:53.908Z"
+    },
+    {
+      "symbol": "BCV",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:44.890Z"
+    },
+    {
+      "symbol": "BCX",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:02.578Z"
+    },
+    {
+      "symbol": "BDJ",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:52.761Z"
+    },
+    {
+      "symbol": "BEAG",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:02.989Z"
+    },
+    {
+      "symbol": "BETR",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:36.558Z"
+    },
+    {
+      "symbol": "BFC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:52.761Z"
+    },
+    {
+      "symbol": "BFCC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:28.060Z"
+    },
+    {
+      "symbol": "BFH",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:43.662Z"
+    },
+    {
+      "symbol": "BFIN",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:36.558Z"
+    },
+    {
+      "symbol": "BFK",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:10.874Z"
+    },
+    {
+      "symbol": "BFST",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:02.578Z"
+    },
+    {
+      "symbol": "BFZ",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:19.412Z"
+    },
+    {
+      "symbol": "BGB",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:10.874Z"
+    },
+    {
+      "symbol": "BGC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:34.929Z"
+    },
+    {
+      "symbol": "BGH",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:19.412Z"
+    },
+    {
+      "symbol": "BGR",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:19.412Z"
+    },
+    {
+      "symbol": "BGT",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:19.412Z"
+    },
+    {
+      "symbol": "BGX",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:36.558Z"
+    },
+    {
+      "symbol": "BGY",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:02.578Z"
+    },
+    {
+      "symbol": "BHB",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:10.874Z"
+    },
+    {
+      "symbol": "BHF",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:43.662Z"
+    },
+    {
+      "symbol": "BHK",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:10.874Z"
+    },
+    {
+      "symbol": "BHLB",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:52.761Z"
+    },
+    {
+      "symbol": "BHRB",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:02.578Z"
+    },
+    {
+      "symbol": "BHV",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:02.989Z"
+    },
+    {
+      "symbol": "BIT",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:02.578Z"
+    },
+    {
+      "symbol": "BKFL",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:53.908Z"
+    },
+    {
+      "symbol": "BKHA",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:44.891Z"
+    },
+    {
+      "symbol": "BKN",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:36.558Z"
+    },
+    {
+      "symbol": "BKSC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:44.891Z"
+    },
+    {
+      "symbol": "BKT",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:28.060Z"
+    },
+    {
+      "symbol": "BKU",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:43.662Z"
+    },
+    {
+      "symbol": "BLE",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:10.874Z"
+    },
+    {
+      "symbol": "BLFY",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:36.558Z"
+    },
+    {
+      "symbol": "BLHK",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:44.891Z"
+    },
+    {
+      "symbol": "BLK",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:25.898Z"
+    },
+    {
+      "symbol": "BLUW",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:02.989Z"
+    },
+    {
+      "symbol": "BLW",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:10.874Z"
+    },
+    {
+      "symbol": "BLX",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:52.761Z"
+    },
+    {
+      "symbol": "BME",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:10.874Z"
+    },
+    {
+      "symbol": "BMEZ",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:52.761Z"
+    },
+    {
+      "symbol": "BMNR",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:43.662Z"
+    },
+    {
+      "symbol": "BMRC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:19.412Z"
+    },
+    {
+      "symbol": "BN",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:20.406Z"
+    },
+    {
+      "symbol": "BNCC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:44.890Z"
+    },
+    {
+      "symbol": "BNPQF",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:20.406Z"
+    },
+    {
+      "symbol": "BNPQY",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:20.406Z"
+    },
+    {
+      "symbol": "BNY",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:28.060Z"
+    },
+    {
+      "symbol": "BOE",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:02.578Z"
+    },
+    {
+      "symbol": "BOH",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:43.662Z"
+    },
+    {
+      "symbol": "BOKF",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:34.929Z"
+    },
+    {
+      "symbol": "BOTJ",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:53.908Z"
+    },
+    {
+      "symbol": "BOW",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:52.761Z"
+    },
+    {
+      "symbol": "BPOP",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:34.929Z"
+    },
+    {
+      "symbol": "BPRN",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:28.060Z"
+    },
+    {
+      "symbol": "BRDG",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:52.761Z"
+    },
+    {
+      "symbol": "BRK-A",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:20.406Z"
+    },
+    {
+      "symbol": "BRK-B",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:25.898Z"
+    },
+    {
+      "symbol": "BRKL",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:52.761Z"
+    },
+    {
+      "symbol": "BRR",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:02.989Z"
+    },
+    {
+      "symbol": "BRW",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:19.412Z"
+    },
+    {
+      "symbol": "BRZH",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:53.908Z"
+    },
+    {
+      "symbol": "BSAA",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:02.989Z"
+    },
+    {
+      "symbol": "BSBK",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:44.890Z"
+    },
+    {
+      "symbol": "BSFO",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:53.908Z"
+    },
+    {
+      "symbol": "BSL",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:36.558Z"
+    },
+    {
+      "symbol": "BSRR",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:10.874Z"
+    },
+    {
+      "symbol": "BST",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:52.761Z"
+    },
+    {
+      "symbol": "BSTZ",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:52.761Z"
+    },
+    {
+      "symbol": "BSVN",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:10.874Z"
+    },
+    {
+      "symbol": "BTA",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:44.890Z"
+    },
+    {
+      "symbol": "BTCS",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:44.891Z"
+    },
+    {
+      "symbol": "BTO",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:02.578Z"
+    },
+    {
+      "symbol": "BTT",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:52.761Z"
+    },
+    {
+      "symbol": "BTX",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:02.989Z"
+    },
+    {
+      "symbol": "BTZ",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:52.761Z"
+    },
+    {
+      "symbol": "BUI",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:02.578Z"
+    },
+    {
+      "symbol": "BUR",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:43.662Z"
+    },
+    {
+      "symbol": "BUSE",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:52.761Z"
+    },
+    {
+      "symbol": "BVFL",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:36.558Z"
+    },
+    {
+      "symbol": "BWB",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:10.874Z"
+    },
+    {
+      "symbol": "BWFG",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:19.412Z"
+    },
+    {
+      "symbol": "BWG",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:36.558Z"
+    },
+    {
+      "symbol": "BWIN",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:43.662Z"
+    },
+    {
+      "symbol": "BX",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:25.898Z"
+    },
+    {
+      "symbol": "BXMX",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:52.761Z"
+    },
+    {
+      "symbol": "BXSL",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:34.929Z"
+    },
+    {
+      "symbol": "BY",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:52.761Z"
+    },
+    {
+      "symbol": "BYFC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:53.908Z"
+    },
+    {
+      "symbol": "BYM",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:28.060Z"
+    },
+    {
+      "symbol": "C",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:25.898Z"
+    },
+    {
+      "symbol": "CAC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:10.874Z"
+    },
+    {
+      "symbol": "CACC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:34.929Z"
+    },
+    {
+      "symbol": "CADE",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:34.929Z"
+    },
+    {
+      "symbol": "CAEP",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:02.989Z"
+    },
+    {
+      "symbol": "CAF",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:28.060Z"
+    },
+    {
+      "symbol": "CAPN",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:53.908Z"
+    },
+    {
+      "symbol": "CARE",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:10.874Z"
+    },
+    {
+      "symbol": "CASH",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:43.662Z"
+    },
+    {
+      "symbol": "CATY",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:43.662Z"
+    },
+    {
+      "symbol": "CB",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:25.898Z"
+    },
+    {
+      "symbol": "CBAF",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:53.908Z"
+    },
+    {
+      "symbol": "CBAN",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:19.412Z"
+    },
+    {
+      "symbol": "CBAUF",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:20.406Z"
+    },
+    {
+      "symbol": "CBBI",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:44.890Z"
+    },
+    {
+      "symbol": "CBFV",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:36.558Z"
+    },
+    {
+      "symbol": "CBKM",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:53.908Z"
+    },
+    {
+      "symbol": "CBNA",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:36.558Z"
+    },
+    {
+      "symbol": "CBNK",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:10.874Z"
+    },
+    {
+      "symbol": "CBRRF",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:53.908Z"
+    },
+    {
+      "symbol": "CBSH",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:34.929Z"
+    },
+    {
+      "symbol": "CBTN",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:36.558Z"
+    },
+    {
+      "symbol": "CBU",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:43.662Z"
+    },
+    {
+      "symbol": "CBWA",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:53.908Z"
+    },
+    {
+      "symbol": "CCAP",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:10.874Z"
+    },
+    {
+      "symbol": "CCB",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:52.761Z"
+    },
+    {
+      "symbol": "CCBG",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:02.578Z"
+    },
+    {
+      "symbol": "CCCX",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:02.989Z"
+    },
+    {
+      "symbol": "CCD",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:10.874Z"
+    },
+    {
+      "symbol": "CCFN",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:36.558Z"
+    },
+    {
+      "symbol": "CCIF",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:53.908Z"
+    },
+    {
+      "symbol": "CCIR",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:28.060Z"
+    },
+    {
+      "symbol": "CCIX",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:19.412Z"
+    },
+    {
+      "symbol": "CCNB",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:53.908Z"
+    },
+    {
+      "symbol": "CCNE",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:10.874Z"
+    },
+    {
+      "symbol": "CEE",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:44.890Z"
+    },
+    {
+      "symbol": "CEP",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:19.412Z"
+    },
+    {
+      "symbol": "CEPO",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:02.989Z"
+    },
+    {
+      "symbol": "CEPT",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:02.989Z"
+    },
+    {
+      "symbol": "CET",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:52.761Z"
+    },
+    {
+      "symbol": "CEV",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:53.908Z"
+    },
+    {
+      "symbol": "CFBK",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:36.558Z"
+    },
+    {
+      "symbol": "CFFI",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:28.060Z"
+    },
+    {
+      "symbol": "CFFN",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:02.578Z"
+    },
+    {
+      "symbol": "CFNB",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:36.558Z"
+    },
+    {
+      "symbol": "CFR",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:34.929Z"
+    },
+    {
+      "symbol": "CFSB",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:44.891Z"
+    },
+    {
+      "symbol": "CGBD",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:02.578Z"
+    },
+    {
+      "symbol": "CGCT",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:02.989Z"
+    },
+    {
+      "symbol": "CGO",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:44.890Z"
+    },
+    {
+      "symbol": "CGXYY",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:20.406Z"
+    },
+    {
+      "symbol": "CHAC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:02.989Z"
+    },
+    {
+      "symbol": "CHAR",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:02.989Z"
+    },
+    {
+      "symbol": "CHBH",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:44.890Z"
+    },
+    {
+      "symbol": "CHCJY",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:20.406Z"
+    },
+    {
+      "symbol": "CHCO",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:43.662Z"
+    },
+    {
+      "symbol": "CHEB",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:44.890Z"
+    },
+    {
+      "symbol": "CHI",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:02.578Z"
+    },
+    {
+      "symbol": "CHMG",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:28.060Z"
+    },
+    {
+      "symbol": "CHN",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:36.558Z"
+    },
+    {
+      "symbol": "CHPG",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:02.989Z"
+    },
+    {
+      "symbol": "CHW",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:10.874Z"
+    },
+    {
+      "symbol": "CHY",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:02.578Z"
+    },
+    {
+      "symbol": "CIBH",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:53.908Z"
+    },
+    {
+      "symbol": "CIBN",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:02.989Z"
+    },
+    {
+      "symbol": "CICHY",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:20.406Z"
+    },
+    {
+      "symbol": "CIHHF",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:20.406Z"
+    },
+    {
+      "symbol": "CIHKY",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:20.406Z"
+    },
+    {
+      "symbol": "CII",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:52.761Z"
+    },
+    {
+      "symbol": "CION",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:02.578Z"
+    },
+    {
+      "symbol": "CIVB",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:19.412Z"
+    },
+    {
+      "symbol": "CIZN",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:53.908Z"
+    },
+    {
+      "symbol": "CLBK",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:52.761Z"
+    },
+    {
+      "symbol": "CLM",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:43.662Z"
+    },
+    {
+      "symbol": "CLSK",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:43.662Z"
+    },
+    {
+      "symbol": "CLST",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:53.908Z"
+    },
+    {
+      "symbol": "CMA",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:34.929Z"
+    },
+    {
+      "symbol": "CME",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:25.898Z"
+    },
+    {
+      "symbol": "CMTV",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:44.890Z"
+    },
+    {
+      "symbol": "CMUV",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:53.908Z"
+    },
+    {
+      "symbol": "CMWAY",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:20.406Z"
+    },
+    {
+      "symbol": "CNAF",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:02.989Z"
+    },
+    {
+      "symbol": "CNBB",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:44.891Z"
+    },
+    {
+      "symbol": "CNBN",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:44.890Z"
+    },
+    {
+      "symbol": "CNO",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:34.929Z"
+    },
+    {
+      "symbol": "CNOB",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:52.761Z"
+    },
+    {
+      "symbol": "CNS",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:34.929Z"
+    },
+    {
+      "symbol": "COF",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:20.406Z"
+    },
+    {
+      "symbol": "COFS",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:28.060Z"
+    },
+    {
+      "symbol": "COHN",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:02.989Z"
+    },
+    {
+      "symbol": "COLA",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:02.989Z"
+    },
+    {
+      "symbol": "COLB",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:34.929Z"
+    },
+    {
+      "symbol": "COPL",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:02.989Z"
+    },
+    {
+      "symbol": "COSO",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:28.060Z"
+    },
+    {
+      "symbol": "CPBI",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:53.908Z"
+    },
+    {
+      "symbol": "CPF",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:02.578Z"
+    },
+    {
+      "symbol": "CPKF",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:44.890Z"
+    },
+    {
+      "symbol": "CPSS",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:36.558Z"
+    },
+    {
+      "symbol": "CPZ",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:19.412Z"
+    },
+    {
+      "symbol": "CRAQ",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:02.989Z"
+    },
+    {
+      "symbol": "CRCL",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:02.989Z"
+    },
+    {
+      "symbol": "CRD-A",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:10.874Z"
+    },
+    {
+      "symbol": "CRF",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:52.761Z"
+    },
+    {
+      "symbol": "CRVL",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:52.761Z"
+    },
+    {
+      "symbol": "CSHX",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:28.060Z"
+    },
+    {
+      "symbol": "CSQ",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:43.662Z"
+    },
+    {
+      "symbol": "CSWC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:52.761Z"
+    },
+    {
+      "symbol": "CTBI",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:52.761Z"
+    },
+    {
+      "symbol": "CTUY",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:44.891Z"
+    },
+    {
+      "symbol": "CUB",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:19.412Z"
+    },
+    {
+      "symbol": "CUBI",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:43.662Z"
+    },
+    {
+      "symbol": "CULL",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:53.908Z"
+    },
+    {
+      "symbol": "CURN",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:44.891Z"
+    },
+    {
+      "symbol": "CVBF",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:43.662Z"
+    },
+    {
+      "symbol": "CWBC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:19.412Z"
+    },
+    {
+      "symbol": "CWBK",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:44.890Z"
+    },
+    {
+      "symbol": "CXH",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:53.908Z"
+    },
+    {
+      "symbol": "CYSM",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:02.989Z"
+    },
+    {
+      "symbol": "CZFS",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:28.060Z"
+    },
+    {
+      "symbol": "CZNC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:19.412Z"
+    },
+    {
+      "symbol": "CZWI",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:36.558Z"
+    },
+    {
+      "symbol": "DAAQ",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:02.989Z"
+    },
+    {
+      "symbol": "DBIN",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:10.874Z"
+    },
+    {
+      "symbol": "DBL",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:19.412Z"
+    },
+    {
+      "symbol": "DBRG",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:43.662Z"
+    },
+    {
+      "symbol": "DBSDF",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:20.406Z"
+    },
+    {
+      "symbol": "DBSDY",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:20.406Z"
+    },
+    {
+      "symbol": "DCOM",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:52.761Z"
+    },
+    {
+      "symbol": "DEFG",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:02.989Z"
+    },
+    {
+      "symbol": "DFP",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:10.874Z"
+    },
+    {
+      "symbol": "DGICA",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:02.578Z"
+    },
+    {
+      "symbol": "DHIL",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:19.412Z"
+    },
+    {
+      "symbol": "DIAX",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:10.874Z"
+    },
+    {
+      "symbol": "DIMC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:44.891Z"
+    },
+    {
+      "symbol": "DLY",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:02.578Z"
+    },
+    {
+      "symbol": "DMAA",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:02.989Z"
+    },
+    {
+      "symbol": "DMB",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:36.558Z"
+    },
+    {
+      "symbol": "DMO",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:36.558Z"
+    },
+    {
+      "symbol": "DMYY",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:53.908Z"
+    },
+    {
+      "symbol": "DNB",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:34.929Z"
+    },
+    {
+      "symbol": "DNP",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:34.929Z"
+    },
+    {
+      "symbol": "DNQAF",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:02.989Z"
+    },
+    {
+      "symbol": "DOMH",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:53.908Z"
+    },
+    {
+      "symbol": "DPG",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:10.874Z"
+    },
+    {
+      "symbol": "DRDB",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:02.989Z"
+    },
+    {
+      "symbol": "DSBX",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:28.060Z"
+    },
+    {
+      "symbol": "DSL",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:52.761Z"
+    },
+    {
+      "symbol": "DSM",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:19.412Z"
+    },
+    {
+      "symbol": "DSU",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:10.874Z"
+    },
+    {
+      "symbol": "DTF",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:53.908Z"
+    },
+    {
+      "symbol": "DTSQ",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:44.891Z"
+    },
+    {
+      "symbol": "DXYZ",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:19.412Z"
+    },
+    {
+      "symbol": "DYCQ",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:44.891Z"
+    },
+    {
+      "symbol": "DYNX",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:02.989Z"
+    },
+    {
+      "symbol": "EAD",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:10.874Z"
+    },
+    {
+      "symbol": "EBC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:43.662Z"
+    },
+    {
+      "symbol": "EBMT",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:44.890Z"
+    },
+    {
+      "symbol": "ECAT",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:43.662Z"
+    },
+    {
+      "symbol": "ECBK",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:36.558Z"
+    },
+    {
+      "symbol": "ECC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:02.578Z"
+    },
+    {
+      "symbol": "ECF",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:36.558Z"
+    },
+    {
+      "symbol": "ECLP",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:02.989Z"
+    },
+    {
+      "symbol": "ECPG",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:52.761Z"
+    },
+    {
+      "symbol": "EDD",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:19.412Z"
+    },
+    {
+      "symbol": "EDF",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:36.558Z"
+    },
+    {
+      "symbol": "EDVR",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:53.908Z"
+    },
+    {
+      "symbol": "EEA",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:53.908Z"
+    },
+    {
+      "symbol": "EFR",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:19.412Z"
+    },
+    {
+      "symbol": "EFSC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:43.662Z"
+    },
+    {
+      "symbol": "EFSI",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:44.890Z"
+    },
+    {
+      "symbol": "EFT",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:19.412Z"
+    },
+    {
+      "symbol": "EGBN",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:10.874Z"
+    },
+    {
+      "symbol": "EGHA",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:02.989Z"
+    },
+    {
+      "symbol": "EHI",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:36.558Z"
+    },
+    {
+      "symbol": "EIC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:28.060Z"
+    },
+    {
+      "symbol": "EIG",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:52.761Z"
+    },
+    {
+      "symbol": "EIM",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:10.874Z"
+    },
+    {
+      "symbol": "EMCG",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:53.908Z"
+    },
+    {
+      "symbol": "EMD",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:02.578Z"
+    },
+    {
+      "symbol": "EMF",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:28.060Z"
+    },
+    {
+      "symbol": "EMO",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:02.578Z"
+    },
+    {
+      "symbol": "EMYB",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:44.890Z"
+    },
+    {
+      "symbol": "ENBP",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:44.890Z"
+    },
+    {
+      "symbol": "ENVA",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:43.662Z"
+    },
+    {
+      "symbol": "ENX",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:36.558Z"
+    },
+    {
+      "symbol": "EOD",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:28.060Z"
+    },
+    {
+      "symbol": "EOI",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:02.578Z"
+    },
+    {
+      "symbol": "EOS",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:52.761Z"
+    },
+    {
+      "symbol": "EOT",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:28.060Z"
+    },
+    {
+      "symbol": "EQBK",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:02.578Z"
+    },
+    {
+      "symbol": "EQV",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:10.874Z"
+    },
+    {
+      "symbol": "ERC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:28.060Z"
+    },
+    {
+      "symbol": "ERH",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:44.890Z"
+    },
+    {
+      "symbol": "ESBS",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:53.908Z"
+    },
+    {
+      "symbol": "ESHA",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:36.558Z"
+    },
+    {
+      "symbol": "ESNT",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:34.929Z"
+    },
+    {
+      "symbol": "ESQ",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:02.578Z"
+    },
+    {
+      "symbol": "ETB",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:10.874Z"
+    },
+    {
+      "symbol": "ETG",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:52.761Z"
+    },
+    {
+      "symbol": "ETJ",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:02.578Z"
+    },
+    {
+      "symbol": "ETO",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:10.874Z"
+    },
+    {
+      "symbol": "ETOR",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:02.989Z"
+    },
+    {
+      "symbol": "ETV",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:52.761Z"
+    },
+    {
+      "symbol": "ETW",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:52.761Z"
+    },
+    {
+      "symbol": "ETX",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:28.060Z"
+    },
+    {
+      "symbol": "ETY",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:43.662Z"
+    },
+    {
+      "symbol": "EURK",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:53.908Z"
+    },
+    {
+      "symbol": "EVF",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:44.890Z"
+    },
+    {
+      "symbol": "EVG",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:36.558Z"
+    },
+    {
+      "symbol": "EVM",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:28.060Z"
+    },
+    {
+      "symbol": "EVN",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:10.874Z"
+    },
+    {
+      "symbol": "EVR",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:34.929Z"
+    },
+    {
+      "symbol": "EVT",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:43.662Z"
+    },
+    {
+      "symbol": "EVV",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:52.761Z"
+    },
+    {
+      "symbol": "EWSB",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:02.989Z"
+    },
+    {
+      "symbol": "EXG",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:43.662Z"
+    },
+    {
+      "symbol": "EZPW",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:02.578Z"
+    },
+    {
+      "symbol": "FACT",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:02.989Z"
+    },
+    {
+      "symbol": "FAF",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:34.929Z"
+    },
+    {
+      "symbol": "FAX",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:02.578Z"
+    },
+    {
+      "symbol": "FBAK",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:02.578Z"
+    },
+    {
+      "symbol": "FBIZ",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:10.874Z"
+    },
+    {
+      "symbol": "FBK",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:43.662Z"
+    },
+    {
+      "symbol": "FBLA",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:28.060Z"
+    },
+    {
+      "symbol": "FBNC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:43.662Z"
+    },
+    {
+      "symbol": "FBP",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:43.662Z"
+    },
+    {
+      "symbol": "FBPA",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:02.989Z"
+    },
+    {
+      "symbol": "FBSI",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:53.908Z"
+    },
+    {
+      "symbol": "FBTT",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:53.908Z"
+    },
+    {
+      "symbol": "FCAP",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:44.890Z"
+    },
+    {
+      "symbol": "FCBC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:02.578Z"
+    },
+    {
+      "symbol": "FCCO",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:36.558Z"
+    },
+    {
+      "symbol": "FCF",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:52.761Z"
+    },
+    {
+      "symbol": "FCFS",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:34.929Z"
+    },
+    {
+      "symbol": "FCO",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:44.891Z"
+    },
+    {
+      "symbol": "FCT",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:28.060Z"
+    },
+    {
+      "symbol": "FDBC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:28.060Z"
+    },
+    {
+      "symbol": "FDSB",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:53.908Z"
+    },
+    {
+      "symbol": "FDUS",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:02.578Z"
+    },
+    {
+      "symbol": "FDVA",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:53.908Z"
+    },
+    {
+      "symbol": "FERA",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:02.989Z"
+    },
+    {
+      "symbol": "FFA",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:10.874Z"
+    },
+    {
+      "symbol": "FFBB",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:28.060Z"
+    },
+    {
+      "symbol": "FFBC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:43.662Z"
+    },
+    {
+      "symbol": "FFBW",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:53.908Z"
+    },
+    {
+      "symbol": "FFC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:02.578Z"
+    },
+    {
+      "symbol": "FFIC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:19.412Z"
+    },
+    {
+      "symbol": "FFIN",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:34.929Z"
+    },
+    {
+      "symbol": "FFMR",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:10.874Z"
+    },
+    {
+      "symbol": "FG",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:34.929Z"
+    },
+    {
+      "symbol": "FGBI",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:44.890Z"
+    },
+    {
+      "symbol": "FGF",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:02.989Z"
+    },
+    {
+      "symbol": "FGFH",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:44.890Z"
+    },
+    {
+      "symbol": "FGMC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:02.989Z"
+    },
+    {
+      "symbol": "FHB",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:43.662Z"
+    },
+    {
+      "symbol": "FHI",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:34.929Z"
+    },
+    {
+      "symbol": "FIBK",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:43.662Z"
+    },
+    {
+      "symbol": "FIHL",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:43.662Z"
+    },
+    {
+      "symbol": "FINS",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:19.412Z"
+    },
+    {
+      "symbol": "FINW",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:28.060Z"
+    },
+    {
+      "symbol": "FISI",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:19.412Z"
+    },
+    {
+      "symbol": "FLC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:36.558Z"
+    },
+    {
+      "symbol": "FLG",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:34.929Z"
+    },
+    {
+      "symbol": "FMAO",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:19.412Z"
+    },
+    {
+      "symbol": "FMBH",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:52.761Z"
+    },
+    {
+      "symbol": "FMBL",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:02.578Z"
+    },
+    {
+      "symbol": "FMBM",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:53.908Z"
+    },
+    {
+      "symbol": "FMCB",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:02.578Z"
+    },
+    {
+      "symbol": "FMCCT",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:20.406Z"
+    },
+    {
+      "symbol": "FMN",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:44.890Z"
+    },
+    {
+      "symbol": "FMNB",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:10.874Z"
+    },
+    {
+      "symbol": "FMY",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:53.908Z"
+    },
+    {
+      "symbol": "FNB",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:34.929Z"
+    },
+    {
+      "symbol": "FNBT",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:10.874Z"
+    },
+    {
+      "symbol": "FNLC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:19.412Z"
+    },
+    {
+      "symbol": "FNRN",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:36.558Z"
+    },
+    {
+      "symbol": "FNWB",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:53.908Z"
+    },
+    {
+      "symbol": "FNWD",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:44.890Z"
+    },
+    {
+      "symbol": "FOA",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:28.060Z"
+    },
+    {
+      "symbol": "FOF",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:19.412Z"
+    },
+    {
+      "symbol": "FPF",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:52.761Z"
+    },
+    {
+      "symbol": "FRA",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:10.874Z"
+    },
+    {
+      "symbol": "FRAF",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:36.558Z"
+    },
+    {
+      "symbol": "FRBA",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:19.412Z"
+    },
+    {
+      "symbol": "FRGE",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:34.929Z"
+    },
+    {
+      "symbol": "FRHC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:34.929Z"
+    },
+    {
+      "symbol": "FRME",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:43.662Z"
+    },
+    {
+      "symbol": "FRSB",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:53.908Z"
+    },
+    {
+      "symbol": "FRST",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:28.060Z"
+    },
+    {
+      "symbol": "FSBC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:02.578Z"
+    },
+    {
+      "symbol": "FSBW",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:19.412Z"
+    },
+    {
+      "symbol": "FSEA",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:53.908Z"
+    },
+    {
+      "symbol": "FSFG",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:36.558Z"
+    },
+    {
+      "symbol": "FSHP",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:44.891Z"
+    },
+    {
+      "symbol": "FSK",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:34.929Z"
+    },
+    {
+      "symbol": "FSUN",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:52.761Z"
+    },
+    {
+      "symbol": "FT",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:28.060Z"
+    },
+    {
+      "symbol": "FTF",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:43.662Z"
+    },
+    {
+      "symbol": "FTFI",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:53.908Z"
+    },
+    {
+      "symbol": "FTHY",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:10.874Z"
+    },
+    {
+      "symbol": "FULT",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:43.662Z"
+    },
+    {
+      "symbol": "FUNC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:28.060Z"
+    },
+    {
+      "symbol": "FUND",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:28.060Z"
+    },
+    {
+      "symbol": "FUSB",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:53.908Z"
+    },
+    {
+      "symbol": "FVCB",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:28.060Z"
+    },
+    {
+      "symbol": "FXNC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:36.558Z"
+    },
+    {
+      "symbol": "GAB",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:43.662Z"
+    },
+    {
+      "symbol": "GABC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:52.761Z"
+    },
+    {
+      "symbol": "GAIN",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:10.874Z"
+    },
+    {
+      "symbol": "GAM",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:52.761Z"
+    },
+    {
+      "symbol": "GAMI",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:02.578Z"
+    },
+    {
+      "symbol": "GBAB",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:19.412Z"
+    },
+    {
+      "symbol": "GBCI",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:34.929Z"
+    },
+    {
+      "symbol": "GBDC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:34.929Z"
+    },
+    {
+      "symbol": "GBFH",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:10.874Z"
+    },
+    {
+      "symbol": "GBLI",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:19.412Z"
+    },
+    {
+      "symbol": "GCBC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:19.412Z"
+    },
+    {
+      "symbol": "GCMG",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:43.662Z"
+    },
+    {
+      "symbol": "GDL",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:44.891Z"
+    },
+    {
+      "symbol": "GDO",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:36.558Z"
+    },
+    {
+      "symbol": "GDOT",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:10.874Z"
+    },
+    {
+      "symbol": "GDV",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:43.662Z"
+    },
+    {
+      "symbol": "GECC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:44.890Z"
+    },
+    {
+      "symbol": "GF",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:36.558Z"
+    },
+    {
+      "symbol": "GGZ",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:44.890Z"
+    },
+    {
+      "symbol": "GHI",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:28.060Z"
+    },
+    {
+      "symbol": "GHLD",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:52.761Z"
+    },
+    {
+      "symbol": "GHY",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:10.874Z"
+    },
+    {
+      "symbol": "GIG",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:19.412Z"
+    },
+    {
+      "symbol": "GLAD",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:02.578Z"
+    },
+    {
+      "symbol": "GLO",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:28.060Z"
+    },
+    {
+      "symbol": "GLQ",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:36.558Z"
+    },
+    {
+      "symbol": "GLRE",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:10.874Z"
+    },
+    {
+      "symbol": "GLU",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:44.890Z"
+    },
+    {
+      "symbol": "GLV",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:53.908Z"
+    },
+    {
+      "symbol": "GLXY",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:02.989Z"
+    },
+    {
+      "symbol": "GNT",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:44.890Z"
+    },
+    {
+      "symbol": "GNTY",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:10.874Z"
+    },
+    {
+      "symbol": "GNW",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:34.929Z"
+    },
+    {
+      "symbol": "GOCO",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:44.890Z"
+    },
+    {
+      "symbol": "GOF",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:43.662Z"
+    },
+    {
+      "symbol": "GOVB",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:02.989Z"
+    },
+    {
+      "symbol": "GPAT",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:19.412Z"
+    },
+    {
+      "symbol": "GRAF",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:19.412Z"
+    },
+    {
+      "symbol": "GRF",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:53.908Z"
+    },
+    {
+      "symbol": "GRX",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:36.558Z"
+    },
+    {
+      "symbol": "GS",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:25.898Z"
+    },
+    {
+      "symbol": "GS-PA",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:20.406Z"
+    },
+    {
+      "symbol": "GS-PD",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:20.406Z"
+    },
+    {
+      "symbol": "GSBC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:02.578Z"
+    },
+    {
+      "symbol": "GSBD",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:52.761Z"
+    },
+    {
+      "symbol": "GSBX",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:53.908Z"
+    },
+    {
+      "symbol": "GSHD",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:43.662Z"
+    },
+    {
+      "symbol": "GSHR",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:02.989Z"
+    },
+    {
+      "symbol": "GSRT",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:02.989Z"
+    },
+    {
+      "symbol": "GTEN",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:02.989Z"
+    },
+    {
+      "symbol": "GTERA",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:02.989Z"
+    },
+    {
+      "symbol": "GUT",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:10.874Z"
+    },
+    {
+      "symbol": "HAFC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:02.578Z"
+    },
+    {
+      "symbol": "HARL",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:44.891Z"
+    },
+    {
+      "symbol": "HASI",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:43.662Z"
+    },
+    {
+      "symbol": "HBCP",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:10.874Z"
+    },
+    {
+      "symbol": "HBCYF",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:20.406Z"
+    },
+    {
+      "symbol": "HBNC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:02.578Z"
+    },
+    {
+      "symbol": "HBT",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:02.578Z"
+    },
+    {
+      "symbol": "HCBC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:02.989Z"
+    },
+    {
+      "symbol": "HCI",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:52.761Z"
+    },
+    {
+      "symbol": "HDB",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:20.406Z"
+    },
+    {
+      "symbol": "HEQ",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:44.890Z"
+    },
+    {
+      "symbol": "HFBL",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:53.908Z"
+    },
+    {
+      "symbol": "HFRO",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:10.874Z"
+    },
+    {
+      "symbol": "HFWA",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:02.578Z"
+    },
+    {
+      "symbol": "HG",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:43.662Z"
+    },
+    {
+      "symbol": "HGLB",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:36.558Z"
+    },
+    {
+      "symbol": "HGTY",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:34.929Z"
+    },
+    {
+      "symbol": "HIFS",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:10.874Z"
+    },
+    {
+      "symbol": "HIPO",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:02.578Z"
+    },
+    {
+      "symbol": "HLNE",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:34.929Z"
+    },
+    {
+      "symbol": "HLXB",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:28.060Z"
+    },
+    {
+      "symbol": "HMN",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:43.662Z"
+    },
+    {
+      "symbol": "HMST",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:28.060Z"
+    },
+    {
+      "symbol": "HNNA",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:44.891Z"
+    },
+    {
+      "symbol": "HNVR",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:36.558Z"
+    },
+    {
+      "symbol": "HNW",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:44.890Z"
+    },
+    {
+      "symbol": "HOMB",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:34.929Z"
+    },
+    {
+      "symbol": "HOND",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:19.412Z"
+    },
+    {
+      "symbol": "HONE",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:10.874Z"
+    },
+    {
+      "symbol": "HOOD",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:25.898Z"
+    },
+    {
+      "symbol": "HOPE",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:52.761Z"
+    },
+    {
+      "symbol": "HPF",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:19.412Z"
+    },
+    {
+      "symbol": "HPI",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:10.874Z"
+    },
+    {
+      "symbol": "HPS",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:10.874Z"
+    },
+    {
+      "symbol": "HQH",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:02.578Z"
+    },
+    {
+      "symbol": "HQL",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:19.412Z"
+    },
+    {
+      "symbol": "HRTG",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:02.578Z"
+    },
+    {
+      "symbol": "HRZN",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:28.060Z"
+    },
+    {
+      "symbol": "HSBC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:20.406Z"
+    },
+    {
+      "symbol": "HSPO",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:44.891Z"
+    },
+    {
+      "symbol": "HSPT",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:02.989Z"
+    },
+    {
+      "symbol": "HTB",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:02.989Z"
+    },
+    {
+      "symbol": "HTBK",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:02.578Z"
+    },
+    {
+      "symbol": "HTD",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:02.578Z"
+    },
+    {
+      "symbol": "HTGC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:43.662Z"
+    },
+    {
+      "symbol": "HTH",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:43.662Z"
+    },
+    {
+      "symbol": "HUT",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:43.662Z"
+    },
+    {
+      "symbol": "HVII",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:02.989Z"
+    },
+    {
+      "symbol": "HWBK",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:28.060Z"
+    },
+    {
+      "symbol": "HWC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:34.929Z"
+    },
+    {
+      "symbol": "HYAC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:19.412Z"
+    },
+    {
+      "symbol": "HYI",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:28.060Z"
+    },
+    {
+      "symbol": "HYT",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:52.761Z"
+    },
+    {
+      "symbol": "IAE",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:53.908Z"
+    },
+    {
+      "symbol": "IBAC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:36.558Z"
+    },
+    {
+      "symbol": "IBCP",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:02.578Z"
+    },
+    {
+      "symbol": "IBN",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:20.406Z"
+    },
+    {
+      "symbol": "IBOC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:34.929Z"
+    },
+    {
+      "symbol": "IBTN",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:53.908Z"
+    },
+    {
+      "symbol": "ICE",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:25.898Z"
+    },
+    {
+      "symbol": "IDCBY",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:20.406Z"
+    },
+    {
+      "symbol": "IDE",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:36.558Z"
+    },
+    {
+      "symbol": "IFN",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:02.578Z"
+    },
+    {
+      "symbol": "IGA",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:36.558Z"
+    },
+    {
+      "symbol": "IGD",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:10.874Z"
+    },
+    {
+      "symbol": "IGI",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:36.558Z"
+    },
+    {
+      "symbol": "IGIC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:52.761Z"
+    },
+    {
+      "symbol": "IHD",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:44.890Z"
+    },
+    {
+      "symbol": "IIF",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:28.060Z"
+    },
+    {
+      "symbol": "IIM",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:10.874Z"
+    },
+    {
+      "symbol": "IITSF",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:20.406Z"
+    },
+    {
+      "symbol": "INAC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:02.989Z"
+    },
+    {
+      "symbol": "INBC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:36.558Z"
+    },
+    {
+      "symbol": "INBK",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:36.558Z"
+    },
+    {
+      "symbol": "INDB",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:43.662Z"
+    },
+    {
+      "symbol": "INFT",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:53.908Z"
+    },
+    {
+      "symbol": "INTR",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:43.662Z"
+    },
+    {
+      "symbol": "IOR",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:53.908Z"
+    },
+    {
+      "symbol": "IPCX",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:02.989Z"
+    },
+    {
+      "symbol": "IPOD",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:02.989Z"
+    },
+    {
+      "symbol": "IREN",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:34.929Z"
+    },
+    {
+      "symbol": "IROH",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:44.891Z"
+    },
+    {
+      "symbol": "IROQ",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:53.908Z"
+    },
+    {
+      "symbol": "ISBA",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:28.060Z"
+    },
+    {
+      "symbol": "ISD",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:10.874Z"
+    },
+    {
+      "symbol": "ISNPY",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:20.406Z"
+    },
+    {
+      "symbol": "ISRL",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:36.558Z"
+    },
+    {
+      "symbol": "ISTR",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:28.060Z"
+    },
+    {
+      "symbol": "ITIC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:10.874Z"
+    },
+    {
+      "symbol": "IVSBF",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:20.406Z"
+    },
+    {
+      "symbol": "IVSXF",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:20.406Z"
+    },
+    {
+      "symbol": "IVZ",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:34.929Z"
+    },
+    {
+      "symbol": "JACS",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:02.989Z"
+    },
+    {
+      "symbol": "JBTC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:53.908Z"
+    },
+    {
+      "symbol": "JCAP",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:02.989Z"
+    },
+    {
+      "symbol": "JCE",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:28.060Z"
+    },
+    {
+      "symbol": "JDVB",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:44.891Z"
+    },
+    {
+      "symbol": "JENA",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:02.989Z"
+    },
+    {
+      "symbol": "JEQ",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:44.890Z"
+    },
+    {
+      "symbol": "JFBC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:44.891Z"
+    },
+    {
+      "symbol": "JFR",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:52.761Z"
+    },
+    {
+      "symbol": "JGH",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:19.412Z"
+    },
+    {
+      "symbol": "JHG",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:34.929Z"
+    },
+    {
+      "symbol": "JHI",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:44.890Z"
+    },
+    {
+      "symbol": "JHS",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:36.558Z"
+    },
+    {
+      "symbol": "JLS",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:44.890Z"
+    },
+    {
+      "symbol": "JMM",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:53.908Z"
+    },
+    {
+      "symbol": "JMSB",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:28.060Z"
+    },
+    {
+      "symbol": "JOF",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:19.412Z"
+    },
+    {
+      "symbol": "JPC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:43.662Z"
+    },
+    {
+      "symbol": "JPI",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:19.412Z"
+    },
+    {
+      "symbol": "JPM",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:25.898Z"
+    },
+    {
+      "symbol": "JQC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:02.578Z"
+    },
+    {
+      "symbol": "JRI",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:19.412Z"
+    },
+    {
+      "symbol": "JRS",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:28.060Z"
+    },
+    {
+      "symbol": "JRVR",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:28.060Z"
+    },
+    {
+      "symbol": "JUVF",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:53.908Z"
+    },
+    {
+      "symbol": "JXN",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:34.929Z"
+    },
+    {
+      "symbol": "KBDC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:52.761Z"
+    },
+    {
+      "symbol": "KCHV",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:02.989Z"
+    },
+    {
+      "symbol": "KCLI",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:19.412Z"
+    },
+    {
+      "symbol": "KF",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:36.558Z"
+    },
+    {
+      "symbol": "KFII",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:02.989Z"
+    },
+    {
+      "symbol": "KG",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:02.989Z"
+    },
+    {
+      "symbol": "KINS",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:36.558Z"
+    },
+    {
+      "symbol": "KIO",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:19.412Z"
+    },
+    {
+      "symbol": "KISB",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:44.890Z"
+    },
+    {
+      "symbol": "KKR",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:25.898Z"
+    },
+    {
+      "symbol": "KMPR",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:43.662Z"
+    },
+    {
+      "symbol": "KNSL",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:34.929Z"
+    },
+    {
+      "symbol": "KRNY",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:19.412Z"
+    },
+    {
+      "symbol": "KTF",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:19.412Z"
+    },
+    {
+      "symbol": "KTHN",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:53.908Z"
+    },
+    {
+      "symbol": "KVAC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:28.060Z"
+    },
+    {
+      "symbol": "KYN",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:43.662Z"
+    },
+    {
+      "symbol": "LARK",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:36.558Z"
+    },
+    {
+      "symbol": "LAZ",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:34.929Z"
+    },
+    {
+      "symbol": "LC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:52.761Z"
+    },
+    {
+      "symbol": "LCCC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:02.989Z"
+    },
+    {
+      "symbol": "LCNB",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:28.060Z"
+    },
+    {
+      "symbol": "LDP",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:02.578Z"
+    },
+    {
+      "symbol": "LEGT",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:19.412Z"
+    },
+    {
+      "symbol": "LEO",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:19.412Z"
+    },
+    {
+      "symbol": "LFGP",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:53.908Z"
+    },
+    {
+      "symbol": "LGI",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:28.060Z"
+    },
+    {
+      "symbol": "LIEN",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:28.060Z"
+    },
+    {
+      "symbol": "LKFN",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:52.761Z"
+    },
+    {
+      "symbol": "LMND",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:34.929Z"
+    },
+    {
+      "symbol": "LNC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:34.929Z"
+    },
+    {
+      "symbol": "LNKB",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:28.060Z"
+    },
+    {
+      "symbol": "LOB",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:52.761Z"
+    },
+    {
+      "symbol": "LOGN",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:02.989Z"
+    },
+    {
+      "symbol": "LOKV",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:02.989Z"
+    },
+    {
+      "symbol": "LPAA",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:19.412Z"
+    },
+    {
+      "symbol": "LPBB",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:28.060Z"
+    },
+    {
+      "symbol": "LRBI",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:53.908Z"
+    },
+    {
+      "symbol": "LSBK",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:53.908Z"
+    },
+    {
+      "symbol": "LUMB",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:53.908Z"
+    },
+    {
+      "symbol": "LYBC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:36.558Z"
+    },
+    {
+      "symbol": "MA",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:25.898Z"
+    },
+    {
+      "symbol": "MACI",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:28.060Z"
+    },
+    {
+      "symbol": "MAIN",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:34.929Z"
+    },
+    {
+      "symbol": "MARA",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:34.929Z"
+    },
+    {
+      "symbol": "MAV",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:36.558Z"
+    },
+    {
+      "symbol": "MAYA",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:02.989Z"
+    },
+    {
+      "symbol": "MBAV",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:19.412Z"
+    },
+    {
+      "symbol": "MBBC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:02.989Z"
+    },
+    {
+      "symbol": "MBCN",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:28.060Z"
+    },
+    {
+      "symbol": "MBFJF",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:20.406Z"
+    },
+    {
+      "symbol": "MBI",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:19.412Z"
+    },
+    {
+      "symbol": "MBIN",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:52.761Z"
+    },
+    {
+      "symbol": "MBLU",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:28.060Z"
+    },
+    {
+      "symbol": "MBWM",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:02.578Z"
+    },
+    {
+      "symbol": "MC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:34.929Z"
+    },
+    {
+      "symbol": "MCB",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:02.578Z"
+    },
+    {
+      "symbol": "MCBI",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:44.890Z"
+    },
+    {
+      "symbol": "MCBS",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:02.578Z"
+    },
+    {
+      "symbol": "MCI",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:10.874Z"
+    },
+    {
+      "symbol": "MCN",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:44.890Z"
+    },
+    {
+      "symbol": "MCO",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:25.898Z"
+    },
+    {
+      "symbol": "MCR",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:28.060Z"
+    },
+    {
+      "symbol": "MCVT",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:53.908Z"
+    },
+    {
+      "symbol": "MCY",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:34.929Z"
+    },
+    {
+      "symbol": "MFBI",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:02.989Z"
+    },
+    {
+      "symbol": "MFIC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:52.761Z"
+    },
+    {
+      "symbol": "MFIN",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:28.060Z"
+    },
+    {
+      "symbol": "MFM",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:28.060Z"
+    },
+    {
+      "symbol": "MGYR",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:44.890Z"
+    },
+    {
+      "symbol": "MHD",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:02.578Z"
+    },
+    {
+      "symbol": "MHF",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:36.558Z"
+    },
+    {
+      "symbol": "MHI",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:28.060Z"
+    },
+    {
+      "symbol": "MHN",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:19.412Z"
+    },
+    {
+      "symbol": "MIY",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:19.412Z"
+    },
+    {
+      "symbol": "MKTW",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:02.578Z"
+    },
+    {
+      "symbol": "MKTX",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:34.929Z"
+    },
+    {
+      "symbol": "MLAC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:02.989Z"
+    },
+    {
+      "symbol": "MMC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:25.898Z"
+    },
+    {
+      "symbol": "MMD",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:19.412Z"
+    },
+    {
+      "symbol": "MMU",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:10.874Z"
+    },
+    {
+      "symbol": "MNAT",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:44.890Z"
+    },
+    {
+      "symbol": "MNBO",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:02.989Z"
+    },
+    {
+      "symbol": "MNMB",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:53.908Z"
+    },
+    {
+      "symbol": "MNSB",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:36.558Z"
+    },
+    {
+      "symbol": "MOFG",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:02.578Z"
+    },
+    {
+      "symbol": "MORN",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:34.929Z"
+    },
+    {
+      "symbol": "MPA",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:36.558Z"
+    },
+    {
+      "symbol": "MPB",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:10.874Z"
+    },
+    {
+      "symbol": "MPV",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:28.060Z"
+    },
+    {
+      "symbol": "MQT",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:28.060Z"
+    },
+    {
+      "symbol": "MQY",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:02.578Z"
+    },
+    {
+      "symbol": "MRBK",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:36.558Z"
+    },
+    {
+      "symbol": "MRCC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:36.558Z"
+    },
+    {
+      "symbol": "MRX",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:43.662Z"
+    },
+    {
+      "symbol": "MS",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:25.898Z"
+    },
+    {
+      "symbol": "MS-PA",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:20.406Z"
+    },
+    {
+      "symbol": "MS-PE",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:20.406Z"
+    },
+    {
+      "symbol": "MS-PF",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:20.406Z"
+    },
+    {
+      "symbol": "MS-PI",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:20.406Z"
+    },
+    {
+      "symbol": "MS-PK",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:20.406Z"
+    },
+    {
+      "symbol": "MSBB",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:02.989Z"
+    },
+    {
+      "symbol": "MSBI",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:19.412Z"
+    },
+    {
+      "symbol": "MSD",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:36.558Z"
+    },
+    {
+      "symbol": "MSDL",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:52.761Z"
+    },
+    {
+      "symbol": "MSIF",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:02.989Z"
+    },
+    {
+      "symbol": "MSWV",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:53.908Z"
+    },
+    {
+      "symbol": "MTG",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:34.929Z"
+    },
+    {
+      "symbol": "MUA",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:10.874Z"
+    },
+    {
+      "symbol": "MUC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:52.761Z"
+    },
+    {
+      "symbol": "MUE",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:28.060Z"
+    },
+    {
+      "symbol": "MUFG",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:20.406Z"
+    },
+    {
+      "symbol": "MUJ",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:02.578Z"
+    },
+    {
+      "symbol": "MURGF",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:20.406Z"
+    },
+    {
+      "symbol": "MURGY",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:20.406Z"
+    },
+    {
+      "symbol": "MVBF",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:19.412Z"
+    },
+    {
+      "symbol": "MVF",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:10.874Z"
+    },
+    {
+      "symbol": "MVLY",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:53.908Z"
+    },
+    {
+      "symbol": "MVT",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:28.060Z"
+    },
+    {
+      "symbol": "MXE",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:53.908Z"
+    },
+    {
+      "symbol": "MXF",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:28.060Z"
+    },
+    {
+      "symbol": "MYD",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:10.874Z"
+    },
+    {
+      "symbol": "MYFW",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:28.060Z"
+    },
+    {
+      "symbol": "MYI",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:02.578Z"
+    },
+    {
+      "symbol": "MYN",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:19.412Z"
+    },
+    {
+      "symbol": "MZHOF",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:20.406Z"
+    },
+    {
+      "symbol": "NAC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:52.761Z"
+    },
+    {
+      "symbol": "NAD",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:43.662Z"
+    },
+    {
+      "symbol": "NAN",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:19.412Z"
+    },
+    {
+      "symbol": "NASB",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:28.060Z"
+    },
+    {
+      "symbol": "NAVI",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:52.761Z"
+    },
+    {
+      "symbol": "NAZ",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:36.558Z"
+    },
+    {
+      "symbol": "NBB",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:10.874Z"
+    },
+    {
+      "symbol": "NBBK",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:02.578Z"
+    },
+    {
+      "symbol": "NBH",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:19.412Z"
+    },
+    {
+      "symbol": "NBHC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:52.761Z"
+    },
+    {
+      "symbol": "NBN",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:02.578Z"
+    },
+    {
+      "symbol": "NBTB",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:43.662Z"
+    },
+    {
+      "symbol": "NCA",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:19.412Z"
+    },
+    {
+      "symbol": "NCDL",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:52.761Z"
+    },
+    {
+      "symbol": "NCV",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:52.761Z"
+    },
+    {
+      "symbol": "NCZ",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:52.761Z"
+    },
+    {
+      "symbol": "NDMO",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:02.578Z"
+    },
+    {
+      "symbol": "NEA",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:43.662Z"
+    },
+    {
+      "symbol": "NECB",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:28.060Z"
+    },
+    {
+      "symbol": "NETD",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:10.874Z"
+    },
+    {
+      "symbol": "NEWT",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:19.412Z"
+    },
+    {
+      "symbol": "NFBK",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:10.874Z"
+    },
+    {
+      "symbol": "NFJ",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:52.761Z"
+    },
+    {
+      "symbol": "NHIC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:02.989Z"
+    },
+    {
+      "symbol": "NHS",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:28.060Z"
+    },
+    {
+      "symbol": "NIC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:43.662Z"
+    },
+    {
+      "symbol": "NIDB",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:53.908Z"
+    },
+    {
+      "symbol": "NIE",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:02.578Z"
+    },
+    {
+      "symbol": "NIM",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:44.890Z"
+    },
+    {
+      "symbol": "NKSH",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:36.558Z"
+    },
+    {
+      "symbol": "NKX",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:02.578Z"
+    },
+    {
+      "symbol": "NMCO",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:02.578Z"
+    },
+    {
+      "symbol": "NMFC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:52.761Z"
+    },
+    {
+      "symbol": "NMI",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:44.891Z"
+    },
+    {
+      "symbol": "NMIH",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:43.662Z"
+    },
+    {
+      "symbol": "NML",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:10.874Z"
+    },
+    {
+      "symbol": "NMS",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:53.908Z"
+    },
+    {
+      "symbol": "NMT",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:44.890Z"
+    },
+    {
+      "symbol": "NMZ",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:52.761Z"
+    },
+    {
+      "symbol": "NNI",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:34.929Z"
+    },
+    {
+      "symbol": "NNY",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:36.558Z"
+    },
+    {
+      "symbol": "NODK",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:28.060Z"
+    },
+    {
+      "symbol": "NOEM",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:02.989Z"
+    },
+    {
+      "symbol": "NOM",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:02.989Z"
+    },
+    {
+      "symbol": "NPAC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:02.989Z"
+    },
+    {
+      "symbol": "NPB",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:02.989Z"
+    },
+    {
+      "symbol": "NPV",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:36.558Z"
+    },
+    {
+      "symbol": "NQP",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:10.874Z"
+    },
+    {
+      "symbol": "NRIM",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:10.874Z"
+    },
+    {
+      "symbol": "NRK",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:02.578Z"
+    },
+    {
+      "symbol": "NSTS",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:53.908Z"
+    },
+    {
+      "symbol": "NTB",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:43.662Z"
+    },
+    {
+      "symbol": "NUV",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:43.662Z"
+    },
+    {
+      "symbol": "NUW",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:28.060Z"
+    },
+    {
+      "symbol": "NVG",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:43.662Z"
+    },
+    {
+      "symbol": "NWBI",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:52.761Z"
+    },
+    {
+      "symbol": "NWFL",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:36.558Z"
+    },
+    {
+      "symbol": "NXC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:53.908Z"
+    },
+    {
+      "symbol": "NXG",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:44.890Z"
+    },
+    {
+      "symbol": "NXJ",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:10.874Z"
+    },
+    {
+      "symbol": "NXN",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:53.908Z"
+    },
+    {
+      "symbol": "NXP",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:02.578Z"
+    },
+    {
+      "symbol": "NZF",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:43.662Z"
+    },
+    {
+      "symbol": "OACC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:02.989Z"
+    },
+    {
+      "symbol": "OAKC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:36.558Z"
+    },
+    {
+      "symbol": "OBDC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:34.929Z"
+    },
+    {
+      "symbol": "OBK",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:52.761Z"
+    },
+    {
+      "symbol": "OBT",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:36.558Z"
+    },
+    {
+      "symbol": "OCCI",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:44.891Z"
+    },
+    {
+      "symbol": "OCFC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:52.761Z"
+    },
+    {
+      "symbol": "OCSL",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:52.761Z"
+    },
+    {
+      "symbol": "OFED",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:53.908Z"
+    },
+    {
+      "symbol": "OFG",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:43.662Z"
+    },
+    {
+      "symbol": "OFS",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:44.890Z"
+    },
+    {
+      "symbol": "OMCC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:53.908Z"
+    },
+    {
+      "symbol": "OMF",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:34.929Z"
+    },
+    {
+      "symbol": "ONB",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:34.929Z"
+    },
+    {
+      "symbol": "ONIT",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:19.412Z"
+    },
+    {
+      "symbol": "OPBK",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:36.558Z"
+    },
+    {
+      "symbol": "OPFI",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:52.761Z"
+    },
+    {
+      "symbol": "OPOF",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:28.060Z"
+    },
+    {
+      "symbol": "OPP",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:28.060Z"
+    },
+    {
+      "symbol": "OPRT",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:28.060Z"
+    },
+    {
+      "symbol": "OPY",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:02.578Z"
+    },
+    {
+      "symbol": "ORI",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:34.929Z"
+    },
+    {
+      "symbol": "ORIQU",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:02.989Z"
+    },
+    {
+      "symbol": "ORRF",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:02.578Z"
+    },
+    {
+      "symbol": "OSBC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:02.578Z"
+    },
+    {
+      "symbol": "OSBK",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:53.908Z"
+    },
+    {
+      "symbol": "OTCM",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:02.578Z"
+    },
+    {
+      "symbol": "OTF",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:10.922Z"
+    },
+    {
+      "symbol": "OTTW",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:53.908Z"
+    },
+    {
+      "symbol": "OVBC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:36.558Z"
+    },
+    {
+      "symbol": "OVLY",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:28.060Z"
+    },
+    {
+      "symbol": "OYSE",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:10.922Z"
+    },
+    {
+      "symbol": "OZK",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:34.929Z"
+    },
+    {
+      "symbol": "PAI",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:44.890Z"
+    },
+    {
+      "symbol": "PAX",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:43.662Z"
+    },
+    {
+      "symbol": "PB",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:34.929Z"
+    },
+    {
+      "symbol": "PBAM",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:19.412Z"
+    },
+    {
+      "symbol": "PBBK",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:53.908Z"
+    },
+    {
+      "symbol": "PBFS",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:19.412Z"
+    },
+    {
+      "symbol": "PBHC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:44.891Z"
+    },
+    {
+      "symbol": "PBNC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:36.558Z"
+    },
+    {
+      "symbol": "PBNK",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:44.890Z"
+    },
+    {
+      "symbol": "PCAP",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:10.922Z"
+    },
+    {
+      "symbol": "PCB",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:19.412Z"
+    },
+    {
+      "symbol": "PCF",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:36.558Z"
+    },
+    {
+      "symbol": "PCK",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:36.558Z"
+    },
+    {
+      "symbol": "PCM",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:53.908Z"
+    },
+    {
+      "symbol": "PCN",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:02.578Z"
+    },
+    {
+      "symbol": "PCQ",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:36.558Z"
+    },
+    {
+      "symbol": "PCSC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:44.890Z"
+    },
+    {
+      "symbol": "PDI",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:34.929Z"
+    },
+    {
+      "symbol": "PDLB",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:19.412Z"
+    },
+    {
+      "symbol": "PDO",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:52.761Z"
+    },
+    {
+      "symbol": "PDT",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:02.578Z"
+    },
+    {
+      "symbol": "PDX",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:52.761Z"
+    },
+    {
+      "symbol": "PEBK",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:36.558Z"
+    },
+    {
+      "symbol": "PEBO",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:52.761Z"
+    },
+    {
+      "symbol": "PELI",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:10.922Z"
+    },
+    {
+      "symbol": "PEO",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:10.874Z"
+    },
+    {
+      "symbol": "PFBC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:52.761Z"
+    },
+    {
+      "symbol": "PFBX",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:44.891Z"
+    },
+    {
+      "symbol": "PFD",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:36.558Z"
+    },
+    {
+      "symbol": "PFIS",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:10.874Z"
+    },
+    {
+      "symbol": "PFL",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:19.412Z"
+    },
+    {
+      "symbol": "PFLC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:44.890Z"
+    },
+    {
+      "symbol": "PFLT",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:02.578Z"
+    },
+    {
+      "symbol": "PFN",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:02.578Z"
+    },
+    {
+      "symbol": "PFO",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:44.890Z"
+    },
+    {
+      "symbol": "PFS",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:43.662Z"
+    },
+    {
+      "symbol": "PFSB",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:02.989Z"
+    },
+    {
+      "symbol": "PFSI",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:34.929Z"
+    },
+    {
+      "symbol": "PFX",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:44.890Z"
+    },
+    {
+      "symbol": "PGC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:10.874Z"
+    },
+    {
+      "symbol": "PGP",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:44.891Z"
+    },
+    {
+      "symbol": "PGR",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:25.898Z"
+    },
+    {
+      "symbol": "PGZ",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:53.908Z"
+    },
+    {
+      "symbol": "PHD",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:44.890Z"
+    },
+    {
+      "symbol": "PHT",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:28.060Z"
+    },
+    {
+      "symbol": "PIAIF",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:20.406Z"
+    },
+    {
+      "symbol": "PIPR",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:34.929Z"
+    },
+    {
+      "symbol": "PJT",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:34.929Z"
+    },
+    {
+      "symbol": "PKBK",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:28.060Z"
+    },
+    {
+      "symbol": "PLAOF",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:10.922Z"
+    },
+    {
+      "symbol": "PLBC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:28.060Z"
+    },
+    {
+      "symbol": "PLMK",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:10.922Z"
+    },
+    {
+      "symbol": "PLMR",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:43.662Z"
+    },
+    {
+      "symbol": "PMF",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:28.060Z"
+    },
+    {
+      "symbol": "PMHG",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:36.558Z"
+    },
+    {
+      "symbol": "PML",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:10.874Z"
+    },
+    {
+      "symbol": "PMM",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:28.060Z"
+    },
+    {
+      "symbol": "PMO",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:19.412Z"
+    },
+    {
+      "symbol": "PMTR",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:10.922Z"
+    },
+    {
+      "symbol": "PMTS",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:36.558Z"
+    },
+    {
+      "symbol": "PMX",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:28.060Z"
+    },
+    {
+      "symbol": "PNF",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:53.908Z"
+    },
+    {
+      "symbol": "PNFP",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:34.929Z"
+    },
+    {
+      "symbol": "PNGAY",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:20.406Z"
+    },
+    {
+      "symbol": "PNI",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:53.908Z"
+    },
+    {
+      "symbol": "PNNT",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:10.874Z"
+    },
+    {
+      "symbol": "POLE",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:19.412Z"
+    },
+    {
+      "symbol": "PPBI",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:43.662Z"
+    },
+    {
+      "symbol": "PPBN",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:53.908Z"
+    },
+    {
+      "symbol": "PRA",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:52.761Z"
+    },
+    {
+      "symbol": "PRAA",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:02.578Z"
+    },
+    {
+      "symbol": "PRI",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:34.929Z"
+    },
+    {
+      "symbol": "PRK",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:43.662Z"
+    },
+    {
+      "symbol": "PROV",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:44.890Z"
+    },
+    {
+      "symbol": "PSBD",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:10.874Z"
+    },
+    {
+      "symbol": "PSBQ",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:44.890Z"
+    },
+    {
+      "symbol": "PSF",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:28.060Z"
+    },
+    {
+      "symbol": "PSLV",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:34.929Z"
+    },
+    {
+      "symbol": "PSTVY",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:20.406Z"
+    },
+    {
+      "symbol": "PTA",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:52.761Z"
+    },
+    {
+      "symbol": "PTMN",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:44.890Z"
+    },
+    {
+      "symbol": "PTY",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:43.662Z"
+    },
+    {
+      "symbol": "PVBC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:28.060Z"
+    },
+    {
+      "symbol": "PWP",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:43.662Z"
+    },
+    {
+      "symbol": "PX",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:52.761Z"
+    },
+    {
+      "symbol": "PYN",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:02.989Z"
+    },
+    {
+      "symbol": "PZC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:36.558Z"
+    },
+    {
+      "symbol": "QCRH",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:52.761Z"
+    },
+    {
+      "symbol": "QNBC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:44.890Z"
+    },
+    {
+      "symbol": "QNTO",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:02.989Z"
+    },
+    {
+      "symbol": "QQQX",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:52.761Z"
+    },
+    {
+      "symbol": "QSEA",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:10.922Z"
+    },
+    {
+      "symbol": "RA",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:02.578Z"
+    },
+    {
+      "symbol": "RAAQ",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:10.922Z"
+    },
+    {
+      "symbol": "RAC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:10.922Z"
+    },
+    {
+      "symbol": "RAND",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:53.908Z"
+    },
+    {
+      "symbol": "RANG",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:10.922Z"
+    },
+    {
+      "symbol": "RBB",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:19.412Z"
+    },
+    {
+      "symbol": "RBCAA",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:52.761Z"
+    },
+    {
+      "symbol": "RBKB",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:36.558Z"
+    },
+    {
+      "symbol": "RBSPF",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:20.406Z"
+    },
+    {
+      "symbol": "RCS",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:19.412Z"
+    },
+    {
+      "symbol": "RDAG",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:10.922Z"
+    },
+    {
+      "symbol": "RDN",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:34.929Z"
+    },
+    {
+      "symbol": "RFAI",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:36.558Z"
+    },
+    {
+      "symbol": "RFI",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:19.412Z"
+    },
+    {
+      "symbol": "RFM",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:44.891Z"
+    },
+    {
+      "symbol": "RFMZ",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:19.412Z"
+    },
+    {
+      "symbol": "RGT",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:53.908Z"
+    },
+    {
+      "symbol": "RILY",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:36.558Z"
+    },
+    {
+      "symbol": "RIOT",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:34.929Z"
+    },
+    {
+      "symbol": "RIV",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:28.060Z"
+    },
+    {
+      "symbol": "RLI",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:43.662Z"
+    },
+    {
+      "symbol": "RM",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:19.412Z"
+    },
+    {
+      "symbol": "RMBI",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:36.558Z"
+    },
+    {
+      "symbol": "RMI",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:44.891Z"
+    },
+    {
+      "symbol": "RMM",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:28.060Z"
+    },
+    {
+      "symbol": "RMT",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:10.874Z"
+    },
+    {
+      "symbol": "RNP",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:52.761Z"
+    },
+    {
+      "symbol": "RNST",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:43.662Z"
+    },
+    {
+      "symbol": "ROOT",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:52.761Z"
+    },
+    {
+      "symbol": "RQI",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:52.761Z"
+    },
+    {
+      "symbol": "RRACF",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:36.558Z"
+    },
+    {
+      "symbol": "RRBI",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:10.874Z"
+    },
+    {
+      "symbol": "RSF",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:53.908Z"
+    },
+    {
+      "symbol": "RTAC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:10.922Z"
+    },
+    {
+      "symbol": "RVT",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:43.662Z"
+    },
+    {
+      "symbol": "RWAY",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:10.874Z"
+    },
+    {
+      "symbol": "RWCB",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:53.908Z"
+    },
+    {
+      "symbol": "RY",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:25.898Z"
+    },
+    {
+      "symbol": "SABA",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:28.060Z"
+    },
+    {
+      "symbol": "SABK",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:44.890Z"
+    },
+    {
+      "symbol": "SAFT",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:52.761Z"
+    },
+    {
+      "symbol": "SAMG",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:36.558Z"
+    },
+    {
+      "symbol": "SAN",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:20.406Z"
+    },
+    {
+      "symbol": "SAR",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:19.412Z"
+    },
+    {
+      "symbol": "SBCF",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:43.662Z"
+    },
+    {
+      "symbol": "SBFG",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:36.558Z"
+    },
+    {
+      "symbol": "SBI",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:44.890Z"
+    },
+    {
+      "symbol": "SBKFF",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:20.406Z"
+    },
+    {
+      "symbol": "SBSI",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:02.578Z"
+    },
+    {
+      "symbol": "SBXD",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:28.060Z"
+    },
+    {
+      "symbol": "SCD",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:28.060Z"
+    },
+    {
+      "symbol": "SCHW",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:25.898Z"
+    },
+    {
+      "symbol": "SCM",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:10.874Z"
+    },
+    {
+      "symbol": "SDHI",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:10.922Z"
+    },
+    {
+      "symbol": "SDHY",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:10.874Z"
+    },
+    {
+      "symbol": "SEIC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:34.929Z"
+    },
+    {
+      "symbol": "SEZL",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:10.874Z"
+    },
+    {
+      "symbol": "SFBC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:44.890Z"
+    },
+    {
+      "symbol": "SFBS",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:34.929Z"
+    },
+    {
+      "symbol": "SFNC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:43.662Z"
+    },
+    {
+      "symbol": "SFST",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:19.412Z"
+    },
+    {
+      "symbol": "SHBI",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:10.874Z"
+    },
+    {
+      "symbol": "SIGI",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:34.929Z"
+    },
+    {
+      "symbol": "SIMA",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:19.412Z"
+    },
+    {
+      "symbol": "SKWD",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:43.662Z"
+    },
+    {
+      "symbol": "SLAMF",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:28.060Z"
+    },
+    {
+      "symbol": "SLBK",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:44.890Z"
+    },
+    {
+      "symbol": "SLDE",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:10.922Z"
+    },
+    {
+      "symbol": "SLM",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:34.929Z"
+    },
+    {
+      "symbol": "SLRC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:52.761Z"
+    },
+    {
+      "symbol": "SMBC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:02.578Z"
+    },
+    {
+      "symbol": "SMBK",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:02.578Z"
+    },
+    {
+      "symbol": "SMFG",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:20.406Z"
+    },
+    {
+      "symbol": "SMFNF",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:20.406Z"
+    },
+    {
+      "symbol": "SNEX",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:43.662Z"
+    },
+    {
+      "symbol": "SNFCA",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:28.060Z"
+    },
+    {
+      "symbol": "SNV",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:34.929Z"
+    },
+    {
+      "symbol": "SOME",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:36.558Z"
+    },
+    {
+      "symbol": "SOR",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:19.412Z"
+    },
+    {
+      "symbol": "SOUB",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:53.908Z"
+    },
+    {
+      "symbol": "SOUL",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:10.922Z"
+    },
+    {
+      "symbol": "SPE",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:36.558Z"
+    },
+    {
+      "symbol": "SPFI",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:02.578Z"
+    },
+    {
+      "symbol": "SPGI",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:25.898Z"
+    },
+    {
+      "symbol": "SPKL",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:36.558Z"
+    },
+    {
+      "symbol": "SPMC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:10.922Z"
+    },
+    {
+      "symbol": "SPNT",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:43.662Z"
+    },
+    {
+      "symbol": "SPXX",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:19.412Z"
+    },
+    {
+      "symbol": "SRBK",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:44.890Z"
+    },
+    {
+      "symbol": "SRCE",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:52.761Z"
+    },
+    {
+      "symbol": "SRL",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:53.908Z"
+    },
+    {
+      "symbol": "SRV",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:36.558Z"
+    },
+    {
+      "symbol": "SSB",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:34.929Z"
+    },
+    {
+      "symbol": "SSBI",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:53.908Z"
+    },
+    {
+      "symbol": "SSBP",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:02.989Z"
+    },
+    {
+      "symbol": "SSSS",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:28.060Z"
+    },
+    {
+      "symbol": "STBA",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:52.761Z"
+    },
+    {
+      "symbol": "STBI",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:53.908Z"
+    },
+    {
+      "symbol": "STC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:43.662Z"
+    },
+    {
+      "symbol": "STEL",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:52.761Z"
+    },
+    {
+      "symbol": "STEP",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:34.929Z"
+    },
+    {
+      "symbol": "STEW",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:43.662Z"
+    },
+    {
+      "symbol": "STK",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:10.874Z"
+    },
+    {
+      "symbol": "SVBT",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:53.908Z"
+    },
+    {
+      "symbol": "SVCC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:10.922Z"
+    },
+    {
+      "symbol": "SVII",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:44.890Z"
+    },
+    {
+      "symbol": "SWKH",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:36.558Z"
+    },
+    {
+      "symbol": "SYBT",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:43.662Z"
+    },
+    {
+      "symbol": "SZZL",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:36.558Z"
+    },
+    {
+      "symbol": "TACH",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:10.922Z"
+    },
+    {
+      "symbol": "TACO",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:10.922Z"
+    },
+    {
+      "symbol": "TAVI",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:10.922Z"
+    },
+    {
+      "symbol": "TBBK",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:43.662Z"
+    },
+    {
+      "symbol": "TBMC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:44.890Z"
+    },
+    {
+      "symbol": "TCBC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:53.908Z"
+    },
+    {
+      "symbol": "TCBI",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:34.929Z"
+    },
+    {
+      "symbol": "TCBK",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:52.761Z"
+    },
+    {
+      "symbol": "TCBS",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:53.908Z"
+    },
+    {
+      "symbol": "TCBX",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:10.874Z"
+    },
+    {
+      "symbol": "TCNB",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:02.989Z"
+    },
+    {
+      "symbol": "TCPC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:02.578Z"
+    },
+    {
+      "symbol": "TD",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:25.898Z"
+    },
+    {
+      "symbol": "TDAC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:10.922Z"
+    },
+    {
+      "symbol": "TDF",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:28.060Z"
+    },
+    {
+      "symbol": "TEAF",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:36.558Z"
+    },
+    {
+      "symbol": "TEI",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:19.412Z"
+    },
+    {
+      "symbol": "TETAA",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:02.989Z"
+    },
+    {
+      "symbol": "TFIN",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:52.761Z"
+    },
+    {
+      "symbol": "TFSL",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:34.929Z"
+    },
+    {
+      "symbol": "THFF",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:02.578Z"
+    },
+    {
+      "symbol": "THG",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:34.929Z"
+    },
+    {
+      "symbol": "THQ",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:02.578Z"
+    },
+    {
+      "symbol": "THW",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:10.874Z"
+    },
+    {
+      "symbol": "TIPT",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:02.578Z"
+    },
+    {
+      "symbol": "TKOMY",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:20.406Z"
+    },
+    {
+      "symbol": "TMP",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:52.761Z"
+    },
+    {
+      "symbol": "TOWN",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:43.662Z"
+    },
+    {
+      "symbol": "TPVG",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:28.060Z"
+    },
+    {
+      "symbol": "TREE",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:02.578Z"
+    },
+    {
+      "symbol": "TRIN",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:52.761Z"
+    },
+    {
+      "symbol": "TRMK",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:43.662Z"
+    },
+    {
+      "symbol": "TRST",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:02.578Z"
+    },
+    {
+      "symbol": "TRUP",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:43.662Z"
+    },
+    {
+      "symbol": "TRVR",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:53.908Z"
+    },
+    {
+      "symbol": "TSBK",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:28.060Z"
+    },
+    {
+      "symbol": "TSLX",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:43.662Z"
+    },
+    {
+      "symbol": "TVA",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:10.922Z"
+    },
+    {
+      "symbol": "TVAI",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:10.922Z"
+    },
+    {
+      "symbol": "TWFG",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:19.412Z"
+    },
+    {
+      "symbol": "TWN",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:19.412Z"
+    },
+    {
+      "symbol": "TYCB",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:36.558Z"
+    },
+    {
+      "symbol": "TYFG",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:44.890Z"
+    },
+    {
+      "symbol": "TYG",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:10.874Z"
+    },
+    {
+      "symbol": "UBAB",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:36.558Z"
+    },
+    {
+      "symbol": "UBCP",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:53.908Z"
+    },
+    {
+      "symbol": "UBFO",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:36.558Z"
+    },
+    {
+      "symbol": "UBOH",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:44.891Z"
+    },
+    {
+      "symbol": "UBS",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:20.406Z"
+    },
+    {
+      "symbol": "UBSI",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:34.929Z"
+    },
+    {
+      "symbol": "UCB",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:34.929Z"
+    },
+    {
+      "symbol": "UFCS",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:02.578Z"
+    },
+    {
+      "symbol": "UMBF",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:34.929Z"
+    },
+    {
+      "symbol": "UNB",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:44.890Z"
+    },
+    {
+      "symbol": "UNCFF",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:20.406Z"
+    },
+    {
+      "symbol": "UNCRY",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:20.406Z"
+    },
+    {
+      "symbol": "UNIB",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:53.908Z"
+    },
+    {
+      "symbol": "UNTN",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:02.989Z"
+    },
+    {
+      "symbol": "UNTY",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:10.874Z"
+    },
+    {
+      "symbol": "UPST",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:34.929Z"
+    },
+    {
+      "symbol": "USA",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:43.662Z"
+    },
+    {
+      "symbol": "USCB",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:19.412Z"
+    },
+    {
+      "symbol": "UTF",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:43.662Z"
+    },
+    {
+      "symbol": "UTG",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:43.662Z"
+    },
+    {
+      "symbol": "UVE",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:02.578Z"
+    },
+    {
+      "symbol": "UVSP",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:02.578Z"
+    },
+    {
+      "symbol": "UWHR",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:53.908Z"
+    },
+    {
+      "symbol": "UYSC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:10.922Z"
+    },
+    {
+      "symbol": "V",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:25.898Z"
+    },
+    {
+      "symbol": "VABK",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:28.060Z"
+    },
+    {
+      "symbol": "VACH",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:19.412Z"
+    },
+    {
+      "symbol": "VALU",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:19.412Z"
+    },
+    {
+      "symbol": "VBF",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:36.558Z"
+    },
+    {
+      "symbol": "VBTX",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:43.662Z"
+    },
+    {
+      "symbol": "VCIC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:10.874Z"
+    },
+    {
+      "symbol": "VCTR",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:34.929Z"
+    },
+    {
+      "symbol": "VEL",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:02.578Z"
+    },
+    {
+      "symbol": "VFL",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:44.890Z"
+    },
+    {
+      "symbol": "VGI",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:44.891Z"
+    },
+    {
+      "symbol": "VINP",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:02.578Z"
+    },
+    {
+      "symbol": "VIRT",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:34.929Z"
+    },
+    {
+      "symbol": "VKI",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:19.412Z"
+    },
+    {
+      "symbol": "VKQ",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:10.874Z"
+    },
+    {
+      "symbol": "VLT",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:53.908Z"
+    },
+    {
+      "symbol": "VLY",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:34.929Z"
+    },
+    {
+      "symbol": "VOYA",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:34.929Z"
+    },
+    {
+      "symbol": "VPV",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:28.060Z"
+    },
+    {
+      "symbol": "VRTS",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:52.761Z"
+    },
+    {
+      "symbol": "VTN",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:28.060Z"
+    },
+    {
+      "symbol": "VTYB",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:02.989Z"
+    },
+    {
+      "symbol": "VWFB",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:02.989Z"
+    },
+    {
+      "symbol": "WABC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:52.761Z"
+    },
+    {
+      "symbol": "WAFD",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:43.662Z"
+    },
+    {
+      "symbol": "WAL",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:34.929Z"
+    },
+    {
+      "symbol": "WASH",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:10.874Z"
+    },
+    {
+      "symbol": "WBS",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:34.929Z"
+    },
+    {
+      "symbol": "WCCB",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:10.922Z"
+    },
+    {
+      "symbol": "WD",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:43.662Z"
+    },
+    {
+      "symbol": "WEA",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:44.890Z"
+    },
+    {
+      "symbol": "WENN",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:10.922Z"
+    },
+    {
+      "symbol": "WFC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:25.898Z"
+    },
+    {
+      "symbol": "WHF",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:36.558Z"
+    },
+    {
+      "symbol": "WHG",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:36.558Z"
+    },
+    {
+      "symbol": "WIA",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:36.558Z"
+    },
+    {
+      "symbol": "WIW",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:10.874Z"
+    },
+    {
+      "symbol": "WLAC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:10.922Z"
+    },
+    {
+      "symbol": "WNEB",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:28.060Z"
+    },
+    {
+      "symbol": "WRIV",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:44.890Z"
+    },
+    {
+      "symbol": "WRLD",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:52.761Z"
+    },
+    {
+      "symbol": "WSBC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:43.662Z"
+    },
+    {
+      "symbol": "WSBF",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:28.060Z"
+    },
+    {
+      "symbol": "WSBK",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:10.922Z"
+    },
+    {
+      "symbol": "WSFS",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:43.662Z"
+    },
+    {
+      "symbol": "WT",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:43.662Z"
+    },
+    {
+      "symbol": "WTBA",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:19.412Z"
+    },
+    {
+      "symbol": "WTFC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:34.929Z"
+    },
+    {
+      "symbol": "WTG",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:10.922Z"
+    },
+    {
+      "symbol": "WTM",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:34.929Z"
+    },
+    {
+      "symbol": "WU",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:43.662Z"
+    },
+    {
+      "symbol": "WULF",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:43.662Z"
+    },
+    {
+      "symbol": "WVFC",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:02.989Z"
+    },
+    {
+      "symbol": "XFLT",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:19.412Z"
+    },
+    {
+      "symbol": "XP",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:34.929Z"
+    },
+    {
+      "symbol": "YHNA",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:57:53.908Z"
+    },
+    {
+      "symbol": "YORK",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:10.922Z"
+    },
+    {
+      "symbol": "ZBAI",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:10.922Z"
+    },
+    {
+      "symbol": "ZFSVF",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:20.406Z"
+    },
+    {
+      "symbol": "ZION",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:56:34.929Z"
+    },
+    {
+      "symbol": "ZURVY",
+      "sector": "Financial Services",
+      "scraped_at": "2025-08-09T07:58:20.406Z"
+    }
+  ]
+}

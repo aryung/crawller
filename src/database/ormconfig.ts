@@ -2,6 +2,7 @@ import 'reflect-metadata';
 import { DataSource } from 'typeorm';
 import { config } from 'dotenv';
 import { FundamentalDataEntity } from './entities/fundamental-data.entity.js';
+import { SymbolEntity } from './entities/symbol.entity.js';
 
 // Load environment variables
 config();
@@ -17,9 +18,9 @@ export const AppDataSource = new DataSource({
     process.env.NODE_ENV === 'production'
       ? process.env.POSTGRES_DB_NAME_AHA
       : process.env.POSTGRES_DB_NAME_AHA_DEV,
-  entities: [FundamentalDataEntity],
+  entities: [FundamentalDataEntity, SymbolEntity],
   synchronize: false, // Never use synchronize in production
-  logging: process.env.NODE_ENV === 'development',
+  logging: process.env.ENABLE_DB_LOGGING === 'true' || false,
   logger: 'advanced-console',
   extra: {
     max: 10, // Maximum number of clients in the pool
