@@ -1,18 +1,43 @@
 [
   {
-    "stockCode": "2330.TW",
-    "companyName": "台灣積體電路製造股份有限公司",
-    "sector": "半導體業"
+    "stockCode": "0050.TW",
+    "companyName": "元大台灣50",
+    "sector": "光電業"
   },
   {
-    "stockCode": "2317.TW", 
-    "companyName": "鴻海精密工業股份有限公司",
-    "sector": "電子零組件業"
+    "stockCode": "0051.TW",
+    "companyName": "元大中型100",
+    "sector": "光電業"
   },
   {
-    "stockCode": "2454.TW",
-    "companyName": "聯發科技股份有限公司", 
-    "sector": "半導體業"
+    "stockCode": "0052.TW",
+    "companyName": "富邦科技",
+    "sector": "光電業"
+  },
+  {
+    "stockCode": "0053.TW",
+    "companyName": "元大電子",
+    "sector": "光電業"
+  },
+  {
+    "stockCode": "0055.TW",
+    "companyName": "元大MSCI金融",
+    "sector": "光電業"
+  },
+  {
+    "stockCode": "0056.TW",
+    "companyName": "元大高股息",
+    "sector": "光電業"
+  },
+  {
+    "stockCode": "0057.TW",
+    "companyName": "富邦摩台",
+    "sector": "光電業"
+  },
+  {
+    "stockCode": "0061.TW",
+    "companyName": "元大寶滬深",
+    "sector": "光電業"
   },
   {
     "stockCode": "1101.TW",
@@ -20,58 +45,3593 @@
     "sector": "水泥工業"
   },
   {
+    "stockCode": "1102.TW",
+    "companyName": "亞泥",
+    "sector": "水泥工業"
+  },
+  {
+    "stockCode": "1103.TW",
+    "companyName": "嘉泥",
+    "sector": "水泥工業"
+  },
+  {
+    "stockCode": "1104.TW",
+    "companyName": "環泥",
+    "sector": "水泥工業"
+  },
+  {
+    "stockCode": "1108.TW",
+    "companyName": "幸福",
+    "sector": "水泥工業"
+  },
+  {
+    "stockCode": "1109.TW",
+    "companyName": "信大",
+    "sector": "水泥工業"
+  },
+  {
+    "stockCode": "1110.TW",
+    "companyName": "東泥",
+    "sector": "水泥工業"
+  },
+  {
+    "stockCode": "1201.TW",
+    "companyName": "味全",
+    "sector": "食品工業"
+  },
+  {
+    "stockCode": "1203.TW",
+    "companyName": "味王",
+    "sector": "食品工業"
+  },
+  {
+    "stockCode": "1210.TW",
+    "companyName": "大成",
+    "sector": "食品工業"
+  },
+  {
+    "stockCode": "1213.TW",
+    "companyName": "大飲",
+    "sector": "食品工業"
+  },
+  {
+    "stockCode": "1215.TW",
+    "companyName": "卜蜂",
+    "sector": "食品工業"
+  },
+  {
     "stockCode": "1216.TW",
     "companyName": "統一企業股份有限公司",
     "sector": "食品工業"
   },
   {
-    "stockCode": "2002.TW",
-    "companyName": "中國鋼鐵股份有限公司", 
+    "stockCode": "1217.TW",
+    "companyName": "愛之味",
+    "sector": "食品工業"
+  },
+  {
+    "stockCode": "1218.TW",
+    "companyName": "泰山",
+    "sector": "食品工業"
+  },
+  {
+    "stockCode": "1219.TW",
+    "companyName": "福壽",
+    "sector": "食品工業"
+  },
+  {
+    "stockCode": "1220.TW",
+    "companyName": "台榮",
+    "sector": "食品工業"
+  },
+  {
+    "stockCode": "1225.TW",
+    "companyName": "福懋油",
+    "sector": "食品工業"
+  },
+  {
+    "stockCode": "1227.TW",
+    "companyName": "佳格",
+    "sector": "食品工業"
+  },
+  {
+    "stockCode": "1229.TW",
+    "companyName": "聯華",
+    "sector": "食品工業"
+  },
+  {
+    "stockCode": "1231.TW",
+    "companyName": "聯華食",
+    "sector": "食品工業"
+  },
+  {
+    "stockCode": "1232.TW",
+    "companyName": "大統益",
+    "sector": "食品工業"
+  },
+  {
+    "stockCode": "1233.TW",
+    "companyName": "天仁",
+    "sector": "食品工業"
+  },
+  {
+    "stockCode": "1234.TW",
+    "companyName": "黑松",
+    "sector": "食品工業"
+  },
+  {
+    "stockCode": "1235.TW",
+    "companyName": "興泰",
+    "sector": "食品工業"
+  },
+  {
+    "stockCode": "1236.TW",
+    "companyName": "宏亞",
+    "sector": "食品工業"
+  },
+  {
+    "stockCode": "1256.TW",
+    "companyName": "鮮活果汁-KY",
+    "sector": "食品工業"
+  },
+  {
+    "stockCode": "1301.TW",
+    "companyName": "台塑",
+    "sector": "塑膠工業"
+  },
+  {
+    "stockCode": "1303.TW",
+    "companyName": "南亞",
+    "sector": "塑膠工業"
+  },
+  {
+    "stockCode": "1304.TW",
+    "companyName": "台聚",
+    "sector": "塑膠工業"
+  },
+  {
+    "stockCode": "1305.TW",
+    "companyName": "華夏",
+    "sector": "塑膠工業"
+  },
+  {
+    "stockCode": "1307.TW",
+    "companyName": "三芳",
+    "sector": "塑膠工業"
+  },
+  {
+    "stockCode": "1308.TW",
+    "companyName": "亞聚",
+    "sector": "塑膠工業"
+  },
+  {
+    "stockCode": "1309.TW",
+    "companyName": "台達化",
+    "sector": "塑膠工業"
+  },
+  {
+    "stockCode": "1310.TW",
+    "companyName": "台苯",
+    "sector": "塑膠工業"
+  },
+  {
+    "stockCode": "1312.TW",
+    "companyName": "國喬",
+    "sector": "塑膠工業"
+  },
+  {
+    "stockCode": "1313.TW",
+    "companyName": "聯成",
+    "sector": "塑膠工業"
+  },
+  {
+    "stockCode": "1314.TW",
+    "companyName": "中石化",
+    "sector": "塑膠工業"
+  },
+  {
+    "stockCode": "1315.TW",
+    "companyName": "達新",
+    "sector": "塑膠工業"
+  },
+  {
+    "stockCode": "1316.TW",
+    "companyName": "上曜",
+    "sector": "產業19"
+  },
+  {
+    "stockCode": "1319.TW",
+    "companyName": "東陽",
+    "sector": "產業13"
+  },
+  {
+    "stockCode": "1321.TW",
+    "companyName": "大洋",
+    "sector": "塑膠工業"
+  },
+  {
+    "stockCode": "1323.TW",
+    "companyName": "永裕",
+    "sector": "塑膠工業"
+  },
+  {
+    "stockCode": "1324.TW",
+    "companyName": "地球",
+    "sector": "塑膠工業"
+  },
+  {
+    "stockCode": "1325.TW",
+    "companyName": "恆大",
+    "sector": "塑膠工業"
+  },
+  {
+    "stockCode": "1326.TW",
+    "companyName": "台化",
+    "sector": "塑膠工業"
+  },
+  {
+    "stockCode": "1337.TW",
+    "companyName": "再生-KY",
+    "sector": "塑膠工業"
+  },
+  {
+    "stockCode": "1338.TW",
+    "companyName": "廣華-KY",
+    "sector": "產業13"
+  },
+  {
+    "stockCode": "1339.TW",
+    "companyName": "昭輝",
+    "sector": "產業13"
+  },
+  {
+    "stockCode": "1340.TW",
+    "companyName": "勝悅-KY",
+    "sector": "塑膠工業"
+  },
+  {
+    "stockCode": "1341.TW",
+    "companyName": "富林-KY",
+    "sector": "塑膠工業"
+  },
+  {
+    "stockCode": "1342.TW",
+    "companyName": "八貫",
+    "sector": "資訊服務業"
+  },
+  {
+    "stockCode": "1402.TW",
+    "companyName": "遠東新",
+    "sector": "紡織纖維"
+  },
+  {
+    "stockCode": "1409.TW",
+    "companyName": "新纖",
+    "sector": "紡織纖維"
+  },
+  {
+    "stockCode": "1410.TW",
+    "companyName": "南染",
+    "sector": "紡織纖維"
+  },
+  {
+    "stockCode": "1413.TW",
+    "companyName": "宏洲",
+    "sector": "紡織纖維"
+  },
+  {
+    "stockCode": "1414.TW",
+    "companyName": "東和",
+    "sector": "紡織纖維"
+  },
+  {
+    "stockCode": "1416.TW",
+    "companyName": "廣豐",
+    "sector": "資訊服務業"
+  },
+  {
+    "stockCode": "1417.TW",
+    "companyName": "嘉裕",
+    "sector": "紡織纖維"
+  },
+  {
+    "stockCode": "1418.TW",
+    "companyName": "東華",
+    "sector": "紡織纖維"
+  },
+  {
+    "stockCode": "1419.TW",
+    "companyName": "新紡",
+    "sector": "紡織纖維"
+  },
+  {
+    "stockCode": "1423.TW",
+    "companyName": "利華",
+    "sector": "紡織纖維"
+  },
+  {
+    "stockCode": "1432.TW",
+    "companyName": "大魯閣",
+    "sector": "產業95"
+  },
+  {
+    "stockCode": "1434.TW",
+    "companyName": "福懋",
+    "sector": "紡織纖維"
+  },
+  {
+    "stockCode": "1435.TW",
+    "companyName": "中福",
+    "sector": "資訊服務業"
+  },
+  {
+    "stockCode": "1436.TW",
+    "companyName": "華友聯",
+    "sector": "產業19"
+  },
+  {
+    "stockCode": "1437.TW",
+    "companyName": "勤益控",
+    "sector": "資訊服務業"
+  },
+  {
+    "stockCode": "1438.TW",
+    "companyName": "三地開發",
+    "sector": "產業19"
+  },
+  {
+    "stockCode": "1439.TW",
+    "companyName": "雋揚",
+    "sector": "產業19"
+  },
+  {
+    "stockCode": "1440.TW",
+    "companyName": "南紡",
+    "sector": "紡織纖維"
+  },
+  {
+    "stockCode": "1441.TW",
+    "companyName": "大東",
+    "sector": "紡織纖維"
+  },
+  {
+    "stockCode": "1442.TW",
+    "companyName": "名軒",
+    "sector": "產業19"
+  },
+  {
+    "stockCode": "1443.TW",
+    "companyName": "立益",
+    "sector": "資訊服務業"
+  },
+  {
+    "stockCode": "1444.TW",
+    "companyName": "力麗",
+    "sector": "紡織纖維"
+  },
+  {
+    "stockCode": "1445.TW",
+    "companyName": "大宇",
+    "sector": "紡織纖維"
+  },
+  {
+    "stockCode": "1446.TW",
+    "companyName": "宏和",
+    "sector": "紡織纖維"
+  },
+  {
+    "stockCode": "1447.TW",
+    "companyName": "力鵬",
+    "sector": "紡織纖維"
+  },
+  {
+    "stockCode": "1449.TW",
+    "companyName": "佳和",
+    "sector": "紡織纖維"
+  },
+  {
+    "stockCode": "1451.TW",
+    "companyName": "年興",
+    "sector": "紡織纖維"
+  },
+  {
+    "stockCode": "1452.TW",
+    "companyName": "宏益",
+    "sector": "紡織纖維"
+  },
+  {
+    "stockCode": "1453.TW",
+    "companyName": "大將",
+    "sector": "產業19"
+  },
+  {
+    "stockCode": "1454.TW",
+    "companyName": "台富",
+    "sector": "紡織纖維"
+  },
+  {
+    "stockCode": "1455.TW",
+    "companyName": "集盛",
+    "sector": "紡織纖維"
+  },
+  {
+    "stockCode": "1456.TW",
+    "companyName": "怡華",
+    "sector": "產業19"
+  },
+  {
+    "stockCode": "1457.TW",
+    "companyName": "宜進",
+    "sector": "紡織纖維"
+  },
+  {
+    "stockCode": "1459.TW",
+    "companyName": "聯發",
+    "sector": "紡織纖維"
+  },
+  {
+    "stockCode": "1460.TW",
+    "companyName": "宏遠",
+    "sector": "紡織纖維"
+  },
+  {
+    "stockCode": "1463.TW",
+    "companyName": "強盛新",
+    "sector": "紡織纖維"
+  },
+  {
+    "stockCode": "1464.TW",
+    "companyName": "得力",
+    "sector": "紡織纖維"
+  },
+  {
+    "stockCode": "1465.TW",
+    "companyName": "偉全",
+    "sector": "紡織纖維"
+  },
+  {
+    "stockCode": "1466.TW",
+    "companyName": "聚隆",
+    "sector": "紡織纖維"
+  },
+  {
+    "stockCode": "1467.TW",
+    "companyName": "南緯",
+    "sector": "紡織纖維"
+  },
+  {
+    "stockCode": "1468.TW",
+    "companyName": "昶和",
+    "sector": "紡織纖維"
+  },
+  {
+    "stockCode": "1471.TW",
+    "companyName": "首利",
+    "sector": "產業44"
+  },
+  {
+    "stockCode": "1472.TW",
+    "companyName": "三洋實業",
+    "sector": "產業19"
+  },
+  {
+    "stockCode": "1503.TW",
+    "companyName": "士電",
+    "sector": "電器電纜"
+  },
+  {
+    "stockCode": "1504.TW",
+    "companyName": "東元",
+    "sector": "電器電纜"
+  },
+  {
+    "stockCode": "1506.TW",
+    "companyName": "正道",
+    "sector": "電器電纜"
+  },
+  {
+    "stockCode": "1512.TW",
+    "companyName": "瑞利",
+    "sector": "產業13"
+  },
+  {
+    "stockCode": "1513.TW",
+    "companyName": "中興電",
+    "sector": "電器電纜"
+  },
+  {
+    "stockCode": "1514.TW",
+    "companyName": "亞力",
+    "sector": "電器電纜"
+  },
+  {
+    "stockCode": "1515.TW",
+    "companyName": "力山",
+    "sector": "電器電纜"
+  },
+  {
+    "stockCode": "1516.TW",
+    "companyName": "川飛",
+    "sector": "資訊服務業"
+  },
+  {
+    "stockCode": "1517.TW",
+    "companyName": "利奇",
+    "sector": "電器電纜"
+  },
+  {
+    "stockCode": "1519.TW",
+    "companyName": "華城",
+    "sector": "電器電纜"
+  },
+  {
+    "stockCode": "1521.TW",
+    "companyName": "大億",
+    "sector": "產業13"
+  },
+  {
+    "stockCode": "1522.TW",
+    "companyName": "堤維西",
+    "sector": "產業13"
+  },
+  {
+    "stockCode": "1524.TW",
+    "companyName": "耿鼎",
+    "sector": "產業13"
+  },
+  {
+    "stockCode": "1525.TW",
+    "companyName": "江申",
+    "sector": "產業13"
+  },
+  {
+    "stockCode": "1526.TW",
+    "companyName": "日馳",
+    "sector": "電器電纜"
+  },
+  {
+    "stockCode": "1527.TW",
+    "companyName": "鑽全",
+    "sector": "電器電纜"
+  },
+  {
+    "stockCode": "1528.TW",
+    "companyName": "恩德",
+    "sector": "電器電纜"
+  },
+  {
+    "stockCode": "1529.TW",
+    "companyName": "樂事綠能",
+    "sector": "電器電纜"
+  },
+  {
+    "stockCode": "1530.TW",
+    "companyName": "亞崴",
+    "sector": "電器電纜"
+  },
+  {
+    "stockCode": "1531.TW",
+    "companyName": "高林股",
+    "sector": "電器電纜"
+  },
+  {
+    "stockCode": "1532.TW",
+    "companyName": "勤美",
+    "sector": "電器電纜"
+  },
+  {
+    "stockCode": "1533.TW",
+    "companyName": "車王電",
+    "sector": "產業13"
+  },
+  {
+    "stockCode": "1535.TW",
+    "companyName": "中宇",
+    "sector": "電器電纜"
+  },
+  {
+    "stockCode": "1536.TW",
+    "companyName": "和大",
+    "sector": "產業13"
+  },
+  {
+    "stockCode": "1537.TW",
+    "companyName": "廣隆",
+    "sector": "電器電纜"
+  },
+  {
+    "stockCode": "1538.TW",
+    "companyName": "正峰",
+    "sector": "電器電纜"
+  },
+  {
+    "stockCode": "1539.TW",
+    "companyName": "巨庭",
+    "sector": "電器電纜"
+  },
+  {
+    "stockCode": "1540.TW",
+    "companyName": "喬福",
+    "sector": "電器電纜"
+  },
+  {
+    "stockCode": "1541.TW",
+    "companyName": "錩泰",
+    "sector": "電器電纜"
+  },
+  {
+    "stockCode": "1558.TW",
+    "companyName": "伸興",
+    "sector": "電器電纜"
+  },
+  {
+    "stockCode": "1560.TW",
+    "companyName": "中砂",
+    "sector": "電器電纜"
+  },
+  {
+    "stockCode": "1563.TW",
+    "companyName": "巧新",
+    "sector": "產業13"
+  },
+  {
+    "stockCode": "1568.TW",
+    "companyName": "倉佑",
+    "sector": "產業13"
+  },
+  {
+    "stockCode": "1582.TW",
+    "companyName": "信錦",
+    "sector": "產業44"
+  },
+  {
+    "stockCode": "1583.TW",
+    "companyName": "程泰",
+    "sector": "電器電纜"
+  },
+  {
+    "stockCode": "1587.TW",
+    "companyName": "吉茂",
+    "sector": "產業13"
+  },
+  {
+    "stockCode": "1589.TW",
+    "companyName": "永冠-KY",
+    "sector": "電器電纜"
+  },
+  {
+    "stockCode": "1590.TW",
+    "companyName": "亞德客-KY",
+    "sector": "電器電纜"
+  },
+  {
+    "stockCode": "1597.TW",
+    "companyName": "直得",
+    "sector": "電器電纜"
+  },
+  {
+    "stockCode": "1598.TW",
+    "companyName": "岱宇",
+    "sector": "產業95"
+  },
+  {
+    "stockCode": "1603.TW",
+    "companyName": "華電",
+    "sector": "產業7"
+  },
+  {
+    "stockCode": "1604.TW",
+    "companyName": "聲寶",
+    "sector": "產業7"
+  },
+  {
+    "stockCode": "1605.TW",
+    "companyName": "華新",
+    "sector": "產業7"
+  },
+  {
+    "stockCode": "1608.TW",
+    "companyName": "華榮",
+    "sector": "產業7"
+  },
+  {
+    "stockCode": "1609.TW",
+    "companyName": "大亞",
+    "sector": "產業7"
+  },
+  {
+    "stockCode": "1611.TW",
+    "companyName": "中電",
+    "sector": "產業7"
+  },
+  {
+    "stockCode": "1612.TW",
+    "companyName": "宏泰",
+    "sector": "產業7"
+  },
+  {
+    "stockCode": "1614.TW",
+    "companyName": "三洋電",
+    "sector": "產業7"
+  },
+  {
+    "stockCode": "1615.TW",
+    "companyName": "大山",
+    "sector": "產業7"
+  },
+  {
+    "stockCode": "1616.TW",
+    "companyName": "億泰",
+    "sector": "產業7"
+  },
+  {
+    "stockCode": "1617.TW",
+    "companyName": "榮星",
+    "sector": "產業7"
+  },
+  {
+    "stockCode": "1618.TW",
+    "companyName": "合機",
+    "sector": "產業7"
+  },
+  {
+    "stockCode": "1626.TW",
+    "companyName": "艾美特-KY",
+    "sector": "產業7"
+  },
+  {
+    "stockCode": "1702.TW",
+    "companyName": "南僑",
+    "sector": "食品工業"
+  },
+  {
+    "stockCode": "1707.TW",
+    "companyName": "葡萄王",
+    "sector": "產業38"
+  },
+  {
+    "stockCode": "1708.TW",
+    "companyName": "東鹼",
+    "sector": "產業37"
+  },
+  {
+    "stockCode": "1709.TW",
+    "companyName": "和益",
+    "sector": "產業37"
+  },
+  {
+    "stockCode": "1710.TW",
+    "companyName": "東聯",
+    "sector": "產業37"
+  },
+  {
+    "stockCode": "1711.TW",
+    "companyName": "永光",
+    "sector": "產業37"
+  },
+  {
+    "stockCode": "1712.TW",
+    "companyName": "興農",
+    "sector": "產業37"
+  },
+  {
+    "stockCode": "1713.TW",
+    "companyName": "國化",
+    "sector": "產業37"
+  },
+  {
+    "stockCode": "1714.TW",
+    "companyName": "和桐",
+    "sector": "產業37"
+  },
+  {
+    "stockCode": "1717.TW",
+    "companyName": "長興",
+    "sector": "產業37"
+  },
+  {
+    "stockCode": "1718.TW",
+    "companyName": "中纖",
+    "sector": "產業37"
+  },
+  {
+    "stockCode": "1720.TW",
+    "companyName": "生達",
+    "sector": "產業38"
+  },
+  {
+    "stockCode": "1721.TW",
+    "companyName": "三晃",
+    "sector": "產業37"
+  },
+  {
+    "stockCode": "1722.TW",
+    "companyName": "台肥",
+    "sector": "產業37"
+  },
+  {
+    "stockCode": "1723.TW",
+    "companyName": "中碳",
+    "sector": "產業37"
+  },
+  {
+    "stockCode": "1725.TW",
+    "companyName": "元禎",
+    "sector": "產業37"
+  },
+  {
+    "stockCode": "1726.TW",
+    "companyName": "永記",
+    "sector": "產業37"
+  },
+  {
+    "stockCode": "1727.TW",
+    "companyName": "中華化",
+    "sector": "產業37"
+  },
+  {
+    "stockCode": "1730.TW",
+    "companyName": "花仙子",
+    "sector": "產業37"
+  },
+  {
+    "stockCode": "1731.TW",
+    "companyName": "美吾華",
+    "sector": "產業38"
+  },
+  {
+    "stockCode": "1732.TW",
+    "companyName": "毛寶",
+    "sector": "產業37"
+  },
+  {
+    "stockCode": "1733.TW",
+    "companyName": "五鼎",
+    "sector": "產業38"
+  },
+  {
+    "stockCode": "1734.TW",
+    "companyName": "杏輝",
+    "sector": "產業38"
+  },
+  {
+    "stockCode": "1735.TW",
+    "companyName": "日勝化",
+    "sector": "產業37"
+  },
+  {
+    "stockCode": "1736.TW",
+    "companyName": "喬山",
+    "sector": "產業95"
+  },
+  {
+    "stockCode": "1737.TW",
+    "companyName": "臺鹽",
+    "sector": "食品工業"
+  },
+  {
+    "stockCode": "1752.TW",
+    "companyName": "南光",
+    "sector": "產業38"
+  },
+  {
+    "stockCode": "1760.TW",
+    "companyName": "寶齡富錦",
+    "sector": "產業38"
+  },
+  {
+    "stockCode": "1762.TW",
+    "companyName": "中化生",
+    "sector": "產業38"
+  },
+  {
+    "stockCode": "1773.TW",
+    "companyName": "勝一",
+    "sector": "產業37"
+  },
+  {
+    "stockCode": "1776.TW",
+    "companyName": "展宇",
+    "sector": "產業37"
+  },
+  {
+    "stockCode": "1783.TW",
+    "companyName": "和康生",
+    "sector": "產業38"
+  },
+  {
+    "stockCode": "1786.TW",
+    "companyName": "科妍",
+    "sector": "產業38"
+  },
+  {
+    "stockCode": "1789.TW",
+    "companyName": "神隆",
+    "sector": "產業38"
+  },
+  {
+    "stockCode": "1795.TW",
+    "companyName": "美時",
+    "sector": "產業38"
+  },
+  {
+    "stockCode": "1802.TW",
+    "companyName": "台玻",
+    "sector": "造紙工業"
+  },
+  {
+    "stockCode": "1805.TW",
+    "companyName": "寶徠",
+    "sector": "產業19"
+  },
+  {
+    "stockCode": "1806.TW",
+    "companyName": "冠軍",
+    "sector": "造紙工業"
+  },
+  {
+    "stockCode": "1808.TW",
+    "companyName": "潤隆",
+    "sector": "產業19"
+  },
+  {
+    "stockCode": "1809.TW",
+    "companyName": "中釉",
+    "sector": "造紙工業"
+  },
+  {
+    "stockCode": "1810.TW",
+    "companyName": "和成",
+    "sector": "造紙工業"
+  },
+  {
+    "stockCode": "1817.TW",
+    "companyName": "凱撒衛",
+    "sector": "造紙工業"
+  },
+  {
+    "stockCode": "1903.TW",
+    "companyName": "士紙",
     "sector": "鋼鐵工業"
   },
   {
-    "stockCode": "2412.TW",
-    "companyName": "中華電信股份有限公司",
-    "sector": "通信網路業"
+    "stockCode": "1904.TW",
+    "companyName": "正隆",
+    "sector": "鋼鐵工業"
   },
   {
-    "stockCode": "3008.TW",
-    "companyName": "大立光電股份有限公司",
-    "sector": "光電業"
+    "stockCode": "1905.TW",
+    "companyName": "華紙",
+    "sector": "鋼鐵工業"
   },
   {
-    "stockCode": "2881.TW",
-    "companyName": "富邦金融控股股份有限公司",
-    "sector": "金融保險業"
+    "stockCode": "1906.TW",
+    "companyName": "寶隆",
+    "sector": "鋼鐵工業"
   },
   {
-    "stockCode": "2882.TW",
-    "companyName": "國泰金融控股股份有限公司",
-    "sector": "金融保險業"
+    "stockCode": "1907.TW",
+    "companyName": "永豐餘",
+    "sector": "鋼鐵工業"
+  },
+  {
+    "stockCode": "1909.TW",
+    "companyName": "榮成",
+    "sector": "鋼鐵工業"
+  },
+  {
+    "stockCode": "2002.TW",
+    "companyName": "中國鋼鐵股份有限公司",
+    "sector": "橡膠工業"
+  },
+  {
+    "stockCode": "2006.TW",
+    "companyName": "東和鋼鐵",
+    "sector": "橡膠工業"
+  },
+  {
+    "stockCode": "2007.TW",
+    "companyName": "燁興",
+    "sector": "橡膠工業"
+  },
+  {
+    "stockCode": "2008.TW",
+    "companyName": "高興昌",
+    "sector": "橡膠工業"
+  },
+  {
+    "stockCode": "2009.TW",
+    "companyName": "第一銅",
+    "sector": "橡膠工業"
+  },
+  {
+    "stockCode": "2010.TW",
+    "companyName": "春源",
+    "sector": "橡膠工業"
+  },
+  {
+    "stockCode": "2012.TW",
+    "companyName": "春雨",
+    "sector": "橡膠工業"
+  },
+  {
+    "stockCode": "2013.TW",
+    "companyName": "中鋼構",
+    "sector": "橡膠工業"
+  },
+  {
+    "stockCode": "2014.TW",
+    "companyName": "中鴻",
+    "sector": "橡膠工業"
+  },
+  {
+    "stockCode": "2015.TW",
+    "companyName": "豐興",
+    "sector": "橡膠工業"
+  },
+  {
+    "stockCode": "2017.TW",
+    "companyName": "官田鋼",
+    "sector": "橡膠工業"
+  },
+  {
+    "stockCode": "2020.TW",
+    "companyName": "美亞",
+    "sector": "橡膠工業"
+  },
+  {
+    "stockCode": "2022.TW",
+    "companyName": "聚亨",
+    "sector": "橡膠工業"
+  },
+  {
+    "stockCode": "2023.TW",
+    "companyName": "燁輝",
+    "sector": "橡膠工業"
+  },
+  {
+    "stockCode": "2024.TW",
+    "companyName": "志聯",
+    "sector": "橡膠工業"
+  },
+  {
+    "stockCode": "2025.TW",
+    "companyName": "千興",
+    "sector": "橡膠工業"
+  },
+  {
+    "stockCode": "2027.TW",
+    "companyName": "大成鋼",
+    "sector": "橡膠工業"
+  },
+  {
+    "stockCode": "2028.TW",
+    "companyName": "威致",
+    "sector": "橡膠工業"
+  },
+  {
+    "stockCode": "2029.TW",
+    "companyName": "盛餘",
+    "sector": "橡膠工業"
+  },
+  {
+    "stockCode": "2030.TW",
+    "companyName": "彰源",
+    "sector": "橡膠工業"
+  },
+  {
+    "stockCode": "2031.TW",
+    "companyName": "新光鋼",
+    "sector": "橡膠工業"
+  },
+  {
+    "stockCode": "2032.TW",
+    "companyName": "新鋼",
+    "sector": "橡膠工業"
+  },
+  {
+    "stockCode": "2033.TW",
+    "companyName": "佳大",
+    "sector": "橡膠工業"
+  },
+  {
+    "stockCode": "2034.TW",
+    "companyName": "允強",
+    "sector": "橡膠工業"
+  },
+  {
+    "stockCode": "2038.TW",
+    "companyName": "海光",
+    "sector": "橡膠工業"
+  },
+  {
+    "stockCode": "2049.TW",
+    "companyName": "上銀",
+    "sector": "電器電纜"
+  },
+  {
+    "stockCode": "2059.TW",
+    "companyName": "川湖",
+    "sector": "產業44"
+  },
+  {
+    "stockCode": "2062.TW",
+    "companyName": "橋椿",
+    "sector": "產業96"
+  },
+  {
+    "stockCode": "2069.TW",
+    "companyName": "運錩",
+    "sector": "橡膠工業"
+  },
+  {
+    "stockCode": "2101.TW",
+    "companyName": "南港",
+    "sector": "汽車工業"
+  },
+  {
+    "stockCode": "2102.TW",
+    "companyName": "泰豐",
+    "sector": "汽車工業"
+  },
+  {
+    "stockCode": "2103.TW",
+    "companyName": "台橡",
+    "sector": "汽車工業"
+  },
+  {
+    "stockCode": "2104.TW",
+    "companyName": "國際中橡",
+    "sector": "汽車工業"
+  },
+  {
+    "stockCode": "2105.TW",
+    "companyName": "正新",
+    "sector": "汽車工業"
+  },
+  {
+    "stockCode": "2106.TW",
+    "companyName": "建大",
+    "sector": "汽車工業"
+  },
+  {
+    "stockCode": "2107.TW",
+    "companyName": "厚生",
+    "sector": "汽車工業"
+  },
+  {
+    "stockCode": "2108.TW",
+    "companyName": "南帝",
+    "sector": "汽車工業"
+  },
+  {
+    "stockCode": "2109.TW",
+    "companyName": "華豐",
+    "sector": "汽車工業"
+  },
+  {
+    "stockCode": "2114.TW",
+    "companyName": "鑫永銓",
+    "sector": "汽車工業"
+  },
+  {
+    "stockCode": "2115.TW",
+    "companyName": "六暉-KY",
+    "sector": "產業13"
+  },
+  {
+    "stockCode": "2201.TW",
+    "companyName": "裕隆",
+    "sector": "產業13"
+  },
+  {
+    "stockCode": "2204.TW",
+    "companyName": "中華",
+    "sector": "產業13"
+  },
+  {
+    "stockCode": "2206.TW",
+    "companyName": "三陽工業",
+    "sector": "產業13"
+  },
+  {
+    "stockCode": "2207.TW",
+    "companyName": "和泰車",
+    "sector": "產業13"
+  },
+  {
+    "stockCode": "2208.TW",
+    "companyName": "台船",
+    "sector": "其他產業"
+  },
+  {
+    "stockCode": "2211.TW",
+    "companyName": "長榮鋼",
+    "sector": "橡膠工業"
+  },
+  {
+    "stockCode": "2227.TW",
+    "companyName": "裕日車",
+    "sector": "產業13"
+  },
+  {
+    "stockCode": "2228.TW",
+    "companyName": "劍麟",
+    "sector": "產業13"
+  },
+  {
+    "stockCode": "2231.TW",
+    "companyName": "為升",
+    "sector": "產業13"
+  },
+  {
+    "stockCode": "2233.TW",
+    "companyName": "宇隆",
+    "sector": "產業13"
+  },
+  {
+    "stockCode": "2236.TW",
+    "companyName": "百達-KY",
+    "sector": "產業13"
+  },
+  {
+    "stockCode": "2239.TW",
+    "companyName": "英利-KY",
+    "sector": "產業13"
+  },
+  {
+    "stockCode": "2241.TW",
+    "companyName": "艾姆勒",
+    "sector": "產業13"
+  },
+  {
+    "stockCode": "2243.TW",
+    "companyName": "宏旭-KY",
+    "sector": "產業13"
+  },
+  {
+    "stockCode": "2247.TW",
+    "companyName": "汎德永業",
+    "sector": "產業13"
+  },
+  {
+    "stockCode": "2248.TW",
+    "companyName": "華勝-KY",
+    "sector": "產業13"
+  },
+  {
+    "stockCode": "2250.TW",
+    "companyName": "IKKA-KY",
+    "sector": "產業13"
+  },
+  {
+    "stockCode": "2254.TW",
+    "companyName": "巨鎧精密-創",
+    "sector": "產業49"
+  },
+  {
+    "stockCode": "2258.TW",
+    "companyName": "鴻華先進-創",
+    "sector": "產業49"
+  },
+  {
+    "stockCode": "2301.TW",
+    "companyName": "光寶科",
+    "sector": "產業41"
+  },
+  {
+    "stockCode": "2302.TW",
+    "companyName": "麗正",
+    "sector": "產業40"
   },
   {
     "stockCode": "2303.TW",
     "companyName": "聯華電子股份有限公司",
-    "sector": "半導體業"
+    "sector": "產業40"
+  },
+  {
+    "stockCode": "2305.TW",
+    "companyName": "全友",
+    "sector": "產業41"
   },
   {
     "stockCode": "2308.TW",
     "companyName": "台達電子工業股份有限公司",
-    "sector": "電子零組件業"
+    "sector": "產業44"
+  },
+  {
+    "stockCode": "2312.TW",
+    "companyName": "金寶",
+    "sector": "產業47"
+  },
+  {
+    "stockCode": "2313.TW",
+    "companyName": "華通",
+    "sector": "產業44"
+  },
+  {
+    "stockCode": "2314.TW",
+    "companyName": "台揚",
+    "sector": "產業43"
+  },
+  {
+    "stockCode": "2316.TW",
+    "companyName": "楠梓電",
+    "sector": "產業44"
+  },
+  {
+    "stockCode": "2317.TW",
+    "companyName": "鴻海精密工業股份有限公司",
+    "sector": "產業47"
+  },
+  {
+    "stockCode": "2321.TW",
+    "companyName": "東訊",
+    "sector": "產業43"
+  },
+  {
+    "stockCode": "2323.TW",
+    "companyName": "中環",
+    "sector": "產業42"
+  },
+  {
+    "stockCode": "2324.TW",
+    "companyName": "仁寶",
+    "sector": "產業41"
+  },
+  {
+    "stockCode": "2327.TW",
+    "companyName": "國巨",
+    "sector": "產業44"
+  },
+  {
+    "stockCode": "2328.TW",
+    "companyName": "廣宇",
+    "sector": "產業44"
+  },
+  {
+    "stockCode": "2329.TW",
+    "companyName": "華泰",
+    "sector": "產業40"
+  },
+  {
+    "stockCode": "2330.TW",
+    "companyName": "台灣積體電路製造股份有限公司",
+    "sector": "產業40"
+  },
+  {
+    "stockCode": "2331.TW",
+    "companyName": "精英",
+    "sector": "產業41"
+  },
+  {
+    "stockCode": "2332.TW",
+    "companyName": "友訊",
+    "sector": "產業43"
+  },
+  {
+    "stockCode": "2337.TW",
+    "companyName": "旺宏",
+    "sector": "產業40"
+  },
+  {
+    "stockCode": "2338.TW",
+    "companyName": "光罩",
+    "sector": "產業40"
+  },
+  {
+    "stockCode": "2340.TW",
+    "companyName": "台亞",
+    "sector": "產業40"
+  },
+  {
+    "stockCode": "2342.TW",
+    "companyName": "茂矽",
+    "sector": "產業40"
+  },
+  {
+    "stockCode": "2344.TW",
+    "companyName": "華邦電",
+    "sector": "產業40"
+  },
+  {
+    "stockCode": "2345.TW",
+    "companyName": "智邦",
+    "sector": "產業43"
+  },
+  {
+    "stockCode": "2347.TW",
+    "companyName": "聯強",
+    "sector": "產業45"
+  },
+  {
+    "stockCode": "2348.TW",
+    "companyName": "海悅",
+    "sector": "資訊服務業"
+  },
+  {
+    "stockCode": "2349.TW",
+    "companyName": "錸德",
+    "sector": "產業42"
+  },
+  {
+    "stockCode": "2351.TW",
+    "companyName": "順德",
+    "sector": "產業40"
+  },
+  {
+    "stockCode": "2352.TW",
+    "companyName": "佳世達",
+    "sector": "產業41"
+  },
+  {
+    "stockCode": "2353.TW",
+    "companyName": "宏碁",
+    "sector": "產業41"
+  },
+  {
+    "stockCode": "2354.TW",
+    "companyName": "鴻準",
+    "sector": "產業47"
+  },
+  {
+    "stockCode": "2355.TW",
+    "companyName": "敬鵬",
+    "sector": "產業44"
+  },
+  {
+    "stockCode": "2356.TW",
+    "companyName": "英業達",
+    "sector": "產業41"
+  },
+  {
+    "stockCode": "2357.TW",
+    "companyName": "華碩",
+    "sector": "產業41"
+  },
+  {
+    "stockCode": "2359.TW",
+    "companyName": "所羅門",
+    "sector": "產業47"
+  },
+  {
+    "stockCode": "2360.TW",
+    "companyName": "致茂",
+    "sector": "產業47"
+  },
+  {
+    "stockCode": "2362.TW",
+    "companyName": "藍天",
+    "sector": "產業41"
+  },
+  {
+    "stockCode": "2363.TW",
+    "companyName": "矽統",
+    "sector": "產業40"
+  },
+  {
+    "stockCode": "2364.TW",
+    "companyName": "倫飛",
+    "sector": "產業41"
+  },
+  {
+    "stockCode": "2365.TW",
+    "companyName": "昆盈",
+    "sector": "產業41"
+  },
+  {
+    "stockCode": "2367.TW",
+    "companyName": "燿華",
+    "sector": "產業44"
+  },
+  {
+    "stockCode": "2368.TW",
+    "companyName": "金像電",
+    "sector": "產業44"
+  },
+  {
+    "stockCode": "2369.TW",
+    "companyName": "菱生",
+    "sector": "產業40"
+  },
+  {
+    "stockCode": "2371.TW",
+    "companyName": "大同",
+    "sector": "電器電纜"
+  },
+  {
+    "stockCode": "2373.TW",
+    "companyName": "震旦行",
+    "sector": "產業47"
+  },
+  {
+    "stockCode": "2374.TW",
+    "companyName": "佳能",
+    "sector": "產業42"
+  },
+  {
+    "stockCode": "2375.TW",
+    "companyName": "凱美",
+    "sector": "產業44"
+  },
+  {
+    "stockCode": "2376.TW",
+    "companyName": "技嘉",
+    "sector": "產業41"
+  },
+  {
+    "stockCode": "2377.TW",
+    "companyName": "微星",
+    "sector": "產業41"
+  },
+  {
+    "stockCode": "2379.TW",
+    "companyName": "瑞昱",
+    "sector": "產業40"
+  },
+  {
+    "stockCode": "2380.TW",
+    "companyName": "虹光",
+    "sector": "產業41"
+  },
+  {
+    "stockCode": "2382.TW",
+    "companyName": "廣達",
+    "sector": "產業41"
+  },
+  {
+    "stockCode": "2383.TW",
+    "companyName": "台光電",
+    "sector": "產業44"
+  },
+  {
+    "stockCode": "2385.TW",
+    "companyName": "群光",
+    "sector": "產業44"
+  },
+  {
+    "stockCode": "2387.TW",
+    "companyName": "精元",
+    "sector": "產業41"
+  },
+  {
+    "stockCode": "2388.TW",
+    "companyName": "威盛",
+    "sector": "產業40"
+  },
+  {
+    "stockCode": "2390.TW",
+    "companyName": "云辰",
+    "sector": "產業47"
+  },
+  {
+    "stockCode": "2392.TW",
+    "companyName": "正崴",
+    "sector": "產業44"
+  },
+  {
+    "stockCode": "2393.TW",
+    "companyName": "億光",
+    "sector": "產業42"
+  },
+  {
+    "stockCode": "2395.TW",
+    "companyName": "研華",
+    "sector": "產業41"
+  },
+  {
+    "stockCode": "2397.TW",
+    "companyName": "友通",
+    "sector": "產業41"
+  },
+  {
+    "stockCode": "2399.TW",
+    "companyName": "映泰",
+    "sector": "產業41"
+  },
+  {
+    "stockCode": "2401.TW",
+    "companyName": "凌陽",
+    "sector": "產業40"
+  },
+  {
+    "stockCode": "2402.TW",
+    "companyName": "毅嘉",
+    "sector": "產業44"
+  },
+  {
+    "stockCode": "2404.TW",
+    "companyName": "漢唐",
+    "sector": "產業47"
+  },
+  {
+    "stockCode": "2405.TW",
+    "companyName": "輔信",
+    "sector": "產業41"
+  },
+  {
+    "stockCode": "2406.TW",
+    "companyName": "國碩",
+    "sector": "產業42"
+  },
+  {
+    "stockCode": "2408.TW",
+    "companyName": "南亞科",
+    "sector": "產業40"
+  },
+  {
+    "stockCode": "2409.TW",
+    "companyName": "友達",
+    "sector": "產業42"
+  },
+  {
+    "stockCode": "2412.TW",
+    "companyName": "中華電信股份有限公司",
+    "sector": "產業43"
+  },
+  {
+    "stockCode": "2413.TW",
+    "companyName": "環科",
+    "sector": "產業44"
+  },
+  {
+    "stockCode": "2414.TW",
+    "companyName": "精技",
+    "sector": "產業45"
+  },
+  {
+    "stockCode": "2415.TW",
+    "companyName": "錩新",
+    "sector": "產業44"
+  },
+  {
+    "stockCode": "2417.TW",
+    "companyName": "圓剛",
+    "sector": "產業41"
+  },
+  {
+    "stockCode": "2419.TW",
+    "companyName": "仲琦",
+    "sector": "產業43"
+  },
+  {
+    "stockCode": "2420.TW",
+    "companyName": "新巨",
+    "sector": "產業44"
+  },
+  {
+    "stockCode": "2421.TW",
+    "companyName": "建準",
+    "sector": "產業44"
+  },
+  {
+    "stockCode": "2423.TW",
+    "companyName": "固緯",
+    "sector": "產業47"
+  },
+  {
+    "stockCode": "2424.TW",
+    "companyName": "隴華",
+    "sector": "產業43"
+  },
+  {
+    "stockCode": "2425.TW",
+    "companyName": "承啟",
+    "sector": "產業41"
+  },
+  {
+    "stockCode": "2426.TW",
+    "companyName": "鼎元",
+    "sector": "產業42"
+  },
+  {
+    "stockCode": "2427.TW",
+    "companyName": "三商電",
+    "sector": "產業46"
+  },
+  {
+    "stockCode": "2428.TW",
+    "companyName": "興勤",
+    "sector": "產業44"
+  },
+  {
+    "stockCode": "2429.TW",
+    "companyName": "銘旺科",
+    "sector": "產業42"
+  },
+  {
+    "stockCode": "2430.TW",
+    "companyName": "燦坤",
+    "sector": "產業45"
+  },
+  {
+    "stockCode": "2431.TW",
+    "companyName": "聯昌",
+    "sector": "產業44"
+  },
+  {
+    "stockCode": "2432.TW",
+    "companyName": "倚天酷碁-創",
+    "sector": "產業49"
+  },
+  {
+    "stockCode": "2433.TW",
+    "companyName": "互盛電",
+    "sector": "產業47"
+  },
+  {
+    "stockCode": "2434.TW",
+    "companyName": "統懋",
+    "sector": "產業40"
+  },
+  {
+    "stockCode": "2436.TW",
+    "companyName": "偉詮電",
+    "sector": "產業40"
+  },
+  {
+    "stockCode": "2438.TW",
+    "companyName": "翔耀",
+    "sector": "產業42"
+  },
+  {
+    "stockCode": "2439.TW",
+    "companyName": "美律",
+    "sector": "產業43"
+  },
+  {
+    "stockCode": "2440.TW",
+    "companyName": "太空梭",
+    "sector": "產業44"
+  },
+  {
+    "stockCode": "2441.TW",
+    "companyName": "超豐",
+    "sector": "產業40"
+  },
+  {
+    "stockCode": "2442.TW",
+    "companyName": "新美齊",
+    "sector": "產業19"
+  },
+  {
+    "stockCode": "2444.TW",
+    "companyName": "兆勁",
+    "sector": "產業43"
+  },
+  {
+    "stockCode": "2449.TW",
+    "companyName": "京元電子",
+    "sector": "產業40"
+  },
+  {
+    "stockCode": "2450.TW",
+    "companyName": "神腦",
+    "sector": "產業43"
+  },
+  {
+    "stockCode": "2451.TW",
+    "companyName": "創見",
+    "sector": "產業40"
+  },
+  {
+    "stockCode": "2453.TW",
+    "companyName": "凌群",
+    "sector": "產業46"
+  },
+  {
+    "stockCode": "2454.TW",
+    "companyName": "聯發科技股份有限公司",
+    "sector": "產業40"
+  },
+  {
+    "stockCode": "2455.TW",
+    "companyName": "全新",
+    "sector": "產業43"
+  },
+  {
+    "stockCode": "2457.TW",
+    "companyName": "飛宏",
+    "sector": "產業44"
+  },
+  {
+    "stockCode": "2458.TW",
+    "companyName": "義隆",
+    "sector": "產業40"
+  },
+  {
+    "stockCode": "2459.TW",
+    "companyName": "敦吉",
+    "sector": "產業47"
+  },
+  {
+    "stockCode": "2460.TW",
+    "companyName": "建通",
+    "sector": "產業44"
+  },
+  {
+    "stockCode": "2461.TW",
+    "companyName": "光群雷",
+    "sector": "產業47"
+  },
+  {
+    "stockCode": "2462.TW",
+    "companyName": "良得電",
+    "sector": "產業44"
+  },
+  {
+    "stockCode": "2464.TW",
+    "companyName": "盟立",
+    "sector": "產業47"
+  },
+  {
+    "stockCode": "2465.TW",
+    "companyName": "麗臺",
+    "sector": "產業41"
+  },
+  {
+    "stockCode": "2466.TW",
+    "companyName": "冠西電",
+    "sector": "產業42"
+  },
+  {
+    "stockCode": "2467.TW",
+    "companyName": "志聖",
+    "sector": "產業44"
+  },
+  {
+    "stockCode": "2468.TW",
+    "companyName": "華經",
+    "sector": "產業46"
+  },
+  {
+    "stockCode": "2471.TW",
+    "companyName": "資通",
+    "sector": "產業46"
+  },
+  {
+    "stockCode": "2472.TW",
+    "companyName": "立隆電",
+    "sector": "產業44"
+  },
+  {
+    "stockCode": "2474.TW",
+    "companyName": "可成",
+    "sector": "產業47"
+  },
+  {
+    "stockCode": "2476.TW",
+    "companyName": "鉅祥",
+    "sector": "產業44"
+  },
+  {
+    "stockCode": "2477.TW",
+    "companyName": "美隆電",
+    "sector": "產業47"
+  },
+  {
+    "stockCode": "2478.TW",
+    "companyName": "大毅",
+    "sector": "產業44"
+  },
+  {
+    "stockCode": "2480.TW",
+    "companyName": "敦陽科",
+    "sector": "產業46"
+  },
+  {
+    "stockCode": "2481.TW",
+    "companyName": "強茂",
+    "sector": "產業40"
+  },
+  {
+    "stockCode": "2482.TW",
+    "companyName": "連宇",
+    "sector": "產業47"
+  },
+  {
+    "stockCode": "2485.TW",
+    "companyName": "兆赫",
+    "sector": "產業43"
+  },
+  {
+    "stockCode": "2486.TW",
+    "companyName": "一詮",
+    "sector": "產業42"
+  },
+  {
+    "stockCode": "2488.TW",
+    "companyName": "漢平",
+    "sector": "產業47"
+  },
+  {
+    "stockCode": "2489.TW",
+    "companyName": "瑞軒",
+    "sector": "產業42"
+  },
+  {
+    "stockCode": "2491.TW",
+    "companyName": "吉祥全",
+    "sector": "產業42"
+  },
+  {
+    "stockCode": "2495.TW",
+    "companyName": "普安",
+    "sector": "產業41"
+  },
+  {
+    "stockCode": "2496.TW",
+    "companyName": "卓越",
+    "sector": "資訊服務業"
+  },
+  {
+    "stockCode": "2497.TW",
+    "companyName": "怡利電",
+    "sector": "產業13"
+  },
+  {
+    "stockCode": "2498.TW",
+    "companyName": "宏達電",
+    "sector": "產業43"
+  },
+  {
+    "stockCode": "2501.TW",
+    "companyName": "國建",
+    "sector": "產業19"
+  },
+  {
+    "stockCode": "2504.TW",
+    "companyName": "國產",
+    "sector": "產業19"
+  },
+  {
+    "stockCode": "2505.TW",
+    "companyName": "國揚",
+    "sector": "產業19"
+  },
+  {
+    "stockCode": "2506.TW",
+    "companyName": "太設",
+    "sector": "產業19"
+  },
+  {
+    "stockCode": "2509.TW",
+    "companyName": "全坤建",
+    "sector": "產業19"
+  },
+  {
+    "stockCode": "2511.TW",
+    "companyName": "太子",
+    "sector": "產業19"
+  },
+  {
+    "stockCode": "2514.TW",
+    "companyName": "龍邦",
+    "sector": "資訊服務業"
+  },
+  {
+    "stockCode": "2515.TW",
+    "companyName": "中工",
+    "sector": "產業19"
+  },
+  {
+    "stockCode": "2516.TW",
+    "companyName": "新建",
+    "sector": "產業19"
+  },
+  {
+    "stockCode": "2520.TW",
+    "companyName": "冠德",
+    "sector": "產業19"
+  },
+  {
+    "stockCode": "2524.TW",
+    "companyName": "京城",
+    "sector": "產業19"
+  },
+  {
+    "stockCode": "2527.TW",
+    "companyName": "宏璟",
+    "sector": "產業19"
+  },
+  {
+    "stockCode": "2528.TW",
+    "companyName": "皇普",
+    "sector": "產業19"
+  },
+  {
+    "stockCode": "2530.TW",
+    "companyName": "華建",
+    "sector": "產業19"
+  },
+  {
+    "stockCode": "2534.TW",
+    "companyName": "宏盛",
+    "sector": "產業19"
+  },
+  {
+    "stockCode": "2535.TW",
+    "companyName": "達欣工",
+    "sector": "產業19"
+  },
+  {
+    "stockCode": "2536.TW",
+    "companyName": "宏普",
+    "sector": "產業19"
+  },
+  {
+    "stockCode": "2537.TW",
+    "companyName": "聯上發",
+    "sector": "產業19"
+  },
+  {
+    "stockCode": "2538.TW",
+    "companyName": "基泰",
+    "sector": "產業19"
+  },
+  {
+    "stockCode": "2539.TW",
+    "companyName": "櫻花建",
+    "sector": "產業19"
+  },
+  {
+    "stockCode": "2601.TW",
+    "companyName": "益航",
+    "sector": "半導體業"
+  },
+  {
+    "stockCode": "2603.TW",
+    "companyName": "長榮",
+    "sector": "其他產業"
+  },
+  {
+    "stockCode": "2605.TW",
+    "companyName": "新興",
+    "sector": "其他產業"
+  },
+  {
+    "stockCode": "2606.TW",
+    "companyName": "裕民",
+    "sector": "其他產業"
+  },
+  {
+    "stockCode": "2607.TW",
+    "companyName": "榮運",
+    "sector": "其他產業"
+  },
+  {
+    "stockCode": "2608.TW",
+    "companyName": "嘉里大榮",
+    "sector": "其他產業"
+  },
+  {
+    "stockCode": "2609.TW",
+    "companyName": "陽明",
+    "sector": "其他產業"
+  },
+  {
+    "stockCode": "2610.TW",
+    "companyName": "華航",
+    "sector": "其他產業"
+  },
+  {
+    "stockCode": "2611.TW",
+    "companyName": "志信",
+    "sector": "其他產業"
+  },
+  {
+    "stockCode": "2612.TW",
+    "companyName": "中航",
+    "sector": "其他產業"
+  },
+  {
+    "stockCode": "2613.TW",
+    "companyName": "中櫃",
+    "sector": "其他產業"
+  },
+  {
+    "stockCode": "2614.TW",
+    "companyName": "東森",
+    "sector": "資訊服務業"
+  },
+  {
+    "stockCode": "2615.TW",
+    "companyName": "萬海",
+    "sector": "其他產業"
+  },
+  {
+    "stockCode": "2616.TW",
+    "companyName": "山隆",
+    "sector": "產業39"
+  },
+  {
+    "stockCode": "2617.TW",
+    "companyName": "台航",
+    "sector": "其他產業"
+  },
+  {
+    "stockCode": "2618.TW",
+    "companyName": "長榮航",
+    "sector": "其他產業"
+  },
+  {
+    "stockCode": "2630.TW",
+    "companyName": "亞航",
+    "sector": "其他產業"
+  },
+  {
+    "stockCode": "2633.TW",
+    "companyName": "台灣高鐵",
+    "sector": "其他產業"
+  },
+  {
+    "stockCode": "2634.TW",
+    "companyName": "漢翔",
+    "sector": "其他產業"
+  },
+  {
+    "stockCode": "2636.TW",
+    "companyName": "台驊控股",
+    "sector": "其他產業"
+  },
+  {
+    "stockCode": "2637.TW",
+    "companyName": "慧洋-KY",
+    "sector": "其他產業"
+  },
+  {
+    "stockCode": "2642.TW",
+    "companyName": "宅配通",
+    "sector": "其他產業"
+  },
+  {
+    "stockCode": "2645.TW",
+    "companyName": "長榮航太",
+    "sector": "其他產業"
+  },
+  {
+    "stockCode": "2646.TW",
+    "companyName": "星宇航空",
+    "sector": "其他產業"
+  },
+  {
+    "stockCode": "2701.TW",
+    "companyName": "萬企",
+    "sector": "化學工業"
+  },
+  {
+    "stockCode": "2702.TW",
+    "companyName": "華園",
+    "sector": "化學工業"
+  },
+  {
+    "stockCode": "2704.TW",
+    "companyName": "國賓",
+    "sector": "化學工業"
+  },
+  {
+    "stockCode": "2705.TW",
+    "companyName": "六福",
+    "sector": "化學工業"
+  },
+  {
+    "stockCode": "2706.TW",
+    "companyName": "第一店",
+    "sector": "化學工業"
+  },
+  {
+    "stockCode": "2707.TW",
+    "companyName": "晶華",
+    "sector": "化學工業"
+  },
+  {
+    "stockCode": "2712.TW",
+    "companyName": "遠雄來",
+    "sector": "化學工業"
+  },
+  {
+    "stockCode": "2722.TW",
+    "companyName": "夏都",
+    "sector": "化學工業"
+  },
+  {
+    "stockCode": "2723.TW",
+    "companyName": "美食-KY",
+    "sector": "化學工業"
+  },
+  {
+    "stockCode": "2727.TW",
+    "companyName": "王品",
+    "sector": "化學工業"
+  },
+  {
+    "stockCode": "2731.TW",
+    "companyName": "雄獅",
+    "sector": "化學工業"
+  },
+  {
+    "stockCode": "2739.TW",
+    "companyName": "寒舍",
+    "sector": "化學工業"
+  },
+  {
+    "stockCode": "2748.TW",
+    "companyName": "雲品",
+    "sector": "化學工業"
+  },
+  {
+    "stockCode": "2753.TW",
+    "companyName": "八方雲集",
+    "sector": "化學工業"
+  },
+  {
+    "stockCode": "2762.TW",
+    "companyName": "世界健身-KY",
+    "sector": "產業95"
+  },
+  {
+    "stockCode": "2801.TW",
+    "companyName": "彰銀",
+    "sector": "生技醫療"
+  },
+  {
+    "stockCode": "2809.TW",
+    "companyName": "京城銀",
+    "sector": "生技醫療"
+  },
+  {
+    "stockCode": "2812.TW",
+    "companyName": "台中銀",
+    "sector": "生技醫療"
+  },
+  {
+    "stockCode": "2816.TW",
+    "companyName": "旺旺保",
+    "sector": "生技醫療"
+  },
+  {
+    "stockCode": "2820.TW",
+    "companyName": "華票",
+    "sector": "生技醫療"
+  },
+  {
+    "stockCode": "2832.TW",
+    "companyName": "台產",
+    "sector": "生技醫療"
+  },
+  {
+    "stockCode": "2834.TW",
+    "companyName": "臺企銀",
+    "sector": "生技醫療"
+  },
+  {
+    "stockCode": "2836.TW",
+    "companyName": "高雄銀",
+    "sector": "生技醫療"
+  },
+  {
+    "stockCode": "2838.TW",
+    "companyName": "聯邦銀",
+    "sector": "生技醫療"
+  },
+  {
+    "stockCode": "2845.TW",
+    "companyName": "遠東銀",
+    "sector": "生技醫療"
+  },
+  {
+    "stockCode": "2849.TW",
+    "companyName": "安泰銀",
+    "sector": "生技醫療"
+  },
+  {
+    "stockCode": "2850.TW",
+    "companyName": "新產",
+    "sector": "生技醫療"
+  },
+  {
+    "stockCode": "2851.TW",
+    "companyName": "中再保",
+    "sector": "生技醫療"
+  },
+  {
+    "stockCode": "2852.TW",
+    "companyName": "第一保",
+    "sector": "生技醫療"
+  },
+  {
+    "stockCode": "2855.TW",
+    "companyName": "統一證",
+    "sector": "生技醫療"
+  },
+  {
+    "stockCode": "2867.TW",
+    "companyName": "三商壽",
+    "sector": "生技醫療"
+  },
+  {
+    "stockCode": "2880.TW",
+    "companyName": "華南金",
+    "sector": "生技醫療"
+  },
+  {
+    "stockCode": "2881.TW",
+    "companyName": "富邦金融控股股份有限公司",
+    "sector": "生技醫療"
+  },
+  {
+    "stockCode": "2882.TW",
+    "companyName": "國泰金融控股股份有限公司",
+    "sector": "生技醫療"
+  },
+  {
+    "stockCode": "2883.TW",
+    "companyName": "凱基金",
+    "sector": "生技醫療"
+  },
+  {
+    "stockCode": "2884.TW",
+    "companyName": "玉山金",
+    "sector": "生技醫療"
+  },
+  {
+    "stockCode": "2885.TW",
+    "companyName": "元大金",
+    "sector": "生技醫療"
   },
   {
     "stockCode": "2886.TW",
     "companyName": "兆豐金融控股股份有限公司",
-    "sector": "金融保險業"
+    "sector": "生技醫療"
+  },
+  {
+    "stockCode": "2887.TW",
+    "companyName": "台新金",
+    "sector": "生技醫療"
+  },
+  {
+    "stockCode": "2889.TW",
+    "companyName": "國票金",
+    "sector": "生技醫療"
+  },
+  {
+    "stockCode": "2890.TW",
+    "companyName": "永豐金",
+    "sector": "生技醫療"
   },
   {
     "stockCode": "2891.TW",
     "companyName": "中國信託金融控股股份有限公司",
-    "sector": "金融保險業"
+    "sector": "生技醫療"
   },
   {
     "stockCode": "2892.TW",
     "companyName": "第一金融控股股份有限公司",
-    "sector": "金融保險業"
+    "sector": "生技醫療"
+  },
+  {
+    "stockCode": "2897.TW",
+    "companyName": "王道銀行",
+    "sector": "生技醫療"
+  },
+  {
+    "stockCode": "2901.TW",
+    "companyName": "欣欣",
+    "sector": "半導體業"
+  },
+  {
+    "stockCode": "2903.TW",
+    "companyName": "遠百",
+    "sector": "半導體業"
+  },
+  {
+    "stockCode": "2904.TW",
+    "companyName": "匯僑",
+    "sector": "資訊服務業"
+  },
+  {
+    "stockCode": "2905.TW",
+    "companyName": "三商",
+    "sector": "半導體業"
+  },
+  {
+    "stockCode": "2906.TW",
+    "companyName": "高林",
+    "sector": "半導體業"
+  },
+  {
+    "stockCode": "2908.TW",
+    "companyName": "特力",
+    "sector": "半導體業"
+  },
+  {
+    "stockCode": "2910.TW",
+    "companyName": "統領",
+    "sector": "半導體業"
+  },
+  {
+    "stockCode": "2911.TW",
+    "companyName": "麗嬰房",
+    "sector": "半導體業"
+  },
+  {
+    "stockCode": "2912.TW",
+    "companyName": "統一超",
+    "sector": "半導體業"
+  },
+  {
+    "stockCode": "2913.TW",
+    "companyName": "農林",
+    "sector": "半導體業"
+  },
+  {
+    "stockCode": "2915.TW",
+    "companyName": "潤泰全",
+    "sector": "半導體業"
+  },
+  {
+    "stockCode": "2929.TW",
+    "companyName": "淘帝-KY",
+    "sector": "半導體業"
+  },
+  {
+    "stockCode": "2939.TW",
+    "companyName": "永邑-KY",
+    "sector": "半導體業"
+  },
+  {
+    "stockCode": "2945.TW",
+    "companyName": "三商家購",
+    "sector": "半導體業"
+  },
+  {
+    "stockCode": "3002.TW",
+    "companyName": "歐格",
+    "sector": "產業41"
+  },
+  {
+    "stockCode": "3004.TW",
+    "companyName": "豐達科",
+    "sector": "橡膠工業"
+  },
+  {
+    "stockCode": "3005.TW",
+    "companyName": "神基",
+    "sector": "產業41"
+  },
+  {
+    "stockCode": "3006.TW",
+    "companyName": "晶豪科",
+    "sector": "產業40"
+  },
+  {
+    "stockCode": "3008.TW",
+    "companyName": "大立光電股份有限公司",
+    "sector": "產業42"
+  },
+  {
+    "stockCode": "3010.TW",
+    "companyName": "華立",
+    "sector": "產業45"
+  },
+  {
+    "stockCode": "3013.TW",
+    "companyName": "晟銘電",
+    "sector": "產業41"
+  },
+  {
+    "stockCode": "3014.TW",
+    "companyName": "聯陽",
+    "sector": "產業40"
+  },
+  {
+    "stockCode": "3016.TW",
+    "companyName": "嘉晶",
+    "sector": "產業40"
+  },
+  {
+    "stockCode": "3017.TW",
+    "companyName": "奇鋐",
+    "sector": "產業41"
+  },
+  {
+    "stockCode": "3018.TW",
+    "companyName": "隆銘綠能",
+    "sector": "產業47"
+  },
+  {
+    "stockCode": "3019.TW",
+    "companyName": "亞光",
+    "sector": "產業42"
+  },
+  {
+    "stockCode": "3022.TW",
+    "companyName": "威強電",
+    "sector": "產業41"
+  },
+  {
+    "stockCode": "3024.TW",
+    "companyName": "憶聲",
+    "sector": "產業42"
+  },
+  {
+    "stockCode": "3025.TW",
+    "companyName": "星通",
+    "sector": "產業43"
+  },
+  {
+    "stockCode": "3027.TW",
+    "companyName": "盛達",
+    "sector": "產業43"
+  },
+  {
+    "stockCode": "3028.TW",
+    "companyName": "增你強",
+    "sector": "產業45"
+  },
+  {
+    "stockCode": "3029.TW",
+    "companyName": "零壹",
+    "sector": "產業46"
+  },
+  {
+    "stockCode": "3030.TW",
+    "companyName": "德律",
+    "sector": "產業47"
+  },
+  {
+    "stockCode": "3031.TW",
+    "companyName": "佰鴻",
+    "sector": "產業42"
+  },
+  {
+    "stockCode": "3033.TW",
+    "companyName": "威健",
+    "sector": "產業45"
+  },
+  {
+    "stockCode": "3034.TW",
+    "companyName": "聯詠",
+    "sector": "產業40"
+  },
+  {
+    "stockCode": "3035.TW",
+    "companyName": "智原",
+    "sector": "產業40"
+  },
+  {
+    "stockCode": "3036.TW",
+    "companyName": "文曄",
+    "sector": "產業45"
+  },
+  {
+    "stockCode": "3038.TW",
+    "companyName": "全台",
+    "sector": "產業42"
+  },
+  {
+    "stockCode": "3040.TW",
+    "companyName": "遠見",
+    "sector": "資訊服務業"
+  },
+  {
+    "stockCode": "3041.TW",
+    "companyName": "揚智",
+    "sector": "產業40"
+  },
+  {
+    "stockCode": "3043.TW",
+    "companyName": "科風",
+    "sector": "產業47"
+  },
+  {
+    "stockCode": "3045.TW",
+    "companyName": "台灣大",
+    "sector": "產業43"
+  },
+  {
+    "stockCode": "3046.TW",
+    "companyName": "建碁",
+    "sector": "產業41"
+  },
+  {
+    "stockCode": "3047.TW",
+    "companyName": "訊舟",
+    "sector": "產業43"
+  },
+  {
+    "stockCode": "3048.TW",
+    "companyName": "益登",
+    "sector": "產業45"
+  },
+  {
+    "stockCode": "3049.TW",
+    "companyName": "精金",
+    "sector": "產業42"
+  },
+  {
+    "stockCode": "3050.TW",
+    "companyName": "鈺德",
+    "sector": "產業42"
+  },
+  {
+    "stockCode": "3051.TW",
+    "companyName": "力特",
+    "sector": "產業42"
+  },
+  {
+    "stockCode": "3054.TW",
+    "companyName": "立萬利",
+    "sector": "食品工業"
+  },
+  {
+    "stockCode": "3055.TW",
+    "companyName": "蔚華科",
+    "sector": "產業45"
+  },
+  {
+    "stockCode": "3059.TW",
+    "companyName": "華晶科",
+    "sector": "產業42"
+  },
+  {
+    "stockCode": "3062.TW",
+    "companyName": "建漢",
+    "sector": "產業43"
+  },
+  {
+    "stockCode": "3130.TW",
+    "companyName": "一零四",
+    "sector": "產業94"
+  },
+  {
+    "stockCode": "3138.TW",
+    "companyName": "耀登",
+    "sector": "產業43"
+  },
+  {
+    "stockCode": "3149.TW",
+    "companyName": "正達",
+    "sector": "產業42"
+  },
+  {
+    "stockCode": "3150.TW",
+    "companyName": "鈺寶-創",
+    "sector": "產業49"
+  },
+  {
+    "stockCode": "3164.TW",
+    "companyName": "景岳",
+    "sector": "產業38"
+  },
+  {
+    "stockCode": "3167.TW",
+    "companyName": "大量",
+    "sector": "電器電纜"
+  },
+  {
+    "stockCode": "3168.TW",
+    "companyName": "眾福科",
+    "sector": "產業42"
+  },
+  {
+    "stockCode": "3209.TW",
+    "companyName": "全科",
+    "sector": "產業45"
+  },
+  {
+    "stockCode": "3305.TW",
+    "companyName": "昇貿",
+    "sector": "產業47"
+  },
+  {
+    "stockCode": "3311.TW",
+    "companyName": "閎暉",
+    "sector": "產業43"
+  },
+  {
+    "stockCode": "3312.TW",
+    "companyName": "弘憶股",
+    "sector": "產業45"
+  },
+  {
+    "stockCode": "3356.TW",
+    "companyName": "奇偶",
+    "sector": "產業42"
+  },
+  {
+    "stockCode": "3380.TW",
+    "companyName": "明泰",
+    "sector": "產業43"
+  },
+  {
+    "stockCode": "3406.TW",
+    "companyName": "玉晶光",
+    "sector": "產業42"
+  },
+  {
+    "stockCode": "3419.TW",
+    "companyName": "譁裕",
+    "sector": "產業43"
+  },
+  {
+    "stockCode": "3437.TW",
+    "companyName": "榮創",
+    "sector": "產業42"
+  },
+  {
+    "stockCode": "3447.TW",
+    "companyName": "展達",
+    "sector": "產業43"
+  },
+  {
+    "stockCode": "3454.TW",
+    "companyName": "晶睿",
+    "sector": "產業42"
+  },
+  {
+    "stockCode": "3481.TW",
+    "companyName": "群創",
+    "sector": "產業42"
+  },
+  {
+    "stockCode": "3504.TW",
+    "companyName": "揚明光",
+    "sector": "產業42"
+  },
+  {
+    "stockCode": "3518.TW",
+    "companyName": "柏騰",
+    "sector": "產業47"
+  },
+  {
+    "stockCode": "3528.TW",
+    "companyName": "安馳",
+    "sector": "產業45"
+  },
+  {
+    "stockCode": "3557.TW",
+    "companyName": "嘉威",
+    "sector": "產業96"
+  },
+  {
+    "stockCode": "3596.TW",
+    "companyName": "智易",
+    "sector": "產業43"
+  },
+  {
+    "stockCode": "3617.TW",
+    "companyName": "碩天",
+    "sector": "產業47"
+  },
+  {
+    "stockCode": "3665.TW",
+    "companyName": "貿聯-KY",
+    "sector": "產業47"
+  },
+  {
+    "stockCode": "3669.TW",
+    "companyName": "圓展",
+    "sector": "產業43"
+  },
+  {
+    "stockCode": "3694.TW",
+    "companyName": "海華",
+    "sector": "產業43"
+  },
+  {
+    "stockCode": "3702.TW",
+    "companyName": "大聯大",
+    "sector": "產業45"
+  },
+  {
+    "stockCode": "3704.TW",
+    "companyName": "合勤控",
+    "sector": "產業43"
+  },
+  {
+    "stockCode": "3705.TW",
+    "companyName": "永信",
+    "sector": "產業38"
+  },
+  {
+    "stockCode": "3708.TW",
+    "companyName": "上緯投控",
+    "sector": "產業93"
+  },
+  {
+    "stockCode": "3716.TW",
+    "companyName": "中化控股",
+    "sector": "產業38"
+  },
+  {
+    "stockCode": "4104.TW",
+    "companyName": "佳醫",
+    "sector": "產業38"
+  },
+  {
+    "stockCode": "4106.TW",
+    "companyName": "雃博",
+    "sector": "產業38"
+  },
+  {
+    "stockCode": "4108.TW",
+    "companyName": "懷特",
+    "sector": "產業38"
+  },
+  {
+    "stockCode": "4119.TW",
+    "companyName": "旭富",
+    "sector": "產業38"
+  },
+  {
+    "stockCode": "4133.TW",
+    "companyName": "亞諾法",
+    "sector": "產業38"
+  },
+  {
+    "stockCode": "4137.TW",
+    "companyName": "麗豐-KY",
+    "sector": "產業38"
+  },
+  {
+    "stockCode": "4142.TW",
+    "companyName": "國光生",
+    "sector": "產業38"
+  },
+  {
+    "stockCode": "4148.TW",
+    "companyName": "全宇生技-KY",
+    "sector": "產業38"
+  },
+  {
+    "stockCode": "4155.TW",
+    "companyName": "訊映",
+    "sector": "產業38"
+  },
+  {
+    "stockCode": "4164.TW",
+    "companyName": "承業醫",
+    "sector": "產業38"
+  },
+  {
+    "stockCode": "4190.TW",
+    "companyName": "佐登-KY",
+    "sector": "產業38"
+  },
+  {
+    "stockCode": "4306.TW",
+    "companyName": "炎洲",
+    "sector": "塑膠工業"
+  },
+  {
+    "stockCode": "4536.TW",
+    "companyName": "拓凱",
+    "sector": "產業95"
+  },
+  {
+    "stockCode": "4588.TW",
+    "companyName": "玖鼎電力",
+    "sector": "產業47"
+  },
+  {
+    "stockCode": "4720.TW",
+    "companyName": "德淵",
+    "sector": "產業37"
+  },
+  {
+    "stockCode": "4722.TW",
+    "companyName": "國精化",
+    "sector": "產業37"
+  },
+  {
+    "stockCode": "4736.TW",
+    "companyName": "泰博",
+    "sector": "產業38"
+  },
+  {
+    "stockCode": "4737.TW",
+    "companyName": "華廣",
+    "sector": "產業38"
+  },
+  {
+    "stockCode": "4739.TW",
+    "companyName": "康普",
+    "sector": "產業37"
+  },
+  {
+    "stockCode": "4746.TW",
+    "companyName": "台耀",
+    "sector": "產業38"
+  },
+  {
+    "stockCode": "4755.TW",
+    "companyName": "三福化",
+    "sector": "產業37"
+  },
+  {
+    "stockCode": "4763.TW",
+    "companyName": "材料*-KY",
+    "sector": "產業37"
+  },
+  {
+    "stockCode": "4764.TW",
+    "companyName": "雙鍵",
+    "sector": "產業37"
+  },
+  {
+    "stockCode": "4766.TW",
+    "companyName": "南寶",
+    "sector": "產業37"
+  },
+  {
+    "stockCode": "4770.TW",
+    "companyName": "上品",
+    "sector": "產業37"
+  },
+  {
+    "stockCode": "4771.TW",
+    "companyName": "望隼",
+    "sector": "產業38"
+  },
+  {
+    "stockCode": "4807.TW",
+    "companyName": "日成-KY",
+    "sector": "半導體業"
+  },
+  {
+    "stockCode": "4904.TW",
+    "companyName": "遠傳",
+    "sector": "產業43"
+  },
+  {
+    "stockCode": "4906.TW",
+    "companyName": "正文",
+    "sector": "產業43"
+  },
+  {
+    "stockCode": "4930.TW",
+    "companyName": "燦星網",
+    "sector": "產業7"
+  },
+  {
+    "stockCode": "4977.TW",
+    "companyName": "眾達-KY",
+    "sector": "產業43"
+  },
+  {
+    "stockCode": "4994.TW",
+    "companyName": "傳奇",
+    "sector": "產業46"
+  },
+  {
+    "stockCode": "5007.TW",
+    "companyName": "三星",
+    "sector": "橡膠工業"
+  },
+  {
+    "stockCode": "5203.TW",
+    "companyName": "訊連",
+    "sector": "產業46"
+  },
+  {
+    "stockCode": "5225.TW",
+    "companyName": "東科-KY",
+    "sector": "產業47"
+  },
+  {
+    "stockCode": "5283.TW",
+    "companyName": "禾聯碩",
+    "sector": "產業7"
+  },
+  {
+    "stockCode": "5284.TW",
+    "companyName": "jpp-KY",
+    "sector": "資訊服務業"
+  },
+  {
+    "stockCode": "5292.TW",
+    "companyName": "華懋",
+    "sector": "產業93"
+  },
+  {
+    "stockCode": "5306.TW",
+    "companyName": "桂盟",
+    "sector": "產業95"
+  },
+  {
+    "stockCode": "5434.TW",
+    "companyName": "崇越",
+    "sector": "產業45"
+  },
+  {
+    "stockCode": "5538.TW",
+    "companyName": "東明-KY",
+    "sector": "橡膠工業"
+  },
+  {
+    "stockCode": "5607.TW",
+    "companyName": "遠雄港",
+    "sector": "其他產業"
+  },
+  {
+    "stockCode": "5608.TW",
+    "companyName": "四維航",
+    "sector": "其他產業"
+  },
+  {
+    "stockCode": "5706.TW",
+    "companyName": "鳳凰",
+    "sector": "化學工業"
+  },
+  {
+    "stockCode": "5871.TW",
+    "companyName": "中租-KY",
+    "sector": "資訊服務業"
+  },
+  {
+    "stockCode": "5876.TW",
+    "companyName": "上海商銀",
+    "sector": "生技醫療"
+  },
+  {
+    "stockCode": "5906.TW",
+    "companyName": "台南-KY",
+    "sector": "半導體業"
+  },
+  {
+    "stockCode": "5907.TW",
+    "companyName": "大洋-KY",
+    "sector": "半導體業"
+  },
+  {
+    "stockCode": "6112.TW",
+    "companyName": "邁達特",
+    "sector": "產業46"
+  },
+  {
+    "stockCode": "6139.TW",
+    "companyName": "亞翔",
+    "sector": "產業47"
+  },
+  {
+    "stockCode": "6165.TW",
+    "companyName": "浪凡",
+    "sector": "產業94"
+  },
+  {
+    "stockCode": "6183.TW",
+    "companyName": "關貿",
+    "sector": "產業46"
+  },
+  {
+    "stockCode": "6184.TW",
+    "companyName": "大豐電",
+    "sector": "資訊服務業"
+  },
+  {
+    "stockCode": "6189.TW",
+    "companyName": "豐藝",
+    "sector": "產業45"
+  },
+  {
+    "stockCode": "6192.TW",
+    "companyName": "巨路",
+    "sector": "產業47"
+  },
+  {
+    "stockCode": "6196.TW",
+    "companyName": "帆宣",
+    "sector": "產業47"
+  },
+  {
+    "stockCode": "6201.TW",
+    "companyName": "亞弘電",
+    "sector": "產業47"
+  },
+  {
+    "stockCode": "6214.TW",
+    "companyName": "精誠",
+    "sector": "產業46"
+  },
+  {
+    "stockCode": "6281.TW",
+    "companyName": "全國電",
+    "sector": "產業45"
+  },
+  {
+    "stockCode": "6423.TW",
+    "companyName": "億而得-創",
+    "sector": "產業49"
+  },
+  {
+    "stockCode": "6464.TW",
+    "companyName": "台數科",
+    "sector": "資訊服務業"
+  },
+  {
+    "stockCode": "6504.TW",
+    "companyName": "南六",
+    "sector": "資訊服務業"
+  },
+  {
+    "stockCode": "6505.TW",
+    "companyName": "台塑化",
+    "sector": "產業39"
+  },
+  {
+    "stockCode": "6534.TW",
+    "companyName": "正瀚-創",
+    "sector": "產業49"
+  },
+  {
+    "stockCode": "6581.TW",
+    "companyName": "鋼聯",
+    "sector": "產業93"
+  },
+  {
+    "stockCode": "6582.TW",
+    "companyName": "申豐",
+    "sector": "汽車工業"
+  },
+  {
+    "stockCode": "6585.TW",
+    "companyName": "鼎基",
+    "sector": "資訊服務業"
+  },
+  {
+    "stockCode": "6592.TW",
+    "companyName": "和潤企業",
+    "sector": "資訊服務業"
+  },
+  {
+    "stockCode": "6625.TW",
+    "companyName": "必應",
+    "sector": "資訊服務業"
+  },
+  {
+    "stockCode": "6641.TW",
+    "companyName": "基士德-KY",
+    "sector": "產業93"
+  },
+  {
+    "stockCode": "6645.TW",
+    "companyName": "金萬林-創",
+    "sector": "產業49"
+  },
+  {
+    "stockCode": "6655.TW",
+    "companyName": "科定",
+    "sector": "資訊服務業"
+  },
+  {
+    "stockCode": "6670.TW",
+    "companyName": "復盛應用",
+    "sector": "產業95"
+  },
+  {
+    "stockCode": "6671.TW",
+    "companyName": "三能-KY",
+    "sector": "產業96"
+  },
+  {
+    "stockCode": "6689.TW",
+    "companyName": "伊雲谷",
+    "sector": "產業94"
+  },
+  {
+    "stockCode": "6753.TW",
+    "companyName": "龍德造船",
+    "sector": "其他產業"
+  },
+  {
+    "stockCode": "6754.TW",
+    "companyName": "匯僑設計",
+    "sector": "產業96"
+  },
+  {
+    "stockCode": "6757.TW",
+    "companyName": "台灣虎航",
+    "sector": "其他產業"
+  },
+  {
+    "stockCode": "6768.TW",
+    "companyName": "志強-KY",
+    "sector": "產業95"
+  },
+  {
+    "stockCode": "6771.TW",
+    "companyName": "平和環保-創",
+    "sector": "產業49"
+  },
+  {
+    "stockCode": "6776.TW",
+    "companyName": "展碁國際",
+    "sector": "產業45"
+  },
+  {
+    "stockCode": "6790.TW",
+    "companyName": "永豐實",
+    "sector": "鋼鐵工業"
+  },
+  {
+    "stockCode": "6794.TW",
+    "companyName": "向榮生技-創",
+    "sector": "產業49"
+  },
+  {
+    "stockCode": "6806.TW",
+    "companyName": "森崴能源",
+    "sector": "產業93"
+  },
+  {
+    "stockCode": "6807.TW",
+    "companyName": "峰源-KY",
+    "sector": "產業96"
+  },
+  {
+    "stockCode": "6854.TW",
+    "companyName": "錼創科技-KY創",
+    "sector": "產業49"
+  },
+  {
+    "stockCode": "6869.TW",
+    "companyName": "雲豹能源",
+    "sector": "產業93"
+  },
+  {
+    "stockCode": "6873.TW",
+    "companyName": "泓德能源",
+    "sector": "產業93"
+  },
+  {
+    "stockCode": "6887.TW",
+    "companyName": "寶綠特-KY",
+    "sector": "產業93"
+  },
+  {
+    "stockCode": "6890.TW",
+    "companyName": "來億-KY",
+    "sector": "產業95"
+  },
+  {
+    "stockCode": "6901.TW",
+    "companyName": "鑽石投資",
+    "sector": "資訊服務業"
+  },
+  {
+    "stockCode": "6902.TW",
+    "companyName": "GOGOLOOK",
+    "sector": "產業94"
+  },
+  {
+    "stockCode": "6906.TW",
+    "companyName": "現觀科",
+    "sector": "產業94"
+  },
+  {
+    "stockCode": "6914.TW",
+    "companyName": "阜爾運通",
+    "sector": "資訊服務業"
+  },
+  {
+    "stockCode": "6923.TW",
+    "companyName": "中台",
+    "sector": "產業93"
+  },
+  {
+    "stockCode": "6924.TW",
+    "companyName": "榮惠-KY創",
+    "sector": "產業49"
+  },
+  {
+    "stockCode": "6944.TW",
+    "companyName": "兆聯實業",
+    "sector": "產業93"
+  },
+  {
+    "stockCode": "6949.TW",
+    "companyName": "沛爾生醫-創",
+    "sector": "產業49"
+  },
+  {
+    "stockCode": "6951.TW",
+    "companyName": "青新-創",
+    "sector": "產業49"
+  },
+  {
+    "stockCode": "6952.TW",
+    "companyName": "大武山",
+    "sector": "資訊服務業"
+  },
+  {
+    "stockCode": "6955.TW",
+    "companyName": "邦睿生技-創",
+    "sector": "產業49"
+  },
+  {
+    "stockCode": "6957.TW",
+    "companyName": "裕慶-KY",
+    "sector": "資訊服務業"
+  },
+  {
+    "stockCode": "6958.TW",
+    "companyName": "日盛台駿",
+    "sector": "資訊服務業"
+  },
+  {
+    "stockCode": "6965.TW",
+    "companyName": "中傑-KY",
+    "sector": "產業95"
+  },
+  {
+    "stockCode": "6969.TW",
+    "companyName": "成信實業*-創",
+    "sector": "產業49"
+  },
+  {
+    "stockCode": "6988.TW",
+    "companyName": "威力暘-創",
+    "sector": "產業49"
+  },
+  {
+    "stockCode": "6994.TW",
+    "companyName": "富威電力",
+    "sector": "產業93"
+  },
+  {
+    "stockCode": "7631.TW",
+    "companyName": "聚賢研發-創",
+    "sector": "產業49"
+  },
+  {
+    "stockCode": "7705.TW",
+    "companyName": "三商餐飲",
+    "sector": "化學工業"
+  },
+  {
+    "stockCode": "7721.TW",
+    "companyName": "微程式",
+    "sector": "產業94"
+  },
+  {
+    "stockCode": "7722.TW",
+    "companyName": "LINEPAY",
+    "sector": "產業94"
+  },
+  {
+    "stockCode": "7740.TW",
+    "companyName": "熙特爾-創",
+    "sector": "產業49"
+  },
+  {
+    "stockCode": "8033.TW",
+    "companyName": "雷虎",
+    "sector": "資訊服務業"
+  },
+  {
+    "stockCode": "8070.TW",
+    "companyName": "長華*",
+    "sector": "產業45"
+  },
+  {
+    "stockCode": "8072.TW",
+    "companyName": "陞泰",
+    "sector": "產業45"
+  },
+  {
+    "stockCode": "8112.TW",
+    "companyName": "至上",
+    "sector": "產業45"
+  },
+  {
+    "stockCode": "8162.TW",
+    "companyName": "微矽電子-創",
+    "sector": "產業49"
+  },
+  {
+    "stockCode": "8341.TW",
+    "companyName": "日友",
+    "sector": "產業93"
+  },
+  {
+    "stockCode": "8367.TW",
+    "companyName": "建新國際",
+    "sector": "其他產業"
+  },
+  {
+    "stockCode": "8404.TW",
+    "companyName": "百和興業-KY",
+    "sector": "資訊服務業"
+  },
+  {
+    "stockCode": "8411.TW",
+    "companyName": "福貞-KY",
+    "sector": "資訊服務業"
+  },
+  {
+    "stockCode": "8422.TW",
+    "companyName": "可寧衛",
+    "sector": "產業93"
+  },
+  {
+    "stockCode": "8429.TW",
+    "companyName": "金麗-KY",
+    "sector": "半導體業"
+  },
+  {
+    "stockCode": "8438.TW",
+    "companyName": "昶昕",
+    "sector": "產業93"
+  },
+  {
+    "stockCode": "8442.TW",
+    "companyName": "威宏-KY",
+    "sector": "資訊服務業"
+  },
+  {
+    "stockCode": "8443.TW",
+    "companyName": "阿瘦",
+    "sector": "半導體業"
+  },
+  {
+    "stockCode": "8454.TW",
+    "companyName": "富邦媒",
+    "sector": "產業94"
+  },
+  {
+    "stockCode": "8462.TW",
+    "companyName": "柏文",
+    "sector": "產業95"
+  },
+  {
+    "stockCode": "8464.TW",
+    "companyName": "億豐",
+    "sector": "產業96"
+  },
+  {
+    "stockCode": "8467.TW",
+    "companyName": "波力-KY",
+    "sector": "產業95"
+  },
+  {
+    "stockCode": "8473.TW",
+    "companyName": "山林水",
+    "sector": "產業93"
+  },
+  {
+    "stockCode": "8476.TW",
+    "companyName": "台境*",
+    "sector": "產業93"
+  },
+  {
+    "stockCode": "8478.TW",
+    "companyName": "東哥遊艇",
+    "sector": "產業95"
+  },
+  {
+    "stockCode": "8482.TW",
+    "companyName": "商億-KY",
+    "sector": "產業96"
+  },
+  {
+    "stockCode": "8487.TW",
+    "companyName": "愛爾達-創",
+    "sector": "產業49"
+  },
+  {
+    "stockCode": "8926.TW",
+    "companyName": "台汽電",
+    "sector": "產業39"
+  },
+  {
+    "stockCode": "8940.TW",
+    "companyName": "新天地",
+    "sector": "化學工業"
+  },
+  {
+    "stockCode": "9103.TW",
+    "companyName": "美德醫療-DR",
+    "sector": "電腦及週邊設備業"
+  },
+  {
+    "stockCode": "9105.TW",
+    "companyName": "泰金寶-DR",
+    "sector": "電腦及週邊設備業"
+  },
+  {
+    "stockCode": "9110.TW",
+    "companyName": "越南控-DR",
+    "sector": "電腦及週邊設備業"
+  },
+  {
+    "stockCode": "9136.TW",
+    "companyName": "巨騰-DR",
+    "sector": "電腦及週邊設備業"
+  },
+  {
+    "stockCode": "9802.TW",
+    "companyName": "鈺齊-KY",
+    "sector": "產業95"
+  },
+  {
+    "stockCode": "9904.TW",
+    "companyName": "寶成",
+    "sector": "產業95"
+  },
+  {
+    "stockCode": "9908.TW",
+    "companyName": "大台北",
+    "sector": "產業39"
+  },
+  {
+    "stockCode": "9910.TW",
+    "companyName": "豐泰",
+    "sector": "產業95"
+  },
+  {
+    "stockCode": "9911.TW",
+    "companyName": "櫻花",
+    "sector": "產業96"
+  },
+  {
+    "stockCode": "9914.TW",
+    "companyName": "美利達",
+    "sector": "產業95"
+  },
+  {
+    "stockCode": "9918.TW",
+    "companyName": "欣天然",
+    "sector": "產業39"
+  },
+  {
+    "stockCode": "9921.TW",
+    "companyName": "巨大",
+    "sector": "產業95"
+  },
+  {
+    "stockCode": "9924.TW",
+    "companyName": "福興",
+    "sector": "產業96"
+  },
+  {
+    "stockCode": "9926.TW",
+    "companyName": "新海",
+    "sector": "產業39"
+  },
+  {
+    "stockCode": "9930.TW",
+    "companyName": "中聯資源",
+    "sector": "產業93"
+  },
+  {
+    "stockCode": "9931.TW",
+    "companyName": "欣高",
+    "sector": "產業39"
+  },
+  {
+    "stockCode": "9934.TW",
+    "companyName": "成霖",
+    "sector": "產業96"
+  },
+  {
+    "stockCode": "9935.TW",
+    "companyName": "慶豐富",
+    "sector": "產業96"
+  },
+  {
+    "stockCode": "9937.TW",
+    "companyName": "全國",
+    "sector": "產業39"
+  },
+  {
+    "stockCode": "9943.TW",
+    "companyName": "好樂迪",
+    "sector": "化學工業"
+  },
+  {
+    "stockCode": "9955.TW",
+    "companyName": "佳龍",
+    "sector": "產業93"
   }
 ]
