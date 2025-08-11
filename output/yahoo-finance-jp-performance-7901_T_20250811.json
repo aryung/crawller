@@ -1,0 +1,170 @@
+{
+  "exportDate": "2025-08-11T13:37:47.620Z",
+  "totalResults": 1,
+  "successCount": 1,
+  "results": [
+    {
+      "url": "https://finance.yahoo.co.jp/quote/7901.T/performance?styl=performance",
+      "data": {
+        "stockInfo": "(株)マツモトの業績・財務・キャッシュフロー",
+        "periodsArray": [
+          {
+            "year": 2026,
+            "month": 4
+          },
+          {
+            "year": 2025,
+            "month": 4
+          },
+          {
+            "year": 2024,
+            "month": 4
+          },
+          {
+            "year": 2023,
+            "month": 4
+          }
+        ],
+        "revenueValues": [
+          2155,
+          2169,
+          2214,
+          2243
+        ],
+        "grossProfitValues": [
+          0,
+          239,
+          327,
+          447
+        ],
+        "grossProfitMarginValues": [
+          0,
+          11.02,
+          14.78,
+          19.94
+        ],
+        "operationProfitValues": [
+          -93,
+          -265,
+          -146,
+          12
+        ],
+        "operationProfitMarginValues": [
+          -4.32,
+          -12.23,
+          -6.61,
+          0.54
+        ],
+        "ordinaryProfitValues": [
+          -12,
+          -261,
+          -137,
+          33
+        ],
+        "ordinaryProfitMarginValues": [
+          -0.56,
+          -12.06,
+          -6.19,
+          1.46
+        ],
+        "netProfitValues": [
+          57,
+          -653,
+          -87,
+          74
+        ],
+        "financialUpdateDates": [
+          "2025-07-23",
+          "2025-07-23",
+          "2024-07-25",
+          "2023-07-26"
+        ],
+        "data": [
+          {
+            "symbolCode": "7901",
+            "exchangeArea": "JP",
+            "reportDate": "2026-04-31",
+            "fiscalYear": 2026,
+            "fiscalMonth": 4,
+            "reportType": "annual",
+            "dataSource": "yahoo-finance-jp",
+            "lastUpdated": "2025-08-11T13:37:47.471Z",
+            "revenue": 2155000000,
+            "grossProfit": 0,
+            "operatingIncome": -93000000,
+            "netIncome": 57000000,
+            "grossMargin": 0,
+            "operatingMargin": -0.0432,
+            "regionalData": {
+              "ordinaryProfit": -12000000,
+              "ordinaryMargin": -0.005600000000000001
+            }
+          },
+          {
+            "symbolCode": "7901",
+            "exchangeArea": "JP",
+            "reportDate": "2025-04-31",
+            "fiscalYear": 2025,
+            "fiscalMonth": 4,
+            "reportType": "annual",
+            "dataSource": "yahoo-finance-jp",
+            "lastUpdated": "2025-08-11T13:37:47.471Z",
+            "revenue": 2169000000,
+            "grossProfit": 239000000,
+            "operatingIncome": -265000000,
+            "netIncome": -653000000,
+            "grossMargin": 0.11019999999999999,
+            "operatingMargin": -0.1223,
+            "regionalData": {
+              "ordinaryProfit": -261000000,
+              "ordinaryMargin": -0.12060000000000001
+            }
+          },
+          {
+            "symbolCode": "7901",
+            "exchangeArea": "JP",
+            "reportDate": "2024-04-31",
+            "fiscalYear": 2024,
+            "fiscalMonth": 4,
+            "reportType": "annual",
+            "dataSource": "yahoo-finance-jp",
+            "lastUpdated": "2025-08-11T13:37:47.471Z",
+            "revenue": 2214000000,
+            "grossProfit": 327000000,
+            "operatingIncome": -146000000,
+            "netIncome": -87000000,
+            "grossMargin": 0.1478,
+            "operatingMargin": -0.0661,
+            "regionalData": {
+              "ordinaryProfit": -137000000,
+              "ordinaryMargin": -0.061900000000000004
+            }
+          },
+          {
+            "symbolCode": "7901",
+            "exchangeArea": "JP",
+            "reportDate": "2023-04-31",
+            "fiscalYear": 2023,
+            "fiscalMonth": 4,
+            "reportType": "annual",
+            "dataSource": "yahoo-finance-jp",
+            "lastUpdated": "2025-08-11T13:37:47.471Z",
+            "revenue": 2243000000,
+            "grossProfit": 447000000,
+            "operatingIncome": 12000000,
+            "netIncome": 74000000,
+            "grossMargin": 0.19940000000000002,
+            "operatingMargin": 0.0054,
+            "regionalData": {
+              "ordinaryProfit": 33000000,
+              "ordinaryMargin": 0.0146
+            }
+          }
+        ]
+      },
+      "timestamp": "2025-08-11T13:37:47.615Z",
+      "success": true,
+      "screenshot": "<Buffer 344393 bytes>"
+    }
+  ]
+}

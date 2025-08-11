@@ -1,0 +1,201 @@
+{
+  "exportDate": "2025-08-11T09:40:22.334Z",
+  "totalResults": 1,
+  "successCount": 1,
+  "results": [
+    {
+      "url": "https://finance.yahoo.com/quote/AAPL/cash-flow/",
+      "data": {
+        "stockInfo": "Yahoo Finance",
+        "fiscalPeriodsArray": [
+          {
+            "year": 2025,
+            "month": 8,
+            "originalDate": "TTM",
+            "isTTM": true
+          },
+          {
+            "year": 2024,
+            "month": 9,
+            "day": 30,
+            "originalDate": "9/30/2024"
+          },
+          {
+            "year": 2023,
+            "month": 9,
+            "day": 30,
+            "originalDate": "9/30/2023"
+          },
+          {
+            "year": 2022,
+            "month": 9,
+            "day": 30,
+            "originalDate": "9/30/2022"
+          },
+          {
+            "year": 2021,
+            "month": 9,
+            "day": 30,
+            "originalDate": "9/30/2021"
+          }
+        ],
+        "operatingCashflowValues": [
+          108565000,
+          118254000,
+          110543000,
+          122151000,
+          104038000
+        ],
+        "investingCashflowValues": [
+          19227000,
+          2935000,
+          3705000,
+          -22354000,
+          -14545000
+        ],
+        "financingCashflowValues": [
+          -118158000,
+          -121983000,
+          -108488000,
+          -110749000,
+          -93353000
+        ],
+        "endCashPositionValues": [
+          36269000,
+          29943000,
+          30737000,
+          24977000,
+          35929000
+        ],
+        "incomeTaxPaidValues": [
+          44204000,
+          26102000,
+          18679000,
+          19573000,
+          25385000
+        ],
+        "interestPaidValues": [
+          0,
+          0,
+          3803000,
+          2865000,
+          2687000
+        ],
+        "capitalExpenditureValues": [
+          -12381000,
+          -9447000,
+          -10959000,
+          -10708000,
+          -11085000
+        ],
+        "issuanceOfCapitalStockValues": [
+          0,
+          0,
+          0,
+          0,
+          1105000
+        ],
+        "issuanceOfDebtValues": [
+          4481000,
+          0,
+          5228000,
+          5465000,
+          20393000
+        ],
+        "repaymentOfDebtValues": [
+          -9320000,
+          -9958000,
+          -11151000,
+          -9543000,
+          -8750000
+        ],
+        "repurchaseOfCapitalStockValues": [
+          -95662000,
+          -94949000,
+          -77550000,
+          -89402000,
+          -85971000
+        ],
+        "freeCashflowValues": [
+          96184000,
+          108807000,
+          99584000,
+          111443000,
+          92953000
+        ],
+        "data": [
+          {
+            "symbolCode": "AAPL",
+            "exchangeArea": "US",
+            "reportDate": "2024-09-30",
+            "fiscalYear": 2024,
+            "fiscalMonth": 9,
+            "reportType": "annual",
+            "dataSource": "yahoo-finance-us",
+            "lastUpdated": "2025-08-11T09:40:22.327Z",
+            "operatingCashFlow": 118254000000,
+            "investingCashFlow": 2935000000,
+            "financingCashFlow": -121983000000,
+            "freeCashFlow": 108807000000,
+            "capex": -9447000000,
+            "debtIssuance": 0,
+            "debtRepayment": -9958000000
+          },
+          {
+            "symbolCode": "AAPL",
+            "exchangeArea": "US",
+            "reportDate": "2023-09-30",
+            "fiscalYear": 2023,
+            "fiscalMonth": 9,
+            "reportType": "annual",
+            "dataSource": "yahoo-finance-us",
+            "lastUpdated": "2025-08-11T09:40:22.327Z",
+            "operatingCashFlow": 110543000000,
+            "investingCashFlow": 3705000000,
+            "financingCashFlow": -108488000000,
+            "freeCashFlow": 99584000000,
+            "capex": -10959000000,
+            "debtIssuance": 5228000000,
+            "debtRepayment": -11151000000
+          },
+          {
+            "symbolCode": "AAPL",
+            "exchangeArea": "US",
+            "reportDate": "2022-09-30",
+            "fiscalYear": 2022,
+            "fiscalMonth": 9,
+            "reportType": "annual",
+            "dataSource": "yahoo-finance-us",
+            "lastUpdated": "2025-08-11T09:40:22.327Z",
+            "operatingCashFlow": 122151000000,
+            "investingCashFlow": -22354000000,
+            "financingCashFlow": -110749000000,
+            "freeCashFlow": 111443000000,
+            "capex": -10708000000,
+            "debtIssuance": 5465000000,
+            "debtRepayment": -9543000000
+          },
+          {
+            "symbolCode": "AAPL",
+            "exchangeArea": "US",
+            "reportDate": "2021-09-30",
+            "fiscalYear": 2021,
+            "fiscalMonth": 9,
+            "reportType": "annual",
+            "dataSource": "yahoo-finance-us",
+            "lastUpdated": "2025-08-11T09:40:22.327Z",
+            "operatingCashFlow": 104038000000,
+            "investingCashFlow": -14545000000,
+            "financingCashFlow": -93353000000,
+            "freeCashFlow": 92953000000,
+            "capex": -11085000000,
+            "debtIssuance": 20393000000,
+            "debtRepayment": -8750000000
+          }
+        ]
+      },
+      "timestamp": "2025-08-11T09:40:22.327Z",
+      "success": true
+    }
+  ]
+}

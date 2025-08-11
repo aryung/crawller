@@ -1,0 +1,94 @@
+{
+  "exportDate": "2025-08-11T13:35:37.408Z",
+  "totalResults": 1,
+  "successCount": 1,
+  "results": [
+    {
+      "url": "https://finance.yahoo.co.jp/quote/143A.T/performance?styl=cf",
+      "data": {
+        "stockInfo": "イシン(株)の業績・財務・キャッシュフロー",
+        "periodsArray": [
+          {
+            "year": 2025,
+            "month": 3
+          },
+          {
+            "year": 2024,
+            "month": 3
+          },
+          {
+            "year": 2023,
+            "month": 3
+          }
+        ],
+        "freeCashflowValues": [
+          102,
+          223,
+          89
+        ],
+        "operatingCashflowValues": [
+          102,
+          226,
+          106
+        ],
+        "investingCashflowValues": [
+          -89,
+          -24,
+          -18
+        ],
+        "financingCashflowValues": [
+          64,
+          209,
+          -1
+        ],
+        "data": [
+          {
+            "symbolCode": "143A",
+            "exchangeArea": "JP",
+            "reportDate": "2025-03-31",
+            "fiscalYear": 2025,
+            "fiscalMonth": 3,
+            "reportType": "annual",
+            "dataSource": "yahoo-finance-jp",
+            "lastUpdated": "2025-08-11T13:35:37.299Z",
+            "freeCashFlow": 102000000,
+            "operatingCashFlow": 102000000,
+            "investingCashFlow": -89000000,
+            "financingCashFlow": 64000000
+          },
+          {
+            "symbolCode": "143A",
+            "exchangeArea": "JP",
+            "reportDate": "2024-03-31",
+            "fiscalYear": 2024,
+            "fiscalMonth": 3,
+            "reportType": "annual",
+            "dataSource": "yahoo-finance-jp",
+            "lastUpdated": "2025-08-11T13:35:37.299Z",
+            "freeCashFlow": 223000000,
+            "operatingCashFlow": 226000000,
+            "investingCashFlow": -24000000,
+            "financingCashFlow": 209000000
+          },
+          {
+            "symbolCode": "143A",
+            "exchangeArea": "JP",
+            "reportDate": "2023-03-31",
+            "fiscalYear": 2023,
+            "fiscalMonth": 3,
+            "reportType": "annual",
+            "dataSource": "yahoo-finance-jp",
+            "lastUpdated": "2025-08-11T13:35:37.299Z",
+            "freeCashFlow": 89000000,
+            "operatingCashFlow": 106000000,
+            "investingCashFlow": -18000000,
+            "financingCashFlow": -1000000
+          }
+        ]
+      },
+      "timestamp": "2025-08-11T13:35:37.404Z",
+      "success": true,
+      "screenshot": "<Buffer 287430 bytes>"
+    }
+  ]
+}

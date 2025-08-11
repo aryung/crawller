@@ -1,0 +1,94 @@
+{
+  "exportDate": "2025-08-11T13:36:11.591Z",
+  "totalResults": 1,
+  "successCount": 1,
+  "results": [
+    {
+      "url": "https://finance.yahoo.co.jp/quote/7203.T/performance?styl=cf",
+      "data": {
+        "stockInfo": "トヨタ自動車(株)の業績・財務・キャッシュフロー",
+        "periodsArray": [
+          {
+            "year": 2025,
+            "month": 3
+          },
+          {
+            "year": 2024,
+            "month": 3
+          },
+          {
+            "year": 2023,
+            "month": 3
+          }
+        ],
+        "freeCashflowValues": [
+          1435927,
+          2025639,
+          1156600
+        ],
+        "operatingCashflowValues": [
+          3696934,
+          4206373,
+          2955076
+        ],
+        "investingCashflowValues": [
+          -4189736,
+          -4998751,
+          -1598890
+        ],
+        "financingCashflowValues": [
+          197236,
+          2497558,
+          -56180
+        ],
+        "data": [
+          {
+            "symbolCode": "7203",
+            "exchangeArea": "JP",
+            "reportDate": "2025-03-31",
+            "fiscalYear": 2025,
+            "fiscalMonth": 3,
+            "reportType": "annual",
+            "dataSource": "yahoo-finance-jp",
+            "lastUpdated": "2025-08-11T13:36:11.472Z",
+            "freeCashFlow": 1435927000000,
+            "operatingCashFlow": 3696934000000,
+            "investingCashFlow": -4189736000000,
+            "financingCashFlow": 197236000000
+          },
+          {
+            "symbolCode": "7203",
+            "exchangeArea": "JP",
+            "reportDate": "2024-03-31",
+            "fiscalYear": 2024,
+            "fiscalMonth": 3,
+            "reportType": "annual",
+            "dataSource": "yahoo-finance-jp",
+            "lastUpdated": "2025-08-11T13:36:11.472Z",
+            "freeCashFlow": 2025639000000,
+            "operatingCashFlow": 4206373000000,
+            "investingCashFlow": -4998751000000,
+            "financingCashFlow": 2497558000000
+          },
+          {
+            "symbolCode": "7203",
+            "exchangeArea": "JP",
+            "reportDate": "2023-03-31",
+            "fiscalYear": 2023,
+            "fiscalMonth": 3,
+            "reportType": "annual",
+            "dataSource": "yahoo-finance-jp",
+            "lastUpdated": "2025-08-11T13:36:11.472Z",
+            "freeCashFlow": 1156600000000,
+            "operatingCashFlow": 2955076000000,
+            "investingCashFlow": -1598890000000,
+            "financingCashFlow": -56180000000
+          }
+        ]
+      },
+      "timestamp": "2025-08-11T13:36:11.587Z",
+      "success": true,
+      "screenshot": "<Buffer 303787 bytes>"
+    }
+  ]
+}

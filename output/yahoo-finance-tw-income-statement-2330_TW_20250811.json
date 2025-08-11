@@ -1,5 +1,5 @@
 {
-  "exportDate": "2025-08-09T16:10:58.247Z",
+  "exportDate": "2025-08-11T13:46:11.775Z",
   "totalResults": 1,
   "successCount": 1,
   "results": [
@@ -241,14 +241,14 @@
         ],
         "data": [
           {
-            "symbolCode": "2330.TW",
+            "symbolCode": "2330",
             "exchangeArea": "TPE",
             "reportDate": "2025-03-31",
             "fiscalYear": 2025,
             "fiscalMonth": 3,
             "reportType": "quarterly",
             "dataSource": "yahoo-finance-tw",
-            "lastUpdated": "2025-08-09T16:10:58.106Z",
+            "lastUpdated": "2025-08-11T13:46:11.625Z",
             "revenue": 839253664000,
             "grossProfit": 493395076000,
             "operatingExpenses": 85186056000,
@@ -256,14 +256,14 @@
             "netIncome": 360732661000
           },
           {
-            "symbolCode": "2330.TW",
+            "symbolCode": "2330",
             "exchangeArea": "TPE",
             "reportDate": "2024-12-31",
             "fiscalYear": 2024,
             "fiscalMonth": 12,
             "reportType": "quarterly",
             "dataSource": "yahoo-finance-tw",
-            "lastUpdated": "2025-08-09T16:10:58.114Z",
+            "lastUpdated": "2025-08-11T13:46:11.633Z",
             "revenue": 868461178000,
             "grossProfit": 512378151000,
             "operatingExpenses": 86338820000,
@@ -271,14 +271,14 @@
             "netIncome": 374468888000
           },
           {
-            "symbolCode": "2330.TW",
+            "symbolCode": "2330",
             "exchangeArea": "TPE",
             "reportDate": "2024-09-30",
             "fiscalYear": 2024,
             "fiscalMonth": 9,
             "reportType": "quarterly",
             "dataSource": "yahoo-finance-tw",
-            "lastUpdated": "2025-08-09T16:10:58.114Z",
+            "lastUpdated": "2025-08-11T13:46:11.633Z",
             "revenue": 759692143000,
             "grossProfit": 439345666000,
             "operatingExpenses": 79078904000,
@@ -286,14 +286,14 @@
             "netIncome": 325080170000
           },
           {
-            "symbolCode": "2330.TW",
+            "symbolCode": "2330",
             "exchangeArea": "TPE",
             "reportDate": "2024-06-30",
             "fiscalYear": 2024,
             "fiscalMonth": 6,
             "reportType": "quarterly",
             "dataSource": "yahoo-finance-tw",
-            "lastUpdated": "2025-08-09T16:10:58.114Z",
+            "lastUpdated": "2025-08-11T13:46:11.633Z",
             "revenue": 673510177000,
             "grossProfit": 358124478000,
             "operatingExpenses": 70295310000,
@@ -301,14 +301,14 @@
             "netIncome": 247661438000
           },
           {
-            "symbolCode": "2330.TW",
+            "symbolCode": "2330",
             "exchangeArea": "TPE",
             "reportDate": "2024-03-31",
             "fiscalYear": 2024,
             "fiscalMonth": 3,
             "reportType": "quarterly",
             "dataSource": "yahoo-finance-tw",
-            "lastUpdated": "2025-08-09T16:10:58.114Z",
+            "lastUpdated": "2025-08-11T13:46:11.633Z",
             "revenue": 592644201000,
             "grossProfit": 314505269000,
             "operatingExpenses": 65357281000,
@@ -316,14 +316,14 @@
             "netIncome": 225221263000
           },
           {
-            "symbolCode": "2330.TW",
+            "symbolCode": "2330",
             "exchangeArea": "TPE",
             "reportDate": "2023-12-31",
             "fiscalYear": 2023,
             "fiscalMonth": 12,
             "reportType": "quarterly",
             "dataSource": "yahoo-finance-tw",
-            "lastUpdated": "2025-08-09T16:10:58.114Z",
+            "lastUpdated": "2025-08-11T13:46:11.633Z",
             "revenue": 625528856000,
             "grossProfit": 331767925000,
             "operatingExpenses": 71621021000,
@@ -331,14 +331,14 @@
             "netIncome": 238306201000
           },
           {
-            "symbolCode": "2330.TW",
+            "symbolCode": "2330",
             "exchangeArea": "TPE",
             "reportDate": "2023-09-30",
             "fiscalYear": 2023,
             "fiscalMonth": 9,
             "reportType": "quarterly",
             "dataSource": "yahoo-finance-tw",
-            "lastUpdated": "2025-08-09T16:10:58.114Z",
+            "lastUpdated": "2025-08-11T13:46:11.633Z",
             "revenue": 546732758000,
             "grossProfit": 296642464000,
             "operatingExpenses": 68708791000,
@@ -346,14 +346,14 @@
             "netIncome": 210795274000
           },
           {
-            "symbolCode": "2330.TW",
+            "symbolCode": "2330",
             "exchangeArea": "TPE",
             "reportDate": "2023-06-30",
             "fiscalYear": 2023,
             "fiscalMonth": 6,
             "reportType": "quarterly",
             "dataSource": "yahoo-finance-tw",
-            "lastUpdated": "2025-08-09T16:10:58.114Z",
+            "lastUpdated": "2025-08-11T13:46:11.633Z",
             "revenue": 480841254000,
             "grossProfit": 260199847000,
             "operatingExpenses": 58194560000,
@@ -361,14 +361,14 @@
             "netIncome": 181717006000
           },
           {
-            "symbolCode": "2330.TW",
+            "symbolCode": "2330",
             "exchangeArea": "TPE",
             "reportDate": "2023-03-31",
             "fiscalYear": 2023,
             "fiscalMonth": 3,
             "reportType": "quarterly",
             "dataSource": "yahoo-finance-tw",
-            "lastUpdated": "2025-08-09T16:10:58.114Z",
+            "lastUpdated": "2025-08-11T13:46:11.633Z",
             "revenue": 508632973000,
             "grossProfit": 286500392000,
             "operatingExpenses": 55309344000,
@@ -376,14 +376,14 @@
             "netIncome": 206949036000
           },
           {
-            "symbolCode": "2330.TW",
+            "symbolCode": "2330",
             "exchangeArea": "TPE",
             "reportDate": "2022-12-31",
             "fiscalYear": 2022,
             "fiscalMonth": 12,
             "reportType": "quarterly",
             "dataSource": "yahoo-finance-tw",
-            "lastUpdated": "2025-08-09T16:10:58.114Z",
+            "lastUpdated": "2025-08-11T13:46:11.633Z",
             "revenue": 625531868000,
             "grossProfit": 389184929000,
             "operatingExpenses": 64535382000,
@@ -391,14 +391,14 @@
             "netIncome": 295878482000
           },
           {
-            "symbolCode": "2330.TW",
+            "symbolCode": "2330",
             "exchangeArea": "TPE",
             "reportDate": "2022-09-30",
             "fiscalYear": 2022,
             "fiscalMonth": 9,
             "reportType": "quarterly",
             "dataSource": "yahoo-finance-tw",
-            "lastUpdated": "2025-08-09T16:10:58.114Z",
+            "lastUpdated": "2025-08-11T13:46:11.633Z",
             "revenue": 613142743000,
             "grossProfit": 370498717000,
             "operatingExpenses": 60186462000,
@@ -406,14 +406,14 @@
             "netIncome": 280968407000
           },
           {
-            "symbolCode": "2330.TW",
+            "symbolCode": "2330",
             "exchangeArea": "TPE",
             "reportDate": "2022-06-30",
             "fiscalYear": 2022,
             "fiscalMonth": 6,
             "reportType": "quarterly",
             "dataSource": "yahoo-finance-tw",
-            "lastUpdated": "2025-08-09T16:10:58.114Z",
+            "lastUpdated": "2025-08-11T13:46:11.633Z",
             "revenue": 534140808000,
             "grossProfit": 315467994000,
             "operatingExpenses": 53374518000,
@@ -421,14 +421,14 @@
             "netIncome": 237180252000
           },
           {
-            "symbolCode": "2330.TW",
+            "symbolCode": "2330",
             "exchangeArea": "TPE",
             "reportDate": "2022-03-31",
             "fiscalYear": 2022,
             "fiscalMonth": 3,
             "reportType": "quarterly",
             "dataSource": "yahoo-finance-tw",
-            "lastUpdated": "2025-08-09T16:10:58.114Z",
+            "lastUpdated": "2025-08-11T13:46:11.633Z",
             "revenue": 491075873000,
             "grossProfit": 273203166000,
             "operatingExpenses": 48611190000,
@@ -436,14 +436,14 @@
             "netIncome": 202873374000
           },
           {
-            "symbolCode": "2330.TW",
+            "symbolCode": "2330",
             "exchangeArea": "TPE",
             "reportDate": "2021-12-31",
             "fiscalYear": 2021,
             "fiscalMonth": 12,
             "reportType": "quarterly",
             "dataSource": "yahoo-finance-tw",
-            "lastUpdated": "2025-08-09T16:10:58.114Z",
+            "lastUpdated": "2025-08-11T13:46:11.633Z",
             "revenue": 438189306000,
             "grossProfit": 230679228000,
             "operatingExpenses": 47877762000,
@@ -451,14 +451,14 @@
             "netIncome": 166373515000
           },
           {
-            "symbolCode": "2330.TW",
+            "symbolCode": "2330",
             "exchangeArea": "TPE",
             "reportDate": "2021-09-30",
             "fiscalYear": 2021,
             "fiscalMonth": 9,
             "reportType": "quarterly",
             "dataSource": "yahoo-finance-tw",
-            "lastUpdated": "2025-08-09T16:10:58.114Z",
+            "lastUpdated": "2025-08-11T13:46:11.634Z",
             "revenue": 414670379000,
             "grossProfit": 212848684000,
             "operatingExpenses": 41649916000,
@@ -466,14 +466,14 @@
             "netIncome": 156479154000
           },
           {
-            "symbolCode": "2330.TW",
+            "symbolCode": "2330",
             "exchangeArea": "TPE",
             "reportDate": "2021-06-30",
             "fiscalYear": 2021,
             "fiscalMonth": 6,
             "reportType": "quarterly",
             "dataSource": "yahoo-finance-tw",
-            "lastUpdated": "2025-08-09T16:10:58.114Z",
+            "lastUpdated": "2025-08-11T13:46:11.634Z",
             "revenue": 372145122000,
             "grossProfit": 186234135000,
             "operatingExpenses": 40583423000,
@@ -481,14 +481,14 @@
             "netIncome": 134481716000
           },
           {
-            "symbolCode": "2330.TW",
+            "symbolCode": "2330",
             "exchangeArea": "TPE",
             "reportDate": "2021-03-31",
             "fiscalYear": 2021,
             "fiscalMonth": 3,
             "reportType": "quarterly",
             "dataSource": "yahoo-finance-tw",
-            "lastUpdated": "2025-08-09T16:10:58.114Z",
+            "lastUpdated": "2025-08-11T13:46:11.634Z",
             "revenue": 362410230000,
             "grossProfit": 189775219000,
             "operatingExpenses": 39111833000,
@@ -496,14 +496,14 @@
             "netIncome": 139738749000
           },
           {
-            "symbolCode": "2330.TW",
+            "symbolCode": "2330",
             "exchangeArea": "TPE",
             "reportDate": "2020-12-31",
             "fiscalYear": 2020,
             "fiscalMonth": 12,
             "reportType": "quarterly",
             "dataSource": "yahoo-finance-tw",
-            "lastUpdated": "2025-08-09T16:10:58.114Z",
+            "lastUpdated": "2025-08-11T13:46:11.634Z",
             "revenue": 361533057000,
             "grossProfit": 195188826000,
             "operatingExpenses": 38321439000,
@@ -511,14 +511,14 @@
             "netIncome": 142824524000
           },
           {
-            "symbolCode": "2330.TW",
+            "symbolCode": "2330",
             "exchangeArea": "TPE",
             "reportDate": "2020-09-30",
             "fiscalYear": 2020,
             "fiscalMonth": 9,
             "reportType": "quarterly",
             "dataSource": "yahoo-finance-tw",
-            "lastUpdated": "2025-08-09T16:10:58.114Z",
+            "lastUpdated": "2025-08-11T13:46:11.634Z",
             "revenue": 356426204000,
             "grossProfit": 190480670000,
             "operatingExpenses": 40891355000,
@@ -526,14 +526,14 @@
             "netIncome": 137378151000
           },
           {
-            "symbolCode": "2330.TW",
+            "symbolCode": "2330",
             "exchangeArea": "TPE",
             "reportDate": "2020-06-30",
             "fiscalYear": 2020,
             "fiscalMonth": 6,
             "reportType": "quarterly",
             "dataSource": "yahoo-finance-tw",
-            "lastUpdated": "2025-08-09T16:10:58.114Z",
+            "lastUpdated": "2025-08-11T13:46:11.634Z",
             "revenue": 310698367000,
             "grossProfit": 164692825000,
             "operatingExpenses": 33520709000,
@@ -542,9 +542,9 @@
           }
         ]
       },
-      "timestamp": "2025-08-09T16:10:58.243Z",
+      "timestamp": "2025-08-11T13:46:11.769Z",
       "success": true,
-      "screenshot": "<Buffer 331059 bytes>"
+      "screenshot": "<Buffer 325398 bytes>"
     }
   ]
 }
