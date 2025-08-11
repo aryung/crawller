@@ -3,9 +3,8 @@
  * 遵循 CLAUDE.md 獨立選擇器原則，符合 UnifiedFinancialData 規範
  */
 
-import { UnifiedFinancialData, FiscalReportType } from '../../types/unified-financial-data';
-import { MarketRegion } from '../../common/shared-types';
-import { UNIT_MULTIPLIERS } from '../../const/finance';
+import { UnifiedFinancialData } from '../../types/unified-financial-data';
+import { FiscalReportType, MarketRegion, UNIT_MULTIPLIERS } from '../../common/';
 
 /**
  * Yahoo Finance US 轉換函數接口 (簡化版本)
@@ -102,9 +101,9 @@ export const yahooFinanceUSTransforms: YahooFinanceUSTransforms = {
 
     for (const item of contentArray) {
       if (!item || typeof item !== 'string') continue;
-      
+
       const str = item.toString().trim();
-      
+
       // 缺失值檢測
       const missingValueRegex = /^[-—\-*・\s]*$|^(N\/A|n\/a|NA|--)$/;
       if (missingValueRegex.test(str)) {
@@ -112,12 +111,12 @@ export const yahooFinanceUSTransforms: YahooFinanceUSTransforms = {
         values.push(0);
         continue;
       }
-      
+
       // 使用現有的 parseUSFinancialValue 函數
       const parsedValue = yahooFinanceUSTransforms.parseUSFinancialValue(str);
       values.push(parsedValue);
     }
-    
+
     console.log(`[US Values Array] ✅ 成功處理 ${values.length} 個數值:`, values);
     return values;
   },
@@ -135,24 +134,31 @@ export const yahooFinanceUSTransforms: YahooFinanceUSTransforms = {
   }> => {
     console.log('[US Periods Array] 📅 處理美國期間陣列...');
     const contentArray = Array.isArray(content) ? content : [content];
-    const periods: Array<{ year: number; quarter?: number; month?: number; day?: number; isTTM?: boolean; originalDate?: string }> = [];
+    const periods: Array<{
+      year: number;
+      quarter?: number;
+      month?: number;
+      day?: number;
+      isTTM?: boolean;
+      originalDate?: string
+    }> = [];
 
     for (const item of contentArray) {
       if (!item || typeof item !== 'string') continue;
-      
+
       const str = item.toString().trim();
-      
+
       // TTM (Trailing Twelve Months) 特殊處理
       if (str.toUpperCase() === 'TTM') {
         periods.push({
           year: new Date().getFullYear(),
           month: new Date().getMonth() + 1,
           originalDate: 'TTM',
-          isTTM: true
+          isTTM: true,
         });
         continue;
       }
-      
+
       // 日期格式: M/D/YYYY 或 MM/DD/YYYY (如 9/30/2024)
       const dateMatch = str.match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/);
       if (dateMatch) {
@@ -160,39 +166,39 @@ export const yahooFinanceUSTransforms: YahooFinanceUSTransforms = {
           year: parseInt(dateMatch[3]),
           month: parseInt(dateMatch[1]),
           day: parseInt(dateMatch[2]),
-          originalDate: str
+          originalDate: str,
         });
         continue;
       }
-      
+
       // 季度格式: Q1 2024, Q2 2024 等
       const quarterMatch = str.match(/Q([1-4])\s+(\d{4})/);
       if (quarterMatch) {
         periods.push({
           year: parseInt(quarterMatch[2]),
           quarter: parseInt(quarterMatch[1]),
-          originalDate: str
+          originalDate: str,
         });
         continue;
       }
-      
+
       // 純年份格式: 2024
       const yearMatch = str.match(/(\d{4})/);
       if (yearMatch) {
-        periods.push({ 
+        periods.push({
           year: parseInt(yearMatch[1]),
-          originalDate: str
+          originalDate: str,
         });
         continue;
       }
-      
+
       // 默認當年
-      periods.push({ 
+      periods.push({
         year: new Date().getFullYear(),
-        originalDate: str
+        originalDate: str,
       });
     }
-    
+
     console.log(`[US Periods Array] ✅ 成功處理 ${periods.length} 個期間`);
     return periods;
   },
@@ -208,12 +214,12 @@ export const yahooFinanceUSTransforms: YahooFinanceUSTransforms = {
     if (!value) return { year: new Date().getFullYear() };
 
     const str = value.toString().trim();
-    
+
     // TTM 處理
     if (str.toUpperCase() === 'TTM') {
       return { year: new Date().getFullYear() };
     }
-    
+
     // 美國日期格式: M/D/YYYY
     const dateMatch = str.match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/);
     if (dateMatch) {
@@ -222,19 +228,19 @@ export const yahooFinanceUSTransforms: YahooFinanceUSTransforms = {
       return {
         year,
         month,
-        quarter: Math.ceil(month / 3)
+        quarter: Math.ceil(month / 3),
       };
     }
-    
+
     // 季度格式
     const quarterMatch = str.match(/Q([1-4])\s+(\d{4})/);
     if (quarterMatch) {
       return {
         year: parseInt(quarterMatch[2]),
-        quarter: parseInt(quarterMatch[1])
+        quarter: parseInt(quarterMatch[1]),
       };
     }
-    
+
     return { year: new Date().getFullYear() };
   },
 
@@ -248,9 +254,9 @@ export const yahooFinanceUSTransforms: YahooFinanceUSTransforms = {
 
     for (const item of contentArray) {
       if (!item || typeof item !== 'string') continue;
-      
+
       const str = item.toString().trim();
-      
+
       // 美國財務日期格式: M/D/YYYY
       const dateMatch = str.match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/);
       if (dateMatch) {
@@ -266,7 +272,7 @@ export const yahooFinanceUSTransforms: YahooFinanceUSTransforms = {
         console.log(`[US Dates Array] ⚠️ 無法解析日期: "${str}"，使用默認: "${fallbackDate}"`);
       }
     }
-    
+
     console.log(`[US Dates Array] ✅ 成功處理 ${dates.length} 個日期:`, dates);
     return dates;
   },
@@ -277,50 +283,50 @@ export const yahooFinanceUSTransforms: YahooFinanceUSTransforms = {
    */
   combineUSFinancialData: (content: any, context?: any): UnifiedFinancialData[] => {
     console.log('[US Combine] 🔗 開始組合美國財務數據...', context?.variables || {});
-    
+
     if (!context) return [];
 
     const results: UnifiedFinancialData[] = [];
     const symbolCode = context.variables?.symbolCode || context.symbolCode || 'UNKNOWN';
     const vars = context.variables || {};
-    
+
     // 獲取期間陣列 - 正確對應配置檔案中的欄位名稱
     const periodsArray = vars.fiscalPeriodsArray || vars.periodsArray || [];
-    
+
     // 檢查是否為現金流數據 - 正確對應配置檔案中的欄位名稱
     const operatingCashFlowArray = vars.operatingCashFlowValues || vars.operatingCashflowValues || [];
     const investingCashFlowArray = vars.investingCashFlowValues || vars.investingCashflowValues || [];
     const financingCashFlowArray = vars.financingCashFlowValues || vars.financingCashflowValues || [];
     const freeCashFlowArray = vars.freeCashFlowValues || vars.freeCashflowValues || [];
-    
+
     // 檢查是否為損益表數據 - 正確對應配置檔案中的欄位名稱
     const revenueArray = vars.totalRevenueValues || vars.revenueValues || [];
     const netIncomeArray = vars.netIncomeCommonStockholdersValues || vars.netIncomeValues || [];
     const epsArray = vars.basicEPSValues || vars.epsValues || [];
     const dilutedEpsArray = vars.dilutedEPSValues || [];
-    
+
     // 檢查是否為資產負債表數據 - 正確對應配置檔案中的欄位名稱
     const totalAssetsArray = vars.totalAssetsValues || [];
     const totalLiabilitiesArray = vars.totalLiabilitiesValues || [];
-    
+
     // 獲取財務更新日期陣列
     const financialUpdateDatesArray = vars.financialUpdateDates || [];
-    
+
     // 找出最大陣列長度（但先過濾掉 TTM）
-    const nonTTMCount = periodsArray.filter((p: any) => 
-      !(p && typeof p === 'object' && p.isTTM)
+    const nonTTMCount = periodsArray.filter((p: any) =>
+      !(p && typeof p === 'object' && p.isTTM),
     ).length;
-    
+
     const maxLength = nonTTMCount > 0 ? nonTTMCount : Math.max(
       periodsArray.length,
       operatingCashFlowArray.length,
       revenueArray.length,
       totalAssetsArray.length,
-      1 // 至少處理一筆
+      1, // 至少處理一筆
     );
-    
+
     console.log(`[US Combine] 📊 檢測到最大陣列長度: ${maxLength} (排除TTM後)`);
-    
+
     // 為每個期間創建記錄 (跳過 TTM 數據)
     let dataIndex = 0; // 用於追蹤實際數據陣列的索引
     for (let i = 0; i < periodsArray.length; i++) {
@@ -329,7 +335,7 @@ export const yahooFinanceUSTransforms: YahooFinanceUSTransforms = {
         console.log(`[US Combine] ⏭️ 跳過 TTM 數據 (索引 ${i})`);
         continue;
       }
-      
+
       // 基本的 UnifiedFinancialData 結構
       const financialData: UnifiedFinancialData = {
         symbolCode: symbolCode, // 美國股票不需要去除後綴
@@ -350,7 +356,7 @@ export const yahooFinanceUSTransforms: YahooFinanceUSTransforms = {
         financialData.investingCashFlow = (investingCashFlowArray[i] || 0) * UNIT_MULTIPLIERS.THOUSAND_USD;
         financialData.financingCashFlow = (financingCashFlowArray[i] || 0) * UNIT_MULTIPLIERS.THOUSAND_USD;
         financialData.freeCashFlow = (freeCashFlowArray[i] || 0) * UNIT_MULTIPLIERS.THOUSAND_USD;
-        
+
         // 資本支出和其他現金流項目 - 修正變數名稱映射
         financialData.capex = ((vars.capitalExpenditureValues || [])[i] || 0) * UNIT_MULTIPLIERS.THOUSAND_USD;
         financialData.debtIssuance = ((vars.issuanceOfDebtValues || [])[i] || 0) * UNIT_MULTIPLIERS.THOUSAND_USD;
@@ -365,11 +371,11 @@ export const yahooFinanceUSTransforms: YahooFinanceUSTransforms = {
         financialData.operatingIncome = ((vars.operatingIncomeValues || [])[i] || 0) * UNIT_MULTIPLIERS.THOUSAND_USD;
         financialData.netIncome = (netIncomeArray[i] || 0) * UNIT_MULTIPLIERS.THOUSAND_USD;
         financialData.ebitda = ((vars.ebitdaValues || [])[i] || 0) * UNIT_MULTIPLIERS.THOUSAND_USD;
-        
+
         // EPS 不需轉換
         financialData.eps = epsArray[i] || 0;
         financialData.dilutedEPS = dilutedEpsArray[i] || 0;
-        
+
         // 美國特有欄位放入 regionalData
         financialData.regionalData = {
           basicAverageShares: (vars.basicAverageSharesValues || [])[i] || 0,
@@ -377,7 +383,7 @@ export const yahooFinanceUSTransforms: YahooFinanceUSTransforms = {
           pretaxIncome: ((vars.pretaxIncomeValues || [])[i] || 0) * UNIT_MULTIPLIERS.THOUSAND_USD,
           taxProvision: ((vars.taxProvisionValues || [])[i] || 0) * UNIT_MULTIPLIERS.THOUSAND_USD,
           interestIncome: ((vars.interestIncomeValues || [])[i] || 0) * UNIT_MULTIPLIERS.THOUSAND_USD,
-          interestExpense: ((vars.interestExpenseValues || [])[i] || 0) * UNIT_MULTIPLIERS.THOUSAND_USD
+          interestExpense: ((vars.interestExpenseValues || [])[i] || 0) * UNIT_MULTIPLIERS.THOUSAND_USD,
         };
       }
       // 檢查資產負債表相關欄位
@@ -389,33 +395,33 @@ export const yahooFinanceUSTransforms: YahooFinanceUSTransforms = {
         financialData.workingCapital = ((vars.workingCapitalValues || [])[i] || 0) * UNIT_MULTIPLIERS.THOUSAND_USD;
         financialData.totalDebt = ((vars.totalDebtValues || [])[i] || 0) * UNIT_MULTIPLIERS.THOUSAND_USD;
         financialData.cashAndEquivalents = ((vars.cashAndEquivalentsValues || [])[i] || 0) * UNIT_MULTIPLIERS.THOUSAND_USD;
-        
+
         // 修正流通股數映射 - 使用實際可用的數據欄位
         financialData.sharesOutstanding = (vars.shareIssuedValues || vars.ordinarySharesNumberValues || [])[i] || 0;
-        
+
         // 計算每股淨值 = 股東權益 ÷ 流通股數
         const shareholdersEquity = ((vars.totalEquityValues || [])[i] || 0);
-        const sharesOutstanding = financialData.sharesOutstanding;
+        const sharesOutstanding = financialData.sharesOutstanding || 0;
         financialData.bookValuePerShare = sharesOutstanding > 0 ? shareholdersEquity / sharesOutstanding : 0;
-        
+
         // 美國特有欄位放入 regionalData
         financialData.regionalData = {
           totalCapitalization: ((vars.totalCapitalizationValues || [])[i] || 0) * UNIT_MULTIPLIERS.THOUSAND_USD,
           commonStockEquity: ((vars.commonStockEquityValues || [])[i] || 0) * UNIT_MULTIPLIERS.THOUSAND_USD,
           netTangibleAssets: ((vars.netTangibleAssetsValues || [])[i] || 0) * UNIT_MULTIPLIERS.THOUSAND_USD,
-          netDebt: ((vars.netDebtValues || [])[i] || 0) * UNIT_MULTIPLIERS.THOUSAND_USD
+          netDebt: ((vars.netDebtValues || [])[i] || 0) * UNIT_MULTIPLIERS.THOUSAND_USD,
         };
       }
 
       // 處理期間信息 - 使用實際的期間數據，不推算
       if (periodsArray[i]) {
-        const parsed = typeof periodsArray[i] === 'object' 
-          ? periodsArray[i] 
+        const parsed = typeof periodsArray[i] === 'object'
+          ? periodsArray[i]
           : yahooFinanceUSTransforms.parseUnifiedFiscalPeriod(periodsArray[i]);
-        
+
         // 使用實際解析出的年份
         financialData.fiscalYear = parsed.year;
-        
+
         // 如果有具體日期（M/D/YYYY 格式）
         if (parsed.day && parsed.month) {
           financialData.fiscalMonth = parsed.month;
@@ -457,10 +463,10 @@ export const yahooFinanceUSTransforms: YahooFinanceUSTransforms = {
       results.push(financialData);
       dataIndex++; // 增加實際數據索引
     }
-    
+
     console.log(`[US Combine] ✅ 成功組合 ${results.length} 筆美國財務數據`);
     return results;
-  }
+  },
 };
 
 /**

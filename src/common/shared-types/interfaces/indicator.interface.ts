@@ -37,6 +37,7 @@ export enum IndicatorType {
   DEBT_TO_EQUITY = 'DEBT_TO_EQUITY', // 負債權益比
   CURRENT_RATIO = 'CURRENT_RATIO', // 流動比率
   QUICK_RATIO = 'QUICK_RATIO', // 速動比率
+  CASH_RATIO = 'CASH_RATIO', // 現金比率
   DEBT_RATIO = 'DEBT_RATIO', // 負債比率
   INTEREST_COVERAGE = 'INTEREST_COVERAGE', // 利息保障倍數
 

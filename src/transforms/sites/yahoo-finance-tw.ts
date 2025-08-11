@@ -3,13 +3,8 @@
  * 只包含配置文件中实际使用的20个函数
  */
 
-import {
-  UnifiedFinancialData,
-  TableOrientation,
-} from '../../types/unified-financial-data';
-import { MarketRegion } from '../../common/shared-types/interfaces/market-data.interface';
-import { FiscalReportType } from '../../common/shared-types/interfaces/fundamental-data.interface';
-import { UNIT_MULTIPLIERS } from '../../const/finance';
+import { UnifiedFinancialData } from '../../types/unified-financial-data';
+import { FiscalReportType, MarketRegion, UNIT_MULTIPLIERS } from '../../common';
 
 /**
  * Yahoo Finance TW 转换函数接口 (大幅清理后的版本)
@@ -26,7 +21,7 @@ export interface YahooFinanceTWTransforms {
   extractRevenueValuesSeparately: (content: string | string[]) => number[];
   combineSimpleRevenueData: (
     content: any,
-    context?: any
+    context?: any,
   ) => UnifiedFinancialData[];
 
   // 股利数据处理 (实际使用)
@@ -35,7 +30,7 @@ export interface YahooFinanceTWTransforms {
   extractStockDividendsSeparately: (content: string | string[]) => number[];
   combineSimpleDividendData: (
     content: any,
-    context?: any
+    context?: any,
   ) => UnifiedFinancialData[];
 
   // EPS 数据处理 (实际使用)
@@ -45,14 +40,14 @@ export interface YahooFinanceTWTransforms {
 
   // 损益表数据处理 (实际使用)
   extractIncomeStatementPeriodsSeparately: (
-    content: string | string[]
+    content: string | string[],
   ) => string[];
   extractIncomeStatementValuesSeparately: (
-    content: string | string[]
+    content: string | string[],
   ) => number[];
   combineIncomeStatementData: (
     content: any,
-    context?: any
+    context?: any,
   ) => UnifiedFinancialData[];
 
   // 现金流数据处理 (实际使用)
@@ -62,11 +57,11 @@ export interface YahooFinanceTWTransforms {
   // 资产负债表数据处理 (实际使用)
   combineBalanceSheetData: (
     content: any,
-    context?: any
+    context?: any,
   ) => UnifiedFinancialData[];
 
   // === 核心工具函数 (被上述函数内部调用) ===
-  detectTableOrientation: (data: string[]) => TableOrientation;
+  detectTableOrientation: (data: string[]) => 'horizontal' | 'vertical';
   parseFinancialValue: (value: string) => number;
   parseUnifiedFiscalPeriod: (value: string) => {
     year: number;
@@ -100,16 +95,16 @@ function cleanStockSymbol(text: string): string {
     .replace(/^[：:]\s*/g, '')
     .trim();
 
-  // 提取股票代码 (格式: 1101.TW 或 2330.TWO)
+  // 提取股票代码並清理為乾淨格式（移除 .TW/.TWO 後綴）
   const stockCodeMatch = cleaned.match(/(\d{4})\.TW[O]?/);
   if (stockCodeMatch) {
-    return stockCodeMatch[0];
+    return stockCodeMatch[1]; // 只返回數字部分，不包含 .TW
   }
 
   // 如果没有找到标准格式，尝试提取数字部分
   const numberMatch = cleaned.match(/\d{4}/);
   if (numberMatch) {
-    return numberMatch[0] + '.TW';
+    return numberMatch[0]; // 只返回數字部分
   }
 
   return cleaned;
@@ -133,7 +128,7 @@ function extractRevenuePeriodsSeparately(content: string | string[]): string[] {
   }
 
   console.log(
-    `[Separate Revenue Periods] ✅ 提取到 ${periods.length} 个期间: ${periods.slice(0, 5).join(', ')}${periods.length > 5 ? '...' : ''}`
+    `[Separate Revenue Periods] ✅ 提取到 ${periods.length} 个期间: ${periods.slice(0, 5).join(', ')}${periods.length > 5 ? '...' : ''}`,
   );
 
   return periods;
@@ -161,7 +156,7 @@ function extractRevenueValuesSeparately(content: string | string[]): number[] {
   }
 
   console.log(
-    `[Separate Revenue Values] ✅ 提取到 ${values.length} 个数值: ${values.slice(0, 5).join(', ')}${values.length > 5 ? '...' : ''}`
+    `[Separate Revenue Values] ✅ 提取到 ${values.length} 个数值: ${values.slice(0, 5).join(', ')}${values.length > 5 ? '...' : ''}`,
   );
 
   return values;
@@ -170,7 +165,7 @@ function extractRevenueValuesSeparately(content: string | string[]): number[] {
 // 营收数据组合函数 (优化版 - 只处理 revenue 相关数据)
 function combineSimpleRevenueData(
   content: any,
-  context?: any
+  context?: any,
 ): UnifiedFinancialData[] {
   console.log('[Combine Simple Revenue] 🔗 开始组合简化营收数据...');
 
@@ -181,13 +176,14 @@ function combineSimpleRevenueData(
     const periodsArray = context?.fiscalPeriodsArray || context?.variables?.fiscalPeriodsArray || context?.variables?.revenuePeriods || [];
     const values = context?.revenueValues || context?.variables?.revenueValues || [];
 
-    // 优先从 URL 提取 symbolCode
+    // 优先从 URL 提取 symbolCode 並清理為乾淨格式
     let symbolCode = '0000';
     if (context?.url) {
       const urlMatch = context.url.match(/\/quote\/([^\/]+)\//);
       if (urlMatch) {
-        symbolCode = urlMatch[1];
-        console.log(`[Combine Simple Revenue] 從 URL 提取 symbolCode: ${symbolCode}`);
+        // 清理 symbolCode: 移除 .TW 或 .TWO 後綴
+        symbolCode = urlMatch[1].replace(/\.TW[O]?$/, '');
+        console.log(`[Combine Simple Revenue] 從 URL 提取並清理 symbolCode: ${urlMatch[1]} -> ${symbolCode}`);
       }
     }
     if (symbolCode === '0000') {
@@ -198,7 +194,7 @@ function combineSimpleRevenueData(
     }
 
     console.log(
-      `[Combine Simple Revenue] 数据概览: ${periodsArray.length} 个期间, ${values.length} 个数值`
+      `[Combine Simple Revenue] 数据概览: ${periodsArray.length} 个期间, ${values.length} 个数值`,
     );
 
     // 组合数据
@@ -219,7 +215,7 @@ function combineSimpleRevenueData(
 
         const unifiedData: UnifiedFinancialData = {
           symbolCode: symbolCode,
-          exchangeArea: MarketRegion.TPE,
+          exchangeArea: 'TPE' as MarketRegion,
           reportDate: reportDate,
           fiscalYear: year,
           fiscalMonth: actualMonth, // 營收數據必須包含月份信息
@@ -235,7 +231,7 @@ function combineSimpleRevenueData(
     }
 
     console.log(
-      `[Combine Simple Revenue] ✅ 成功组合 ${results.length} 筆營收数据`
+      `[Combine Simple Revenue] ✅ 成功组合 ${results.length} 筆營收数据`,
     );
   } catch (error) {
     console.error('[Combine Simple Revenue] ❌ 组合过程中发生错误:', error);
@@ -246,7 +242,7 @@ function combineSimpleRevenueData(
 
 // 股利期间提取函数
 function extractDividendPeriodsSeparately(
-  content: string | string[]
+  content: string | string[],
 ): string[] {
   console.log('[Extract Dividend Periods] 🔍 开始提取股利所属期间...');
 
@@ -255,9 +251,9 @@ function extractDividendPeriodsSeparately(
 
   for (const item of contentArray) {
     if (!item || typeof item !== 'string') continue;
-    
+
     const cleanedItem = item.trim();
-    
+
     // 匹配多種季度格式: "2025 Q1", "2025Q1", "2025-Q1", "2024Q4", "2024-4", "2025-1" 等
     // 優先匹配 "2025 Q1" 格式（空格分隔）
     const spaceMatch = cleanedItem.match(/^(\d{4})\s+Q(\d)$/);
@@ -267,7 +263,7 @@ function extractDividendPeriodsSeparately(
       console.log(`[Extract Dividend Periods] 匹配到期間: "${cleanedItem}" → "${period}"`);
       continue;
     }
-    
+
     // 半年度格式: 2024H1, 2024H2 等
     const halfYearMatches = cleanedItem.match(/(\d{4})H([12])/g);
     if (halfYearMatches) {
@@ -333,7 +329,7 @@ function extractCashDividendsSeparately(content: string | string[]): number[] {
     }
 
     const cleanValue = item.trim().replace(/[,\s]/g, '');
-    
+
     // 处理 "-" 符号，表示该期间没有现金股利
     if (cleanValue === '-' || cleanValue === '－' || cleanValue === '') {
       dividends.push(0); // "-" 转为 0
@@ -344,7 +340,7 @@ function extractCashDividendsSeparately(content: string | string[]): number[] {
   }
 
   console.log(
-    `[Extract Cash Dividends] ✅ 提取到 ${dividends.length} 个现金股利数值`
+    `[Extract Cash Dividends] ✅ 提取到 ${dividends.length} 个现金股利数值`,
   );
 
   return dividends;
@@ -364,7 +360,7 @@ function extractStockDividendsSeparately(content: string | string[]): number[] {
     }
 
     const cleanValue = item.trim().replace(/[,\s]/g, '');
-    
+
     // 处理 "-" 符号，表示该期间没有股票股利
     if (cleanValue === '-' || cleanValue === '－' || cleanValue === '') {
       dividends.push(0); // "-" 转为 0
@@ -375,7 +371,7 @@ function extractStockDividendsSeparately(content: string | string[]): number[] {
   }
 
   console.log(
-    `[Extract Stock Dividends] ✅ 提取到 ${dividends.length} 个股票股利数值`
+    `[Extract Stock Dividends] ✅ 提取到 ${dividends.length} 个股票股利数值`,
   );
 
   return dividends;
@@ -384,7 +380,7 @@ function extractStockDividendsSeparately(content: string | string[]): number[] {
 // 股利数据组合函数
 function combineSimpleDividendData(
   content: any,
-  context?: any
+  context?: any,
 ): UnifiedFinancialData[] {
   console.log('[Combine Dividend] 🔗 开始组合股利数据...');
   console.log('[Combine Dividend] 📊 Context 詳細資訊:', {
@@ -392,15 +388,15 @@ function combineSimpleDividendData(
     hasVariables: !!context?.variables,
     variableKeys: context?.variables ? Object.keys(context.variables) : [],
     contentType: typeof content,
-    contentLength: Array.isArray(content) ? content.length : (typeof content === 'string' ? content.length : 0)
+    contentLength: Array.isArray(content) ? content.length : (typeof content === 'string' ? content.length : 0),
   });
 
   if (context?.variables) {
     console.log('[Combine Dividend] 🔍 Variables 內容預覽:', {
       dividendPeriods: context.variables.dividendPeriods ? `Array(${context.variables.dividendPeriods.length})` : 'undefined',
-      cashDividends: context.variables.cashDividends ? `Array(${context.variables.cashDividends.length})` : 'undefined', 
+      cashDividends: context.variables.cashDividends ? `Array(${context.variables.cashDividends.length})` : 'undefined',
       stockDividends: context.variables.stockDividends ? `Array(${context.variables.stockDividends.length})` : 'undefined',
-      symbolCode: context.variables.symbolCode || context.variables.stockSymbol || 'undefined'
+      symbolCode: context.variables.symbolCode || context.variables.stockSymbol || 'undefined',
     });
   }
 
@@ -412,14 +408,15 @@ function combineSimpleDividendData(
   const stockDividends: number[] = context?.stockDividendsValues || context?.variables?.stockDividendsValues || context?.variables?.stockDividends || [];
 
   try {
-    
-    // 優先從 URL 提取 symbolCode
+
+    // 優先從 URL 提取 symbolCode 並清理為乾淨格式
     let symbolCode = '0000';
     if (context?.url) {
       const urlMatch = context.url.match(/\/quote\/([^\/]+)\//);
       if (urlMatch) {
-        symbolCode = urlMatch[1];
-        console.log(`[Combine Dividend] 從 URL 提取 symbolCode: ${symbolCode}`);
+        // 清理 symbolCode: 移除 .TW 或 .TWO 後綴
+        symbolCode = urlMatch[1].replace(/\.TW[O]?$/, '');
+        console.log(`[Combine Dividend] 從 URL 提取並清理 symbolCode: ${urlMatch[1]} -> ${symbolCode}`);
       }
     }
     if (symbolCode === '0000') {
@@ -433,17 +430,17 @@ function combineSimpleDividendData(
       periods: { length: periodsArray.length, sample: periodsArray.slice(0, 3) },
       cashDividends: { length: cashDividends.length, sample: cashDividends.slice(0, 3) },
       stockDividends: { length: stockDividends.length, sample: stockDividends.slice(0, 3) },
-      symbolCode
+      symbolCode,
     });
 
     // 如果所有陣列都為空，進行詳細檢查
     if (periodsArray.length === 0 && cashDividends.length === 0 && stockDividends.length === 0) {
       console.error('[Combine Dividend] ❌ 所有數據陣列都為空！');
-      console.log('[Combine Dividend] 🔍 所有可用的變量:', 
-        context?.variables ? Object.keys(context.variables) : '無 variables'
+      console.log('[Combine Dividend] 🔍 所有可用的變量:',
+        context?.variables ? Object.keys(context.variables) : '無 variables',
       );
-      console.log('[Combine Dividend] 🔍 完整 context 結構:', 
-        JSON.stringify(context, null, 2).slice(0, 500) + '...'
+      console.log('[Combine Dividend] 🔍 完整 context 結構:',
+        JSON.stringify(context, null, 2).slice(0, 500) + '...',
       );
       return [];
     }
@@ -451,7 +448,7 @@ function combineSimpleDividendData(
     // 验证数组长度是否一致
     if (periodsArray.length !== cashDividends.length || periodsArray.length !== stockDividends.length) {
       console.warn(
-        `[Combine Dividend] ⚠️ 数组长度不一致: periods=${periodsArray.length}, cashDividends=${cashDividends.length}, stockDividends=${stockDividends.length}`
+        `[Combine Dividend] ⚠️ 数组长度不一致: periods=${periodsArray.length}, cashDividends=${cashDividends.length}, stockDividends=${stockDividends.length}`,
       );
     }
 
@@ -459,11 +456,11 @@ function combineSimpleDividendData(
     const minLength = Math.min(
       periodsArray.length,
       cashDividends.length,
-      stockDividends.length
+      stockDividends.length,
     );
 
     console.log(
-      `[Combine Dividend] 📈 处理 ${minLength} 条记录 (periods=${periodsArray.length}, cash=${cashDividends.length}, stock=${stockDividends.length})`
+      `[Combine Dividend] 📈 处理 ${minLength} 条记录 (periods=${periodsArray.length}, cash=${cashDividends.length}, stock=${stockDividends.length})`,
     );
 
     for (let i = 0; i < minLength; i++) {
@@ -476,7 +473,7 @@ function combineSimpleDividendData(
         const year = periodData.year;
         const quarter = periodData.quarter;
         const month = periodData.month;
-        
+
         console.log(`[Combine Dividend] 🔍 處理期間: Year: ${year}, Quarter: ${quarter}, Month: ${month}`);
 
         // 生成正確的報告日期
@@ -493,7 +490,7 @@ function combineSimpleDividendData(
 
         const unifiedData: UnifiedFinancialData = {
           symbolCode: symbolCode,
-          exchangeArea: MarketRegion.TPE,
+          exchangeArea: 'TPE' as MarketRegion,
           reportDate: reportDate,
           fiscalYear: year,
           fiscalMonth: quarter ? quarter * 3 : 12, // Q1→3, Q2→6, Q3→9, Q4→12
@@ -511,21 +508,21 @@ function combineSimpleDividendData(
     }
 
     console.log(`[Combine Dividend] ✅ 成功组合 ${results.length} 筆股利数据`);
-    
+
     if (results.length === 0) {
       console.error('[Combine Dividend] ⚠️ 警告：沒有生成任何組合數據！');
       console.log('[Combine Dividend] 🔍 檢查點:', {
         minLength,
         hasValidPeriodsArray: periodsArray.some((p: any) => p && p.year),
         cashDividendsNonZero: cashDividends.some((c: number) => c !== 0),
-        stockDividendsNonZero: stockDividends.some((s: number) => s !== 0)
+        stockDividendsNonZero: stockDividends.some((s: number) => s !== 0),
       });
     }
   } catch (error: any) {
     console.error('[Combine Dividend] ❌ 组合过程中发生错误:', error);
     console.error('[Combine Dividend] 錯誤詳情:', {
       message: error.message,
-      stack: error.stack?.slice(0, 500)
+      stack: error.stack?.slice(0, 500),
     });
   }
 
@@ -541,9 +538,9 @@ function extractEPSPeriodsSeparately(content: string | string[]): string[] {
 
   for (const item of contentArray) {
     if (!item || typeof item !== 'string') continue;
-    
+
     const cleanedItem = item.trim();
-    
+
     // 匹配多種季度格式: "2025 Q1", "2025Q1", "2025-Q1", "2024Q4", "2024-4", "2025-1" 等
     // 優先匹配 "2025 Q1" 格式（空格分隔）
     const spaceMatch = cleanedItem.match(/^(\d{4})\s+Q(\d)$/);
@@ -553,7 +550,7 @@ function extractEPSPeriodsSeparately(content: string | string[]): string[] {
       console.log(`[Extract EPS Periods] 匹配到期間: "${cleanedItem}" → "${period}"`);
       continue;
     }
-    
+
     // 其他格式: 2025Q1, 2025-Q1, 2024-4, 2025-1 等
     const matches = cleanedItem.match(/(\d{4}[-]?[Q]?\d{1})/g);
     if (matches) {
@@ -605,7 +602,7 @@ function extractEPSValuesSeparately(content: string | string[]): number[] {
 // EPS 数据组合函数
 function combineSimpleEPSData(
   content: any,
-  context?: any
+  context?: any,
 ): UnifiedFinancialData[] {
   console.log('[Combine EPS] 🔗 开始组合 EPS 数据...');
 
@@ -615,21 +612,22 @@ function combineSimpleEPSData(
     // 使用新的統一變數名稱
     const periodsArray = context?.fiscalPeriodsArray || context?.variables?.fiscalPeriodsArray || context?.variables?.epsPeriods || [];
     const values = context?.epsValues || context?.variables?.epsValues || [];
-    
-    // 優先從 URL 提取 symbolCode
+
+    // 優先從 URL 提取 symbolCode 並清理為乾淨格式
     let symbolCode = '0000';
     if (context?.url) {
       const urlMatch = context.url.match(/\/quote\/([^\/]+)\//);
       if (urlMatch) {
-        symbolCode = urlMatch[1];
-        console.log(`[Combine EPS] 從 URL 提取 symbolCode: ${symbolCode}`);
+        // 清理 symbolCode: 移除 .TW 或 .TWO 後綴
+        symbolCode = urlMatch[1].replace(/\.TW[O]?$/, '');
+        console.log(`[Combine EPS] 從 URL 提取並清理 symbolCode: ${urlMatch[1]} -> ${symbolCode}`);
       }
     }
     if (symbolCode === '0000') {
       symbolCode = context?.symbolCode ||
-                    context?.variables?.symbolCode ||
-                    context?.variables?.stockSymbol ||
-                    '0000';
+        context?.variables?.symbolCode ||
+        context?.variables?.stockSymbol ||
+        '0000';
     }
 
     const minLength = Math.min(periodsArray.length, values.length);
@@ -653,7 +651,7 @@ function combineSimpleEPSData(
         const lastDayOfQuarter = new Date(
           year,
           quarterEndMonth,
-          0
+          0,
         ).getDate();
         reportDate = `${year}-${quarterEndMonth.toString().padStart(2, '0')}-${lastDayOfQuarter.toString().padStart(2, '0')}`;
       } else {
@@ -663,7 +661,7 @@ function combineSimpleEPSData(
 
       const unifiedData: UnifiedFinancialData = {
         symbolCode: symbolCode,
-        exchangeArea: MarketRegion.TPE,
+        exchangeArea: 'TPE' as MarketRegion,
         reportDate: reportDate,
         fiscalYear: year,
         fiscalMonth: quarter ? quarter * 3 : 12, // Q1→3, Q2→6, Q3→9, Q4→12
@@ -686,7 +684,7 @@ function combineSimpleEPSData(
 
 // 损益表期间提取函数
 function extractIncomeStatementPeriodsSeparately(
-  content: string | string[]
+  content: string | string[],
 ): string[] {
   console.log('[Income Statement Periods] 🔍 处理直接选择器结果...');
 
@@ -709,7 +707,7 @@ function extractIncomeStatementPeriodsSeparately(
 
 // 损益表数值提取函数
 function extractIncomeStatementValuesSeparately(
-  content: string | string[]
+  content: string | string[],
 ): number[] {
   console.log('[Income Statement Values] 💰 处理直接选择器结果...');
 
@@ -734,7 +732,7 @@ function extractIncomeStatementValuesSeparately(
 // 损益表数据组合函数
 function combineIncomeStatementData(
   content: any,
-  context?: any
+  context?: any,
 ): UnifiedFinancialData[] {
   console.log('[Combine Income Statement] 🔗 开始组合收益表数据...');
 
@@ -745,33 +743,34 @@ function combineIncomeStatementData(
   try {
     // 使用新的統一變數名稱
     const periodsArray = context?.fiscalPeriodsArray ||
-                        context?.variables?.fiscalPeriodsArray || 
-                        context?.variables?.incomeStatementPeriods || [];
+      context?.variables?.fiscalPeriodsArray ||
+      context?.variables?.incomeStatementPeriods || [];
     const revenueValues = context?.revenueValues ||
-                         context?.variables?.revenueValues || [];
+      context?.variables?.revenueValues || [];
     const grossProfitValues = context?.grossProfitValues ||
-                             context?.variables?.grossProfitValues || [];
+      context?.variables?.grossProfitValues || [];
     const operatingExpenseValues = context?.operatingExpenseValues ||
-                                  context?.variables?.operatingExpenseValues || [];
+      context?.variables?.operatingExpenseValues || [];
     const operatingIncomeValues = context?.operatingIncomeValues ||
-                                 context?.variables?.operatingIncomeValues || [];
+      context?.variables?.operatingIncomeValues || [];
     const netIncomeValues = context?.netIncomeValues ||
-                           context?.variables?.netIncomeValues || [];
-    
-    // 優先從 URL 提取 symbolCode
+      context?.variables?.netIncomeValues || [];
+
+    // 優先從 URL 提取 symbolCode 並清理為乾淨格式
     let symbolCode = '0000';
     if (context?.url) {
       const urlMatch = context.url.match(/\/quote\/([^\/]+)\//);
       if (urlMatch) {
-        symbolCode = urlMatch[1];
-        console.log(`[Combine Income Statement] 從 URL 提取 symbolCode: ${symbolCode}`);
+        // 清理 symbolCode: 移除 .TW 或 .TWO 後綴
+        symbolCode = urlMatch[1].replace(/\.TW[O]?$/, '');
+        console.log(`[Combine Income Statement] 從 URL 提取並清理 symbolCode: ${urlMatch[1]} -> ${symbolCode}`);
       }
     }
     if (symbolCode === '0000') {
       symbolCode = context?.symbolCode ||
-                    context?.variables?.symbolCode ||
-                    context?.variables?.stockSymbol ||
-                    '0000';
+        context?.variables?.symbolCode ||
+        context?.variables?.stockSymbol ||
+        '0000';
     }
 
     console.log(`[Combine Income Statement] 📊 數據統計:`);
@@ -788,7 +787,7 @@ function combineIncomeStatementData(
       grossProfitValues.length,
       operatingExpenseValues.length,
       operatingIncomeValues.length,
-      netIncomeValues.length
+      netIncomeValues.length,
     );
 
     console.log(`[Combine Income Statement] 🔄 將組合 ${minLength} 筆數據`);
@@ -813,7 +812,7 @@ function combineIncomeStatementData(
 
         const unifiedData: UnifiedFinancialData = {
           symbolCode: symbolCode,
-          exchangeArea: MarketRegion.TPE,
+          exchangeArea: 'TPE' as MarketRegion,
           reportDate: reportDate,
           fiscalYear: year,
           fiscalMonth: quarter ? quarter * 3 : 12,
@@ -835,7 +834,7 @@ function combineIncomeStatementData(
     }
 
     console.log(
-      `[Combine Income Statement] ✅ 成功组合 ${results.length} 筆收益表数据`
+      `[Combine Income Statement] ✅ 成功组合 ${results.length} 筆收益表数据`,
     );
   } catch (error) {
     console.error('[Combine Income Statement] ❌ 组合过程中发生错误:', error);
@@ -869,7 +868,7 @@ function extractCashFlowValuesSeparately(content: string | string[]): number[] {
 // 现金流数据组合函数
 function combineCashFlowData(
   content: any,
-  context?: any
+  context?: any,
 ): UnifiedFinancialData[] {
   console.log('[Combine Cash Flow] 🔗 开始组合现金流量表数据...');
 
@@ -878,28 +877,29 @@ function combineCashFlowData(
   try {
     // 使用新的統一變數名稱
     const periodsArray = context?.fiscalPeriodsArray ||
-                        context?.variables?.fiscalPeriodsArray || 
-                        context?.variables?.cashFlowPeriods || [];
+      context?.variables?.fiscalPeriodsArray ||
+      context?.variables?.cashFlowPeriods || [];
     const operatingCashFlowValues = context?.operatingCashFlowValues || context?.variables?.operatingCashFlowValues || [];
     const investingCashFlowValues = context?.investingCashFlowValues || context?.variables?.investingCashFlowValues || [];
     const financingCashFlowValues = context?.financingCashFlowValues || context?.variables?.financingCashFlowValues || [];
     const freeCashFlowValues = context?.freeCashFlowValues || context?.variables?.freeCashFlowValues || [];
     const netCashFlowValues = context?.netCashFlowValues || context?.variables?.netCashFlowValues || [];
-    
-    // 優先從 URL 提取 symbolCode
+
+    // 優先從 URL 提取 symbolCode 並清理為乾淨格式
     let symbolCode = '0000';
     if (context?.url) {
       const urlMatch = context.url.match(/\/quote\/([^\/]+)\//);
       if (urlMatch) {
-        symbolCode = urlMatch[1];
-        console.log(`[Combine Cash Flow] 從 URL 提取 symbolCode: ${symbolCode}`);
+        // 清理 symbolCode: 移除 .TW 或 .TWO 後綴
+        symbolCode = urlMatch[1].replace(/\.TW[O]?$/, '');
+        console.log(`[Combine Cash Flow] 從 URL 提取並清理 symbolCode: ${urlMatch[1]} -> ${symbolCode}`);
       }
     }
     if (symbolCode === '0000') {
       symbolCode = context?.symbolCode ||
-                    context?.variables?.symbolCode ||
-                    context?.variables?.stockSymbol ||
-                    '0000';
+        context?.variables?.symbolCode ||
+        context?.variables?.stockSymbol ||
+        '0000';
     }
 
     console.log(`[Combine Cash Flow] 📊 數據統計:`);
@@ -914,7 +914,7 @@ function combineCashFlowData(
         periodsArray.length,
         operatingCashFlowValues.length,
         investingCashFlowValues.length,
-        financingCashFlowValues.length
+        financingCashFlowValues.length,
       );
 
       for (let i = 0; i < minLength; i++) {
@@ -937,7 +937,7 @@ function combineCashFlowData(
 
           const unifiedData: UnifiedFinancialData = {
             symbolCode: symbolCode,
-            exchangeArea: MarketRegion.TPE,
+            exchangeArea: 'TPE' as MarketRegion,
             reportDate: reportDate,
             fiscalYear: year,
             fiscalMonth: quarter ? quarter * 3 : 12,
@@ -958,7 +958,7 @@ function combineCashFlowData(
       }
 
       console.log(
-        `[Combine Cash Flow] ✅ 成功组合 ${results.length} 筆现金流数据`
+        `[Combine Cash Flow] ✅ 成功组合 ${results.length} 筆现金流数据`,
       );
     }
   } catch (error) {
@@ -971,7 +971,7 @@ function combineCashFlowData(
 // 资产负债表数据组合函数
 function combineBalanceSheetData(
   content: any,
-  context?: any
+  context?: any,
 ): UnifiedFinancialData[] {
   console.log('[Combine Balance Sheet] 🔗 开始组合资产负债表数据...');
 
@@ -980,28 +980,29 @@ function combineBalanceSheetData(
   try {
     // 使用新的統一變數名稱
     const periodsArray = context?.fiscalPeriodsArray ||
-                        context?.variables?.fiscalPeriodsArray || 
-                        context?.variables?.balanceSheetPeriods || [];
+      context?.variables?.fiscalPeriodsArray ||
+      context?.variables?.balanceSheetPeriods || [];
     const totalAssetsValues = context?.totalAssetsValues || context?.variables?.totalAssetsValues || [];
     const totalLiabilitiesValues = context?.totalLiabilitiesValues || context?.variables?.totalLiabilitiesValues || [];
     const shareholdersEquityValues = context?.shareholdersEquityValues || context?.variables?.shareholdersEquityValues || [];
     const currentAssetsValues = context?.currentAssetsValues || context?.variables?.currentAssetsValues || [];
     const currentLiabilitiesValues = context?.currentLiabilitiesValues || context?.variables?.currentLiabilitiesValues || [];
-    
-    // 優先從 URL 提取 symbolCode
+
+    // 優先從 URL 提取 symbolCode 並清理為乾淨格式
     let symbolCode = '0000';
     if (context?.url) {
       const urlMatch = context.url.match(/\/quote\/([^\/]+)\//);
       if (urlMatch) {
-        symbolCode = urlMatch[1];
-        console.log(`[Combine Balance Sheet] 從 URL 提取 symbolCode: ${symbolCode}`);
+        // 清理 symbolCode: 移除 .TW 或 .TWO 後綴
+        symbolCode = urlMatch[1].replace(/\.TW[O]?$/, '');
+        console.log(`[Combine Balance Sheet] 從 URL 提取並清理 symbolCode: ${urlMatch[1]} -> ${symbolCode}`);
       }
     }
     if (symbolCode === '0000') {
       symbolCode = context?.symbolCode ||
-                    context?.variables?.symbolCode ||
-                    context?.variables?.stockSymbol ||
-                    '0000';
+        context?.variables?.symbolCode ||
+        context?.variables?.stockSymbol ||
+        '0000';
     }
 
     console.log(`[Combine Balance Sheet] 📊 數據統計:`);
@@ -1015,7 +1016,7 @@ function combineBalanceSheetData(
         periodsArray.length,
         totalAssetsValues.length,
         totalLiabilitiesValues.length,
-        shareholdersEquityValues.length
+        shareholdersEquityValues.length,
       );
 
       for (let i = 0; i < minLength; i++) {
@@ -1038,7 +1039,7 @@ function combineBalanceSheetData(
 
           const unifiedData: UnifiedFinancialData = {
             symbolCode: symbolCode,
-            exchangeArea: MarketRegion.TPE,
+            exchangeArea: 'TPE' as MarketRegion,
             reportDate: reportDate,
             fiscalYear: year,
             fiscalMonth: quarter ? quarter * 3 : 12,
@@ -1059,7 +1060,7 @@ function combineBalanceSheetData(
       }
 
       console.log(
-        `[Combine Balance Sheet] ✅ 成功转换 ${results.length} 筆资产负债表数据`
+        `[Combine Balance Sheet] ✅ 成功转换 ${results.length} 筆资产负债表数据`,
       );
     }
   } catch (error) {
@@ -1067,18 +1068,18 @@ function combineBalanceSheetData(
   }
 
   console.log(
-    `[Combine Balance Sheet] 🎯 成功转换 ${results.length} 筆资产负债表数据`
+    `[Combine Balance Sheet] 🎯 成功转换 ${results.length} 筆资产负债表数据`,
   );
   return results;
 }
 
 // 表格方向检测函数
-function detectTableOrientation(data: string[]): TableOrientation {
+function detectTableOrientation(data: string[]): 'horizontal' | 'vertical' {
   if (data.length < 10) return 'horizontal';
 
   // 检查期间数据的分布模式
   const periodCount = data.filter((item) =>
-    /20\d{2}[\/\-Q]/.test(item?.toString() || '')
+    /20\d{2}[\/\-Q]/.test(item?.toString() || ''),
   ).length;
 
   // 如果期间数据较多且连续，可能是垂直布局
@@ -1134,12 +1135,12 @@ function parseTWFinancialPeriodsArray(content: string | string[]): Array<{
   console.log('[TW Periods Array] 📅 處理台灣期間陣列...');
   const contentArray = Array.isArray(content) ? content : [content];
   const periods: Array<{ year: number; quarter?: number; month?: number; originalPeriod?: string }> = [];
-  
+
   for (const item of contentArray) {
     if (!item || typeof item !== 'string') continue;
-    
+
     const cleanText = item.trim();
-    
+
     // 處理不同格式的期間
     // 格式1: "2024H2" - 半年度格式
     const halfYearMatch = cleanText.match(/(\d{4})\s*H([1-2])/);
@@ -1148,17 +1149,17 @@ function parseTWFinancialPeriodsArray(content: string | string[]): Array<{
       const half = parseInt(halfYearMatch[2]);
       const quarter = half === 1 ? 2 : 4; // H1 = Q2 (上半年結束), H2 = Q4 (下半年結束)
       const month = quarter * 3; // Q2=6, Q4=12
-      
+
       periods.push({
         year,
         quarter,
         month,
-        originalPeriod: cleanText
+        originalPeriod: cleanText,
       });
       console.log(`[TW Periods] 半年度格式: ${cleanText} -> ${year}Q${quarter}`);
       continue;
     }
-    
+
     // 格式2: "2024Q3" - 季度格式
     const quarterMatch = cleanText.match(/(\d{4})\s*Q(\d)/);
     if (quarterMatch) {
@@ -1166,33 +1167,33 @@ function parseTWFinancialPeriodsArray(content: string | string[]): Array<{
         year: parseInt(quarterMatch[1]),
         quarter: parseInt(quarterMatch[2]),
         month: parseInt(quarterMatch[2]) * 3, // Q1=3, Q2=6, Q3=9, Q4=12
-        originalPeriod: cleanText
+        originalPeriod: cleanText,
       });
       continue;
     }
-    
+
     // 格式3: "2024/11" - 月份格式
     const monthMatch = cleanText.match(/(\d{4})[\/\-](\d{1,2})/);
     if (monthMatch) {
       periods.push({
         year: parseInt(monthMatch[1]),
         month: parseInt(monthMatch[2]),
-        originalPeriod: cleanText
+        originalPeriod: cleanText,
       });
       continue;
     }
-    
+
     // 格式4: "2024" - 年度格式
     const yearMatch = cleanText.match(/^(\d{4})$/);
     if (yearMatch) {
       periods.push({
         year: parseInt(yearMatch[1]),
-        originalPeriod: cleanText
+        originalPeriod: cleanText,
       });
       continue;
     }
   }
-  
+
   console.log(`[TW Periods Array] ✅ 成功處理 ${periods.length} 個期間`);
   return periods;
 }
@@ -1205,26 +1206,26 @@ function parseTWFinancialValuesArray(content: string | string[]): number[] {
   console.log('[TW Values Array] 💰 處理台灣財務數值陣列...');
   const contentArray = Array.isArray(content) ? content : [content];
   const values: number[] = [];
-  
+
   for (const item of contentArray) {
     if (!item || typeof item !== 'string') {
       values.push(0);
       continue;
     }
-    
+
     const cleanValue = item.trim()
       .replace(/[,\s]/g, '')  // 移除逗號和空格
       .replace(/[（()]/g, ''); // 移除括號
-    
+
     // 處理 "-" 或空值
     if (cleanValue === '-' || cleanValue === '－' || cleanValue === '') {
       values.push(0);
       continue;
     }
-    
+
     // 處理負數（括號表示）
     const isNegative = item.includes('(') || item.includes('（');
-    
+
     const num = parseFloat(cleanValue);
     if (!isNaN(num)) {
       values.push(isNegative ? -Math.abs(num) : num);
@@ -1232,7 +1233,7 @@ function parseTWFinancialValuesArray(content: string | string[]): number[] {
       values.push(0);
     }
   }
-  
+
   console.log(`[TW Values Array] ✅ 成功處理 ${values.length} 個數值: [${values.slice(0, 3).join(', ')}...]`);
   return values;
 }

@@ -2,7 +2,15 @@
  * 台灣財務數據處理工具函數
  */
 
-import { TW_DATA_PROCESSING } from '../const/finance.js';
+// 台灣財務數據處理常數
+const TW_DATA_PROCESSING = {
+  DEFAULT_DATE: '2024-01-01',
+  MONTH_DAY_DEFAULT: '01',
+  SORT_ORDER: {
+    DESC: 'desc' as const,
+    ASC: 'asc' as const
+  }
+};
 
 /**
  * 解析台灣財務期間為可比較的日期對象

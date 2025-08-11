@@ -10,12 +10,13 @@
  * Output: output/category-symbol-mappings.json
  */
 
-import { readFileSync, writeFileSync, readdirSync, existsSync, mkdirSync } from 'fs';
-import { join, dirname } from 'path';
-import { fileURLToPath } from 'url';
+// Load environment variables
+import 'dotenv/config';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+import { readFileSync, writeFileSync, readdirSync, existsSync, mkdirSync } from 'fs';
+import { join } from 'path';
+
+const __dirname = process.cwd();
 
 // Type definitions
 interface Symbol {
@@ -153,7 +154,7 @@ class CategorySymbolMapper {
    */
   processTaiwanData(): void {
     console.log('\n📊 Processing Taiwan (TPE) data...');
-    const filePath = join(__dirname, '../data/yahoo-tw-stock-details.json');
+    const filePath = join(__dirname, 'data/yahoo-tw-stock-details.json');
     
     if (!existsSync(filePath)) {
       console.warn('⚠️  Taiwan data file not found:', filePath);
@@ -191,7 +192,7 @@ class CategorySymbolMapper {
    */
   processJapanData(): void {
     console.log('\n📊 Processing Japan (JP) data...');
-    const filePath = join(__dirname, '../data/yahoo-jp-stock-details.json');
+    const filePath = join(__dirname, 'data/yahoo-jp-stock-details.json');
     
     if (!existsSync(filePath)) {
       console.warn('⚠️  Japan data file not found:', filePath);
@@ -229,7 +230,7 @@ class CategorySymbolMapper {
    */
   processUSData(): void {
     console.log('\n📊 Processing US data...');
-    const dataDir = join(__dirname, '../data');
+    const dataDir = join(__dirname, 'data');
     
     // Find all US sector files
     const files = readdirSync(dataDir);
@@ -299,13 +300,8 @@ class CategorySymbolMapper {
   saveMappings(): void {
     console.log('\n💾 Saving category-symbol mappings...');
     
-    // Ensure output directory exists
-    const outputDir = join(__dirname, '../output');
-    if (!existsSync(outputDir)) {
-      mkdirSync(outputDir, { recursive: true });
-    }
-    
-    const outputPath = join(outputDir, 'category-symbol-mappings.json');
+    // Save to data directory instead of output
+    const outputPath = join(__dirname, 'data', 'category-symbol-mappings.json');
     
     // Calculate statistics
     const stats = {

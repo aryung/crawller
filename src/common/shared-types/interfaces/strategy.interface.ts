@@ -1,7 +1,6 @@
 import { ErrorCode } from './error.interface';
 import { ConditionGroup } from './condition.interface';
 import { AssetType } from './position.interface';
-import { StrategyEntity } from '../entities';
 import { StopLossType } from './enums.interface';
 
 // enum 定義
@@ -53,7 +52,7 @@ export enum StrategyStatus {
  */
 export interface IStrategy {
   execute(payload: {
-    strategy: StrategyEntity;
+    strategy: any; // StrategyEntity; // 暫時使用 any 避免循環依賴
     options: {
       userId: string;
     } & StrategyExecuteOptions;

@@ -3,7 +3,6 @@ import * as fs from 'fs-extra';
 import { exec } from 'child_process';
 import { promisify } from 'util';
 import { OutputFileManager } from './OutputFileManager.js';
-import { DatabaseImporter, ImportResult } from '../database/DatabaseImporter.js';
 import { UnifiedFinancialData } from '../types/unified-financial-data.js';
 
 const execAsync = promisify(exec);
@@ -30,7 +29,6 @@ export interface PipelineResult {
   successfulCrawls: number;
   failedCrawls: number;
   totalDataAggregated: number;
-  databaseImport: ImportResult | null;
   errors: string[];
   duration: number;
 }
@@ -49,7 +47,7 @@ export interface CrawlerProgress {
 export class PipelineOrchestrator {
   private config: Required<PipelineConfig>;
   private fileManager: OutputFileManager;
-  private importer: DatabaseImporter;
+  // private importer: DatabaseImporter;
   private progressCallback?: (progress: CrawlerProgress) => void;
 
   constructor(config: PipelineConfig = {}) {
@@ -65,11 +63,11 @@ export class PipelineOrchestrator {
       skipConfigGeneration: config.skipConfigGeneration || false,
       skipCrawling: config.skipCrawling || false,
       skipAggregation: config.skipAggregation || false,
-      skipDatabaseImport: config.skipDatabaseImport || false,
+      skipDatabaseImport: config.skipDatabaseImport || true, // Default to skip now
     };
 
     this.fileManager = new OutputFileManager(this.config.outputDir);
-    this.importer = new DatabaseImporter();
+    // this.importer = new DatabaseImporter();
   }
 
   /**
@@ -91,7 +89,6 @@ export class PipelineOrchestrator {
       successfulCrawls: 0,
       failedCrawls: 0,
       totalDataAggregated: 0,
-      databaseImport: null,
       errors: [],
       duration: 0,
     };
@@ -126,10 +123,12 @@ export class PipelineOrchestrator {
         result.totalDataAggregated = unifiedData.length;
       }
 
-      // Step 4: Import to database
+      // Step 4: API Import (Manual)
       if (!this.config.skipDatabaseImport && unifiedData.length > 0) {
-        console.log('\n💾 Step 4: Importing to database...');
-        result.databaseImport = await this.importToDatabase(unifiedData);
+        console.log('\n💾 Step 4: Data ready for API import');
+        console.log('  ℹ️  Use the following command to import to backend:');
+        console.log('     npm run import:fundamental:batch');
+        console.log('  📁 Output files are ready in ./output/ directory');
       }
 
       result.duration = Date.now() - startTime;
@@ -141,7 +140,7 @@ export class PipelineOrchestrator {
       console.error('❌ Pipeline failed:', error);
     } finally {
       // Cleanup
-      await this.importer.close();
+      // await this.importer.close();
     }
 
     return result;
@@ -342,32 +341,6 @@ export class PipelineOrchestrator {
     return allData;
   }
 
-  /**
-   * Import unified data to database
-   */
-  private async importToDatabase(
-    data: UnifiedFinancialData[]
-  ): Promise<ImportResult> {
-    await this.importer.initialize();
-    
-    const result = await this.importer.importBatch(data, {
-      batchSize: this.config.batchSize,
-      upsert: true,
-      skipValidation: false,
-    });
-
-    console.log(`  ✓ Database import: ${result.inserted} inserted, ${result.updated} updated, ${result.failed} failed`);
-    
-    if (result.errors.length > 0) {
-      console.log('  Import errors:');
-      result.errors.slice(0, 5).forEach(err => console.log(`    - ${err}`));
-      if (result.errors.length > 5) {
-        console.log(`    ... and ${result.errors.length - 5} more errors`);
-      }
-    }
-
-    return result;
-  }
 
   /**
    * Get all config files to process
@@ -432,12 +405,9 @@ export class PipelineOrchestrator {
     console.log(`  - Failed:           ${result.failedCrawls}`);
     console.log(`Data Aggregated:      ${result.totalDataAggregated} records`);
     
-    if (result.databaseImport) {
-      console.log(`Database Import:`);
-      console.log(`  - Inserted:         ${result.databaseImport.inserted}`);
-      console.log(`  - Updated:          ${result.databaseImport.updated}`);
-      console.log(`  - Failed:           ${result.databaseImport.failed}`);
-    }
+    console.log('\n💡 Next Steps:');
+    console.log('  - Run: npm run import:fundamental:batch');
+    console.log('  - Or import specific regions: npm run import:fundamental:us');
     
     console.log(`Duration:             ${(result.duration / 1000).toFixed(2)}s`);
     
@@ -462,14 +432,47 @@ export class PipelineOrchestrator {
   }
 
   /**
-   * Get current pipeline statistics
+   * Get current pipeline statistics via API
    */
   async getStatistics(): Promise<{
     outputFiles: any;
     database: any;
   }> {
     const outputStats = await this.fileManager.getStatistics();
-    const dbStats = await this.importer.getStatistics();
+    
+    // Get database statistics from backend API instead of direct database access
+    let dbStats: any = {
+      totalRecords: 0,
+      byRegion: {},
+      byReportType: {},
+      latestReportDate: null,
+    };
+    
+    try {
+      const axios = require('axios');
+      const apiUrl = process.env.BACKEND_API_URL || 'http://localhost:3000';
+      const token = process.env.BACKEND_API_TOKEN;
+      
+      const headers: any = {
+        'Content-Type': 'application/json',
+      };
+      
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+      
+      const response = await axios.get(`${apiUrl}/fundamental-data/statistics`, {
+        headers,
+        timeout: 10000,
+      });
+      
+      if (response.data) {
+        dbStats = response.data;
+      }
+    } catch (error) {
+      console.warn('⚠️ Failed to fetch database statistics from API:', (error as Error).message);
+      console.log('   Using default empty statistics');
+    }
 
     return {
       outputFiles: outputStats,

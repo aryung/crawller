@@ -1,4 +1,4 @@
-import { CrawlerConfig, SelectorConfig, SelectorItem } from './index';
+import { CrawlerConfig, SelectorItem } from './index';
 
 export interface EnhancedCrawlerConfig extends Omit<CrawlerConfig, 'selectors'> {
   selectors?: EnhancedSelectorConfig;
@@ -17,7 +17,7 @@ export interface DataDrivenConfig {
   sourceSelector?: string;
   urlTemplate?: string;
   templateVars?: Record<string, string>;
-  
+
   // 舊版格式（向後兼容）
   source?: string;
   jsonPath?: string;
