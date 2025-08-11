@@ -1,0 +1,22 @@
+{
+  "status": "in_progress",
+  "total_pages": 100,
+  "target_pages": 10,
+  "completed_pages": [],
+  "failed_pages": [
+    1,
+    2,
+    3,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6
+  ],
+  "total_stocks_scraped": 0,
+  "last_update": "2025-08-09T00:38:06.545Z",
+  "batches_saved": [],
+  "start_time": "2025-08-09T00:28:40.579Z",
+  "estimated_completion": ""
+}

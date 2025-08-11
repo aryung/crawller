@@ -1,0 +1,2286 @@
+{
+  "metadata": {
+    "sector_filter": "industrial",
+    "scraped_date": "2025-08-09T08:56:39.069Z",
+    "total_pages_scraped": 100,
+    "total_records": 9879,
+    "unique_stocks": 454,
+    "duplicates_removed": 9425,
+    "detected_total_results": null,
+    "sectors_distribution": {
+      "Industrials": 9879
+    }
+  },
+  "data": [
+    {
+      "symbol": "AAL",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:54.406Z"
+    },
+    {
+      "symbol": "AAON",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:54.406Z"
+    },
+    {
+      "symbol": "ABBNY",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:31.257Z"
+    },
+    {
+      "symbol": "ABLZF",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:31.257Z"
+    },
+    {
+      "symbol": "ABM",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:03.987Z"
+    },
+    {
+      "symbol": "ACA",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:54.406Z"
+    },
+    {
+      "symbol": "ACHR",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:54.406Z"
+    },
+    {
+      "symbol": "ADSE",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:12.954Z"
+    },
+    {
+      "symbol": "ADT",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:54.406Z"
+    },
+    {
+      "symbol": "AEBI",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:22.469Z"
+    },
+    {
+      "symbol": "AEIS",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:54.406Z"
+    },
+    {
+      "symbol": "AGCO",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:54.406Z"
+    },
+    {
+      "symbol": "AGFY",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:22.469Z"
+    },
+    {
+      "symbol": "AGX",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:03.987Z"
+    },
+    {
+      "symbol": "AIR",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:03.987Z"
+    },
+    {
+      "symbol": "AIRO",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:22.469Z"
+    },
+    {
+      "symbol": "AIRT",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:22.469Z"
+    },
+    {
+      "symbol": "AIT",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:54.406Z"
+    },
+    {
+      "symbol": "AL",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:54.406Z"
+    },
+    {
+      "symbol": "ALG",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:03.987Z"
+    },
+    {
+      "symbol": "ALGT",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:03.987Z"
+    },
+    {
+      "symbol": "ALK",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:54.406Z"
+    },
+    {
+      "symbol": "ALTG",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:12.954Z"
+    },
+    {
+      "symbol": "AMPX",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:12.954Z"
+    },
+    {
+      "symbol": "AMRC",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:03.987Z"
+    },
+    {
+      "symbol": "AMSC",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:03.987Z"
+    },
+    {
+      "symbol": "AMTM",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:54.406Z"
+    },
+    {
+      "symbol": "ANPA",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:22.469Z"
+    },
+    {
+      "symbol": "AOS",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:54.406Z"
+    },
+    {
+      "symbol": "APG",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:54.406Z"
+    },
+    {
+      "symbol": "APOG",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:03.987Z"
+    },
+    {
+      "symbol": "ARCB",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:03.987Z"
+    },
+    {
+      "symbol": "ARLO",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:03.987Z"
+    },
+    {
+      "symbol": "ARMK",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:54.406Z"
+    },
+    {
+      "symbol": "ARQ",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:12.954Z"
+    },
+    {
+      "symbol": "ASC",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:12.954Z"
+    },
+    {
+      "symbol": "ASLE",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:12.954Z"
+    },
+    {
+      "symbol": "ASPN",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:12.954Z"
+    },
+    {
+      "symbol": "ASTE",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:03.987Z"
+    },
+    {
+      "symbol": "ATI",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:54.406Z"
+    },
+    {
+      "symbol": "ATKR",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:03.987Z"
+    },
+    {
+      "symbol": "ATLCY",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:31.257Z"
+    },
+    {
+      "symbol": "ATLFF",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:31.257Z"
+    },
+    {
+      "symbol": "ATLKY",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:31.257Z"
+    },
+    {
+      "symbol": "ATLPF",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:31.257Z"
+    },
+    {
+      "symbol": "ATRO",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:03.987Z"
+    },
+    {
+      "symbol": "AVAV",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:54.406Z"
+    },
+    {
+      "symbol": "AWI",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:54.406Z"
+    },
+    {
+      "symbol": "AXON",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:31.257Z"
+    },
+    {
+      "symbol": "AYI",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:54.406Z"
+    },
+    {
+      "symbol": "AZZ",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:03.987Z"
+    },
+    {
+      "symbol": "BA",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:44.867Z"
+    },
+    {
+      "symbol": "BAESF",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:31.257Z"
+    },
+    {
+      "symbol": "BAESY",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:31.257Z"
+    },
+    {
+      "symbol": "BBCP",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:12.954Z"
+    },
+    {
+      "symbol": "BBSI",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:03.987Z"
+    },
+    {
+      "symbol": "BCO",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:54.406Z"
+    },
+    {
+      "symbol": "BE",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:54.406Z"
+    },
+    {
+      "symbol": "BGSF",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:22.469Z"
+    },
+    {
+      "symbol": "BKSY",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:12.954Z"
+    },
+    {
+      "symbol": "BLBD",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:03.987Z"
+    },
+    {
+      "symbol": "BNC",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:22.469Z"
+    },
+    {
+      "symbol": "BOC",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:12.954Z"
+    },
+    {
+      "symbol": "BOOM",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:22.469Z"
+    },
+    {
+      "symbol": "BRC",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:54.406Z"
+    },
+    {
+      "symbol": "BV",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:03.987Z"
+    },
+    {
+      "symbol": "BWMN",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:12.954Z"
+    },
+    {
+      "symbol": "BXC",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:12.954Z"
+    },
+    {
+      "symbol": "BYRN",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:12.954Z"
+    },
+    {
+      "symbol": "CAAP",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:54.406Z"
+    },
+    {
+      "symbol": "CAR",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:54.406Z"
+    },
+    {
+      "symbol": "CARR",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:31.257Z"
+    },
+    {
+      "symbol": "CASS",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:12.954Z"
+    },
+    {
+      "symbol": "CAT",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:44.867Z"
+    },
+    {
+      "symbol": "CBZ",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:03.987Z"
+    },
+    {
+      "symbol": "CCEC",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:03.987Z"
+    },
+    {
+      "symbol": "CDRE",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:03.987Z"
+    },
+    {
+      "symbol": "CECO",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:03.987Z"
+    },
+    {
+      "symbol": "CEEIF",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:31.257Z"
+    },
+    {
+      "symbol": "CIX",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:12.954Z"
+    },
+    {
+      "symbol": "CMCO",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:12.954Z"
+    },
+    {
+      "symbol": "CMDB",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:22.469Z"
+    },
+    {
+      "symbol": "CMI",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:31.257Z"
+    },
+    {
+      "symbol": "CMPO",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:03.987Z"
+    },
+    {
+      "symbol": "CMPR",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:03.987Z"
+    },
+    {
+      "symbol": "CMRE",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:03.987Z"
+    },
+    {
+      "symbol": "CNI",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:31.257Z"
+    },
+    {
+      "symbol": "CODA",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:22.469Z"
+    },
+    {
+      "symbol": "CODGF",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:31.257Z"
+    },
+    {
+      "symbol": "CODI",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:12.954Z"
+    },
+    {
+      "symbol": "CODYY",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:31.257Z"
+    },
+    {
+      "symbol": "CP",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:31.257Z"
+    },
+    {
+      "symbol": "CPA",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:54.406Z"
+    },
+    {
+      "symbol": "CPRT",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:31.257Z"
+    },
+    {
+      "symbol": "CR",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:54.406Z"
+    },
+    {
+      "symbol": "CRAI",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:03.987Z"
+    },
+    {
+      "symbol": "CRE",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:22.469Z"
+    },
+    {
+      "symbol": "CSW",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:22.469Z"
+    },
+    {
+      "symbol": "CSX",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:44.867Z"
+    },
+    {
+      "symbol": "CTAS",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:44.867Z"
+    },
+    {
+      "symbol": "CTOS",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:03.987Z"
+    },
+    {
+      "symbol": "CTPCY",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:31.257Z"
+    },
+    {
+      "symbol": "CVLG",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:12.954Z"
+    },
+    {
+      "symbol": "CVR",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:22.469Z"
+    },
+    {
+      "symbol": "CWST",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:54.406Z"
+    },
+    {
+      "symbol": "CXT",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:54.406Z"
+    },
+    {
+      "symbol": "CXW",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:03.987Z"
+    },
+    {
+      "symbol": "CYRX",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:12.954Z"
+    },
+    {
+      "symbol": "DAC",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:03.987Z"
+    },
+    {
+      "symbol": "DCI",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:54.406Z"
+    },
+    {
+      "symbol": "DCO",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:03.987Z"
+    },
+    {
+      "symbol": "DE",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:44.867Z"
+    },
+    {
+      "symbol": "DGNX",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:22.469Z"
+    },
+    {
+      "symbol": "DHLGY",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:31.257Z"
+    },
+    {
+      "symbol": "DLB",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:54.406Z"
+    },
+    {
+      "symbol": "DLHC",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:22.469Z"
+    },
+    {
+      "symbol": "DLX",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:12.954Z"
+    },
+    {
+      "symbol": "DNOW",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:03.987Z"
+    },
+    {
+      "symbol": "DPSTF",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:31.257Z"
+    },
+    {
+      "symbol": "DRS",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:54.406Z"
+    },
+    {
+      "symbol": "DSDVF",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:31.257Z"
+    },
+    {
+      "symbol": "DSDVY",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:31.257Z"
+    },
+    {
+      "symbol": "DSGR",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:03.987Z"
+    },
+    {
+      "symbol": "DXPE",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:03.987Z"
+    },
+    {
+      "symbol": "DY",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:54.406Z"
+    },
+    {
+      "symbol": "EADSF",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:31.257Z"
+    },
+    {
+      "symbol": "EADSY",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:31.257Z"
+    },
+    {
+      "symbol": "EBF",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:12.954Z"
+    },
+    {
+      "symbol": "ECG",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:54.406Z"
+    },
+    {
+      "symbol": "EDRY",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:22.469Z"
+    },
+    {
+      "symbol": "EGG",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:22.469Z"
+    },
+    {
+      "symbol": "EHLD",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:22.469Z"
+    },
+    {
+      "symbol": "EML",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:12.954Z"
+    },
+    {
+      "symbol": "EMR",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:44.867Z"
+    },
+    {
+      "symbol": "ENR",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:03.987Z"
+    },
+    {
+      "symbol": "ENS",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:54.406Z"
+    },
+    {
+      "symbol": "ENVX",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:03.987Z"
+    },
+    {
+      "symbol": "EOSE",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:03.987Z"
+    },
+    {
+      "symbol": "EPAC",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:03.987Z"
+    },
+    {
+      "symbol": "ERII",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:12.954Z"
+    },
+    {
+      "symbol": "ESAB",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:54.406Z"
+    },
+    {
+      "symbol": "ESEA",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:12.954Z"
+    },
+    {
+      "symbol": "ESOA",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:12.954Z"
+    },
+    {
+      "symbol": "ESP",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:22.469Z"
+    },
+    {
+      "symbol": "ETN",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:44.867Z"
+    },
+    {
+      "symbol": "EVEX",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:03.987Z"
+    },
+    {
+      "symbol": "EVI",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:12.954Z"
+    },
+    {
+      "symbol": "EVLV",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:03.987Z"
+    },
+    {
+      "symbol": "EVTL",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:22.469Z"
+    },
+    {
+      "symbol": "EXPGF",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:31.257Z"
+    },
+    {
+      "symbol": "EXPGY",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:31.257Z"
+    },
+    {
+      "symbol": "EXPO",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:54.406Z"
+    },
+    {
+      "symbol": "FA",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:03.987Z"
+    },
+    {
+      "symbol": "FBIN",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:54.406Z"
+    },
+    {
+      "symbol": "FBYD",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:22.469Z"
+    },
+    {
+      "symbol": "FCN",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:54.406Z"
+    },
+    {
+      "symbol": "FDX",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:31.257Z"
+    },
+    {
+      "symbol": "FELE",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:54.406Z"
+    },
+    {
+      "symbol": "FERG",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:31.257Z"
+    },
+    {
+      "symbol": "FLR",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:54.406Z"
+    },
+    {
+      "symbol": "FLS",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:54.406Z"
+    },
+    {
+      "symbol": "FLY",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:22.469Z"
+    },
+    {
+      "symbol": "FORR",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:12.954Z"
+    },
+    {
+      "symbol": "FSS",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:54.406Z"
+    },
+    {
+      "symbol": "FSTR",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:12.954Z"
+    },
+    {
+      "symbol": "FWRD",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:12.954Z"
+    },
+    {
+      "symbol": "GASS",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:12.954Z"
+    },
+    {
+      "symbol": "GATX",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:54.406Z"
+    },
+    {
+      "symbol": "GBX",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:03.987Z"
+    },
+    {
+      "symbol": "GD",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:44.867Z"
+    },
+    {
+      "symbol": "GE",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:44.866Z"
+    },
+    {
+      "symbol": "GENC",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:12.954Z"
+    },
+    {
+      "symbol": "GEO",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:03.987Z"
+    },
+    {
+      "symbol": "GEV",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:44.867Z"
+    },
+    {
+      "symbol": "GFF",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:03.987Z"
+    },
+    {
+      "symbol": "GHM",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:12.954Z"
+    },
+    {
+      "symbol": "GIC",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:03.987Z"
+    },
+    {
+      "symbol": "GIFI",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:22.469Z"
+    },
+    {
+      "symbol": "GLDD",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:12.954Z"
+    },
+    {
+      "symbol": "GMS",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:54.406Z"
+    },
+    {
+      "symbol": "GNK",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:12.954Z"
+    },
+    {
+      "symbol": "GRC",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:03.987Z"
+    },
+    {
+      "symbol": "GSL",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:03.987Z"
+    },
+    {
+      "symbol": "GTES",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:54.406Z"
+    },
+    {
+      "symbol": "GTLS",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:54.406Z"
+    },
+    {
+      "symbol": "GVA",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:54.406Z"
+    },
+    {
+      "symbol": "GVH",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:22.469Z"
+    },
+    {
+      "symbol": "GWW",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:31.257Z"
+    },
+    {
+      "symbol": "GXO",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:54.406Z"
+    },
+    {
+      "symbol": "HAYW",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:03.987Z"
+    },
+    {
+      "symbol": "HI",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:03.987Z"
+    },
+    {
+      "symbol": "HII",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:54.406Z"
+    },
+    {
+      "symbol": "HLIO",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:03.987Z"
+    },
+    {
+      "symbol": "HLMN",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:03.987Z"
+    },
+    {
+      "symbol": "HON",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:44.867Z"
+    },
+    {
+      "symbol": "HQI",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:12.954Z"
+    },
+    {
+      "symbol": "HRI",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:03.987Z"
+    },
+    {
+      "symbol": "HSII",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:03.987Z"
+    },
+    {
+      "symbol": "HSON",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:22.469Z"
+    },
+    {
+      "symbol": "HTCO",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:12.954Z"
+    },
+    {
+      "symbol": "HTHIF",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:31.257Z"
+    },
+    {
+      "symbol": "HTHIY",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:31.257Z"
+    },
+    {
+      "symbol": "HTLD",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:12.954Z"
+    },
+    {
+      "symbol": "HTZ",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:03.987Z"
+    },
+    {
+      "symbol": "HUBG",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:03.987Z"
+    },
+    {
+      "symbol": "HUHU",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:12.954Z"
+    },
+    {
+      "symbol": "HURC",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:22.469Z"
+    },
+    {
+      "symbol": "HURN",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:03.987Z"
+    },
+    {
+      "symbol": "HWM",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:44.867Z"
+    },
+    {
+      "symbol": "HXL",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:54.406Z"
+    },
+    {
+      "symbol": "HY",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:12.954Z"
+    },
+    {
+      "symbol": "ICFI",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:03.987Z"
+    },
+    {
+      "symbol": "IESC",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:54.406Z"
+    },
+    {
+      "symbol": "IIIN",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:12.954Z"
+    },
+    {
+      "symbol": "ISSC",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:12.954Z"
+    },
+    {
+      "symbol": "ITOCF",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:31.257Z"
+    },
+    {
+      "symbol": "ITOCY",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:31.257Z"
+    },
+    {
+      "symbol": "ITW",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:44.867Z"
+    },
+    {
+      "symbol": "JANL",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:22.469Z"
+    },
+    {
+      "symbol": "JBI",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:03.987Z"
+    },
+    {
+      "symbol": "JBTM",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:22.469Z"
+    },
+    {
+      "symbol": "JCI",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:44.867Z"
+    },
+    {
+      "symbol": "JELD",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:12.954Z"
+    },
+    {
+      "symbol": "KAI",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:54.406Z"
+    },
+    {
+      "symbol": "KBR",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:54.406Z"
+    },
+    {
+      "symbol": "KE",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:12.954Z"
+    },
+    {
+      "symbol": "KELYA",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:12.954Z"
+    },
+    {
+      "symbol": "KEX",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:54.406Z"
+    },
+    {
+      "symbol": "KFRC",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:12.954Z"
+    },
+    {
+      "symbol": "KFY",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:54.406Z"
+    },
+    {
+      "symbol": "KMT",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:03.987Z"
+    },
+    {
+      "symbol": "KNX",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:54.406Z"
+    },
+    {
+      "symbol": "KODK",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:12.954Z"
+    },
+    {
+      "symbol": "KRMN",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:22.469Z"
+    },
+    {
+      "symbol": "KRNT",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:12.954Z"
+    },
+    {
+      "symbol": "KSCP",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:22.469Z"
+    },
+    {
+      "symbol": "KTOS",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:54.406Z"
+    },
+    {
+      "symbol": "KUBR",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:12.954Z"
+    },
+    {
+      "symbol": "LHX",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:31.257Z"
+    },
+    {
+      "symbol": "LMB",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:03.987Z"
+    },
+    {
+      "symbol": "LMT",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:44.867Z"
+    },
+    {
+      "symbol": "LNN",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:03.987Z"
+    },
+    {
+      "symbol": "LOAR",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:54.406Z"
+    },
+    {
+      "symbol": "LPX",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:54.406Z"
+    },
+    {
+      "symbol": "LSTR",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:54.406Z"
+    },
+    {
+      "symbol": "LTBR",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:12.954Z"
+    },
+    {
+      "symbol": "LTOUF",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:31.257Z"
+    },
+    {
+      "symbol": "LUNR",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:12.954Z"
+    },
+    {
+      "symbol": "LXFR",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:12.954Z"
+    },
+    {
+      "symbol": "LZ",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:03.987Z"
+    },
+    {
+      "symbol": "MAN",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:03.987Z"
+    },
+    {
+      "symbol": "MATW",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:12.954Z"
+    },
+    {
+      "symbol": "MATX",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:54.406Z"
+    },
+    {
+      "symbol": "MDU",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:54.406Z"
+    },
+    {
+      "symbol": "MEC",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:12.954Z"
+    },
+    {
+      "symbol": "MEG",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:03.987Z"
+    },
+    {
+      "symbol": "MG",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:12.954Z"
+    },
+    {
+      "symbol": "MGRC",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:03.987Z"
+    },
+    {
+      "symbol": "MHH",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:22.469Z"
+    },
+    {
+      "symbol": "MHVIY",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:31.257Z"
+    },
+    {
+      "symbol": "MHVYF",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:31.257Z"
+    },
+    {
+      "symbol": "MIDD",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:54.406Z"
+    },
+    {
+      "symbol": "MIELF",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:31.257Z"
+    },
+    {
+      "symbol": "MIELY",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:31.257Z"
+    },
+    {
+      "symbol": "MIMI",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:22.469Z"
+    },
+    {
+      "symbol": "MIR",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:54.406Z"
+    },
+    {
+      "symbol": "MITSF",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:31.257Z"
+    },
+    {
+      "symbol": "MITSY",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:31.257Z"
+    },
+    {
+      "symbol": "MLI",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:54.406Z"
+    },
+    {
+      "symbol": "MMM",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:44.867Z"
+    },
+    {
+      "symbol": "MMS",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:54.406Z"
+    },
+    {
+      "symbol": "MOG-A",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:54.406Z"
+    },
+    {
+      "symbol": "MRCY",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:03.987Z"
+    },
+    {
+      "symbol": "MRTN",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:03.987Z"
+    },
+    {
+      "symbol": "MSA",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:54.406Z"
+    },
+    {
+      "symbol": "MSBHF",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:31.257Z"
+    },
+    {
+      "symbol": "MSGY",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:22.469Z"
+    },
+    {
+      "symbol": "MSM",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:54.406Z"
+    },
+    {
+      "symbol": "MTEN",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:22.469Z"
+    },
+    {
+      "symbol": "MTRX",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:12.954Z"
+    },
+    {
+      "symbol": "MTSUY",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:31.257Z"
+    },
+    {
+      "symbol": "MTW",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:12.954Z"
+    },
+    {
+      "symbol": "MWA",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:54.406Z"
+    },
+    {
+      "symbol": "MYRG",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:03.987Z"
+    },
+    {
+      "symbol": "NL",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:12.954Z"
+    },
+    {
+      "symbol": "NMM",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:03.987Z"
+    },
+    {
+      "symbol": "NNE",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:03.987Z"
+    },
+    {
+      "symbol": "NOC",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:44.867Z"
+    },
+    {
+      "symbol": "NPK",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:12.954Z"
+    },
+    {
+      "symbol": "NPO",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:54.406Z"
+    },
+    {
+      "symbol": "NSC",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:31.257Z"
+    },
+    {
+      "symbol": "NSP",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:03.987Z"
+    },
+    {
+      "symbol": "NSSC",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:03.987Z"
+    },
+    {
+      "symbol": "NVEE",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:03.987Z"
+    },
+    {
+      "symbol": "NVRI",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:12.954Z"
+    },
+    {
+      "symbol": "NX",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:03.987Z"
+    },
+    {
+      "symbol": "OFLX",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:12.954Z"
+    },
+    {
+      "symbol": "ONEG",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:22.469Z"
+    },
+    {
+      "symbol": "OPXS",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:22.469Z"
+    },
+    {
+      "symbol": "ORN",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:12.954Z"
+    },
+    {
+      "symbol": "OSAGF",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:31.257Z"
+    },
+    {
+      "symbol": "OSAGY",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:31.257Z"
+    },
+    {
+      "symbol": "OSK",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:54.406Z"
+    },
+    {
+      "symbol": "OTTR",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:03.986Z"
+    },
+    {
+      "symbol": "PAL",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:12.954Z"
+    },
+    {
+      "symbol": "PAMT",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:12.954Z"
+    },
+    {
+      "symbol": "PBI",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:03.987Z"
+    },
+    {
+      "symbol": "PC",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:12.954Z"
+    },
+    {
+      "symbol": "PCAR",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:31.257Z"
+    },
+    {
+      "symbol": "PCT",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:03.987Z"
+    },
+    {
+      "symbol": "PESI",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:12.954Z"
+    },
+    {
+      "symbol": "PEW",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:22.469Z"
+    },
+    {
+      "symbol": "PH",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:44.867Z"
+    },
+    {
+      "symbol": "PHOE",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:22.469Z"
+    },
+    {
+      "symbol": "PKE",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:12.954Z"
+    },
+    {
+      "symbol": "PKOH",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:12.954Z"
+    },
+    {
+      "symbol": "PL",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:03.987Z"
+    },
+    {
+      "symbol": "PLPC",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:12.954Z"
+    },
+    {
+      "symbol": "POOL",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:54.406Z"
+    },
+    {
+      "symbol": "POWL",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:03.987Z"
+    },
+    {
+      "symbol": "PPIH",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:12.954Z"
+    },
+    {
+      "symbol": "PRG",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:03.987Z"
+    },
+    {
+      "symbol": "PRIM",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:54.406Z"
+    },
+    {
+      "symbol": "PRLB",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:03.987Z"
+    },
+    {
+      "symbol": "PSIX",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:03.987Z"
+    },
+    {
+      "symbol": "PWR",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:31.257Z"
+    },
+    {
+      "symbol": "QEPC",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:12.954Z"
+    },
+    {
+      "symbol": "QUAD",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:12.954Z"
+    },
+    {
+      "symbol": "R",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:54.406Z"
+    },
+    {
+      "symbol": "RAIL",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:12.954Z"
+    },
+    {
+      "symbol": "RCAT",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:12.954Z"
+    },
+    {
+      "symbol": "RCIT",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:31.257Z"
+    },
+    {
+      "symbol": "RCMT",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:12.954Z"
+    },
+    {
+      "symbol": "RDW",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:12.954Z"
+    },
+    {
+      "symbol": "RELX",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:31.257Z"
+    },
+    {
+      "symbol": "REVG",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:03.987Z"
+    },
+    {
+      "symbol": "REZI",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:54.406Z"
+    },
+    {
+      "symbol": "RFIL",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:22.469Z"
+    },
+    {
+      "symbol": "RGR",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:12.954Z"
+    },
+    {
+      "symbol": "RHI",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:54.406Z"
+    },
+    {
+      "symbol": "RHLD",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:22.469Z"
+    },
+    {
+      "symbol": "RLGT",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:12.954Z"
+    },
+    {
+      "symbol": "RLXXF",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:31.257Z"
+    },
+    {
+      "symbol": "RNMBF",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:31.257Z"
+    },
+    {
+      "symbol": "RNMBY",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:31.257Z"
+    },
+    {
+      "symbol": "ROAD",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:54.406Z"
+    },
+    {
+      "symbol": "ROCK",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:03.987Z"
+    },
+    {
+      "symbol": "RRX",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:54.406Z"
+    },
+    {
+      "symbol": "RSG",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:44.867Z"
+    },
+    {
+      "symbol": "RTX",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:44.867Z"
+    },
+    {
+      "symbol": "RXO",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:03.987Z"
+    },
+    {
+      "symbol": "RYAOF",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:31.257Z"
+    },
+    {
+      "symbol": "RYCEF",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:31.257Z"
+    },
+    {
+      "symbol": "RYCEY",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:31.257Z"
+    },
+    {
+      "symbol": "RYI",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:12.954Z"
+    },
+    {
+      "symbol": "SAFRF",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:31.257Z"
+    },
+    {
+      "symbol": "SAFRY",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:31.257Z"
+    },
+    {
+      "symbol": "SAIA",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:54.406Z"
+    },
+    {
+      "symbol": "SARO",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:54.406Z"
+    },
+    {
+      "symbol": "SBGSF",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:31.257Z"
+    },
+    {
+      "symbol": "SBGSY",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:31.257Z"
+    },
+    {
+      "symbol": "SBLK",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:03.987Z"
+    },
+    {
+      "symbol": "SEB",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:54.406Z"
+    },
+    {
+      "symbol": "SERV",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:12.954Z"
+    },
+    {
+      "symbol": "SFL",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:03.987Z"
+    },
+    {
+      "symbol": "SHIP",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:12.954Z"
+    },
+    {
+      "symbol": "SIEGY",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:31.257Z"
+    },
+    {
+      "symbol": "SIF",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:22.469Z"
+    },
+    {
+      "symbol": "SITE",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:54.406Z"
+    },
+    {
+      "symbol": "SKAS",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:22.469Z"
+    },
+    {
+      "symbol": "SKYW",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:54.406Z"
+    },
+    {
+      "symbol": "SMAWF",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:31.257Z"
+    },
+    {
+      "symbol": "SMEGF",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:31.257Z"
+    },
+    {
+      "symbol": "SMHI",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:12.954Z"
+    },
+    {
+      "symbol": "SMNEY",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:31.257Z"
+    },
+    {
+      "symbol": "SMR",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:54.406Z"
+    },
+    {
+      "symbol": "SMX",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:22.469Z"
+    },
+    {
+      "symbol": "SNCY",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:12.954Z"
+    },
+    {
+      "symbol": "SNDR",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:54.406Z"
+    },
+    {
+      "symbol": "SNTL",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:22.469Z"
+    },
+    {
+      "symbol": "SPCB",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:22.469Z"
+    },
+    {
+      "symbol": "SPIR",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:12.954Z"
+    },
+    {
+      "symbol": "SPLP",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:12.954Z"
+    },
+    {
+      "symbol": "SPR",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:54.406Z"
+    },
+    {
+      "symbol": "SPXC",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:54.406Z"
+    },
+    {
+      "symbol": "SST",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:12.954Z"
+    },
+    {
+      "symbol": "STRL",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:54.406Z"
+    },
+    {
+      "symbol": "SWBI",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:12.954Z"
+    },
+    {
+      "symbol": "SWIM",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:12.954Z"
+    },
+    {
+      "symbol": "SWK",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:54.406Z"
+    },
+    {
+      "symbol": "SXI",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:03.987Z"
+    },
+    {
+      "symbol": "TAYD",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:12.954Z"
+    },
+    {
+      "symbol": "TBI",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:12.954Z"
+    },
+    {
+      "symbol": "TDG",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:44.867Z"
+    },
+    {
+      "symbol": "TEX",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:03.987Z"
+    },
+    {
+      "symbol": "TG",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:12.954Z"
+    },
+    {
+      "symbol": "TGEN",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:12.954Z"
+    },
+    {
+      "symbol": "TH",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:12.954Z"
+    },
+    {
+      "symbol": "THLEF",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:31.257Z"
+    },
+    {
+      "symbol": "THLLY",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:31.257Z"
+    },
+    {
+      "symbol": "THR",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:12.954Z"
+    },
+    {
+      "symbol": "TIC",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:22.469Z"
+    },
+    {
+      "symbol": "TISI",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:22.469Z"
+    },
+    {
+      "symbol": "TITN",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:12.954Z"
+    },
+    {
+      "symbol": "TKR",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:54.406Z"
+    },
+    {
+      "symbol": "TNC",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:03.987Z"
+    },
+    {
+      "symbol": "TNET",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:03.987Z"
+    },
+    {
+      "symbol": "TPC",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:03.987Z"
+    },
+    {
+      "symbol": "TPCS",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:22.469Z"
+    },
+    {
+      "symbol": "TRC",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:12.954Z"
+    },
+    {
+      "symbol": "TREX",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:54.406Z"
+    },
+    {
+      "symbol": "TRI",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:31.257Z"
+    },
+    {
+      "symbol": "TRN",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:03.987Z"
+    },
+    {
+      "symbol": "TRNS",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:12.954Z"
+    },
+    {
+      "symbol": "TT",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:44.867Z"
+    },
+    {
+      "symbol": "TTC",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:54.406Z"
+    },
+    {
+      "symbol": "TTEK",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:54.406Z"
+    },
+    {
+      "symbol": "TWI",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:12.954Z"
+    },
+    {
+      "symbol": "TWIN",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:12.954Z"
+    },
+    {
+      "symbol": "UHAL",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:54.406Z"
+    },
+    {
+      "symbol": "ULBI",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:22.469Z"
+    },
+    {
+      "symbol": "ULH",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:12.954Z"
+    },
+    {
+      "symbol": "UNF",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:03.987Z"
+    },
+    {
+      "symbol": "UNP",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:44.867Z"
+    },
+    {
+      "symbol": "UPS",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:44.867Z"
+    },
+    {
+      "symbol": "URI",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:31.257Z"
+    },
+    {
+      "symbol": "VAPE",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:22.469Z"
+    },
+    {
+      "symbol": "VATE",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:22.469Z"
+    },
+    {
+      "symbol": "VCISF",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:31.257Z"
+    },
+    {
+      "symbol": "VCISY",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:31.257Z"
+    },
+    {
+      "symbol": "VLVLY",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:31.257Z"
+    },
+    {
+      "symbol": "VMI",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:54.406Z"
+    },
+    {
+      "symbol": "VOLAF",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:31.257Z"
+    },
+    {
+      "symbol": "VOLVF",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:31.257Z"
+    },
+    {
+      "symbol": "VOYG",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:22.469Z"
+    },
+    {
+      "symbol": "VRT",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:31.257Z"
+    },
+    {
+      "symbol": "VSEC",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:03.987Z"
+    },
+    {
+      "symbol": "VVX",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:03.987Z"
+    },
+    {
+      "symbol": "VWAV",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:22.469Z"
+    },
+    {
+      "symbol": "WCC",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:54.406Z"
+    },
+    {
+      "symbol": "WCN",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:31.257Z"
+    },
+    {
+      "symbol": "WERN",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:03.987Z"
+    },
+    {
+      "symbol": "WFCF",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:22.469Z"
+    },
+    {
+      "symbol": "WLDN",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:03.987Z"
+    },
+    {
+      "symbol": "WLFC",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:03.987Z"
+    },
+    {
+      "symbol": "WM",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:44.867Z"
+    },
+    {
+      "symbol": "WMS",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:54.406Z"
+    },
+    {
+      "symbol": "WNC",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:12.954Z"
+    },
+    {
+      "symbol": "WOR",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:03.987Z"
+    },
+    {
+      "symbol": "WSC",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:54.406Z"
+    },
+    {
+      "symbol": "WTS",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:54.406Z"
+    },
+    {
+      "symbol": "XMTR",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:03.987Z"
+    },
+    {
+      "symbol": "ZIM",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:42:03.987Z"
+    },
+    {
+      "symbol": "ZWS",
+      "sector": "Industrials",
+      "scraped_at": "2025-08-09T08:41:54.406Z"
+    }
+  ]
+}

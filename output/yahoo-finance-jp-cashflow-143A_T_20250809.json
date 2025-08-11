@@ -1,5 +1,5 @@
 {
-  "exportDate": "2025-08-09T08:40:38.344Z",
+  "exportDate": "2025-08-09T15:54:26.610Z",
   "totalResults": 1,
   "successCount": 1,
   "results": [
@@ -47,46 +47,46 @@
             "exchangeArea": "JP",
             "reportDate": "2025-03-31",
             "fiscalYear": 2025,
+            "fiscalMonth": 3,
             "reportType": "annual",
             "dataSource": "yahoo-finance-jp",
-            "lastUpdated": "2025-08-09T08:40:38.224Z",
-            "freeCashFlow": 102,
-            "operatingCashFlow": 102,
-            "investingCashFlow": -89,
-            "financingCashFlow": 64,
-            "fiscalMonth": 3
+            "lastUpdated": "2025-08-09T15:54:26.523Z",
+            "freeCashFlow": 102000000,
+            "operatingCashFlow": 102000000,
+            "investingCashFlow": -89000000,
+            "financingCashFlow": 64000000
           },
           {
             "symbolCode": "143A",
             "exchangeArea": "JP",
             "reportDate": "2024-03-31",
             "fiscalYear": 2024,
+            "fiscalMonth": 3,
             "reportType": "annual",
             "dataSource": "yahoo-finance-jp",
-            "lastUpdated": "2025-08-09T08:40:38.224Z",
-            "freeCashFlow": 223,
-            "operatingCashFlow": 226,
-            "investingCashFlow": -24,
-            "financingCashFlow": 209,
-            "fiscalMonth": 3
+            "lastUpdated": "2025-08-09T15:54:26.523Z",
+            "freeCashFlow": 223000000,
+            "operatingCashFlow": 226000000,
+            "investingCashFlow": -24000000,
+            "financingCashFlow": 209000000
           },
           {
             "symbolCode": "143A",
             "exchangeArea": "JP",
             "reportDate": "2023-03-31",
             "fiscalYear": 2023,
+            "fiscalMonth": 3,
             "reportType": "annual",
             "dataSource": "yahoo-finance-jp",
-            "lastUpdated": "2025-08-09T08:40:38.224Z",
-            "freeCashFlow": 89,
-            "operatingCashFlow": 106,
-            "investingCashFlow": -18,
-            "financingCashFlow": -1,
-            "fiscalMonth": 3
+            "lastUpdated": "2025-08-09T15:54:26.523Z",
+            "freeCashFlow": 89000000,
+            "operatingCashFlow": 106000000,
+            "investingCashFlow": -18000000,
+            "financingCashFlow": -1000000
           }
         ]
       },
-      "timestamp": "2025-08-09T08:40:38.339Z",
+      "timestamp": "2025-08-09T15:54:26.607Z",
       "success": true,
       "screenshot": "<Buffer 287430 bytes>"
     }

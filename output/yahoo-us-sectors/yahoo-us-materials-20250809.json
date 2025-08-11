@@ -1,0 +1,631 @@
+{
+  "metadata": {
+    "sector_filter": "materials",
+    "scraped_date": "2025-08-09T09:56:28.696Z",
+    "total_pages_scraped": 100,
+    "total_records": 9651,
+    "unique_stocks": 123,
+    "duplicates_removed": 9528,
+    "detected_total_results": null,
+    "sectors_distribution": {
+      "Basic Materials": 9651
+    }
+  },
+  "data": [
+    {
+      "symbol": "AAUKF",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:42:08.192Z"
+    },
+    {
+      "symbol": "ACNT",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:41:58.335Z"
+    },
+    {
+      "symbol": "AEM",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:42:08.192Z"
+    },
+    {
+      "symbol": "AGPPF",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:42:08.192Z"
+    },
+    {
+      "symbol": "AHCHY",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:42:08.192Z"
+    },
+    {
+      "symbol": "AIQUF",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:42:08.192Z"
+    },
+    {
+      "symbol": "AIQUY",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:42:08.192Z"
+    },
+    {
+      "symbol": "AMSYF",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:42:08.192Z"
+    },
+    {
+      "symbol": "ANFGF",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:42:08.192Z"
+    },
+    {
+      "symbol": "ANGPY",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:42:08.192Z"
+    },
+    {
+      "symbol": "APD",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:41:49.442Z"
+    },
+    {
+      "symbol": "ATLX",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:41:58.335Z"
+    },
+    {
+      "symbol": "AU",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:41:49.442Z"
+    },
+    {
+      "symbol": "BASFY",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:42:08.192Z"
+    },
+    {
+      "symbol": "BFFAF",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:42:08.192Z"
+    },
+    {
+      "symbol": "BGL",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:41:58.335Z"
+    },
+    {
+      "symbol": "BGLC",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:41:58.335Z"
+    },
+    {
+      "symbol": "BHP",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:42:08.192Z"
+    },
+    {
+      "symbol": "BHPLF",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:42:08.192Z"
+    },
+    {
+      "symbol": "CF",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:41:49.442Z"
+    },
+    {
+      "symbol": "CHHQY",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:42:08.192Z"
+    },
+    {
+      "symbol": "CLW",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:41:58.335Z"
+    },
+    {
+      "symbol": "CMT",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:41:58.335Z"
+    },
+    {
+      "symbol": "COVTY",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:42:08.192Z"
+    },
+    {
+      "symbol": "CRH",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:41:49.442Z"
+    },
+    {
+      "symbol": "CTGO",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:41:58.335Z"
+    },
+    {
+      "symbol": "CTVA",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:41:49.442Z"
+    },
+    {
+      "symbol": "CVVTF",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:42:08.192Z"
+    },
+    {
+      "symbol": "CX",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:42:08.192Z"
+    },
+    {
+      "symbol": "DD",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:41:49.442Z"
+    },
+    {
+      "symbol": "DOW",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:41:49.442Z"
+    },
+    {
+      "symbol": "DSFIY",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:42:08.192Z"
+    },
+    {
+      "symbol": "DSMFF",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:42:08.192Z"
+    },
+    {
+      "symbol": "ECL",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:41:49.442Z"
+    },
+    {
+      "symbol": "EMSHF",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:42:08.192Z"
+    },
+    {
+      "symbol": "FCX",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:41:49.442Z"
+    },
+    {
+      "symbol": "FNLPF",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:42:08.192Z"
+    },
+    {
+      "symbol": "FNV",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:42:08.192Z"
+    },
+    {
+      "symbol": "FQVLF",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:42:08.192Z"
+    },
+    {
+      "symbol": "FRD",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:41:58.335Z"
+    },
+    {
+      "symbol": "FSI",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:41:58.335Z"
+    },
+    {
+      "symbol": "FSUGY",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:42:08.192Z"
+    },
+    {
+      "symbol": "FSUMF",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:42:08.192Z"
+    },
+    {
+      "symbol": "GFI",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:42:08.192Z"
+    },
+    {
+      "symbol": "GFIOF",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:42:08.192Z"
+    },
+    {
+      "symbol": "GLNCY",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:42:08.192Z"
+    },
+    {
+      "symbol": "GMBXF",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:42:08.192Z"
+    },
+    {
+      "symbol": "GRSXY",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:42:08.192Z"
+    },
+    {
+      "symbol": "GVDNY",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:42:08.192Z"
+    },
+    {
+      "symbol": "HCMLF",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:42:08.192Z"
+    },
+    {
+      "symbol": "HCMLY",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:42:08.192Z"
+    },
+    {
+      "symbol": "HLBZF",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:42:08.192Z"
+    },
+    {
+      "symbol": "IDR",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:41:58.335Z"
+    },
+    {
+      "symbol": "IFF",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:41:49.442Z"
+    },
+    {
+      "symbol": "IPI",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:41:58.335Z"
+    },
+    {
+      "symbol": "IPOAF",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:42:08.192Z"
+    },
+    {
+      "symbol": "JHIUF",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:42:08.192Z"
+    },
+    {
+      "symbol": "JHX",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:41:49.442Z"
+    },
+    {
+      "symbol": "KGC",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:42:08.192Z"
+    },
+    {
+      "symbol": "KLBAY",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:42:08.192Z"
+    },
+    {
+      "symbol": "LIN",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:41:49.441Z"
+    },
+    {
+      "symbol": "LUD",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:41:58.335Z"
+    },
+    {
+      "symbol": "LUGDF",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:42:08.192Z"
+    },
+    {
+      "symbol": "LYB",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:41:49.442Z"
+    },
+    {
+      "symbol": "MLM",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:41:49.442Z"
+    },
+    {
+      "symbol": "MP",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:41:49.442Z"
+    },
+    {
+      "symbol": "MSB",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:41:58.335Z"
+    },
+    {
+      "symbol": "MT",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:42:08.192Z"
+    },
+    {
+      "symbol": "NDEKF",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:42:08.192Z"
+    },
+    {
+      "symbol": "NDEKY",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:42:08.192Z"
+    },
+    {
+      "symbol": "NEM",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:41:49.442Z"
+    },
+    {
+      "symbol": "NEMCL",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:42:08.192Z"
+    },
+    {
+      "symbol": "NESRF",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:42:08.192Z"
+    },
+    {
+      "symbol": "NGLOY",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:42:08.192Z"
+    },
+    {
+      "symbol": "NHYKF",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:42:08.192Z"
+    },
+    {
+      "symbol": "NISTF",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:42:08.192Z"
+    },
+    {
+      "symbol": "NPCPF",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:42:08.192Z"
+    },
+    {
+      "symbol": "NPSCY",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:42:08.192Z"
+    },
+    {
+      "symbol": "NTIC",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:41:58.335Z"
+    },
+    {
+      "symbol": "NTR",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:42:08.192Z"
+    },
+    {
+      "symbol": "NUE",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:41:49.442Z"
+    },
+    {
+      "symbol": "NVZMF",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:42:08.192Z"
+    },
+    {
+      "symbol": "NVZMY",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:42:08.192Z"
+    },
+    {
+      "symbol": "ODC",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:41:58.335Z"
+    },
+    {
+      "symbol": "PKX",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:42:08.192Z"
+    },
+    {
+      "symbol": "PLL",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:41:58.335Z"
+    },
+    {
+      "symbol": "PPG",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:41:49.442Z"
+    },
+    {
+      "symbol": "PTCAY",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:42:08.192Z"
+    },
+    {
+      "symbol": "RGLD",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:41:49.442Z"
+    },
+    {
+      "symbol": "RIO",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:42:08.192Z"
+    },
+    {
+      "symbol": "RPM",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:41:49.442Z"
+    },
+    {
+      "symbol": "RS",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:41:49.442Z"
+    },
+    {
+      "symbol": "RTNTF",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:42:08.192Z"
+    },
+    {
+      "symbol": "RTPPF",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:42:08.192Z"
+    },
+    {
+      "symbol": "SCCO",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:41:49.442Z"
+    },
+    {
+      "symbol": "SHECF",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:42:08.192Z"
+    },
+    {
+      "symbol": "SHECY",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:42:08.192Z"
+    },
+    {
+      "symbol": "SHW",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:41:49.441Z"
+    },
+    {
+      "symbol": "SKFOF",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:42:08.192Z"
+    },
+    {
+      "symbol": "SLMNP",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:42:08.192Z"
+    },
+    {
+      "symbol": "SMID",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:41:58.335Z"
+    },
+    {
+      "symbol": "STLD",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:41:49.442Z"
+    },
+    {
+      "symbol": "SUZ",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:42:08.192Z"
+    },
+    {
+      "symbol": "SVJTY",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:42:08.192Z"
+    },
+    {
+      "symbol": "SXYAY",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:42:08.192Z"
+    },
+    {
+      "symbol": "SYIEF",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:42:08.192Z"
+    },
+    {
+      "symbol": "SYIEY",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:42:08.192Z"
+    },
+    {
+      "symbol": "TATLY",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:42:08.192Z"
+    },
+    {
+      "symbol": "TCKRF",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:42:08.192Z"
+    },
+    {
+      "symbol": "TECK",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:42:08.192Z"
+    },
+    {
+      "symbol": "TTAM",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:41:58.335Z"
+    },
+    {
+      "symbol": "TYNPF",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:42:08.192Z"
+    },
+    {
+      "symbol": "UCLQF",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:42:08.192Z"
+    },
+    {
+      "symbol": "UPMKF",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:42:08.192Z"
+    },
+    {
+      "symbol": "UPMMY",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:42:08.192Z"
+    },
+    {
+      "symbol": "USAR",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:41:58.335Z"
+    },
+    {
+      "symbol": "USAU",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:41:58.335Z"
+    },
+    {
+      "symbol": "USGO",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:41:58.335Z"
+    },
+    {
+      "symbol": "VALE",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:42:08.192Z"
+    },
+    {
+      "symbol": "VMC",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:41:49.442Z"
+    },
+    {
+      "symbol": "WPM",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:42:08.192Z"
+    },
+    {
+      "symbol": "ZEUS",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:41:58.335Z"
+    },
+    {
+      "symbol": "ZIJMY",
+      "sector": "Basic Materials",
+      "scraped_at": "2025-08-09T09:42:08.192Z"
+    }
+  ]
+}

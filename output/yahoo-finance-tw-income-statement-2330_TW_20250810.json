@@ -1,5 +1,5 @@
 {
-  "exportDate": "2025-08-09T08:20:34.498Z",
+  "exportDate": "2025-08-09T16:10:58.247Z",
   "totalResults": 1,
   "successCount": 1,
   "results": [
@@ -248,12 +248,12 @@
             "fiscalMonth": 3,
             "reportType": "quarterly",
             "dataSource": "yahoo-finance-tw",
-            "lastUpdated": "2025-08-09T08:20:34.359Z",
-            "revenue": 839253664,
-            "grossProfit": 493395076,
-            "operatingExpenses": 85186056,
-            "operatingIncome": 407080808,
-            "netIncome": 360732661
+            "lastUpdated": "2025-08-09T16:10:58.106Z",
+            "revenue": 839253664000,
+            "grossProfit": 493395076000,
+            "operatingExpenses": 85186056000,
+            "operatingIncome": 407080808000,
+            "netIncome": 360732661000
           },
           {
             "symbolCode": "2330.TW",
@@ -263,12 +263,12 @@
             "fiscalMonth": 12,
             "reportType": "quarterly",
             "dataSource": "yahoo-finance-tw",
-            "lastUpdated": "2025-08-09T08:20:34.367Z",
-            "revenue": 868461178,
-            "grossProfit": 512378151,
-            "operatingExpenses": 86338820,
-            "operatingIncome": 425712913,
-            "netIncome": 374468888
+            "lastUpdated": "2025-08-09T16:10:58.114Z",
+            "revenue": 868461178000,
+            "grossProfit": 512378151000,
+            "operatingExpenses": 86338820000,
+            "operatingIncome": 425712913000,
+            "netIncome": 374468888000
           },
           {
             "symbolCode": "2330.TW",
@@ -278,12 +278,12 @@
             "fiscalMonth": 9,
             "reportType": "quarterly",
             "dataSource": "yahoo-finance-tw",
-            "lastUpdated": "2025-08-09T08:20:34.367Z",
-            "revenue": 759692143,
-            "grossProfit": 439345666,
-            "operatingExpenses": 79078904,
-            "operatingIncome": 360766289,
-            "netIncome": 325080170
+            "lastUpdated": "2025-08-09T16:10:58.114Z",
+            "revenue": 759692143000,
+            "grossProfit": 439345666000,
+            "operatingExpenses": 79078904000,
+            "operatingIncome": 360766289000,
+            "netIncome": 325080170000
           },
           {
             "symbolCode": "2330.TW",
@@ -293,12 +293,12 @@
             "fiscalMonth": 6,
             "reportType": "quarterly",
             "dataSource": "yahoo-finance-tw",
-            "lastUpdated": "2025-08-09T08:20:34.367Z",
-            "revenue": 673510177,
-            "grossProfit": 358124478,
-            "operatingExpenses": 70295310,
-            "operatingIncome": 286555542,
-            "netIncome": 247661438
+            "lastUpdated": "2025-08-09T16:10:58.114Z",
+            "revenue": 673510177000,
+            "grossProfit": 358124478000,
+            "operatingExpenses": 70295310000,
+            "operatingIncome": 286555542000,
+            "netIncome": 247661438000
           },
           {
             "symbolCode": "2330.TW",
@@ -308,12 +308,12 @@
             "fiscalMonth": 3,
             "reportType": "quarterly",
             "dataSource": "yahoo-finance-tw",
-            "lastUpdated": "2025-08-09T08:20:34.367Z",
-            "revenue": 592644201,
-            "grossProfit": 314505269,
-            "operatingExpenses": 65357281,
-            "operatingIncome": 249018306,
-            "netIncome": 225221263
+            "lastUpdated": "2025-08-09T16:10:58.114Z",
+            "revenue": 592644201000,
+            "grossProfit": 314505269000,
+            "operatingExpenses": 65357281000,
+            "operatingIncome": 249018306000,
+            "netIncome": 225221263000
           },
           {
             "symbolCode": "2330.TW",
@@ -323,12 +323,12 @@
             "fiscalMonth": 12,
             "reportType": "quarterly",
             "dataSource": "yahoo-finance-tw",
-            "lastUpdated": "2025-08-09T08:20:34.368Z",
-            "revenue": 625528856,
-            "grossProfit": 331767925,
-            "operatingExpenses": 71621021,
-            "operatingIncome": 260204503,
-            "netIncome": 238306201
+            "lastUpdated": "2025-08-09T16:10:58.114Z",
+            "revenue": 625528856000,
+            "grossProfit": 331767925000,
+            "operatingExpenses": 71621021000,
+            "operatingIncome": 260204503000,
+            "netIncome": 238306201000
           },
           {
             "symbolCode": "2330.TW",
@@ -338,12 +338,12 @@
             "fiscalMonth": 9,
             "reportType": "quarterly",
             "dataSource": "yahoo-finance-tw",
-            "lastUpdated": "2025-08-09T08:20:34.368Z",
-            "revenue": 546732758,
-            "grossProfit": 296642464,
-            "operatingExpenses": 68708791,
-            "operatingIncome": 228064903,
-            "netIncome": 210795274
+            "lastUpdated": "2025-08-09T16:10:58.114Z",
+            "revenue": 546732758000,
+            "grossProfit": 296642464000,
+            "operatingExpenses": 68708791000,
+            "operatingIncome": 228064903000,
+            "netIncome": 210795274000
           },
           {
             "symbolCode": "2330.TW",
@@ -353,12 +353,12 @@
             "fiscalMonth": 6,
             "reportType": "quarterly",
             "dataSource": "yahoo-finance-tw",
-            "lastUpdated": "2025-08-09T08:20:34.368Z",
-            "revenue": 480841254,
-            "grossProfit": 260199847,
-            "operatingExpenses": 58194560,
-            "operatingIncome": 201958043,
-            "netIncome": 181717006
+            "lastUpdated": "2025-08-09T16:10:58.114Z",
+            "revenue": 480841254000,
+            "grossProfit": 260199847000,
+            "operatingExpenses": 58194560000,
+            "operatingIncome": 201958043000,
+            "netIncome": 181717006000
           },
           {
             "symbolCode": "2330.TW",
@@ -368,12 +368,12 @@
             "fiscalMonth": 3,
             "reportType": "quarterly",
             "dataSource": "yahoo-finance-tw",
-            "lastUpdated": "2025-08-09T08:20:34.368Z",
-            "revenue": 508632973,
-            "grossProfit": 286500392,
-            "operatingExpenses": 55309344,
-            "operatingIncome": 231238157,
-            "netIncome": 206949036
+            "lastUpdated": "2025-08-09T16:10:58.114Z",
+            "revenue": 508632973000,
+            "grossProfit": 286500392000,
+            "operatingExpenses": 55309344000,
+            "operatingIncome": 231238157000,
+            "netIncome": 206949036000
           },
           {
             "symbolCode": "2330.TW",
@@ -383,12 +383,12 @@
             "fiscalMonth": 12,
             "reportType": "quarterly",
             "dataSource": "yahoo-finance-tw",
-            "lastUpdated": "2025-08-09T08:20:34.368Z",
-            "revenue": 625531868,
-            "grossProfit": 389184929,
-            "operatingExpenses": 64535382,
-            "operatingIncome": 325040770,
-            "netIncome": 295878482
+            "lastUpdated": "2025-08-09T16:10:58.114Z",
+            "revenue": 625531868000,
+            "grossProfit": 389184929000,
+            "operatingExpenses": 64535382000,
+            "operatingIncome": 325040770000,
+            "netIncome": 295878482000
           },
           {
             "symbolCode": "2330.TW",
@@ -398,12 +398,12 @@
             "fiscalMonth": 9,
             "reportType": "quarterly",
             "dataSource": "yahoo-finance-tw",
-            "lastUpdated": "2025-08-09T08:20:34.368Z",
-            "revenue": 613142743,
-            "grossProfit": 370498717,
-            "operatingExpenses": 60186462,
-            "operatingIncome": 310324214,
-            "netIncome": 280968407
+            "lastUpdated": "2025-08-09T16:10:58.114Z",
+            "revenue": 613142743000,
+            "grossProfit": 370498717000,
+            "operatingExpenses": 60186462000,
+            "operatingIncome": 310324214000,
+            "netIncome": 280968407000
           },
           {
             "symbolCode": "2330.TW",
@@ -413,12 +413,12 @@
             "fiscalMonth": 6,
             "reportType": "quarterly",
             "dataSource": "yahoo-finance-tw",
-            "lastUpdated": "2025-08-09T08:20:34.368Z",
-            "revenue": 534140808,
-            "grossProfit": 315467994,
-            "operatingExpenses": 53374518,
-            "operatingIncome": 262123749,
-            "netIncome": 237180252
+            "lastUpdated": "2025-08-09T16:10:58.114Z",
+            "revenue": 534140808000,
+            "grossProfit": 315467994000,
+            "operatingExpenses": 53374518000,
+            "operatingIncome": 262123749000,
+            "netIncome": 237180252000
           },
           {
             "symbolCode": "2330.TW",
@@ -428,12 +428,12 @@
             "fiscalMonth": 3,
             "reportType": "quarterly",
             "dataSource": "yahoo-finance-tw",
-            "lastUpdated": "2025-08-09T08:20:34.368Z",
-            "revenue": 491075873,
-            "grossProfit": 273203166,
-            "operatingExpenses": 48611190,
-            "operatingIncome": 223790118,
-            "netIncome": 202873374
+            "lastUpdated": "2025-08-09T16:10:58.114Z",
+            "revenue": 491075873000,
+            "grossProfit": 273203166000,
+            "operatingExpenses": 48611190000,
+            "operatingIncome": 223790118000,
+            "netIncome": 202873374000
           },
           {
             "symbolCode": "2330.TW",
@@ -443,12 +443,12 @@
             "fiscalMonth": 12,
             "reportType": "quarterly",
             "dataSource": "yahoo-finance-tw",
-            "lastUpdated": "2025-08-09T08:20:34.368Z",
-            "revenue": 438189306,
-            "grossProfit": 230679228,
-            "operatingExpenses": 47877762,
-            "operatingIncome": 182771954,
-            "netIncome": 166373515
+            "lastUpdated": "2025-08-09T16:10:58.114Z",
+            "revenue": 438189306000,
+            "grossProfit": 230679228000,
+            "operatingExpenses": 47877762000,
+            "operatingIncome": 182771954000,
+            "netIncome": 166373515000
           },
           {
             "symbolCode": "2330.TW",
@@ -458,12 +458,12 @@
             "fiscalMonth": 9,
             "reportType": "quarterly",
             "dataSource": "yahoo-finance-tw",
-            "lastUpdated": "2025-08-09T08:20:34.368Z",
-            "revenue": 414670379,
-            "grossProfit": 212848684,
-            "operatingExpenses": 41649916,
-            "operatingIncome": 171003548,
-            "netIncome": 156479154
+            "lastUpdated": "2025-08-09T16:10:58.114Z",
+            "revenue": 414670379000,
+            "grossProfit": 212848684000,
+            "operatingExpenses": 41649916000,
+            "operatingIncome": 171003548000,
+            "netIncome": 156479154000
           },
           {
             "symbolCode": "2330.TW",
@@ -473,12 +473,12 @@
             "fiscalMonth": 6,
             "reportType": "quarterly",
             "dataSource": "yahoo-finance-tw",
-            "lastUpdated": "2025-08-09T08:20:34.368Z",
-            "revenue": 372145122,
-            "grossProfit": 186234135,
-            "operatingExpenses": 40583423,
-            "operatingIncome": 145667205,
-            "netIncome": 134481716
+            "lastUpdated": "2025-08-09T16:10:58.114Z",
+            "revenue": 372145122000,
+            "grossProfit": 186234135000,
+            "operatingExpenses": 40583423000,
+            "operatingIncome": 145667205000,
+            "netIncome": 134481716000
           },
           {
             "symbolCode": "2330.TW",
@@ -488,12 +488,12 @@
             "fiscalMonth": 3,
             "reportType": "quarterly",
             "dataSource": "yahoo-finance-tw",
-            "lastUpdated": "2025-08-09T08:20:34.368Z",
-            "revenue": 362410230,
-            "grossProfit": 189775219,
-            "operatingExpenses": 39111833,
-            "operatingIncome": 150538190,
-            "netIncome": 139738749
+            "lastUpdated": "2025-08-09T16:10:58.114Z",
+            "revenue": 362410230000,
+            "grossProfit": 189775219000,
+            "operatingExpenses": 39111833000,
+            "operatingIncome": 150538190000,
+            "netIncome": 139738749000
           },
           {
             "symbolCode": "2330.TW",
@@ -503,12 +503,12 @@
             "fiscalMonth": 12,
             "reportType": "quarterly",
             "dataSource": "yahoo-finance-tw",
-            "lastUpdated": "2025-08-09T08:20:34.368Z",
-            "revenue": 361533057,
-            "grossProfit": 195188826,
-            "operatingExpenses": 38321439,
-            "operatingIncome": 157120174,
-            "netIncome": 142824524
+            "lastUpdated": "2025-08-09T16:10:58.114Z",
+            "revenue": 361533057000,
+            "grossProfit": 195188826000,
+            "operatingExpenses": 38321439000,
+            "operatingIncome": 157120174000,
+            "netIncome": 142824524000
           },
           {
             "symbolCode": "2330.TW",
@@ -518,12 +518,12 @@
             "fiscalMonth": 9,
             "reportType": "quarterly",
             "dataSource": "yahoo-finance-tw",
-            "lastUpdated": "2025-08-09T08:20:34.368Z",
-            "revenue": 356426204,
-            "grossProfit": 190480670,
-            "operatingExpenses": 40891355,
-            "operatingIncome": 150047349,
-            "netIncome": 137378151
+            "lastUpdated": "2025-08-09T16:10:58.114Z",
+            "revenue": 356426204000,
+            "grossProfit": 190480670000,
+            "operatingExpenses": 40891355000,
+            "operatingIncome": 150047349000,
+            "netIncome": 137378151000
           },
           {
             "symbolCode": "2330.TW",
@@ -533,18 +533,18 @@
             "fiscalMonth": 6,
             "reportType": "quarterly",
             "dataSource": "yahoo-finance-tw",
-            "lastUpdated": "2025-08-09T08:20:34.368Z",
-            "revenue": 310698367,
-            "grossProfit": 164692825,
-            "operatingExpenses": 33520709,
-            "operatingIncome": 131094538,
-            "netIncome": 120892514
+            "lastUpdated": "2025-08-09T16:10:58.114Z",
+            "revenue": 310698367000,
+            "grossProfit": 164692825000,
+            "operatingExpenses": 33520709000,
+            "operatingIncome": 131094538000,
+            "netIncome": 120892514000
           }
         ]
       },
-      "timestamp": "2025-08-09T08:20:34.494Z",
+      "timestamp": "2025-08-09T16:10:58.243Z",
       "success": true,
-      "screenshot": "<Buffer 329306 bytes>"
+      "screenshot": "<Buffer 331059 bytes>"
     }
   ]
 }

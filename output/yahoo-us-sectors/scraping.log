@@ -1,0 +1,113 @@
+[2025-08-09T00:28:40.695Z] [INFO] 📄 正在爬取第 1 頁: https://finance.yahoo.com/research-hub/screener/sec-ind_sec-largest-equities_technology/?start=0&count=100
+[2025-08-09T00:28:50.302Z] [INFO] 📸 已儲存截圖: /Users/aryung/Downloads/Workshop/crawler/output/yahoo-us-sectors/debug/page-1.png
+[2025-08-09T00:28:50.306Z] [INFO] 🔍 Table 偵測結果: {"found":true,"rowCount":100,"firstRowHTML":"<td class=\"yf-ao6als lpin\" style=\"--_depth: false;\">1 </td><td class=\"yf-ao6als lpin shad\" style=\"--_depth: false;\"><div style=\"display: contents; --background-color:transparent; --hover-bg-color:transparent; --hover-color:var(--text1); --text-color:var(--enabled-active-emph); --hover-focus-color:var(--hovered-emph-same); --text-decoration:underline;\"><span class=\"ticker-wrapper yf-90gdtp\"><a data-testid=\"table-cell-ticker\" class=\"ticker x-small hover logo stacked yf-90gdtp\" aria-label=\"NVIDIA C"}
+[2025-08-09T00:28:50.310Z] [INFO] 🔍 DOM 分析: {"linksCount":137,"firstLinkText":" NVDA    ","possibleRowsCount":102,"bodyHTML":"Contains AAPL"}
+[2025-08-09T00:28:50.312Z] [ERROR] ❌ 第 1 頁爬取失敗 (嘗試 1/3): page.evaluate: ReferenceError: __name is not defined
+    at eval (eval at evaluate (:291:30), <anonymous>:1:517)
+    at UtilityScript.evaluate (<anonymous>:293:16)
+    at UtilityScript.<anonymous> (<anonymous>:1:44)
+[2025-08-09T00:29:03.641Z] [INFO] 📸 已儲存截圖: /Users/aryung/Downloads/Workshop/crawler/output/yahoo-us-sectors/debug/page-1.png
+[2025-08-09T00:29:03.643Z] [INFO] 🔍 Table 偵測結果: {"found":true,"rowCount":100,"firstRowHTML":"<td class=\"yf-ao6als lpin\" style=\"--_depth: false;\">1 </td><td class=\"yf-ao6als lpin shad\" style=\"--_depth: false;\"><div style=\"display: contents; --background-color:transparent; --hover-bg-color:transparent; --hover-color:var(--text1); --text-color:var(--enabled-active-emph); --hover-focus-color:var(--hovered-emph-same); --text-decoration:underline;\"><span class=\"ticker-wrapper yf-90gdtp\"><a data-testid=\"table-cell-ticker\" class=\"ticker x-small hover logo stacked yf-90gdtp\" aria-label=\"NVIDIA C"}
+[2025-08-09T00:29:03.648Z] [INFO] 🔍 DOM 分析: {"linksCount":137,"firstLinkText":" NVDA    ","possibleRowsCount":102,"bodyHTML":"Contains AAPL"}
+[2025-08-09T00:29:03.650Z] [ERROR] ❌ 第 1 頁爬取失敗 (嘗試 2/3): page.evaluate: ReferenceError: __name is not defined
+    at eval (eval at evaluate (:291:30), <anonymous>:1:517)
+    at UtilityScript.evaluate (<anonymous>:293:16)
+    at UtilityScript.<anonymous> (<anonymous>:1:44)
+[2025-08-09T00:29:17.205Z] [INFO] 📸 已儲存截圖: /Users/aryung/Downloads/Workshop/crawler/output/yahoo-us-sectors/debug/page-1.png
+[2025-08-09T00:29:17.206Z] [INFO] 🔍 Table 偵測結果: {"found":true,"rowCount":100,"firstRowHTML":"<td class=\"yf-ao6als lpin\" style=\"--_depth: false;\">1 </td><td class=\"yf-ao6als lpin shad\" style=\"--_depth: false;\"><div style=\"display: contents; --background-color:transparent; --hover-bg-color:transparent; --hover-color:var(--text1); --text-color:var(--enabled-active-emph); --hover-focus-color:var(--hovered-emph-same); --text-decoration:underline;\"><span class=\"ticker-wrapper yf-90gdtp\"><a data-testid=\"table-cell-ticker\" class=\"ticker x-small hover logo stacked yf-90gdtp\" aria-label=\"NVIDIA C"}
+[2025-08-09T00:29:17.212Z] [INFO] 🔍 DOM 分析: {"linksCount":137,"firstLinkText":" NVDA    ","possibleRowsCount":102,"bodyHTML":"Contains AAPL"}
+[2025-08-09T00:29:17.213Z] [ERROR] ❌ 第 1 頁爬取失敗 (嘗試 3/3): page.evaluate: ReferenceError: __name is not defined
+    at eval (eval at evaluate (:291:30), <anonymous>:1:517)
+    at UtilityScript.evaluate (<anonymous>:293:16)
+    at UtilityScript.<anonymous> (<anonymous>:1:44)
+[2025-08-09T00:29:17.213Z] [WARNING] ⚠️ 第 1 頁已達最大重試次數，跳過
+[2025-08-09T00:29:20.058Z] [INFO] 📄 正在爬取第 2 頁: https://finance.yahoo.com/research-hub/screener/sec-ind_sec-largest-equities_technology/?start=100&count=100
+[2025-08-09T00:29:28.633Z] [INFO] 📸 已儲存截圖: /Users/aryung/Downloads/Workshop/crawler/output/yahoo-us-sectors/debug/page-2.png
+[2025-08-09T00:29:28.635Z] [INFO] 🔍 Table 偵測結果: {"found":true,"rowCount":100,"firstRowHTML":"<td class=\"yf-ao6als lpin\" style=\"--_depth: false;\">101 </td><td class=\"yf-ao6als lpin shad\" style=\"--_depth: false;\"><div style=\"display: contents; --background-color:transparent; --hover-bg-color:transparent; --hover-color:var(--text1); --text-color:var(--enabled-active-emph); --hover-focus-color:var(--hovered-emph-same); --text-decoration:underline;\"><span class=\"ticker-wrapper yf-90gdtp\"><a data-testid=\"table-cell-ticker\" class=\"ticker x-small hover logo stacked yf-90gdtp\" aria-label=\"Okta, "}
+[2025-08-09T00:29:28.639Z] [INFO] 🔍 DOM 分析: {"linksCount":137,"firstLinkText":" OKTA    ","possibleRowsCount":102,"bodyHTML":"Contains AAPL"}
+[2025-08-09T00:29:28.641Z] [ERROR] ❌ 第 2 頁爬取失敗 (嘗試 1/3): page.evaluate: ReferenceError: __name is not defined
+    at eval (eval at evaluate (:291:30), <anonymous>:1:517)
+    at UtilityScript.evaluate (<anonymous>:293:16)
+    at UtilityScript.<anonymous> (<anonymous>:1:44)
+[2025-08-09T00:29:42.305Z] [INFO] 📸 已儲存截圖: /Users/aryung/Downloads/Workshop/crawler/output/yahoo-us-sectors/debug/page-2.png
+[2025-08-09T00:29:42.307Z] [INFO] 🔍 Table 偵測結果: {"found":true,"rowCount":100,"firstRowHTML":"<td class=\"yf-ao6als lpin\" style=\"--_depth: false;\">101 </td><td class=\"yf-ao6als lpin shad\" style=\"--_depth: false;\"><div style=\"display: contents; --background-color:transparent; --hover-bg-color:transparent; --hover-color:var(--text1); --text-color:var(--enabled-active-emph); --hover-focus-color:var(--hovered-emph-same); --text-decoration:underline;\"><span class=\"ticker-wrapper yf-90gdtp\"><a data-testid=\"table-cell-ticker\" class=\"ticker x-small hover logo stacked yf-90gdtp\" aria-label=\"Okta, "}
+[2025-08-09T00:29:42.311Z] [INFO] 🔍 DOM 分析: {"linksCount":137,"firstLinkText":" OKTA    ","possibleRowsCount":102,"bodyHTML":"Contains AAPL"}
+[2025-08-09T00:29:42.312Z] [ERROR] ❌ 第 2 頁爬取失敗 (嘗試 2/3): page.evaluate: ReferenceError: __name is not defined
+    at eval (eval at evaluate (:291:30), <anonymous>:1:517)
+    at UtilityScript.evaluate (<anonymous>:293:16)
+    at UtilityScript.<anonymous> (<anonymous>:1:44)
+[2025-08-09T00:29:56.000Z] [INFO] 📸 已儲存截圖: /Users/aryung/Downloads/Workshop/crawler/output/yahoo-us-sectors/debug/page-2.png
+[2025-08-09T00:29:56.001Z] [INFO] 🔍 Table 偵測結果: {"found":true,"rowCount":100,"firstRowHTML":"<td class=\"yf-ao6als lpin\" style=\"--_depth: false;\">101 </td><td class=\"yf-ao6als lpin shad\" style=\"--_depth: false;\"><div style=\"display: contents; --background-color:transparent; --hover-bg-color:transparent; --hover-color:var(--text1); --text-color:var(--enabled-active-emph); --hover-focus-color:var(--hovered-emph-same); --text-decoration:underline;\"><span class=\"ticker-wrapper yf-90gdtp\"><a data-testid=\"table-cell-ticker\" class=\"ticker x-small hover logo stacked yf-90gdtp\" aria-label=\"Okta, "}
+[2025-08-09T00:29:56.005Z] [INFO] 🔍 DOM 分析: {"linksCount":137,"firstLinkText":" OKTA    ","possibleRowsCount":102,"bodyHTML":"Contains AAPL"}
+[2025-08-09T00:29:56.006Z] [ERROR] ❌ 第 2 頁爬取失敗 (嘗試 3/3): page.evaluate: ReferenceError: __name is not defined
+    at eval (eval at evaluate (:291:30), <anonymous>:1:517)
+    at UtilityScript.evaluate (<anonymous>:293:16)
+    at UtilityScript.<anonymous> (<anonymous>:1:44)
+[2025-08-09T00:29:56.006Z] [WARNING] ⚠️ 第 2 頁已達最大重試次數，跳過
+[2025-08-09T00:29:58.691Z] [INFO] 📄 正在爬取第 3 頁: https://finance.yahoo.com/research-hub/screener/sec-ind_sec-largest-equities_technology/?start=200&count=100
+[2025-08-09T00:30:07.219Z] [INFO] 📸 已儲存截圖: /Users/aryung/Downloads/Workshop/crawler/output/yahoo-us-sectors/debug/page-3.png
+[2025-08-09T00:30:07.220Z] [INFO] 🔍 Table 偵測結果: {"found":true,"rowCount":100,"firstRowHTML":"<td class=\"yf-ao6als lpin\" style=\"--_depth: false;\">201 </td><td class=\"yf-ao6als lpin shad\" style=\"--_depth: false;\"><div style=\"display: contents; --background-color:transparent; --hover-bg-color:transparent; --hover-color:var(--text1); --text-color:var(--enabled-active-emph); --hover-focus-color:var(--hovered-emph-same); --text-decoration:underline;\"><span class=\"ticker-wrapper yf-90gdtp\"><a data-testid=\"table-cell-ticker\" class=\"ticker x-small hover logo stacked yf-90gdtp\" aria-label=\"SPS Co"}
+[2025-08-09T00:30:07.226Z] [INFO] 🔍 DOM 分析: {"linksCount":137,"firstLinkText":"S SPSC    ","possibleRowsCount":102,"bodyHTML":"Contains AAPL"}
+[2025-08-09T00:30:07.227Z] [ERROR] ❌ 第 3 頁爬取失敗 (嘗試 1/3): page.evaluate: ReferenceError: __name is not defined
+    at eval (eval at evaluate (:291:30), <anonymous>:1:517)
+    at UtilityScript.evaluate (<anonymous>:293:16)
+    at UtilityScript.<anonymous> (<anonymous>:1:44)
+[2025-08-09T00:30:20.645Z] [INFO] 📸 已儲存截圖: /Users/aryung/Downloads/Workshop/crawler/output/yahoo-us-sectors/debug/page-3.png
+[2025-08-09T00:30:20.646Z] [INFO] 🔍 Table 偵測結果: {"found":true,"rowCount":100,"firstRowHTML":"<td class=\"yf-ao6als lpin\" style=\"--_depth: false;\">201 </td><td class=\"yf-ao6als lpin shad\" style=\"--_depth: false;\"><div style=\"display: contents; --background-color:transparent; --hover-bg-color:transparent; --hover-color:var(--text1); --text-color:var(--enabled-active-emph); --hover-focus-color:var(--hovered-emph-same); --text-decoration:underline;\"><span class=\"ticker-wrapper yf-90gdtp\"><a data-testid=\"table-cell-ticker\" class=\"ticker x-small hover logo stacked yf-90gdtp\" aria-label=\"SPS Co"}
+[2025-08-09T00:30:20.650Z] [INFO] 🔍 DOM 分析: {"linksCount":137,"firstLinkText":"S SPSC    ","possibleRowsCount":102,"bodyHTML":"Contains AAPL"}
+[2025-08-09T00:30:20.652Z] [ERROR] ❌ 第 3 頁爬取失敗 (嘗試 2/3): page.evaluate: ReferenceError: __name is not defined
+    at eval (eval at evaluate (:291:30), <anonymous>:1:517)
+    at UtilityScript.evaluate (<anonymous>:293:16)
+    at UtilityScript.<anonymous> (<anonymous>:1:44)
+[2025-08-09T00:30:34.515Z] [INFO] 📸 已儲存截圖: /Users/aryung/Downloads/Workshop/crawler/output/yahoo-us-sectors/debug/page-3.png
+[2025-08-09T00:30:34.516Z] [INFO] 🔍 Table 偵測結果: {"found":true,"rowCount":100,"firstRowHTML":"<td class=\"yf-ao6als lpin\" style=\"--_depth: false;\">201 </td><td class=\"yf-ao6als lpin shad\" style=\"--_depth: false;\"><div style=\"display: contents; --background-color:transparent; --hover-bg-color:transparent; --hover-color:var(--text1); --text-color:var(--enabled-active-emph); --hover-focus-color:var(--hovered-emph-same); --text-decoration:underline;\"><span class=\"ticker-wrapper yf-90gdtp\"><a data-testid=\"table-cell-ticker\" class=\"ticker x-small hover logo stacked yf-90gdtp\" aria-label=\"SPS Co"}
+[2025-08-09T00:30:34.521Z] [INFO] 🔍 DOM 分析: {"linksCount":137,"firstLinkText":"S SPSC    ","possibleRowsCount":102,"bodyHTML":"Contains AAPL"}
+[2025-08-09T00:30:34.522Z] [ERROR] ❌ 第 3 頁爬取失敗 (嘗試 3/3): page.evaluate: ReferenceError: __name is not defined
+    at eval (eval at evaluate (:291:30), <anonymous>:1:517)
+    at UtilityScript.evaluate (<anonymous>:293:16)
+    at UtilityScript.<anonymous> (<anonymous>:1:44)
+[2025-08-09T00:30:34.522Z] [WARNING] ⚠️ 第 3 頁已達最大重試次數，跳過
+[2025-08-09T00:30:37.334Z] [INFO] 📄 正在爬取第 4 頁: https://finance.yahoo.com/research-hub/screener/sec-ind_sec-largest-equities_technology/?start=300&count=100
+[2025-08-09T00:31:22.050Z] [INFO] 📄 正在爬取第 1 頁: https://finance.yahoo.com/research-hub/screener/sec-ind_sec-largest-equities_technology/?start=0&count=100
+[2025-08-09T00:31:31.781Z] [ERROR] ❌ 第 1 頁爬取失敗 (嘗試 1/3): page.evaluate: ReferenceError: __name is not defined
+    at eval (eval at evaluate (:291:30), <anonymous>:1:147)
+    at UtilityScript.evaluate (<anonymous>:293:16)
+    at UtilityScript.<anonymous> (<anonymous>:1:44)
+[2025-08-09T00:31:44.762Z] [ERROR] ❌ 第 1 頁爬取失敗 (嘗試 2/3): page.evaluate: ReferenceError: __name is not defined
+    at eval (eval at evaluate (:291:30), <anonymous>:1:147)
+    at UtilityScript.evaluate (<anonymous>:293:16)
+    at UtilityScript.<anonymous> (<anonymous>:1:44)
+[2025-08-09T00:31:57.798Z] [ERROR] ❌ 第 1 頁爬取失敗 (嘗試 3/3): page.evaluate: ReferenceError: __name is not defined
+    at eval (eval at evaluate (:291:30), <anonymous>:1:147)
+    at UtilityScript.evaluate (<anonymous>:293:16)
+    at UtilityScript.<anonymous> (<anonymous>:1:44)
+[2025-08-09T00:31:57.798Z] [WARNING] ⚠️ 第 1 頁已達最大重試次數，跳過
+[2025-08-09T00:32:01.350Z] [INFO] 📄 正在爬取第 2 頁: https://finance.yahoo.com/research-hub/screener/sec-ind_sec-largest-equities_technology/?start=100&count=100
+[2025-08-09T00:32:09.198Z] [ERROR] ❌ 第 2 頁爬取失敗 (嘗試 1/3): page.evaluate: ReferenceError: __name is not defined
+    at eval (eval at evaluate (:291:30), <anonymous>:1:147)
+    at UtilityScript.evaluate (<anonymous>:293:16)
+    at UtilityScript.<anonymous> (<anonymous>:1:44)
+[2025-08-09T00:32:22.223Z] [ERROR] ❌ 第 2 頁爬取失敗 (嘗試 2/3): page.evaluate: ReferenceError: __name is not defined
+    at eval (eval at evaluate (:291:30), <anonymous>:1:147)
+    at UtilityScript.evaluate (<anonymous>:293:16)
+    at UtilityScript.<anonymous> (<anonymous>:1:44)
+[2025-08-09T00:32:35.197Z] [ERROR] ❌ 第 2 頁爬取失敗 (嘗試 3/3): page.evaluate: ReferenceError: __name is not defined
+    at eval (eval at evaluate (:291:30), <anonymous>:1:147)
+    at UtilityScript.evaluate (<anonymous>:293:16)
+    at UtilityScript.<anonymous> (<anonymous>:1:44)
+[2025-08-09T00:32:35.197Z] [WARNING] ⚠️ 第 2 頁已達最大重試次數，跳過
+[2025-08-09T00:32:38.818Z] [INFO] 📄 正在爬取第 3 頁: https://finance.yahoo.com/research-hub/screener/sec-ind_sec-largest-equities_technology/?start=200&count=100
+[2025-08-09T00:32:47.181Z] [ERROR] ❌ 第 3 頁爬取失敗 (嘗試 1/3): page.evaluate: ReferenceError: __name is not defined
+    at eval (eval at evaluate (:291:30), <anonymous>:1:147)
+    at UtilityScript.evaluate (<anonymous>:293:16)
+    at UtilityScript.<anonymous> (<anonymous>:1:44)
+[2025-08-09T00:33:00.372Z] [ERROR] ❌ 第 3 頁爬取失敗 (嘗試 2/3): page.evaluate: ReferenceError: __name is not defined
+    at eval (eval at evaluate (:291:30), <anonymous>:1:147)
+    at UtilityScript.evaluate (<anonymous>:293:16)
+    at UtilityScript.<anonymous> (<anonymous>:1:44)
+[2025-08-09T00:33:14.086Z] [ERROR] ❌ 第 3 頁爬取失敗 (嘗試 3/3): page.evaluate: ReferenceError: __name is not defined
+    at eval (eval at evaluate (:291:30), <anonymous>:1:147)
+    at UtilityScript.evaluate (<anonymous>:293:16)
+    at UtilityScript.<anonymous> (<anonymous>:1:44)
+[2025-08-09T00:33:14.086Z] [WARNING] ⚠️ 第 3 頁已達最大重試次數，跳過
+[2025-08-09T00:33:16.892Z] [INFO] 📄 正在爬取第 4 頁: https://finance.yahoo.com/research-hub/screener/sec-ind_sec-largest-equities_technology/?start=300&count=100
