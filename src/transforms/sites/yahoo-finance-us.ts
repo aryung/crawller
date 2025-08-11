@@ -351,10 +351,10 @@ export const yahooFinanceUSTransforms: YahooFinanceUSTransforms = {
         financialData.financingCashFlow = (financingCashFlowArray[i] || 0) * UNIT_MULTIPLIERS.THOUSAND_USD;
         financialData.freeCashFlow = (freeCashFlowArray[i] || 0) * UNIT_MULTIPLIERS.THOUSAND_USD;
         
-        // 資本支出和其他現金流項目
-        financialData.capex = ((vars.capexValues || [])[i] || 0) * UNIT_MULTIPLIERS.THOUSAND_USD;
-        financialData.debtIssuance = ((vars.debtIssuanceValues || [])[i] || 0) * UNIT_MULTIPLIERS.THOUSAND_USD;
-        financialData.debtRepayment = ((vars.debtRepaymentValues || [])[i] || 0) * UNIT_MULTIPLIERS.THOUSAND_USD;
+        // 資本支出和其他現金流項目 - 修正變數名稱映射
+        financialData.capex = ((vars.capitalExpenditureValues || [])[i] || 0) * UNIT_MULTIPLIERS.THOUSAND_USD;
+        financialData.debtIssuance = ((vars.issuanceOfDebtValues || [])[i] || 0) * UNIT_MULTIPLIERS.THOUSAND_USD;
+        financialData.debtRepayment = ((vars.repaymentOfDebtValues || [])[i] || 0) * UNIT_MULTIPLIERS.THOUSAND_USD;
       }
       // 檢查損益表相關欄位
       else if (revenueArray[0] !== undefined || netIncomeArray[0] !== undefined) {
@@ -390,9 +390,13 @@ export const yahooFinanceUSTransforms: YahooFinanceUSTransforms = {
         financialData.totalDebt = ((vars.totalDebtValues || [])[i] || 0) * UNIT_MULTIPLIERS.THOUSAND_USD;
         financialData.cashAndEquivalents = ((vars.cashAndEquivalentsValues || [])[i] || 0) * UNIT_MULTIPLIERS.THOUSAND_USD;
         
-        // 每股淨值
-        financialData.bookValuePerShare = (vars.bookValuePerShareValues || [])[i] || 0;
-        financialData.sharesOutstanding = (vars.sharesOutstandingValues || [])[i] || 0;
+        // 修正流通股數映射 - 使用實際可用的數據欄位
+        financialData.sharesOutstanding = (vars.shareIssuedValues || vars.ordinarySharesNumberValues || [])[i] || 0;
+        
+        // 計算每股淨值 = 股東權益 ÷ 流通股數
+        const shareholdersEquity = ((vars.totalEquityValues || [])[i] || 0);
+        const sharesOutstanding = financialData.sharesOutstanding;
+        financialData.bookValuePerShare = sharesOutstanding > 0 ? shareholdersEquity / sharesOutstanding : 0;
         
         // 美國特有欄位放入 regionalData
         financialData.regionalData = {
