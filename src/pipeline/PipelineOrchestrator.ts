@@ -4,6 +4,7 @@ import { exec } from 'child_process';
 import { promisify } from 'util';
 import { OutputFileManager } from './OutputFileManager.js';
 import { UnifiedFinancialData } from '../types/unified-financial-data.js';
+import { ApiClient, createApiClient } from '../common/api-client.js';
 
 const execAsync = promisify(exec);
 
@@ -19,7 +20,11 @@ export interface PipelineConfig {
   skipConfigGeneration?: boolean;
   skipCrawling?: boolean;
   skipAggregation?: boolean;
-  skipDatabaseImport?: boolean;
+  skipSymbolImport?: boolean;
+  skipFundamentalImport?: boolean;
+  skipLabelSync?: boolean;
+  apiUrl?: string;
+  apiToken?: string;
 }
 
 export interface PipelineResult {
@@ -47,7 +52,7 @@ export interface CrawlerProgress {
 export class PipelineOrchestrator {
   private config: Required<PipelineConfig>;
   private fileManager: OutputFileManager;
-  // private importer: DatabaseImporter;
+  private apiClient: ApiClient;
   private progressCallback?: (progress: CrawlerProgress) => void;
 
   constructor(config: PipelineConfig = {}) {
@@ -63,11 +68,18 @@ export class PipelineOrchestrator {
       skipConfigGeneration: config.skipConfigGeneration || false,
       skipCrawling: config.skipCrawling || false,
       skipAggregation: config.skipAggregation || false,
-      skipDatabaseImport: config.skipDatabaseImport || true, // Default to skip now
+      skipSymbolImport: config.skipSymbolImport || false,
+      skipFundamentalImport: config.skipFundamentalImport || false,
+      skipLabelSync: config.skipLabelSync || false,
+      apiUrl: config.apiUrl || process.env.BACKEND_API_URL || 'http://localhost:3000',
+      apiToken: config.apiToken || process.env.BACKEND_API_TOKEN || '',
     };
 
     this.fileManager = new OutputFileManager(this.config.outputDir);
-    // this.importer = new DatabaseImporter();
+    this.apiClient = createApiClient({
+      apiUrl: this.config.apiUrl,
+      apiToken: this.config.apiToken,
+    });
   }
 
   /**
@@ -123,12 +135,42 @@ export class PipelineOrchestrator {
         result.totalDataAggregated = unifiedData.length;
       }
 
-      // Step 4: API Import (Manual)
-      if (!this.config.skipDatabaseImport && unifiedData.length > 0) {
-        console.log('\n💾 Step 4: Data ready for API import');
-        console.log('  ℹ️  Use the following command to import to backend:');
-        console.log('     npm run import:fundamental:batch');
-        console.log('  📁 Output files are ready in ./output/ directory');
+      // Step 4: Import symbols to backend
+      if (!this.config.skipSymbolImport) {
+        console.log('\n📈 Step 4: Importing symbols to backend...');
+        try {
+          await this.importSymbolsFromMappings();
+          console.log('  ✅ Symbol import completed');
+        } catch (error) {
+          console.error('  ❌ Symbol import failed:', (error as Error).message);
+          result.errors.push(`Symbol import failed: ${(error as Error).message}`);
+        }
+      }
+
+      // Step 5: Import fundamental data to backend
+      if (!this.config.skipFundamentalImport && unifiedData.length > 0) {
+        console.log('\n💾 Step 5: Importing fundamental data to backend...');
+        try {
+          await this.importFundamentalData(unifiedData);
+          console.log('  ✅ Fundamental data import completed');
+        } catch (error) {
+          console.error('  ❌ Fundamental data import failed:', (error as Error).message);
+          result.errors.push(`Fundamental data import failed: ${(error as Error).message}`);
+        }
+      } else if (!this.config.skipFundamentalImport) {
+        console.log('\n💾 Step 5: No fundamental data to import (use: npm run import:fundamental:batch)');
+      }
+
+      // Step 6: Sync category labels
+      if (!this.config.skipLabelSync) {
+        console.log('\n🏷️  Step 6: Syncing category labels...');
+        try {
+          await this.syncCategoryLabels();
+          console.log('  ✅ Label sync completed');
+        } catch (error) {
+          console.error('  ❌ Label sync failed:', (error as Error).message);
+          result.errors.push(`Label sync failed: ${(error as Error).message}`);
+        }
       }
 
       result.duration = Date.now() - startTime;
@@ -478,5 +520,141 @@ export class PipelineOrchestrator {
       outputFiles: outputStats,
       database: dbStats,
     };
+  }
+
+  /**
+   * Import symbols from category mappings
+   */
+  private async importSymbolsFromMappings(): Promise<void> {
+    const { readFileSync, existsSync } = await import('fs');
+    const mappingFile = path.join(this.config.dataDir, 'category-symbol-mappings.json');
+    
+    if (!existsSync(mappingFile)) {
+      throw new Error(`找不到映射檔案: ${mappingFile}`);
+    }
+
+    const fileContent = JSON.parse(readFileSync(mappingFile, 'utf-8'));
+    const mappings = fileContent.categoryMappings || fileContent;
+
+    // 轉換為股票資料
+    const symbolsMap = new Map<string, any>();
+    
+    for (const [market, categories] of Object.entries(mappings)) {
+      if (!categories || !Array.isArray(categories)) continue;
+      
+      for (const category of categories as any[]) {
+        for (const symbol of category.symbols) {
+          const key = `${symbol.symbolCode}_${market}`;
+          
+          if (!symbolsMap.has(key)) {
+            symbolsMap.set(key, {
+              symbolCode: this.cleanSymbolCode(symbol.symbolCode, market),
+              name: symbol.name,
+              exchangeArea: this.mapMarketToExchangeArea(market),
+              assetType: 'EQUITY',
+              regionalData: {
+                originalSymbolCode: symbol.symbolCode,
+                category: category.category,
+                categoryId: category.categoryId,
+                market: market,
+              }
+            });
+          }
+        }
+      }
+    }
+
+    const symbols = Array.from(symbolsMap.values());
+    console.log(`  📊 準備匯入 ${symbols.length} 個股票代碼`);
+
+    // 批量匯入
+    await this.apiClient.importSymbols(symbols, (current, total, message) => {
+      console.log(`    ${message}`);
+    });
+  }
+
+  /**
+   * Import fundamental data using existing output files
+   */
+  private async importFundamentalData(data: UnifiedFinancialData[]): Promise<void> {
+    console.log(`  📊 準備匯入 ${data.length} 筆基本面資料`);
+    
+    // 轉換資料格式為後端 API 預期格式
+    const convertedData = data.map(record => this.convertToApiFormat(record));
+    
+    // 批量匯入
+    await this.apiClient.importFundamental(convertedData, (current, total, message) => {
+      console.log(`    ${message}`);
+    });
+  }
+
+  /**
+   * Sync category labels
+   */
+  private async syncCategoryLabels(): Promise<void> {
+    const { readFileSync, existsSync } = await import('fs');
+    const mappingFile = path.join(this.config.dataDir, 'category-symbol-mappings.json');
+    
+    if (!existsSync(mappingFile)) {
+      throw new Error(`找不到映射檔案: ${mappingFile}`);
+    }
+
+    const fileContent = JSON.parse(readFileSync(mappingFile, 'utf-8'));
+    const mappings = fileContent.categoryMappings || fileContent;
+
+    console.log(`  📊 準備同步標籤映射`);
+    
+    // 使用現有的標籤同步邏輯
+    const result = await this.apiClient.syncLabels(mappings, {
+      strategy: 'merge',
+      createMissingSymbols: false,
+      updateExistingRelations: true,
+    });
+
+    if (result.success) {
+      console.log(`    ✅ 同步成功: ${result.data?.labelsCreated || 0} 標籤, ${result.data?.relationsCreated || 0} 關係`);
+    } else {
+      throw new Error(`標籤同步失敗: ${result.message}`);
+    }
+  }
+
+  /**
+   * Convert UnifiedFinancialData to API format
+   */
+  private convertToApiFormat(record: UnifiedFinancialData): any {
+    // 清理 symbolCode
+    let cleanSymbolCode = record.symbolCode;
+    if (record.exchangeArea === 'TPE') {
+      cleanSymbolCode = cleanSymbolCode.replace(/\.TW[O]?$/, '');
+    }
+
+    // 先展開所有屬性，再覆蓋特定欄位
+    return {
+      ...record,
+      symbolCode: cleanSymbolCode,
+      reportType: record.reportType || 'annual'
+    };
+  }
+
+  /**
+   * Clean symbol code based on market
+   */
+  private cleanSymbolCode(symbolCode: string, market: string): string {
+    if (market === 'TPE') {
+      return symbolCode.replace(/\.TW[O]?$/, '');
+    }
+    return symbolCode;
+  }
+
+  /**
+   * Map market code to exchange area
+   */
+  private mapMarketToExchangeArea(market: string): string {
+    const mapping: Record<string, string> = {
+      'TPE': 'TPE',
+      'US': 'US', 
+      'JP': 'JP'
+    };
+    return mapping[market] || market;
   }
 }

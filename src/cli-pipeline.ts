@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 
-import 'reflect-metadata';
 import { program } from 'commander';
 import { PipelineOrchestrator, PipelineConfig } from './pipeline/PipelineOrchestrator.js';
 import chalk from 'chalk';
@@ -24,7 +23,11 @@ program
   .option('--skip-config', 'Skip configuration generation')
   .option('--skip-crawl', 'Skip crawler execution')
   .option('--skip-aggregate', 'Skip data aggregation')
-  .option('--skip-db', 'Skip database import')
+  .option('--skip-symbol-import', 'Skip symbol import to backend')
+  .option('--skip-fundamental-import', 'Skip fundamental data import to backend')
+  .option('--skip-label-sync', 'Skip category label synchronization')
+  .option('--api-url <url>', 'Backend API URL', process.env.BACKEND_API_URL || 'http://localhost:3000')
+  .option('--api-token <token>', 'API authentication token', process.env.BACKEND_API_TOKEN)
   .option('--clean-days <days>', 'Clean files older than specified days', '7')
   .action(async (options) => {
     console.log(chalk.blue.bold('\n🚀 Universal Web Crawler Pipeline'));
@@ -38,7 +41,11 @@ program
       skipConfigGeneration: options.skipConfig,
       skipCrawling: options.skipCrawl,
       skipAggregation: options.skipAggregate,
-      skipDatabaseImport: options.skipDb,
+      skipSymbolImport: options.skipSymbolImport,
+      skipFundamentalImport: options.skipFundamentalImport,
+      skipLabelSync: options.skipLabelSync,
+      apiUrl: options.apiUrl,
+      apiToken: options.apiToken,
     };
 
     const orchestrator = new PipelineOrchestrator(config);

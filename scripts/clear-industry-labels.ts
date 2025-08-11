@@ -22,6 +22,7 @@ import axios, { AxiosInstance } from 'axios';
 import chalk from 'chalk';
 import ora from 'ora';
 import { program } from 'commander';
+import { ApiClient, createApiClient } from '../src/common/api-client';
 
 interface Label {
   id: string;
@@ -42,18 +43,15 @@ interface ClearConfig {
 }
 
 class IndustryLabelCleaner {
-  private api: AxiosInstance;
+  private apiClient: ApiClient;
   private config: ClearConfig;
   private spinner: any;
 
   constructor(config: ClearConfig) {
     this.config = config;
-    this.api = axios.create({
-      baseURL: config.apiUrl,
-      headers: {
-        'Content-Type': 'application/json',
-        ...(config.apiToken && { 'Authorization': `Bearer ${config.apiToken}` })
-      }
+    this.apiClient = createApiClient({
+      apiUrl: config.apiUrl,
+      apiToken: config.apiToken,
     });
   }
 
@@ -91,11 +89,11 @@ class IndustryLabelCleaner {
     isEncoded: boolean;
   } | null> {
     try {
-      const response = await this.api.post('/label-industry/labels/decode', {
+      const response = await this.apiClient.post('/label-industry/labels/decode', {
         labelName: encodedLabel
       });
       
-      const decoded = response.data?.data;
+      const decoded = response.data;
       if (decoded && decoded.isEncoded) {
         return decoded;
       }
@@ -188,13 +186,14 @@ class IndustryLabelCleaner {
       
       // 方法 1: 使用新的 all-including-inactive 端點
       try {
-        console.log(chalk.gray('  嘗試查詢方法 1: /labels/all-including-inactive'));
-        response = await this.api.get('/labels/all-including-inactive');
-        console.log(chalk.gray(`  方法 1 回應長度: ${Array.isArray(response.data) ? response.data.length : 'unknown'}`));
+        console.log(chalk.gray('  嘗試查詢方法 1: /label-industry/labels/all-including-inactive'));
+        const result = await this.apiClient.get('/label-industry/labels/all-including-inactive');
+        response = { data: result };
+        console.log(chalk.gray(`  方法 1 回應長度: ${Array.isArray(result) ? result.length : 'unknown'}`));
         
         // 檢查是否成功獲取數據
-        if (response.data && Array.isArray(response.data) && response.data.length > 0) {
-          console.log(chalk.green(`  ✓ 方法 1 成功獲取 ${response.data.length} 個標籤`));
+        if (result && Array.isArray(result) && result.length > 0) {
+          console.log(chalk.green(`  ✓ 方法 1 成功獲取 ${result.length} 個標籤`));
         }
       } catch (error) {
         console.log(chalk.yellow(`  方法 1 失敗: ${error.message}`));
@@ -204,12 +203,11 @@ class IndustryLabelCleaner {
       if (!response || !response.data || (Array.isArray(response.data) && response.data.length === 0)) {
         try {
           console.log(chalk.gray('  嘗試查詢方法 2: /labels?type=SYSTEM_DEFINED'));
-          response = await this.api.get('/labels', {
-            params: {
-              type: 'SYSTEM_DEFINED'
-            }
+          const result = await this.apiClient.get('/labels', {
+            type: 'SYSTEM_DEFINED'
           });
-          console.log(chalk.gray(`  方法 2 回應: ${JSON.stringify(response.data).substring(0, 100)}...`));
+          response = { data: result };
+          console.log(chalk.gray(`  方法 2 回應: ${JSON.stringify(result).substring(0, 100)}...`));
         } catch (error) {
           console.log(chalk.yellow(`  方法 2 失敗: ${error.message}`));
         }
@@ -218,9 +216,10 @@ class IndustryLabelCleaner {
       // 方法 3: 使用 /labels/all 端點
       if (!response || !response.data || (Array.isArray(response.data) && response.data.length === 0)) {
         try {
-          console.log(chalk.gray('  嘗試查詢方法 3: /labels/all'));
-          response = await this.api.get('/labels/all');
-          console.log(chalk.gray(`  方法 3 回應長度: ${Array.isArray(response.data) ? response.data.length : 'unknown'}`));
+          console.log(chalk.gray('  嘗試查詢方法 3: /label-industry/labels/all'));
+          const result = await this.apiClient.get('/label-industry/labels/all');
+          response = { data: result };
+          console.log(chalk.gray(`  方法 3 回應長度: ${Array.isArray(result) ? result.length : 'unknown'}`));
         } catch (error) {
           console.log(chalk.yellow(`  方法 3 失敗: ${error.message}`));
         }
@@ -229,11 +228,12 @@ class IndustryLabelCleaner {
       // 方法 4: 使用 POST 搜尋
       if (!response || !response.data || (Array.isArray(response.data) && response.data.length === 0)) {
         try {
-          console.log(chalk.gray('  嘗試查詢方法 4: POST /labels/search'));
-          response = await this.api.post('/labels/search', {
+          console.log(chalk.gray('  嘗試查詢方法 4: POST /label-industry/labels/search'));
+          const result = await this.apiClient.post('/label-industry/labels/search', {
             type: 'SYSTEM_DEFINED'
           });
-          console.log(chalk.gray(`  方法 4 回應長度: ${Array.isArray(response.data?.data) ? response.data.data.length : 'unknown'}`));
+          response = { data: result.data || result };
+          console.log(chalk.gray(`  方法 4 回應長度: ${Array.isArray(result.data) ? result.data.length : Array.isArray(result) ? result.length : 'unknown'}`));
         } catch (error) {
           console.log(chalk.yellow(`  方法 4 失敗: ${error.message}`));
         }
@@ -347,29 +347,51 @@ class IndustryLabelCleaner {
     };
     
     const deleteType = this.config.forceHardDelete ? 'HARD' : 'SOFT';
+    
+    // Note: Entity-label relationships are handled differently:
+    // - Soft delete: Relationships remain but become inactive (label.is_active = false)
+    // - Hard delete: Relationships are removed due to CASCADE DELETE in entity-label table
     console.log(chalk.cyan(`\n🗑️ ${deleteType} deleting ${labels.length} labels...`));
     
     for (const label of labels) {
       this.spinner = ora(`${deleteType} deleting ${label.name}...`).start();
       
       try {
-        if (this.config.forceHardDelete) {
-          // 硬刪除：使用 force-delete 端點並加上 hard=true 參數
-          await this.api.delete(`/labels/${label.id}/force-delete?hard=true`);
-          results.success++;
-          this.spinner.succeed(`Hard deleted ${label.name} (permanent)`);
-        } else {
-          // 軟刪除：嘗試 force-delete (設為 inactive) 或普通刪除
+        // 嘗試多個可能的刪除端點
+        const deleteEndpoints = this.config.forceHardDelete ? [
+          `/label-industry/labels/${label.id}/force-delete?hard=true`,
+          `/labels/${label.id}/force-delete?hard=true`,
+          `/label-industry/labels/${label.id}?hard=true`,
+          `/labels/${label.id}?hard=true`
+        ] : [
+          `/label-industry/labels/${label.id}/force-delete`,
+          `/labels/${label.id}/force-delete`,
+          `/label-industry/labels/${label.id}`,
+          `/labels/${label.id}`
+        ];
+        
+        let deleted = false;
+        let lastError: any = null;
+        
+        for (const endpoint of deleteEndpoints) {
           try {
-            await this.api.delete(`/labels/${label.id}/force-delete`);
+            await this.apiClient.delete(endpoint);
             results.success++;
-            this.spinner.succeed(`Soft deleted ${label.name} (set inactive)`);
-          } catch (forceDeleteError) {
-            // 如果 force-delete 失敗，嘗試使用普通刪除（適用於活躍標籤）
-            await this.api.delete(`/labels/${label.id}`);
-            results.success++;
-            this.spinner.succeed(`Soft deleted ${label.name} (set inactive)`);
+            const deleteType = this.config.forceHardDelete ? 'Hard' : 'Soft';
+            this.spinner.succeed(`${deleteType} deleted ${label.name}`);
+            deleted = true;
+            break;
+          } catch (err: any) {
+            lastError = err;
+            if (err.response?.status !== 404) {
+              // 如果不是 404，記錄錯誤但繼續嘗試其他端點
+              console.log(chalk.gray(`  端點 ${endpoint} 失敗: ${err.response?.status}`));
+            }
           }
+        }
+        
+        if (!deleted) {
+          throw lastError || new Error('所有刪除端點都失敗');
         }
       } catch (error) {
         results.failed++;
@@ -421,23 +443,49 @@ const options = program.opts();
 
 // Main execution
 async function main() {
-  let apiToken = options.apiToken;
+  // 優先使用環境變數中的 token
+  let apiToken = process.env.BACKEND_API_TOKEN || options.apiToken;
   
-  // 如果沒有提供 token，嘗試自動登入
+  console.log(chalk.blue('🔐 API Token 狀態檢查:'));
+  if (apiToken) {
+    console.log(chalk.green(`  ✅ 找到 API Token: ${apiToken.substring(0, 20)}...`));
+  } else {
+    console.log(chalk.yellow('  ⚠️  沒有找到 API Token，將嘗試自動登入'));
+  }
+  
+  // 只有在完全沒有 token 時才嘗試自動登入
   if (!apiToken && options.apiUrl.includes('localhost')) {
     try {
-      console.log(chalk.yellow('沒有提供 API token，嘗試自動登入...'));
+      console.log(chalk.yellow('🔄 嘗試自動登入...'));
       const loginResponse = await axios.post(`${options.apiUrl}/auth/auto-login`, {
         email: 'aryung@gmail.com',
         name: 'Test User',
       });
       apiToken = loginResponse.data.accessToken;
-      console.log(chalk.green('✓ 自動登入成功\n'));
+      console.log(chalk.green('✅ 自動登入成功'));
     } catch (error) {
-      console.log(chalk.red('✗ 自動登入失敗，繼續嘗試無認證請求\n'));
+      console.log(chalk.red('❌ 自動登入失敗，將嘗試無認證請求'));
+      console.log(chalk.gray(`   錯誤: ${(error as any).message}`));
     }
   }
   
+  // 驗證 API 連接（如果有 token）
+  if (apiToken) {
+    try {
+      console.log(chalk.blue('🔍 驗證 API 連接...'));
+      const testResponse = await axios.get(`${options.apiUrl}/auth/profile`, {
+        headers: { 'Authorization': `Bearer ${apiToken}` },
+        timeout: 5000
+      });
+      console.log(chalk.green(`  ✅ API 連接正常，用戶: ${testResponse.data?.email || 'unknown'}`));
+    } catch (error: any) {
+      console.log(chalk.yellow(`  ⚠️  API 連接測試失敗: ${error.response?.status} ${error.response?.statusText || error.message}`));
+      if (error.response?.status === 401) {
+        console.log(chalk.red('  🚫 Token 可能已過期或無效'));
+      }
+    }
+  }
+
   const config: ClearConfig = {
     apiUrl: options.apiUrl,
     apiToken: apiToken,
@@ -454,9 +502,32 @@ async function main() {
     await cleaner.clear();
     console.log(chalk.green('\n✅ Clear process completed!'));
     process.exit(0);
-  } catch (error) {
+  } catch (error: any) {
     console.error(chalk.red('\n❌ Clear process failed!'));
-    console.error(error);
+    
+    // 提供詳細的錯誤資訊
+    if (error.response) {
+      console.error(chalk.red(`HTTP ${error.response.status}: ${error.response.statusText}`));
+      if (error.response.data) {
+        console.error(chalk.red(`API 錯誤詳情:`));
+        console.error(chalk.red(JSON.stringify(error.response.data, null, 2)));
+      }
+      
+      // 特定錯誤的建議
+      if (error.response.status === 401) {
+        console.error(chalk.yellow('\n💡 建議: 檢查 API Token 是否正確或已過期'));
+        console.error(chalk.yellow('   可嘗試: 更新 .env 中的 BACKEND_API_TOKEN'));
+      } else if (error.response.status === 403) {
+        console.error(chalk.yellow('\n💡 建議: 當前用戶可能沒有刪除標籤的權限'));
+        console.error(chalk.yellow('   可嘗試: 使用管理員帳號 token'));
+      } else if (error.response.status === 404) {
+        console.error(chalk.yellow('\n💡 建議: API 端點可能不存在'));
+        console.error(chalk.yellow('   可嘗試: 檢查後端服務是否支援標籤刪除功能'));
+      }
+    } else {
+      console.error(chalk.red(error.message));
+    }
+    
     process.exit(1);
   }
 }
