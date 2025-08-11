@@ -24,7 +24,20 @@
     "typecheck": "npx tsc --noEmit",
     "generate:category-mapping": "tsx scripts/generate-category-symbol-mapping.ts",
     "import:symbols": "tsx scripts/import-symbols.ts",
-    "import:all": "npm run generate:category-mapping && npm run import:symbols"
+    "sync:labels": "tsx scripts/sync-category-labels.ts",
+    "sync:labels:dry": "tsx scripts/sync-category-labels.ts --dry-run",
+    "clear:labels": "tsx scripts/clear-industry-labels.ts --confirm",
+    "clear:labels:dry": "tsx scripts/clear-industry-labels.ts --dry-run",
+    "clear:labels:hard": "tsx scripts/clear-industry-labels.ts --confirm --force-hard-delete",
+    "clear:labels:hard:dry": "tsx scripts/clear-industry-labels.ts --dry-run --force-hard-delete",
+    "clear:labels:tpe": "tsx scripts/clear-industry-labels.ts --market=TPE --confirm",
+    "clear:labels:tpe:hard": "tsx scripts/clear-industry-labels.ts --market=TPE --confirm --force-hard-delete",
+    "clear:labels:us": "tsx scripts/clear-industry-labels.ts --market=US --confirm",
+    "clear:labels:us:hard": "tsx scripts/clear-industry-labels.ts --market=US --confirm --force-hard-delete",
+    "clear:labels:jp": "tsx scripts/clear-industry-labels.ts --market=JP --confirm",
+    "clear:labels:jp:hard": "tsx scripts/clear-industry-labels.ts --market=JP --confirm --force-hard-delete",
+    "import:all": "npm run generate:category-mapping && npm run import:symbols",
+    "sync:all": "npm run generate:category-mapping && npm run sync:labels"
   },
   "bin": {
     "universal-crawler": "dist/cli.js"

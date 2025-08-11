@@ -13,67 +13,67 @@ import {
   NotificationChannel,
   NotificationStatus,
   NotificationType,
-} from '../shared-types';
+} from '../../common/shared-types';
 
 @Entity('notification_messages')
 export class NotificationMessageEntity {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @Column({ name: 'user_id' })
-  userId: string;
+  userId!: string;
 
   @ManyToOne(() => UserEntity, { eager: false })
   @JoinColumn({ name: 'user_id' })
-  user: UserEntity;
+  user!: UserEntity;
 
   @Column({ name: 'alert_id', nullable: true })
-  alertId: string;
+  alertId!: string;
 
   @ManyToOne(() => UserAlertEntity, { eager: false, nullable: true })
   @JoinColumn({ name: 'alert_id' })
-  alert: UserAlertEntity;
+  alert!: UserAlertEntity;
 
   @Column({
     type: 'enum',
     enum: NotificationType,
   })
-  type: NotificationType;
+  type!: NotificationType;
 
   @Column({
     type: 'enum',
     enum: NotificationChannel,
   })
-  channel: NotificationChannel;
+  channel!: NotificationChannel;
 
   @Column({ type: 'varchar', length: 255 })
-  title: string;
+  title!: string;
 
   @Column({ type: 'text' })
-  content: string;
+  content!: string;
 
   @Column({ type: 'json', nullable: true })
-  metadata: Record<string, unknown>;
+  metadata!: Record<string, unknown>;
 
   @Column({
     type: 'enum',
     enum: NotificationStatus,
     default: NotificationStatus.PENDING,
   })
-  status: NotificationStatus;
+  status!: NotificationStatus;
 
   @Column({ name: 'scheduled_at', type: 'timestamp', nullable: true })
-  scheduledAt: Date;
+  scheduledAt!: Date;
 
   @Column({ name: 'sent_at', type: 'timestamp', nullable: true })
-  sentAt: Date;
+  sentAt!: Date;
 
   @Column({ name: 'error_message', type: 'text', nullable: true })
-  errorMessage: string;
+  errorMessage!: string;
 
   @CreateDateColumn({ name: 'created_at' })
-  createdAt: Date;
+  createdAt!: Date;
 
   @UpdateDateColumn({ name: 'updated_at' })
-  updatedAt: Date;
+  updatedAt!: Date;
 }

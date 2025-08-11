@@ -22,13 +22,13 @@ import { LabelEntity } from './label.entity';
 @Index('IDX_indicators_display_order', ['displayOrder'])
 export class IndicatorEntity {
   @PrimaryGeneratedColumn()
-  id: number;
+  id!: number;
 
   @Column({ name: 'type', type: 'varchar', length: 100, unique: true })
-  type: string;
+  type!: string;
 
   @Column({ name: 'name', type: 'varchar', length: 200 })
-  name: string;
+  name!: string;
 
   @Column({ name: 'description', type: 'text', nullable: true })
   description?: string;
@@ -37,7 +37,7 @@ export class IndicatorEntity {
   icon?: string;
 
   @Column({ name: 'category_id', type: 'integer' })
-  categoryId: number;
+  categoryId!: number;
 
   @Column({
     name: 'context_modes',
@@ -45,7 +45,7 @@ export class IndicatorEntity {
     array: true,
     default: '{}',
   })
-  contextModes: string[];
+  contextModes!: string[];
 
   @Column({
     name: 'match_signature',
@@ -64,16 +64,16 @@ export class IndicatorEntity {
   signatureTemplate?: string;
 
   @Column({ name: 'is_active', type: 'boolean', default: true })
-  isActive: boolean;
+  isActive!: boolean;
 
   @Column({ name: 'display_order', type: 'integer', default: 0 })
-  displayOrder: number;
+  displayOrder!: number;
 
   @CreateDateColumn({ name: 'created_at' })
-  createdAt: Date;
+  createdAt!: Date;
 
   @UpdateDateColumn({ name: 'updated_at' })
-  updatedAt: Date;
+  updatedAt!: Date;
 
   // 關聯：所屬分類
   @ManyToOne(() => IndicatorCategoryEntity, (category) => category.indicators)
@@ -81,15 +81,15 @@ export class IndicatorEntity {
     name: 'category_id',
     foreignKeyConstraintName: 'FK_indicators_category_id',
   })
-  category: IndicatorCategoryEntity;
+  category!: IndicatorCategoryEntity;
 
   // 關聯：指標參數
   @OneToMany(() => IndicatorParameterEntity, (parameter) => parameter.indicator)
-  parameters: IndicatorParameterEntity[];
+  parameters!: IndicatorParameterEntity[];
 
   // 關聯：指標模板
   @OneToMany(() => IndicatorTemplateEntity, (template) => template.indicator)
-  templates: IndicatorTemplateEntity[];
+  templates!: IndicatorTemplateEntity[];
 
   // 標籤關聯 (虛擬關聯)
   @OneToMany(() => EntityLabelEntity, (entityLabel) => entityLabel.entityId, {

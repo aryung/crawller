@@ -1,5 +1,5 @@
 import { Column, Entity, PrimaryColumn } from 'typeorm';
-import { InvestmentRelationshipChangeType } from '../shared-types';
+import { InvestmentRelationshipChangeType } from '../../common/shared-types';
 
 @Entity('investment_relationship_changes')
 export class InvestmentRelationshipChangeEntity {
@@ -7,26 +7,26 @@ export class InvestmentRelationshipChangeEntity {
     type: 'uuid',
     default: () => 'uuid_generate_v4()', // 明確指定資料庫使用此函數作為預設值
   })
-  id: string;
+  id!: string;
 
   @Column('uuid')
-  strategyId: string;
+  strategyId!: string;
 
   @Column('uuid')
-  portfolioId: string;
+  portfolioId!: string;
 
   @Column({
     name: 'change_type',
     type: 'varchar',
   })
-  changeType: InvestmentRelationshipChangeType;
+  changeType!: InvestmentRelationshipChangeType;
 
   @Column('timestamptz')
-  changeTime: Date;
+  changeTime!: Date;
 
   @Column('jsonb', { nullable: true })
-  previousParameters: object;
+  previousParameters!: object;
 
   @Column('jsonb', { nullable: true })
-  newParameters: object;
+  newParameters!: object;
 }

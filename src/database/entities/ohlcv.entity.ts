@@ -13,7 +13,7 @@ export class OhlcvEntity {
     type: 'uuid',
     default: () => 'uuid_generate_v4()', // 明確指定資料庫使用此函數作為預設值
   })
-  id: string;
+  id!: string;
   @Column({
     name: 'symbol_code',
     type: 'varchar',
@@ -21,7 +21,7 @@ export class OhlcvEntity {
     nullable: false,
   })
   @Index()
-  symbolCode: string;
+  symbolCode!: string;
 
   @Column({
     name: 'timestamp',
@@ -29,7 +29,7 @@ export class OhlcvEntity {
     nullable: false,
   })
   @Index()
-  timestamp: Date;
+  timestamp!: Date;
 
   @Column({
     name: 'open',
@@ -42,7 +42,7 @@ export class OhlcvEntity {
       from: (value: string) => Number(value),
     },
   })
-  open: number;
+  open!: number;
 
   @Column({
     name: 'high',
@@ -55,7 +55,7 @@ export class OhlcvEntity {
       from: (value: string) => Number(value),
     },
   })
-  high: number;
+  high!: number;
 
   @Column({
     name: 'low',
@@ -68,7 +68,7 @@ export class OhlcvEntity {
       from: (value: string) => Number(value),
     },
   })
-  low: number;
+  low!: number;
 
   @Column({
     name: 'close',
@@ -81,7 +81,7 @@ export class OhlcvEntity {
       from: (value: string) => Number(value),
     },
   })
-  close: number;
+  close!: number;
 
   @Column({
     name: 'volume',
@@ -94,7 +94,7 @@ export class OhlcvEntity {
       from: (value: string) => Number(value),
     },
   })
-  volume: number;
+  volume!: number;
 
   @Column({
     name: 'openinterest',
@@ -108,7 +108,7 @@ export class OhlcvEntity {
       from: (value: string) => Number(value),
     },
   })
-  openInterest: number;
+  openInterest!: number;
 
   @CreateDateColumn({
     name: 'created_at',
@@ -120,5 +120,5 @@ export class OhlcvEntity {
     name: 'updated_at',
     type: 'timestamptz',
   })
-  updatedAt: Date;
+  updatedAt!: Date;
 }

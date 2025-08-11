@@ -7,7 +7,7 @@ import {
   UpdateDateColumn,
   Index,
 } from 'typeorm';
-import { MarketRegion, ConditionGroup, ScopeType } from '../shared-types';
+import { MarketRegion, ConditionGroup, ScopeType } from '../../common/shared-types';
 import { EntityLabelEntity } from './entity-label.entity';
 import { LabelEntity } from './label.entity';
 
@@ -18,13 +18,13 @@ import { LabelEntity } from './label.entity';
 @Index('IDX_conditions_market_region', ['marketRegion'])
 export class ConditionEntity {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @Column({ type: 'varchar', length: 255 })
-  name: string;
+  name!: string;
 
   @Column({ type: 'text', nullable: true })
-  description: string;
+  description!: string;
 
   @Column({
     type: 'json',
@@ -33,7 +33,7 @@ export class ConditionEntity {
       from: (value: any) => value,
     },
   })
-  conditionGroup: ConditionGroup;
+  conditionGroup!: ConditionGroup;
 
   @Column({
     type: 'varchar',
@@ -41,7 +41,7 @@ export class ConditionEntity {
     default: 'GENERAL',
     comment: '條件分類：TECHNICAL, FUNDAMENTAL, SENTIMENT, VOLUME, GENERAL',
   })
-  category: string;
+  category!: string;
 
   @Column({
     type: 'varchar',
@@ -49,21 +49,21 @@ export class ConditionEntity {
     nullable: true,
     comment: '適用市場區域：TW, US, HK, CN 等',
   })
-  marketRegion: MarketRegion;
+  marketRegion!: MarketRegion;
 
   @Column({
     type: 'json',
     nullable: true,
     comment: '適用股票代碼列表，null 表示適用所有股票',
   })
-  applicableSymbols: string[] | null;
+  applicableSymbols!: string[] | null;
 
   @Column({
     type: 'json',
     nullable: true,
     comment: '排除股票代碼列表',
   })
-  excludedSymbols: string[] | null;
+  excludedSymbols!: string[] | null;
 
   @Column({
     type: 'varchar',
@@ -72,10 +72,10 @@ export class ConditionEntity {
     comment:
       '條件範圍類型：SYMBOL_SPECIFIC(單一股票), SYMBOL_LIST(股票清單), MARKET_WIDE(市場範圍)',
   })
-  scopeType: ScopeType;
+  scopeType!: ScopeType;
 
   @Column({ name: 'is_active', type: 'boolean', default: true })
-  isActive: boolean;
+  isActive!: boolean;
 
   @Column({
     name: 'is_public',
@@ -83,7 +83,7 @@ export class ConditionEntity {
     default: false,
     comment: '是否為公開條件（可被其他用戶使用）',
   })
-  isPublic: boolean;
+  isPublic!: boolean;
 
   @Column({
     name: 'created_by',
@@ -92,7 +92,7 @@ export class ConditionEntity {
     nullable: true,
     comment: '創建者ID，null表示系統預設條件',
   })
-  createdBy: string | null;
+  createdBy!: string | null;
 
   @Column({
     name: 'usage_count',
@@ -100,13 +100,13 @@ export class ConditionEntity {
     default: 0,
     comment: '使用次數統計',
   })
-  usageCount: number;
+  usageCount!: number;
 
   @CreateDateColumn({ name: 'created_at' })
-  createdAt: Date;
+  createdAt!: Date;
 
   @UpdateDateColumn({ name: 'updated_at' })
-  updatedAt: Date;
+  updatedAt!: Date;
 
   // 標籤關聯 (虛擬關聯)
   @OneToMany(() => EntityLabelEntity, (entityLabel) => entityLabel.entityId, {

@@ -1,19 +1,13 @@
-import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
-import { InjectRepository } from '@nestjs/typeorm';
 import { SymbolEntity } from '../entities/symbol.entity';
 import { LabelEntity } from '../entities/label.entity';
 import { EntityLabelEntity } from '../entities/entity-label.entity';
-import { AssetType, EntityType, MarketRegion } from '../shared-types';
+import { AssetType, EntityType, MarketRegion } from '../../common/shared-types';
 
-@Injectable()
 export class SymbolRepository {
   constructor(
-    @InjectRepository(SymbolEntity)
     private readonly symbolRepository: Repository<SymbolEntity>,
-    @InjectRepository(LabelEntity)
     private readonly labelRepository: Repository<LabelEntity>,
-    @InjectRepository(EntityLabelEntity)
     private readonly entityLabelRepository: Repository<EntityLabelEntity>
   ) {}
 
@@ -46,7 +40,9 @@ export class SymbolRepository {
   }
 
   async update(id: string, updateData: Partial<SymbolEntity>): Promise<void> {
-    await this.symbolRepository.update(id, updateData);
+    // Remove relations before updating to avoid TypeORM query issues
+    const { positions, ...safeUpdateData } = updateData;
+    await this.symbolRepository.update(id, safeUpdateData as any);
   }
 
   async delete(id: string): Promise<void> {
@@ -383,7 +379,7 @@ export class SymbolRepository {
       labelId,
     });
 
-    return result.affected > 0;
+    return (result.affected ?? 0) > 0;
   }
 
   /**

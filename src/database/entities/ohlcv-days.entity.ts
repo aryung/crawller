@@ -8,7 +8,7 @@ import {
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
-import { MarketRegion } from '../shared-types';
+import { MarketRegion } from '../../common/shared-types';
 import { SymbolEntity } from './symbol.entity';
 
 @Entity({ name: 'ohlcv_days' })
@@ -23,7 +23,7 @@ export class OhlcvDaysEntity {
     type: 'uuid',
     default: () => 'uuid_generate_v4()', // 明確指定資料庫使用此函數作為預設值
   })
-  id: string;
+  id!: string;
 
   @Column({
     name: 'symbol_code',
@@ -32,14 +32,14 @@ export class OhlcvDaysEntity {
     nullable: false,
   })
   @Index()
-  symbolCode: string;
+  symbolCode!: string;
 
   @Column({
     type: 'timestamptz',
     nullable: false,
   })
   @Index()
-  timestamp: Date;
+  timestamp!: Date;
 
   @Column({
     name: 'open',
@@ -52,7 +52,7 @@ export class OhlcvDaysEntity {
       from: (value: string) => Number(value),
     },
   })
-  open: number;
+  open!: number;
 
   @Column({
     name: 'high',
@@ -65,7 +65,7 @@ export class OhlcvDaysEntity {
       from: (value: string) => Number(value),
     },
   })
-  high: number;
+  high!: number;
 
   @Column({
     name: 'low',
@@ -78,7 +78,7 @@ export class OhlcvDaysEntity {
       from: (value: string) => Number(value),
     },
   })
-  low: number;
+  low!: number;
 
   @Column({
     name: 'close',
@@ -91,7 +91,7 @@ export class OhlcvDaysEntity {
       from: (value: string) => Number(value),
     },
   })
-  close: number;
+  close!: number;
 
   @Column({
     name: 'volume',
@@ -104,7 +104,7 @@ export class OhlcvDaysEntity {
       from: (value: string) => Number(value),
     },
   })
-  volume: number;
+  volume!: number;
 
   @Column({
     name: 'openinterest',
@@ -118,7 +118,7 @@ export class OhlcvDaysEntity {
       from: (value: string) => Number(value),
     },
   })
-  openInterest: number;
+  openInterest!: number;
 
   @CreateDateColumn({
     name: 'created_at',
@@ -137,16 +137,16 @@ export class OhlcvDaysEntity {
     type: 'date',
     nullable: false,
   })
-  date: Date;
+  date!: Date;
 
   @Column({
     name: 'exchange_area',
     type: 'varchar',
     nullable: true,
   })
-  region: MarketRegion;
+  region!: MarketRegion;
 
   @ManyToOne(() => SymbolEntity)
   @JoinColumn({ name: 'symbol_code', referencedColumnName: 'symbolCode' })
-  symbol: SymbolEntity;
+  symbol!: SymbolEntity;
 }

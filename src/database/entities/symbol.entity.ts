@@ -7,7 +7,7 @@ import {
   PrimaryColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { AssetType, MarketRegion } from '../shared-types';
+import { AssetType, MarketRegion } from '../../common/shared-types';
 import { PositionEntity } from './position.entity';
 import { FundamentalDataEntity } from './fundamental-data.entity';
 import { OhlcvDaysEntity } from './ohlcv-days.entity';
@@ -23,27 +23,27 @@ export class SymbolEntity {
     type: 'uuid',
     default: () => 'uuid_generate_v4()',
   })
-  id: string;
+  id!: string;
 
   @Column({ name: 'symbol_code' })
-  symbolCode: string;
+  symbolCode!: string;
 
   @Column()
   @Index()
-  name: string;
+  name!: string;
 
   @Column({
     name: 'asset_type',
     type: 'varchar',
     default: AssetType.EQUITY,
   })
-  assetType: AssetType;
+  assetType!: AssetType;
 
   @Column({
     name: 'exchange_area',
     nullable: false,
   })
-  exchangeArea: MarketRegion;
+  exchangeArea!: MarketRegion;
 
   @CreateDateColumn({
     type: 'timestamptz',
@@ -60,16 +60,16 @@ export class SymbolEntity {
   updatedAt?: Date;
 
   @OneToMany(() => PositionEntity, (position) => position.symbol)
-  positions: PositionEntity[];
+  positions!: PositionEntity[];
 
   @OneToMany(
     () => FundamentalDataEntity,
     (fundamentalData) => fundamentalData.symbolId
   )
-  fundamentalDatas: FundamentalDataEntity[];
+  fundamentalDatas!: FundamentalDataEntity[];
 
   @OneToMany(() => OhlcvDaysEntity, (ohlcvDays) => ohlcvDays.symbol)
-  ohlcvDays: OhlcvDaysEntity[];
+  ohlcvDays!: OhlcvDaysEntity[];
 
   // 標籤關聯 (虛擬關聯)
   @OneToMany(() => EntityLabelEntity, (entityLabel) => entityLabel.entityId, {

@@ -20,13 +20,13 @@ export class PortfolioEntity {
     type: 'uuid',
     default: () => 'uuid_generate_v4()', // 明確指定資料庫使用此函數作為預設值
   })
-  id: string;
+  id!: string;
 
   @Column({
     type: 'varchar',
     nullable: false,
   })
-  name: string;
+  name!: string;
 
   // parameters 欄位已移除，配置參數現在存儲在關聯的 Strategy 中
 
@@ -42,7 +42,7 @@ export class PortfolioEntity {
       from: (value: string) => Number(value),
     },
   })
-  cashBalance: number;
+  cashBalance!: number;
 
   @CreateDateColumn({
     type: 'timestamptz',
@@ -52,24 +52,24 @@ export class PortfolioEntity {
   @UpdateDateColumn({
     type: 'timestamptz',
   })
-  updatedAt: Date;
+  updatedAt!: Date;
 
   @ManyToOne(() => UserEntity, (user) => user.portfolios)
   @JoinColumn({ name: 'user_id' })
-  user: UserEntity;
+  user!: UserEntity;
 
   // 所有持倉
   @OneToMany(() => PositionEntity, (position) => position.portfolio, {
     nullable: true,
   })
-  positions: PositionEntity[];
+  positions!: PositionEntity[];
 
   // 關聯的策略，可為空
   @ManyToOne(() => StrategyEntity, {
     nullable: true,
   })
   @JoinColumn({ name: 'strategy_id' })
-  strategy: StrategyEntity;
+  strategy!: StrategyEntity;
 
   // 標籤關聯 (虛擬關聯)
   @OneToMany(() => EntityLabelEntity, (entityLabel) => entityLabel.entityId, {

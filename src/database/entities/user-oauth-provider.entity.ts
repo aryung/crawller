@@ -8,30 +8,30 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { UserEntity } from './user.entity';
-import { OAuthProvider } from '../shared-types';
+import { OAuthProvider } from '../../common/shared-types';
 
 @Entity('user_oauth_providers')
 export class UserOAuthProviderEntity {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @Column({
     name: 'user_id',
     type: 'uuid',
   })
-  userId: string;
+  userId!: string;
 
   @Column({
     name: 'oauth_provider',
     type: 'varchar',
   })
-  oauthProvider: OAuthProvider;
+  oauthProvider!: OAuthProvider;
 
   @Column({
     name: 'oauth_provider_id',
     type: 'varchar',
   })
-  oauthProviderId: string;
+  oauthProviderId!: string;
 
   @Column({
     name: 'provider_email',
@@ -52,19 +52,19 @@ export class UserOAuthProviderEntity {
     type: 'boolean',
     default: false,
   })
-  isPrimary: boolean;
+  isPrimary!: boolean;
 
   @CreateDateColumn({
     type: 'timestamptz',
     name: 'created_at',
   })
-  createdAt: Date;
+  createdAt!: Date;
 
   @UpdateDateColumn({
     type: 'timestamptz',
     name: 'updated_at',
   })
-  updatedAt: Date;
+  updatedAt!: Date;
 
   @ManyToOne(() => UserEntity, (user) => user.oauthProviders, {
     onDelete: 'CASCADE',
@@ -73,5 +73,5 @@ export class UserOAuthProviderEntity {
     name: 'user_id',
     foreignKeyConstraintName: 'FK_user_oauth_providers_user_id',
   })
-  user: UserEntity;
+  user!: UserEntity;
 }

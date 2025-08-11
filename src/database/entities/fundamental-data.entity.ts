@@ -9,7 +9,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { SymbolEntity } from './symbol.entity';
-import { FiscalReportType } from '../shared-types';
+import { FiscalReportType } from '../../common/shared-types';
 
 @Entity('fundamental_data')
 @Index('IDX_fundamental_data_symbol_exchange', ['symbolCode', 'exchangeArea'])
@@ -31,7 +31,7 @@ export class FundamentalDataEntity {
     type: 'uuid',
     default: () => 'uuid_generate_v4()', // 明確指定資料庫使用此函數作為預設值
   })
-  id: string;
+  id!: string;
 
   @Column({
     name: 'symbol_code',
@@ -39,7 +39,7 @@ export class FundamentalDataEntity {
     nullable: false,
   })
   @Index()
-  symbolCode: string;
+  symbolCode!: string;
 
   @Column({
     name: 'exchange_area',
@@ -47,30 +47,31 @@ export class FundamentalDataEntity {
     nullable: false,
   })
   @Index()
-  exchangeArea: string;
+  exchangeArea!: string;
 
   @Column({
     name: 'report_date',
     type: 'date',
   })
   @Index()
-  reportDate: Date;
+  reportDate!: Date;
 
   @Column({
     name: 'fiscal_year',
     type: 'integer',
   })
   @Index()
-  fiscalYear: number;
+  fiscalYear!: number;
 
   @Column({
     name: 'fiscal_month',
     type: 'integer',
     nullable: true,
-    comment: '財務月份: quarterly(1-4表示Q1-Q4), monthly(1-12), annual(12), half-yearly(2或4)',
+    comment:
+      '財務月份: quarterly(1-4表示Q1-Q4), monthly(1-12), annual(12), half-yearly(2或4)',
   })
   @Index()
-  fiscalMonth?: number;
+  fiscalMonth?:number;
 
   @Column({
     name: 'report_type',
@@ -78,7 +79,7 @@ export class FundamentalDataEntity {
     default: FiscalReportType.MONTHLY,
   })
   @Index()
-  reportType: FiscalReportType;
+  reportType!: FiscalReportType;
 
   // === 損益表指標 (Income Statement) ===
   @Column({
@@ -684,10 +685,10 @@ export class FundamentalDataEntity {
     type: 'uuid',
     nullable: false,
   })
-  symbolId: string;
+  symbolId!: string;
 
   // === 關聯 ===
   @ManyToOne(() => SymbolEntity, { nullable: false })
   @JoinColumn({ name: 'symbol_id' })
-  symbol: SymbolEntity;
+  symbol!: SymbolEntity;
 }

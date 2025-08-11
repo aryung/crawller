@@ -9,7 +9,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { UserEntity } from '.';
-import { LabelType } from '../shared-types';
+import { LabelType } from '../../common/shared-types';
 
 @Entity('labels')
 @Index('IDX_labels_name', ['name'], { unique: true })
@@ -17,10 +17,10 @@ import { LabelType } from '../shared-types';
 @Index('IDX_labels_is_active', ['isActive'])
 export class LabelEntity {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @Column({ length: 100 })
-  name: string;
+  name!: string;
 
   @Column({
     type: 'varchar',
@@ -28,7 +28,7 @@ export class LabelEntity {
     default: 'USER_CUSTOM',
     comment: '標籤類型：SYSTEM_DEFINED(系統預設), USER_CUSTOM(用戶自定義)',
   })
-  type: LabelType;
+  type!: LabelType;
 
   @Column({ length: 7, nullable: true, comment: '標籤顏色 #HEX 格式' })
   color?: string;
@@ -51,18 +51,18 @@ export class LabelEntity {
   creator?: UserEntity;
 
   @Column({ name: 'is_active', default: true, comment: '是否啟用' })
-  isActive: boolean;
+  isActive!: boolean;
 
   @Column({
     name: 'usage_count',
     default: 0,
     comment: '使用次數統計',
   })
-  usageCount: number;
+  usageCount!: number;
 
   @CreateDateColumn({ name: 'created_at' })
-  createdAt: Date;
+  createdAt!: Date;
 
   @UpdateDateColumn({ name: 'updated_at' })
-  updatedAt: Date;
+  updatedAt!: Date;
 }

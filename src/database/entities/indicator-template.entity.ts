@@ -19,19 +19,19 @@ import { IndicatorEntity } from './indicator.entity';
 )
 export class IndicatorTemplateEntity {
   @PrimaryGeneratedColumn()
-  id: number;
+  id!: number;
 
   @Column({ name: 'indicator_id', type: 'integer' })
-  indicatorId: number;
+  indicatorId!: number;
 
   @Column({ name: 'template_type', type: 'varchar', length: 50 })
-  templateType: string;
+  templateType!: string;
 
   @Column({ name: 'template_values', type: 'jsonb' })
-  templateValues: Record<string, any>;
+  templateValues!: Record<string, any>;
 
   @CreateDateColumn({ name: 'created_at' })
-  createdAt: Date;
+  createdAt!: Date;
 
   // 關聯：所屬指標
   @ManyToOne(() => IndicatorEntity, (indicator) => indicator.templates)
@@ -39,5 +39,5 @@ export class IndicatorTemplateEntity {
     name: 'indicator_id',
     foreignKeyConstraintName: 'FK_indicator_templates_indicator_id',
   })
-  indicator: IndicatorEntity;
+  indicator!: IndicatorEntity;
 }

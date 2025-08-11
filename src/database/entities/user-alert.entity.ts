@@ -20,7 +20,7 @@ import {
   NotificationChannel,
   NotificationSettings,
   AlertConditionType,
-} from '../shared-types';
+} from '../../common/shared-types';
 
 @Entity('user_alerts')
 @Index('IDX_user_alerts_user_id', ['userId'])
@@ -32,14 +32,14 @@ import {
 @Index('IDX_user_alerts_user_condition', ['userId', 'conditionId'])
 export class UserAlertEntity {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @Column({ name: 'user_id' })
-  userId: string;
+  userId!: string;
 
   @ManyToOne(() => UserEntity, { eager: false })
   @JoinColumn({ name: 'user_id' })
-  user: UserEntity;
+  user!: UserEntity;
 
   @Column({
     name: 'symbol_id',
@@ -47,14 +47,14 @@ export class UserAlertEntity {
     nullable: true,
     comment: 'Symbol UUID（單一股票警報時使用）',
   })
-  symbolId: string | null;
+  symbolId!: string | null;
 
   @ManyToOne(() => SymbolEntity, { eager: false, nullable: true })
   @JoinColumn({
     name: 'symbol_id',
     foreignKeyConstraintName: 'FK_user_alerts_symbol_id',
   })
-  symbol: SymbolEntity | null;
+  symbol!: SymbolEntity | null;
 
   @Column({
     name: 'condition_type',
@@ -63,20 +63,20 @@ export class UserAlertEntity {
     default: 'INLINE',
     comment: '條件類型：INLINE(內聯JSON), REFERENCE(外連Condition實體)',
   })
-  conditionType: AlertConditionType;
+  conditionType!: AlertConditionType;
 
   @Column({ name: 'condition_id', type: 'uuid', nullable: true })
-  conditionId: string | null;
+  conditionId!: string | null;
 
   @ManyToOne(() => ConditionEntity, { eager: false, nullable: true })
   @JoinColumn({
     name: 'condition_id',
     foreignKeyConstraintName: 'FK_user_alerts_condition_id',
   })
-  condition: ConditionEntity | null;
+  condition!: ConditionEntity | null;
 
   @Column({ type: 'varchar', length: 255 })
-  name: string;
+  name!: string;
 
   @Column({
     type: 'json',
@@ -87,7 +87,7 @@ export class UserAlertEntity {
       from: (value: any) => value,
     },
   })
-  conditions: ConditionGroup | null;
+  conditions!: ConditionGroup | null;
 
   @Column({
     name: 'regions',
@@ -96,19 +96,19 @@ export class UserAlertEntity {
     nullable: true,
     comment: '市場區域陣列（市場掃描器時使用）',
   })
-  regions: MarketRegion[] | null;
+  regions!: MarketRegion[] | null;
 
   @Column({ name: 'is_active', type: 'boolean', default: true })
-  isActive: boolean;
+  isActive!: boolean;
 
   @Column({
     name: 'notification_channels',
     type: 'json',
   })
-  notificationChannels: NotificationChannel[];
+  notificationChannels!: NotificationChannel[];
 
   @Column({ name: 'last_triggered', type: 'timestamp', nullable: true })
-  lastTriggered: Date;
+  lastTriggered!: Date;
 
   @Column({
     name: 'last_notification_sent',
@@ -116,7 +116,7 @@ export class UserAlertEntity {
     nullable: true,
     comment: '上次發送通知的時間',
   })
-  lastNotificationSent: Date;
+  lastNotificationSent!: Date;
 
   @Column({
     name: 'notification_settings',
@@ -128,13 +128,13 @@ export class UserAlertEntity {
       from: (value: any) => value,
     },
   })
-  notificationSettings: NotificationSettings;
+  notificationSettings!: NotificationSettings;
 
   @CreateDateColumn({ name: 'created_at' })
-  createdAt: Date;
+  createdAt!: Date;
 
   @UpdateDateColumn({ name: 'updated_at' })
-  updatedAt: Date;
+  updatedAt!: Date;
 
   // 標籤關聯 (虛擬關聯)
   @OneToMany(() => EntityLabelEntity, (entityLabel) => entityLabel.entityId, {

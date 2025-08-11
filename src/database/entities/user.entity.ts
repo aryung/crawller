@@ -10,7 +10,7 @@ import { PortfolioEntity } from './portfolio.entity';
 import { StrategyEntity } from './strategy.entity';
 import { PositionEntity } from './position.entity';
 import { UserOAuthProviderEntity } from './user-oauth-provider.entity';
-import { UserRole } from '../shared-types';
+import { UserRole } from '../../common/shared-types';
 
 @Entity('users')
 export class UserEntity {
@@ -18,7 +18,7 @@ export class UserEntity {
     type: 'uuid',
     default: () => 'uuid_generate_v4()', // 明確指定資料庫使用此函數作為預設值
   })
-  id: string;
+  id!: string;
 
   @Column({
     name: 'username',
@@ -48,7 +48,7 @@ export class UserEntity {
     nullable: false,
     unique: true,
   })
-  identifier: string;
+  identifier!: string;
 
   @Column({
     name: 'chat_id',
@@ -62,21 +62,21 @@ export class UserEntity {
     type: 'varchar',
     default: UserRole.USER,
   })
-  role: UserRole;
+  role!: UserRole;
 
   @Column({
     name: 'email_verified',
     type: 'boolean',
     default: false,
   })
-  emailVerified: boolean;
+  emailVerified!: boolean;
 
   @Column({
     name: 'registration_date',
     type: 'timestamp',
     default: () => 'CURRENT_TIMESTAMP',
   })
-  registrationDate: Date;
+  registrationDate!: Date;
 
   @CreateDateColumn({
     type: 'timestamptz',

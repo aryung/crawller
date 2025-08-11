@@ -449,9 +449,9 @@ export class PlaywrightCrawler {
     for (const selector of excludeSelectors) {
       try {
         const removedCount = await page.evaluate((sel: string) => {
-          const elements = document.querySelectorAll(sel);
+          const elements = (globalThis as any).document.querySelectorAll(sel);
           let count = 0;
-          elements.forEach((el: Element) => {
+          elements.forEach((el: any) => {
             el.remove();
             count++;
           });

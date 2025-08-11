@@ -15,22 +15,22 @@ import { IndicatorEntity } from './indicator.entity';
 @Index('IDX_indicator_parameters_display_order', ['displayOrder'])
 export class IndicatorParameterEntity {
   @PrimaryGeneratedColumn()
-  id: number;
+  id!: number;
 
   @Column({ name: 'indicator_id', type: 'integer' })
-  indicatorId: number;
+  indicatorId!: number;
 
   @Column({ name: 'parameter_id', type: 'varchar', length: 100 })
-  parameterId: string;
+  parameterId!: string;
 
   @Column({ name: 'name', type: 'varchar', length: 200 })
-  name: string;
+  name!: string;
 
   @Column({ name: 'description', type: 'text', nullable: true })
   description?: string;
 
   @Column({ name: 'parameter_type', type: 'varchar', length: 50 })
-  parameterType: string;
+  parameterType!: string;
 
   @Column({
     name: 'min_value',
@@ -79,19 +79,19 @@ export class IndicatorParameterEntity {
     array: true,
     default: '{}',
   })
-  suggestedValues: number[];
+  suggestedValues!: number[];
 
   @Column({ name: 'impact_type', type: 'varchar', length: 50 })
-  impactType: string;
+  impactType!: string;
 
   @Column({ name: 'display_order', type: 'integer', default: 0 })
-  displayOrder: number;
+  displayOrder!: number;
 
   @Column({ name: 'is_active', type: 'boolean', default: true })
-  isActive: boolean;
+  isActive!: boolean;
 
   @CreateDateColumn({ name: 'created_at' })
-  createdAt: Date;
+  createdAt!: Date;
 
   // 關聯：所屬指標
   @ManyToOne(() => IndicatorEntity, (indicator) => indicator.parameters)
@@ -99,5 +99,5 @@ export class IndicatorParameterEntity {
     name: 'indicator_id',
     foreignKeyConstraintName: 'FK_indicator_parameters_indicator_id',
   })
-  indicator: IndicatorEntity;
+  indicator!: IndicatorEntity;
 }

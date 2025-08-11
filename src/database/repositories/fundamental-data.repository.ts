@@ -1,13 +1,9 @@
-import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import { FundamentalDataEntity } from '../entities/fundamental-data.entity';
 import { Repository } from 'typeorm';
-import { MarketRegion, FiscalReportType } from '../shared-types';
+import { MarketRegion, FiscalReportType } from '../../common/shared-types';
 
-@Injectable()
 export class FundamentalDataRepository {
   constructor(
-    @InjectRepository(FundamentalDataEntity)
     private repository: Repository<FundamentalDataEntity>
   ) {}
 

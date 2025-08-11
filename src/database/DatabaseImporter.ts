@@ -1,6 +1,7 @@
 import { DataSource, Repository } from 'typeorm';
 import { AppDataSource, initializeDatabase } from './ormconfig.js';
-import { FundamentalDataEntity, FiscalReportType } from './entities/fundamental-data.entity.js';
+import { FundamentalDataEntity } from './entities/fundamental-data.entity.js';
+import { FiscalReportType } from '../common/shared-types/index.js';
 import { UnifiedFinancialData } from '../types/unified-financial-data.js';
 
 export interface ImportResult {
@@ -154,10 +155,13 @@ export class DatabaseImporter {
    * Upsert (insert or update) fundamental data
    */
   private async upsertFundamentalData(entity: FundamentalDataEntity): Promise<void> {
+    // 移除關聯對象，只保留數據欄位
+    const { symbol, ...entityData } = entity;
+    
     const queryBuilder = this.repository!.createQueryBuilder()
       .insert()
       .into(FundamentalDataEntity)
-      .values(entity)
+      .values(entityData as any)
       .orUpdate(
         [
           'revenue',

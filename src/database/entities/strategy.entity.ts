@@ -17,7 +17,7 @@ import {
   StrategyStatus,
   StrategyType,
   TradeRecommendation,
-} from '../shared-types';
+} from '../../common/shared-types';
 
 @Entity({ name: 'strategies' })
 export class StrategyEntity {
@@ -25,19 +25,19 @@ export class StrategyEntity {
     type: 'uuid',
     default: () => 'uuid_generate_v4()', // 明確指定資料庫使用此函數作為預設值
   })
-  id: string;
+  id!: string;
 
   @Column()
-  name: string;
+  name!: string;
 
   @Column({
     type: 'varchar',
     name: 'type',
   })
-  type: StrategyType;
+  type!: StrategyType;
 
   @Column('jsonb', { nullable: true, name: 'parameters' })
-  parameters: AggregatedStrategyParameters;
+  parameters!: AggregatedStrategyParameters;
 
   /**
    * 執行歷史摘要
@@ -64,13 +64,13 @@ export class StrategyEntity {
     default: StrategyStatus.INACTIVE,
     name: 'status',
   })
-  status: StrategyStatus;
+  status!: StrategyStatus;
 
   @Column({ type: 'timestamptz', nullable: true, name: 'last_execution_time' })
-  lastExecutionTime: Date;
+  lastExecutionTime?: Date;
 
   @Column('jsonb', { nullable: true, name: 'execution_results' })
-  executionResults: {
+  executionResults!: {
     success: boolean;
     recommendations?: TradeRecommendation[];
     message?: string;
@@ -85,11 +85,11 @@ export class StrategyEntity {
   @UpdateDateColumn({
     type: 'timestamptz',
   })
-  updatedAt: Date;
+  updatedAt!: Date;
 
   @ManyToOne(() => UserEntity)
   @JoinColumn({ name: 'user_id' })
-  user: UserEntity;
+  user!: UserEntity;
 
   @OneToMany(() => PortfolioEntity, (portfolio) => portfolio.strategy, {
     nullable: true,
