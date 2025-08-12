@@ -63,6 +63,8 @@ interface BulkSyncResponse {
   success: boolean;
   data: {
     labelsCreated: number;
+    labelsReactivated: number;  // 新增：重新啟用的標籤數量
+    symbolsCreated: number;     // 新增：創建的股票數量
     symbolsUpdated: number;
     relationsCreated: number;
     relationsRemoved: number;
@@ -145,7 +147,7 @@ class SimplifiedCategoryLabelSyncer {
         
         const options: BulkSyncOptions = {
           strategy: 'merge',
-          createMissingSymbols: false,
+          createMissingSymbols: true,  // 啟用自動創建股票功能
           updateExistingRelations: true,
         };
 
@@ -237,6 +239,8 @@ class SimplifiedCategoryLabelSyncer {
     const allChunks: { market: string; chunk: CategoryMapping[]; chunkIndex: number }[] = [];
     const totalStats: BulkSyncResponse['data'] = {
       labelsCreated: 0,
+      labelsReactivated: 0,
+      symbolsCreated: 0,
       symbolsUpdated: 0,
       relationsCreated: 0,
       relationsRemoved: 0,
@@ -275,7 +279,7 @@ class SimplifiedCategoryLabelSyncer {
           [market]: chunk,
           options: {
             strategy: 'merge',
-            createMissingSymbols: false,
+            createMissingSymbols: true,  // 啟用自動創建股票功能
             updateExistingRelations: true,
           },
         };
@@ -286,6 +290,8 @@ class SimplifiedCategoryLabelSyncer {
         if (response.data.success) {
           const data = response.data.data;
           totalStats.labelsCreated += data.labelsCreated;
+          totalStats.labelsReactivated += data.labelsReactivated;
+          totalStats.symbolsCreated += data.symbolsCreated;
           totalStats.symbolsUpdated += data.symbolsUpdated;
           totalStats.relationsCreated += data.relationsCreated;
           totalStats.relationsRemoved += data.relationsRemoved;
@@ -299,7 +305,7 @@ class SimplifiedCategoryLabelSyncer {
           totalStats.chunkDetails![market].mappings += chunkMappingCount;
           totalStats.chunkDetails![market].time += response.data.data.totalProcessingTime || 0;
 
-          this.spinner.succeed(`完成分塊 ${i + 1}/${allChunks.length}: +${data.labelsCreated} 標籤, +${data.relationsCreated} 關係`);
+          this.spinner.succeed(`完成分塊 ${i + 1}/${allChunks.length}: +${data.labelsCreated} 標籤${data.labelsReactivated > 0 ? `(+${data.labelsReactivated} 重新啟用)` : ''}, +${data.symbolsCreated} 股票, +${data.relationsCreated} 關係`);
         } else {
           this.spinner.fail(`分塊 ${i + 1}/${allChunks.length} 處理失敗`);
           if (response.data.errors) {
@@ -321,7 +327,7 @@ class SimplifiedCategoryLabelSyncer {
       success: errors.length === 0,
       data: totalStats,
       errors: errors.length > 0 ? errors : undefined,
-      message: `前端分塊處理完成：${totalStats.chunksProcessed}/${allChunks.length} 個分塊成功，${totalStats.symbolsUpdated} 個股票`,
+      message: `前端分塊處理完成：${totalStats.chunksProcessed}/${allChunks.length} 個分塊成功，${totalStats.labelsCreated} 標籤${totalStats.labelsReactivated > 0 ? `(+${totalStats.labelsReactivated} 重新啟用)` : ''}，${totalStats.symbolsCreated} 新股票，${totalStats.symbolsUpdated} 個股票`,
     };
   }
 
@@ -450,6 +456,12 @@ class SimplifiedCategoryLabelSyncer {
       const { data } = result;
       console.log(`📊 處理統計:`);
       console.log(`  • 創建標籤: ${chalk.yellow(data.labelsCreated)} 個`);
+      if (data.labelsReactivated > 0) {
+        console.log(`  • 重新啟用標籤: ${chalk.green(data.labelsReactivated)} 個`);
+      }
+      if (data.symbolsCreated > 0) {
+        console.log(`  • 創建股票: ${chalk.cyan(data.symbolsCreated)} 個`);
+      }
       console.log(`  • 更新股票: ${chalk.yellow(data.symbolsUpdated)} 個`);
       console.log(`  • 創建關係: ${chalk.yellow(data.relationsCreated)} 個`);
       console.log(`  • 移除關係: ${chalk.yellow(data.relationsRemoved)} 個`);
