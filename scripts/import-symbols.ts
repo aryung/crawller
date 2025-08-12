@@ -9,11 +9,20 @@
  * - 支援市場過濾 (TPE, US, JP)
  * - 與後端 /symbols/bulk-create API 整合
  * 
+ * 權限要求：
+ * - 需要 ADMIN 或 SUPER_ADMIN 角色權限
+ * - 使用 BACKEND_API_TOKEN 環境變數進行認證
+ * - 未授權使用者將收到 403 Forbidden 錯誤
+ * 
  * 使用方式：
  * npx tsx scripts/import-symbols.ts
  * npx tsx scripts/import-symbols.ts --dry-run
  * npx tsx scripts/import-symbols.ts --market=TPE
  * npx tsx scripts/import-symbols.ts --api-url http://localhost:3000
+ * 
+ * 環境變數：
+ * BACKEND_API_TOKEN - 後端 API 認證 token (需要管理員權限)
+ * BACKEND_API_URL - 後端 API URL (預設: http://localhost:3000)
  */
 
 import 'dotenv/config';

@@ -97,11 +97,11 @@ templateFiles.forEach(templateFile => {
     
     // 更新導出文件名
     if (config.export && config.export.filename) {
-      config.export.filename = config.export.filename.replace('${symbolCode}', stock.stockCode.replace('.T', '_T'));
+      config.export.filename = config.export.filename.replace('${symbolCode}', stock.stockCode.replace(/\.(T|S)$/, '_$1'));
     }
     
-    // 生成配置文件名 (將 .T 轉換為 _T 避免文件系統問題)
-    const safeStockCode = stock.stockCode.replace('.T', '_T');
+    // 生成配置文件名 (將 .T/.S 轉換為 _T/_S 避免文件系統問題)
+    const safeStockCode = stock.stockCode.replace(/\.(T|S)$/, '_$1');
     const configFileName = `yahoo-finance-jp-${templateType}-${safeStockCode}.json`;
     const configPath = path.join(configsDir, configFileName);
     
