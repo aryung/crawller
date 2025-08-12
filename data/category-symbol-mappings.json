@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generatedAt": "2025-08-11T14:19:22.468Z",
+    "generatedAt": "2025-08-12T14:19:14.676Z",
     "statistics": {
       "TPE": {
         "categories": 35,
@@ -493,7 +493,7 @@
         ]
       },
       {
-        "category": "產業7",
+        "category": "化學生技醫療",
         "categoryId": "7",
         "symbols": [
           {
@@ -795,7 +795,7 @@
         ]
       },
       {
-        "category": "產業13",
+        "category": "電子電機",
         "categoryId": "13",
         "symbols": [
           {
@@ -921,7 +921,7 @@
         ]
       },
       {
-        "category": "產業19",
+        "category": "化學原料",
         "categoryId": "19",
         "symbols": [
           {
@@ -2419,7 +2419,7 @@
         ]
       },
       {
-        "category": "產業44",
+        "category": "封閉型基金",
         "categoryId": "44",
         "symbols": [
           {
@@ -2545,7 +2545,7 @@
         ]
       },
       {
-        "category": "產業45",
+        "category": "開放型基金",
         "categoryId": "45",
         "symbols": [
           {
@@ -2631,7 +2631,7 @@
         ]
       },
       {
-        "category": "產業46",
+        "category": "期貨ETF",
         "categoryId": "46",
         "symbols": [
           {
@@ -2681,7 +2681,7 @@
         ]
       },
       {
-        "category": "產業47",
+        "category": "槓桿型ETF",
         "categoryId": "47",
         "symbols": [
           {
@@ -2807,7 +2807,7 @@
         ]
       },
       {
-        "category": "產業49",
+        "category": "商品ETF",
         "categoryId": "49",
         "symbols": [
           {
@@ -2893,7 +2893,7 @@
         ]
       },
       {
-        "category": "產業93",
+        "category": "上櫃ETF",
         "categoryId": "93",
         "symbols": [
           {
@@ -2971,7 +2971,7 @@
         ]
       },
       {
-        "category": "產業94",
+        "category": "興櫃ETF",
         "categoryId": "94",
         "symbols": [
           {
@@ -3009,7 +3009,7 @@
         ]
       },
       {
-        "category": "產業95",
+        "category": "興櫃股票",
         "categoryId": "95",
         "symbols": [
           {
@@ -3087,7 +3087,7 @@
         ]
       },
       {
-        "category": "產業96",
+        "category": "興櫃創新",
         "categoryId": "96",
         "symbols": [
           {
@@ -4305,7 +4305,7 @@
         ]
       },
       {
-        "category": "産業3100",
+        "category": "化学製品",
         "categoryId": "3100",
         "symbols": [
           {
@@ -4499,7 +4499,7 @@
         ]
       },
       {
-        "category": "産業3150",
+        "category": "化学・合成繊維",
         "categoryId": "3150",
         "symbols": [
           {
@@ -4601,7 +4601,7 @@
         ]
       },
       {
-        "category": "産業3200",
+        "category": "医薬品",
         "categoryId": "3200",
         "symbols": [
           {
@@ -5439,7 +5439,7 @@
         ]
       },
       {
-        "category": "産業3250",
+        "category": "石油・石炭製品",
         "categoryId": "3250",
         "symbols": [
           {
@@ -5749,7 +5749,7 @@
         ]
       },
       {
-        "category": "産業3300",
+        "category": "ゴム製品",
         "categoryId": "3300",
         "symbols": [
           {
@@ -5795,7 +5795,7 @@
         ]
       },
       {
-        "category": "産業3350",
+        "category": "ガラス・土石製品",
         "categoryId": "3350",
         "symbols": [
           {
@@ -5873,7 +5873,7 @@
         ]
       },
       {
-        "category": "産業3400",
+        "category": "鉄鋼",
         "categoryId": "3400",
         "symbols": [
           {
@@ -6091,7 +6091,7 @@
         ]
       },
       {
-        "category": "産業3450",
+        "category": "非鉄金属",
         "categoryId": "3450",
         "symbols": [
           {
@@ -6257,7 +6257,7 @@
         ]
       },
       {
-        "category": "産業3500",
+        "category": "金属製品",
         "categoryId": "3500",
         "symbols": [
           {
@@ -6395,7 +6395,7 @@
         ]
       },
       {
-        "category": "産業3550",
+        "category": "機械",
         "categoryId": "3550",
         "symbols": [
           {
@@ -6749,7 +6749,7 @@
         ]
       },
       {
-        "category": "産業3600",
+        "category": "電気機器",
         "categoryId": "3600",
         "symbols": [
           {
@@ -7643,7 +7643,7 @@
         ]
       },
       {
-        "category": "産業3650",
+        "category": "輸送用機器",
         "categoryId": "3650",
         "symbols": [
           {
@@ -8585,7 +8585,7 @@
         ]
       },
       {
-        "category": "産業3700",
+        "category": "精密機器",
         "categoryId": "3700",
         "symbols": [
           {
@@ -8939,7 +8939,7 @@
         ]
       },
       {
-        "category": "産業3750",
+        "category": "その他製品",
         "categoryId": "3750",
         "symbols": [
           {
@@ -9137,7 +9137,7 @@
         ]
       },
       {
-        "category": "産業3800",
+        "category": "電気・ガス業",
         "categoryId": "3800",
         "symbols": [
           {
@@ -13685,7 +13685,7 @@
         ]
       },
       {
-        "category": "産業6100",
+        "category": "電気機器",
         "categoryId": "6100",
         "symbols": [
           {
@@ -15393,7 +15393,7 @@
         ]
       },
       {
-        "category": "産業7100",
+        "category": "精密機器",
         "categoryId": "7100",
         "symbols": [
           {
@@ -15543,7 +15543,7 @@
         ]
       },
       {
-        "category": "産業7150",
+        "category": "その他製品",
         "categoryId": "7150",
         "symbols": [
           {
