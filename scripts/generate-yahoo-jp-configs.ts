@@ -84,16 +84,47 @@ templateFiles.forEach(templateFile => {
   stockCodes.forEach(stock => {
     const config: ConfigTemplate = { ...template };
     
-    // 更新 URL 中的變數
-    config.url = config.url.replace('${symbolCode}', stock.stockCode);
-    
-    // 更新變數
-    config.variables = {
-      ...config.variables,
-      symbolCode: stock.stockCode,
-      companyName: stock.companyName,
-      sector: stock.sector
-    };
+    // 如果是 history 類型，需要特殊處理日期參數
+    if (templateType === 'history') {
+      // 設置默認日期範圍（最近15天）
+      const now = new Date();
+      const fifteenDaysAgo = new Date(now.getTime() - 15 * 24 * 60 * 60 * 1000);
+      const formatDate = (date: Date): string => {
+        return date.toISOString().split('T')[0].replace(/-/g, '');
+      };
+      const fromDate = formatDate(fifteenDaysAgo);
+      const toDate = formatDate(now);
+      
+      // 更新 URL 中的所有變數
+      config.url = config.url
+        .replace('${symbolCode}', stock.stockCode)
+        .replace('${fromDate}', fromDate)
+        .replace('${toDate}', toDate)
+        .replace('${page}', '1');
+      
+      // 更新變數包含日期
+      config.variables = {
+        ...config.variables,
+        symbolCode: stock.stockCode,
+        companyName: stock.companyName,
+        sector: stock.sector,
+        fromDate,
+        toDate,
+        page: '1'
+      };
+    } else {
+      // 原有邏輯（非 history 類型）
+      // 更新 URL 中的變數
+      config.url = config.url.replace('${symbolCode}', stock.stockCode);
+      
+      // 更新變數
+      config.variables = {
+        ...config.variables,
+        symbolCode: stock.stockCode,
+        companyName: stock.companyName,
+        sector: stock.sector
+      };
+    }
     
     // 更新導出文件名
     if (config.export && config.export.filename) {
@@ -148,6 +179,7 @@ if (exampleFiles[0]) {
 }
 console.log('\n💡 提示:');
 console.log('   - 使用 --type=<type> 只生成特定類型的配置');
-console.log('   - 可用類型: cashflow, financials, performance');
+console.log('   - 可用類型: cashflow, financials, performance, history');
 console.log('   - 配置文件位於 config/ 目錄');
 console.log('   - 可以直接編輯模板文件來調整所有配置');
+console.log('   - history 類型會自動設置最近15天的日期範圍');
