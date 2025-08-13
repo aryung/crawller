@@ -214,7 +214,7 @@ async function main() {
         const configIndex = args.findIndex(arg => arg === '-c' || arg === '--config');
         
         const options: CLIOptions = {
-          config: configIndex >= 0 && args[configIndex + 1] ? args[configIndex + 1] : 'configs',
+          config: configIndex >= 0 && args[configIndex + 1] ? args[configIndex + 1] : 'config',
           output: outputIndex >= 0 && args[outputIndex + 1] ? args[outputIndex + 1] : 'output',
           format: formatIndex >= 0 && args[formatIndex + 1] ? args[formatIndex + 1] as ExportOptions['format'] : 'json',
           concurrent: concurrentIndex >= 0 && args[concurrentIndex + 1] ? Number(args[concurrentIndex + 1]) : 3,
