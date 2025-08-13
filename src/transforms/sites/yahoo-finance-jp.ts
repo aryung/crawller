@@ -51,6 +51,8 @@ export interface YahooFinanceJPTransforms {
     content: any,
     context?: any,
   ) => HistoricalStockPrice[];
+  // 調試函數
+  debugFieldExtraction: (content: string | string[]) => string[];
 }
 
 /**
@@ -514,7 +516,7 @@ export const yahooFinanceJPTransforms: YahooFinanceJPTransforms = {
 
   /**
    * 解析日文日期陣列 (歷史股價專用)
-   * 處理 "2025年8月6日" 格式轉換為標準日期格式
+   * 從混合數據中提取日期: "2025年8月12日267267267267500267" -> "2025-08-12"
    */
   parseJapaneseDateArray: (content: string | string[]): string[] => {
     console.log('[JP History Dates] 📅 處理日本股價歷史日期陣列...');
@@ -526,7 +528,7 @@ export const yahooFinanceJPTransforms: YahooFinanceJPTransforms = {
 
       const str = item.toString().trim();
 
-      // 日本股價歷史日期格式: 2025年8月6日
+      // 從混合數據中提取日期格式: "2025年8月12日267267267267500267"
       const dateMatch = str.match(/(\d{4})年(\d{1,2})月(\d{1,2})日/);
       if (dateMatch) {
         const [, year, month, day] = dateMatch;
@@ -534,26 +536,12 @@ export const yahooFinanceJPTransforms: YahooFinanceJPTransforms = {
         const standardDate = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
         dates.push(standardDate);
         console.log(
-          `[JP History Dates] ✅ 轉換日期: "${str}" -> "${standardDate}"`,
+          `[JP History Dates] ✅ 從混合數據提取日期: "${str.substring(0, 30)}..." -> "${standardDate}"`,
         );
       } else {
-        // 嘗試其他格式: YYYY-MM-DD 或 YYYY/MM/DD
-        const simpleDateMatch = str.match(/(\d{4})[\/\-](\d{1,2})[\/\-](\d{1,2})/);
-        if (simpleDateMatch) {
-          const [, year, month, day] = simpleDateMatch;
-          const standardDate = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
-          dates.push(standardDate);
-          console.log(
-            `[JP History Dates] ✅ 轉換日期: "${str}" -> "${standardDate}"`,
-          );
-        } else {
-          // 如果無法解析，使用當前日期
-          const fallbackDate = new Date().toISOString().split('T')[0];
-          dates.push(fallbackDate);
-          console.log(
-            `[JP History Dates] ⚠️ 無法解析日期: "${str}"，使用預設: "${fallbackDate}"`,
-          );
-        }
+        console.log(
+          `[JP History Dates] ⚠️ 無法從混合數據提取日期: "${str.substring(0, 30)}..."`
+        );
       }
     }
 
@@ -713,6 +701,31 @@ export const yahooFinanceJPTransforms: YahooFinanceJPTransforms = {
     console.log(`[JP History Combine] ✅ 成功組合 ${results.length} 筆歷史股價數據`);
     return results;
   },
+
+  /**
+   * 調試字段提取函數
+   * 用於檢查選擇器是否正確匹配元素
+   */
+  debugFieldExtraction: (content: string | string[]): string[] => {
+    console.log('[JP Debug] 🔍 開始調試字段提取...');
+    const contentArray = Array.isArray(content) ? content : [content];
+    const results: string[] = [];
+
+    for (let i = 0; i < Math.min(contentArray.length, 50); i++) {
+      const item = contentArray[i];
+      if (!item || typeof item !== 'string') continue;
+
+      const str = item.toString().trim();
+      if (str.length > 0) {
+        results.push(str);
+        console.log(`[JP Debug] ${i + 1}. "${str.substring(0, 100)}${str.length > 100 ? '...' : ''}"`);
+      }
+    }
+
+    console.log(`[JP Debug] ✅ 找到 ${results.length} 個元素`);
+    return results;
+  },
+
 };
 
 /**

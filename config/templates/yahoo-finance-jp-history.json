@@ -8,37 +8,37 @@
       "transform": "cleanStockSymbol"
     },
     "historicalDates": {
-      "selector": ".main table tbody > tr > td:nth-child(1)",
+      "selector": "table tbody > tr",
       "multiple": true,
       "transform": "parseJapaneseDateArray"
     },
     "openPrices": {
-      "selector": ".main table tbody > tr > td:nth-child(2)",
+      "selector": "table tbody > tr > td:nth-child(2)",
       "multiple": true,
       "transform": "parseJapaneseStockPriceArray"
     },
     "highPrices": {
-      "selector": ".main table tbody > tr > td:nth-child(3)",
+      "selector": "table tbody > tr > td:nth-child(3)",
       "multiple": true,
       "transform": "parseJapaneseStockPriceArray"
     },
     "lowPrices": {
-      "selector": ".main table tbody > tr > td:nth-child(4)",
+      "selector": "table tbody > tr > td:nth-child(4)",
       "multiple": true,
       "transform": "parseJapaneseStockPriceArray"
     },
     "closePrices": {
-      "selector": ".main table tbody > tr > td:nth-child(5)",
+      "selector": "table tbody > tr > td:nth-child(5)",
       "multiple": true,
       "transform": "parseJapaneseStockPriceArray"
     },
     "volumes": {
-      "selector": ".main table tbody > tr > td:nth-child(6)",
+      "selector": "table tbody > tr > td:nth-child(6)",
       "multiple": true,
       "transform": "parseJapaneseVolumeArray"
     },
     "adjustedClosePrices": {
-      "selector": ".main table tbody > tr > td:nth-child(7)",
+      "selector": "table tbody > tr > td:nth-child(7)",
       "multiple": true,
       "transform": "parseJapaneseStockPriceArray"
     },
