@@ -7,6 +7,20 @@ import { UnifiedFinancialData } from '../../types/unified-financial-data';
 import { FiscalReportType, MarketRegion, UNIT_MULTIPLIERS } from '../../common/';
 
 /**
+ * 歷史股價數據類型定義
+ */
+export interface HistoricalStockPrice {
+  date: string;
+  open: number;
+  high: number;
+  low: number;
+  close: number;
+  volume: number;
+  adjustedClose?: number;
+  symbolCode: string;
+}
+
+/**
  * Yahoo Finance JP 轉換函數接口 (簡化版本)
  * 只保留模板中實際使用的函數
  */
@@ -29,6 +43,14 @@ export interface YahooFinanceJPTransforms {
     content: any,
     context?: any,
   ) => UnifiedFinancialData[];
+  // 歷史股價數據轉換函數
+  parseJapaneseDateArray: (content: string | string[]) => string[];
+  parseJapaneseStockPriceArray: (content: string | string[]) => number[];
+  parseJapaneseVolumeArray: (content: string | string[]) => number[];
+  combineJapaneseHistoricalData: (
+    content: any,
+    context?: any,
+  ) => HistoricalStockPrice[];
 }
 
 /**
@@ -359,9 +381,9 @@ export const yahooFinanceJPTransforms: YahooFinanceJPTransforms = {
       const actualReportDate =
         financialUpdateDatesArray[i] || `${currentYear - i}-03-31`;
 
-      // 清理 symbolCode: 移除 .T 後綴但保留字母代碼
-      const cleanSymbolCode = symbolCode.replace(/\.T$/, '');
-      console.log(`[JP SymbolCode] 日本股票清理: ${symbolCode} → ${cleanSymbolCode}`);
+      // 保留完整 symbolCode 包含交易所後綴 (.T/.S)
+      const cleanSymbolCode = symbolCode;
+      console.log(`[JP SymbolCode] 日本股票代碼: ${symbolCode}`);
 
       // 基本的 UnifiedFinancialData 結構
       const financialData: UnifiedFinancialData = {
@@ -487,6 +509,208 @@ export const yahooFinanceJPTransforms: YahooFinanceJPTransforms = {
     }
 
     console.log(`[JP Combine] ✅ 成功組合 ${results.length} 筆日本財務數據`);
+    return results;
+  },
+
+  /**
+   * 解析日文日期陣列 (歷史股價專用)
+   * 處理 "2025年8月6日" 格式轉換為標準日期格式
+   */
+  parseJapaneseDateArray: (content: string | string[]): string[] => {
+    console.log('[JP History Dates] 📅 處理日本股價歷史日期陣列...');
+    const contentArray = Array.isArray(content) ? content : [content];
+    const dates: string[] = [];
+
+    for (const item of contentArray) {
+      if (!item || typeof item !== 'string') continue;
+
+      const str = item.toString().trim();
+
+      // 日本股價歷史日期格式: 2025年8月6日
+      const dateMatch = str.match(/(\d{4})年(\d{1,2})月(\d{1,2})日/);
+      if (dateMatch) {
+        const [, year, month, day] = dateMatch;
+        // 轉換為標準格式 YYYY-MM-DD
+        const standardDate = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+        dates.push(standardDate);
+        console.log(
+          `[JP History Dates] ✅ 轉換日期: "${str}" -> "${standardDate}"`,
+        );
+      } else {
+        // 嘗試其他格式: YYYY-MM-DD 或 YYYY/MM/DD
+        const simpleDateMatch = str.match(/(\d{4})[\/\-](\d{1,2})[\/\-](\d{1,2})/);
+        if (simpleDateMatch) {
+          const [, year, month, day] = simpleDateMatch;
+          const standardDate = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+          dates.push(standardDate);
+          console.log(
+            `[JP History Dates] ✅ 轉換日期: "${str}" -> "${standardDate}"`,
+          );
+        } else {
+          // 如果無法解析，使用當前日期
+          const fallbackDate = new Date().toISOString().split('T')[0];
+          dates.push(fallbackDate);
+          console.log(
+            `[JP History Dates] ⚠️ 無法解析日期: "${str}"，使用預設: "${fallbackDate}"`,
+          );
+        }
+      }
+    }
+
+    console.log(`[JP History Dates] ✅ 成功處理 ${dates.length} 個日期:`, dates);
+    return dates;
+  },
+
+  /**
+   * 解析日本股價數值陣列
+   * 處理股價數值（包含逗號分隔等格式）
+   */
+  parseJapaneseStockPriceArray: (content: string | string[]): number[] => {
+    console.log('[JP Stock Prices] 💰 處理日本股價數值陣列...');
+    const contentArray = Array.isArray(content) ? content : [content];
+    const prices: number[] = [];
+
+    for (const item of contentArray) {
+      if (!item || typeof item !== 'string') continue;
+
+      const str = item.toString().trim();
+
+      // 檢查缺失值 (---、空白等)
+      const missingValueRegex = /^[-—－\-*・\s　]*$|^(N\/A|n\/a|NA|該当なし|なし|---)$/;
+      if (missingValueRegex.test(str)) {
+        console.log(`[JP Stock Prices] 🔍 檢測到缺失值: "${str}" -> 轉換為 0`);
+        prices.push(0);
+        continue;
+      }
+
+      // 移除逗號和空白
+      let cleaned = str.replace(/[,\s]/g, '');
+
+      // 解析數值
+      const match = cleaned.match(/([\d.-]+)/);
+      if (match) {
+        const num = parseFloat(match[1]);
+        prices.push(isNaN(num) ? 0 : num);
+        console.log(`[JP Stock Prices] ✅ 解析股價: "${str}" -> ${num}`);
+      } else {
+        prices.push(0);
+        console.log(`[JP Stock Prices] ⚠️ 無法解析股價: "${str}" -> 0`);
+      }
+    }
+
+    console.log(
+      `[JP Stock Prices] ✅ 成功處理 ${prices.length} 個股價:`,
+      prices,
+    );
+    return prices;
+  },
+
+  /**
+   * 解析日本成交量陣列
+   * 處理成交量數值（可能包含千、萬等單位）
+   */
+  parseJapaneseVolumeArray: (content: string | string[]): number[] => {
+    console.log('[JP Volume] 📊 處理日本成交量陣列...');
+    const contentArray = Array.isArray(content) ? content : [content];
+    const volumes: number[] = [];
+
+    for (const item of contentArray) {
+      if (!item || typeof item !== 'string') continue;
+
+      const str = item.toString().trim();
+
+      // 檢查缺失值
+      const missingValueRegex = /^[-—－\-*・\s　]*$|^(N\/A|n\/a|NA|該当なし|なし|---)$/;
+      if (missingValueRegex.test(str)) {
+        console.log(`[JP Volume] 🔍 檢測到缺失值: "${str}" -> 轉換為 0`);
+        volumes.push(0);
+        continue;
+      }
+
+      // 移除逗號和空白
+      let cleaned = str.replace(/[,\s]/g, '');
+
+      // 解析數值
+      const match = cleaned.match(/([\d.-]+)/);
+      if (match) {
+        const num = parseFloat(match[1]);
+        volumes.push(isNaN(num) ? 0 : num);
+        console.log(`[JP Volume] ✅ 解析成交量: "${str}" -> ${num}`);
+      } else {
+        volumes.push(0);
+        console.log(`[JP Volume] ⚠️ 無法解析成交量: "${str}" -> 0`);
+      }
+    }
+
+    console.log(
+      `[JP Volume] ✅ 成功處理 ${volumes.length} 個成交量:`,
+      volumes,
+    );
+    return volumes;
+  },
+
+  /**
+   * 組合日本歷史股價數據
+   * 將個別提取的數據組合成統一的 HistoricalStockPrice 格式
+   */
+  combineJapaneseHistoricalData: (
+    content: any,
+    context?: any,
+  ): HistoricalStockPrice[] => {
+    console.log(
+      '[JP History Combine] 🔗 開始組合日本歷史股價數據...',
+      context?.variables || {},
+    );
+
+    if (!context) return [];
+
+    const results: HistoricalStockPrice[] = [];
+    const symbolCode =
+      context.variables?.symbolCode || context.symbolCode || '0000.T';
+    const vars = context.variables || {};
+
+    // 保留完整 symbolCode 包含交易所後綴 (.T/.S)
+    const cleanSymbolCode = symbolCode;
+
+    // 獲取各類數據陣列
+    const datesArray = vars.historicalDates || [];
+    const openPricesArray = vars.openPrices || [];
+    const highPricesArray = vars.highPrices || [];
+    const lowPricesArray = vars.lowPrices || [];
+    const closePricesArray = vars.closePrices || [];
+    const volumesArray = vars.volumes || [];
+    const adjustedClosePricesArray = vars.adjustedClosePrices || [];
+
+    // 找出最大陣列長度
+    const maxLength = Math.max(
+      datesArray.length,
+      openPricesArray.length,
+      highPricesArray.length,
+      lowPricesArray.length,
+      closePricesArray.length,
+      volumesArray.length,
+      adjustedClosePricesArray.length,
+    );
+
+    console.log(`[JP History Combine] 📊 偵測到最大陣列長度: ${maxLength}`);
+
+    // 為每個歷史記錄創建對象
+    for (let i = 0; i < maxLength; i++) {
+      const historicalData: HistoricalStockPrice = {
+        date: datesArray[i] || new Date().toISOString().split('T')[0],
+        open: openPricesArray[i] || 0,
+        high: highPricesArray[i] || 0,
+        low: lowPricesArray[i] || 0,
+        close: closePricesArray[i] || 0,
+        volume: volumesArray[i] || 0,
+        adjustedClose: adjustedClosePricesArray[i] || undefined,
+        symbolCode: cleanSymbolCode,
+      };
+
+      results.push(historicalData);
+    }
+
+    console.log(`[JP History Combine] ✅ 成功組合 ${results.length} 筆歷史股價數據`);
     return results;
   },
 };

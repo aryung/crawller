@@ -38,6 +38,17 @@ export const YAHOO_FINANCE_JP_CASHFLOW_HEADERS = {
   FINANCING_CASH_FLOW: '財務CF（百万円）'
 } as const;
 
+// Yahoo Finance Japan History 頁面表格標題常數
+export const YAHOO_FINANCE_JP_HISTORY_HEADERS = {
+  DATE: '日付',
+  OPEN: '始値',
+  HIGH: '高値',
+  LOW: '安値',
+  CLOSE: '終値',
+  VOLUME: '出来高',
+  ADJUSTED_CLOSE: '調整後終値*'
+} as const;
+
 // 向後兼容的別名
 export const YAHOO_FINANCE_JP_HEADERS = YAHOO_FINANCE_JP_PERFORMANCE_HEADERS;
 
@@ -532,5 +543,63 @@ export const US_FINANCIALS_HEADERS = {
   netIncome: 'Net Income',
   basicEPS: 'Basic EPS',
   dilutedEPS: 'Diluted EPS'
+} as const;
+
+// Japanese Stock History 歷史股價數據處理常數
+export const JP_STOCK_HISTORY_DATA_CONSTANTS = {
+  // 股價基本檢查 - 基於日本股市實際股價範圍
+  MIN_REASONABLE_PRICE: 0.1,          // 最小合理股價 (0.1円，避免垃圾數據)
+  MAX_REASONABLE_PRICE: 200000,       // 最大合理股價 (20萬円，基於 BRK-A 類型高價股)
+  
+  // 成交量基本檢查
+  MIN_REASONABLE_VOLUME: 0,           // 最小合理成交量 (可為0，表示無交易)
+  MAX_REASONABLE_VOLUME: 1000000000,  // 最大合理成交量 (10億股，基於大型股日交易量)
+  
+  // 日期範圍檢查
+  MIN_VALID_YEAR: 1980,               // 最小有效年份 (日本股市電子化開始)
+  MAX_YEAR_OFFSET: 1,                 // 相對於當前年份的最大偏移 (允許未來1年)
+  
+  // 數據驗證參數
+  PRICE_VALIDATION: {
+    DECIMAL_PLACES: 2,                // 股價最多2位小數
+    ZERO_TOLERANCE: 0.001,            // 接近零的容忍度
+    NEGATIVE_PRICE_ERROR: true        // 負股價視為錯誤
+  },
+  
+  // 成交量驗證參數
+  VOLUME_VALIDATION: {
+    DECIMAL_PLACES: 0,                // 成交量為整數
+    SUSPICIOUS_HIGH_VOLUME: 500000000, // 可疑的高成交量
+    ALLOW_ZERO_VOLUME: true           // 允許零成交量
+  },
+  
+  // 日期驗證參數
+  DATE_VALIDATION: {
+    REQUIRED_FORMAT: 'YYYY-MM-DD',    // 必須的日期格式
+    WEEKEND_TRADING: false,           // 不允許週末交易數據
+    HOLIDAY_TRADING: false            // 不允許假日交易數據
+  }
+} as const;
+
+// History 頁面表格標題陣列（按順序）
+export const YAHOO_FINANCE_JP_HISTORY_HEADER_ORDER = [
+  YAHOO_FINANCE_JP_HISTORY_HEADERS.DATE,
+  YAHOO_FINANCE_JP_HISTORY_HEADERS.OPEN,
+  YAHOO_FINANCE_JP_HISTORY_HEADERS.HIGH,
+  YAHOO_FINANCE_JP_HISTORY_HEADERS.LOW,
+  YAHOO_FINANCE_JP_HISTORY_HEADERS.CLOSE,
+  YAHOO_FINANCE_JP_HISTORY_HEADERS.VOLUME,
+  YAHOO_FINANCE_JP_HISTORY_HEADERS.ADJUSTED_CLOSE
+] as const;
+
+// History 欄位到表格標題的映射
+export const JP_HISTORY_DATA_FIELD_MAPPING = {
+  date: YAHOO_FINANCE_JP_HISTORY_HEADERS.DATE,
+  open: YAHOO_FINANCE_JP_HISTORY_HEADERS.OPEN,
+  high: YAHOO_FINANCE_JP_HISTORY_HEADERS.HIGH,
+  low: YAHOO_FINANCE_JP_HISTORY_HEADERS.LOW,
+  close: YAHOO_FINANCE_JP_HISTORY_HEADERS.CLOSE,
+  volume: YAHOO_FINANCE_JP_HISTORY_HEADERS.VOLUME,
+  adjustedClose: YAHOO_FINANCE_JP_HISTORY_HEADERS.ADJUSTED_CLOSE
 } as const;
 

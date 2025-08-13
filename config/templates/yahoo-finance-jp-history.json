@@ -1,0 +1,87 @@
+{
+  "templateType": "history",
+  "url": "https://finance.yahoo.co.jp/quote/${symbolCode}/history?from=${fromDate}&to=${toDate}&timeFrame=d&page=${page}",
+  "_note": "JP STOCK HISTORY CONFIG (Unified Naming): Simple independent selectors following CLAUDE.md principles. Each field uses its own CSS selector for precise data extraction from historical stock price table.",
+  "selectors": {
+    "stockInfo": {
+      "selector": "h1, .symbol",
+      "transform": "cleanStockSymbol"
+    },
+    "historicalDates": {
+      "selector": ".main table tbody > tr > td:nth-child(1)",
+      "multiple": true,
+      "transform": "parseJapaneseDateArray"
+    },
+    "openPrices": {
+      "selector": ".main table tbody > tr > td:nth-child(2)",
+      "multiple": true,
+      "transform": "parseJapaneseStockPriceArray"
+    },
+    "highPrices": {
+      "selector": ".main table tbody > tr > td:nth-child(3)",
+      "multiple": true,
+      "transform": "parseJapaneseStockPriceArray"
+    },
+    "lowPrices": {
+      "selector": ".main table tbody > tr > td:nth-child(4)",
+      "multiple": true,
+      "transform": "parseJapaneseStockPriceArray"
+    },
+    "closePrices": {
+      "selector": ".main table tbody > tr > td:nth-child(5)",
+      "multiple": true,
+      "transform": "parseJapaneseStockPriceArray"
+    },
+    "volumes": {
+      "selector": ".main table tbody > tr > td:nth-child(6)",
+      "multiple": true,
+      "transform": "parseJapaneseVolumeArray"
+    },
+    "adjustedClosePrices": {
+      "selector": ".main table tbody > tr > td:nth-child(7)",
+      "multiple": true,
+      "transform": "parseJapaneseStockPriceArray"
+    },
+    "data": {
+      "selector": "body",
+      "transform": "combineJapaneseHistoricalData"
+    }
+  },
+  "headers": {
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
+    "Accept-Language": "ja,en-US;q=0.9,en;q=0.8",
+    "Accept-Encoding": "gzip, deflate, br",
+    "Cache-Control": "no-cache",
+    "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+  },
+  "options": {
+    "timeout": 45000,
+    "retries": 3,
+    "headless": true,
+    "screenshot": true,
+    "encoding": "utf-8",
+    "domainDelay": 5000,
+    "waitFor": 8000,
+    "waitForNetworkIdle": true,
+    "networkIdleTimeout": 3000,
+    "engine": "playwright",
+    "viewport": {
+      "width": 1920,
+      "height": 1080
+    }
+  },
+  "variables": {
+    "symbolCode": "8105.T",
+    "fromDate": "20240813",
+    "toDate": "20250806",
+    "page": "1",
+    "baseUrl": "https://finance.yahoo.co.jp"
+  },
+  "export": {
+    "formats": ["json"],
+    "filename": "yahoo_finance_jp_history_${symbolCode}_${fromDate}_${toDate}",
+    "structure": {
+      "historicalData": "historicalPeriods,historicalData"
+    }
+  }
+}
