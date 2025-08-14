@@ -34,10 +34,13 @@ npm run import:fundamental:tw:quarterly # 台灣季度數據
 npm run import:fundamental:us:quarterly # 美國季度數據
 npm run import:fundamental:jp:quarterly # 日本季度數據
 
-# 📊 按類型匯入
-npm run import:balance-sheet           # 所有市場的資產負債表
-npm run import:cash-flow              # 所有市場的現金流量表
-npm run import:income-statement        # 所有市場的損益表
+# 📊 市場特定類型匯入
+npm run import:tw:balance-sheet        # 只匯入台灣資產負債表
+npm run import:tw:cash-flow           # 只匯入台灣現金流量表
+npm run import:us:balance-sheet        # 只匯入美國資產負債表
+npm run import:us:financials          # 只匯入美國財務數據
+npm run import:jp:balance-sheet        # 只匯入日本資產負債表
+npm run import:jp:performance         # 只匯入日本績效數據
 
 # 🚀 快速設置
 npm run setup:structured               # 完整設置 (數據+股票+標籤)

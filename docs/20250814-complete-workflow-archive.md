@@ -160,11 +160,10 @@ npm run import:fundamental:jp:quarterly
 #### 3.4 按類型匯入
 
 ```bash
-# 所有資產負債表
-npm run import:balance-sheet
-
-# 所有現金流量表
-npm run import:cash-flow
+# 市場特定類型
+npm run import:tw:balance-sheet        # 只匯入台灣資產負債表
+npm run import:us:balance-sheet        # 只匯入美國資產負債表
+npm run import:jp:balance-sheet        # 只匯入日本資產負債表
 ```
 
 ### 階段 4: 輔助數據設置

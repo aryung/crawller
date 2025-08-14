@@ -374,9 +374,19 @@ npm run import:fundamental:jp          # 日本所有數據
 # 特定市場 + 類別
 npm run import:fundamental:tw:quarterly # 台灣季度數據
 
-# 特定數據類型
-npm run import:balance-sheet           # 所有市場的資產負債表
-npm run import:cash-flow              # 所有市場的現金流量表
+# 市場特定數據類型
+npm run import:tw:balance-sheet        # 只匯入台灣資產負債表
+npm run import:tw:cash-flow           # 只匯入台灣現金流量表
+npm run import:tw:income-statement     # 只匯入台灣損益表
+npm run import:tw:dividend            # 只匯入台灣股利資料
+npm run import:tw:eps                 # 只匯入台灣每股盈餘
+
+npm run import:us:balance-sheet        # 只匯入美國資產負債表
+npm run import:us:cash-flow           # 只匯入美國現金流量表
+npm run import:us:financials          # 只匯入美國財務數據
+
+npm run import:jp:balance-sheet        # 只匯入日本資產負債表
+npm run import:jp:performance         # 只匯入日本績效數據
 ```
 
 #### 快速設置命令
