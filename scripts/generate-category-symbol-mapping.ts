@@ -7,7 +7,7 @@
  * - Japan: data/yahoo-jp-stock-details.json
  * - US: data/yahoo-us-*-20250809.json files
  *
- * Output: output/category-symbol-mappings.json
+ * Output: output/metadata/category-symbol-mappings.json
  */
 
 // Load environment variables
@@ -732,8 +732,15 @@ class CategorySymbolMapper {
   saveMappings(): void {
     console.log('\n💾 Saving category-symbol mappings...');
 
-    // Save to data directory instead of output
-    const outputPath = join(__dirname, 'data', 'category-symbol-mappings.json');
+    // Save to metadata directory for structured organization
+    const outputDir = join(__dirname, 'output', 'metadata');
+    
+    // Ensure metadata directory exists
+    if (!existsSync(outputDir)) {
+      mkdirSync(outputDir, { recursive: true });
+    }
+    
+    const outputPath = join(outputDir, 'category-symbol-mappings.json');
 
     // Calculate statistics
     const stats = {

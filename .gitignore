@@ -13,4 +13,8 @@ logs/
 
 .env
 
+.progress/
+config-backup/
+config-categorized/
+
 config/*.json

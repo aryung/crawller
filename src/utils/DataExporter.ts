@@ -18,7 +18,11 @@ export class DataExporter {
     await fs.ensureDir(this.outputDir);
 
     const filename = this.generateFilename(options);
-    const filePath = path.join(this.outputDir, filename);
+    const categorizedPath = this.getCategorizedPath(options.configName || '', filename);
+    const filePath = path.join(this.outputDir, categorizedPath);
+
+    // 確保分類目錄存在
+    await fs.ensureDir(path.dirname(filePath));
 
     try {
       switch (options.format) {
@@ -183,6 +187,46 @@ export class DataExporter {
       .slice(0, 3)
       .map(([error, count]) => `${error} (${count}x)`)
       .join('; ');
+  }
+
+  /**
+   * 解析配置名稱並生成分類路徑
+   */
+  private getCategorizedPath(configName: string, filename: string): string {
+    if (!configName) {
+      return filename; // 無配置名稱時，直接返回檔案名
+    }
+
+    // 解析配置名稱格式: yahoo-finance-{market}-{type}-{symbol} 或 yahoo-finance-{market}-{detailed-type}-{symbol}
+    // 支援格式如: yahoo-finance-tw-balance-sheet-2330_TW, yahoo-finance-tw-eps-2330_TW
+    const match = configName.match(/^yahoo-finance-([a-z]+)-(.+?)-.+/);
+    if (!match) {
+      return filename; // 無法解析時，直接返回檔案名
+    }
+
+    const [, market, typeSegment] = match;
+    
+    // 處理複合類型名稱 (如 balance-sheet, cash-flow-statement)
+    const type = typeSegment;
+    
+    // 判斷分類
+    let category = '';
+    
+    if (type === 'history') {
+      category = 'daily';
+    } else if (['symbols', 'labels', 'categories', 'details', 'sectors'].includes(type)) {
+      category = 'metadata';
+    } else {
+      // 其他財務數據類型如 balance-sheet, cash-flow-statement, income-statement, eps, dividend 等
+      category = 'quarterly';
+    }
+
+    // 構建分類路徑: category/market/type/filename
+    if (category === 'metadata') {
+      return path.join(category, type, filename);
+    } else {
+      return path.join(category, market, type, filename);
+    }
   }
 
   private generateFilename(options: ExportOptions): string {

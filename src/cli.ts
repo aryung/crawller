@@ -7,6 +7,8 @@ import { formatTimestamp } from './utils/helpers';
 import * as path from 'path';
 import * as fs from 'fs-extra';
 import { EnhancedCrawlerConfig, ExportOptions } from './types';
+import { BatchCrawlerManager, BatchOptions } from './batch/BatchCrawlerManager';
+import { ProgressTracker } from './batch/ProgressTracker';
 
 interface CLIOptions {
   config?: string;
@@ -27,6 +29,22 @@ interface CLIOptions {
   debugSelectors?: boolean;  // New: output all intermediate selector data (fiscalPeriodsArray, etc.)
   showIntermediate?: boolean; // New: show intermediate processing steps data
   includeArrays?: boolean;   // New: include raw array data in output
+  
+  // Batch command options
+  category?: 'daily' | 'quarterly' | 'metadata';
+  market?: 'tw' | 'us' | 'jp';
+  type?: string;
+  delayMs?: number;
+  retryAttempts?: number;
+  resume?: string;
+  retryFailed?: string;
+  pause?: boolean;
+  status?: boolean;
+  stats?: boolean;
+  errorReport?: boolean;
+  performanceReport?: boolean;
+  progressId?: string;
+  limit?: number;
 }
 
 async function main() {
@@ -38,7 +56,7 @@ async function main() {
   program
     .command('crawl [configs...]')
     .description('執行爬蟲任務')
-    .option('-c, --config <path>', '配置檔案目錄或特定配置檔案路徑', 'config')
+    .option('-c, --config <path>', '配置檔案目錄或特定配置檔案路徑', 'config-categorized')
     .option('-o, --output <path>', '輸出目錄', 'output')
     .option('-f, --format <format>', '匯出格式 (json|csv|xlsx)', 'json')
     .option('--concurrent <number>', '同時處理的配置檔案數量（非引擎併發）', '1')
@@ -118,6 +136,32 @@ async function main() {
     .option('-c, --config <path>', '配置檔案目錄', 'configs')
     .action(async (configName: string, options: CLIOptions) => {
       await validateConfig(configName, options.config || 'configs');
+    });
+
+  program
+    .command('crawl-batch')
+    .description('批量爬取工具 - 支援斷點續傳、錯誤恢復、進度追蹤')
+    .option('-c, --config <path>', '配置檔案目錄', 'config-categorized')
+    .option('-o, --output <path>', '輸出目錄', 'output')
+    .option('--category <type>', '指定類別 (daily|quarterly|metadata)')
+    .option('--market <region>', '指定市場 (tw|us|jp)')
+    .option('--type <datatype>', '指定數據類型 (eps|history|financials等)')
+    .option('--concurrent <num>', '併發數量', '3')
+    .option('--start-from <num>', '從第幾個開始執行', '0')
+    .option('--limit <num>', '限制執行數量')
+    .option('--delay <ms>', '請求間隔毫秒數', '5000')
+    .option('--retry-attempts <num>', '最大重試次數', '3')
+    .option('--resume <id>', '恢復指定進度ID的執行')
+    .option('--retry-failed <id>', '只重試失敗的配置')
+    .option('--pause', '暫停當前執行')
+    .option('--status', '查看執行狀態')
+    .option('--stats', '顯示統計資訊')
+    .option('--error-report', '生成錯誤報告')
+    .option('--performance-report', '生成性能報告')
+    .option('--progress-id <id>', '指定進度ID')
+    .option('-v, --verbose', '詳細日誌')
+    .action(async (options: CLIOptions) => {
+      await runBatchCrawler(options);
     });
 
   program
@@ -807,6 +851,275 @@ async function curl2config(curlCommand: string, options: CLIOptions) {
     console.error('❌ 轉換失敗:', (error as Error).message);
     process.exit(1);
   }
+}
+
+/**
+ * 批量爬取命令處理器
+ */
+async function runBatchCrawler(options: CLIOptions): Promise<void> {
+  try {
+    // 設置日誌級別
+    if (options.verbose) {
+      process.env.LOG_LEVEL = 'debug';
+    }
+
+    // 創建批量管理器
+    const batchManager = new BatchCrawlerManager({
+      configPath: options.config || 'config',
+      outputDir: options.output || 'output',
+      maxConcurrency: parseInt(options.concurrent?.toString() || '3'),
+      delayMs: parseInt(options.delayMs?.toString() || '5000')
+    });
+
+    // 處理特殊命令
+    if (options.status) {
+      await showBatchStatus(options);
+      return;
+    }
+
+    if (options.stats) {
+      await showBatchStats(options);
+      return;
+    }
+
+    if (options.errorReport) {
+      await generateErrorReport(options);
+      return;
+    }
+
+    if (options.performanceReport) {
+      await generatePerformanceReport(options);
+      return;
+    }
+
+    // 恢復執行
+    if (options.resume) {
+      console.log(`🔄 恢復批量執行: ${options.resume}`);
+      const result = await batchManager.resumeBatch(options.resume, {
+        concurrent: parseInt(options.concurrent?.toString() || '3'),
+        delayMs: parseInt(options.delayMs?.toString() || '5000'),
+        outputDir: options.output || 'output'
+      });
+      displayBatchResult(result);
+      return;
+    }
+
+    // 重試失敗
+    if (options.retryFailed) {
+      console.log(`🔄 重試失敗配置: ${options.retryFailed}`);
+      const result = await batchManager.retryFailed(options.retryFailed, {
+        concurrent: parseInt(options.concurrent?.toString() || '3'),
+        delayMs: parseInt(options.delayMs?.toString() || '5000'),
+        outputDir: options.output || 'output'
+      });
+      displayBatchResult(result);
+      return;
+    }
+
+    // 標準批量執行
+    console.log('🚀 Universal Web Crawler - 批量模式');
+    console.log('='.repeat(50));
+
+    const batchOptions: BatchOptions = {
+      category: options.category,
+      market: options.market,
+      type: options.type,
+      concurrent: parseInt(options.concurrent?.toString() || '3'),
+      startFrom: parseInt(options.startFrom?.toString() || '0'),
+      limit: options.limit ? parseInt(options.limit.toString()) : undefined,
+      delayMs: parseInt(options.delayMs?.toString() || '5000'),
+      retryAttempts: parseInt(options.retryAttempts?.toString() || '3'),
+      outputDir: options.output || 'output',
+      configPath: options.config || 'config',
+      progressDir: '.progress'
+    };
+
+    console.log(`📁 配置目錄: ${batchOptions.configPath}`);
+    console.log(`📂 輸出目錄: ${batchOptions.outputDir}`);
+    console.log(`🔢 併發數: ${batchOptions.concurrent}`);
+    console.log(`⏰ 延遲: ${batchOptions.delayMs}ms`);
+    if (batchOptions.category) console.log(`📋 類別: ${batchOptions.category}`);
+    if (batchOptions.market) console.log(`🌍 市場: ${batchOptions.market}`);
+    if (batchOptions.type) console.log(`📊 類型: ${batchOptions.type}`);
+    console.log('='.repeat(50));
+
+    const result = await batchManager.startBatch(batchOptions);
+    displayBatchResult(result);
+
+  } catch (error) {
+    console.error('❌ 批量爬取失敗:', (error as Error).message);
+    if (options.verbose) {
+      console.error(error);
+    }
+    process.exit(1);
+  }
+}
+
+/**
+ * 顯示批量狀態
+ */
+async function showBatchStatus(options: CLIOptions): Promise<void> {
+  try {
+    const progressFiles = await ProgressTracker.listProgressFiles(options.progressId ? '.' : '.progress');
+    
+    if (progressFiles.length === 0) {
+      console.log('📊 沒有找到進行中的批量任務');
+      return;
+    }
+
+    console.log('📊 批量任務狀態');
+    console.log('='.repeat(50));
+
+    for (const file of progressFiles) {
+      try {
+        const tracker = await ProgressTracker.load(file);
+        const progress = tracker.getProgress();
+        
+        console.log(`\n📋 進度ID: ${progress.id}`);
+        if (progress.category) console.log(`   類別: ${progress.category}`);
+        if (progress.market) console.log(`   市場: ${progress.market}`);
+        if (progress.type) console.log(`   類型: ${progress.type}`);
+        console.log(`   進度: ${progress.percentage.toFixed(1)}% (${progress.completed + progress.failed + progress.skipped}/${progress.total})`);
+        console.log(`   狀態: 完成 ${progress.completed}, 失敗 ${progress.failed}, 跳過 ${progress.skipped}, 執行中 ${progress.running}, 待處理 ${progress.pending}`);
+        
+        if (progress.currentItem) {
+          console.log(`   當前: ${progress.currentItem}`);
+        }
+
+        const duration = Date.now() - progress.startTime;
+        console.log(`   耗時: ${Math.round(duration / 1000)}s`);
+        
+        if (progress.estimatedTimeRemaining > 0) {
+          console.log(`   預估剩餘: ${Math.round(progress.estimatedTimeRemaining / 1000)}s`);
+        }
+      } catch (error) {
+        console.log(`   ❌ 無法讀取進度檔案: ${file}`);
+      }
+    }
+  } catch (error) {
+    console.error('❌ 獲取狀態失敗:', (error as Error).message);
+  }
+}
+
+/**
+ * 顯示批量統計
+ */
+async function showBatchStats(options: CLIOptions): Promise<void> {
+  console.log('📊 批量爬取統計功能開發中...');
+}
+
+/**
+ * 生成錯誤報告
+ */
+async function generateErrorReport(options: CLIOptions): Promise<void> {
+  console.log('📋 錯誤報告生成功能開發中...');
+}
+
+/**
+ * 生成性能報告
+ */
+async function generatePerformanceReport(options: CLIOptions): Promise<void> {
+  console.log('📈 性能報告生成功能開發中...');
+}
+
+/**
+ * 顯示批量執行結果
+ */
+function displayBatchResult(result: any): void {
+  console.log('\n🎉 批量爬取完成!');
+  console.log('='.repeat(60));
+  
+  // 執行統計
+  console.log(`📊 執行統計:`);
+  console.log(`   總數: ${result.total}`);
+  console.log(`   ✅ 成功: ${result.completed} (${((result.completed / result.total) * 100).toFixed(1)}%)`);
+  console.log(`   ❌ 失敗: ${result.failed} (${((result.failed / result.total) * 100).toFixed(1)}%)`);
+  console.log(`   ⏭️  跳過: ${result.skipped} (${((result.skipped / result.total) * 100).toFixed(1)}%)`);
+  console.log(`   ⏱️  耗時: ${Math.round(result.duration / 1000)} 秒`);
+  
+  // 輸出檔案信息
+  if (result.outputFiles && result.outputFiles.length > 0) {
+    console.log(`\n📂 輸出檔案: ${result.outputFiles.length} 個`);
+    console.log(`   📁 保存位置: output/`);
+    
+    // 按目錄結構分組顯示檔案
+    const filesByCategory = result.outputFiles.reduce((acc: any, file: string) => {
+      const relativePath = path.relative('output', file);
+      const pathParts = relativePath.split(path.sep);
+      
+      if (pathParts.length >= 2) {
+        const category = pathParts[0]; // daily, quarterly, metadata
+        const subcategory = pathParts[1]; // market 或 type
+        const key = `${category}/${subcategory}`;
+        
+        if (!acc[key]) acc[key] = [];
+        acc[key].push(path.basename(file));
+      } else {
+        // 根目錄下的檔案
+        if (!acc['root']) acc['root'] = [];
+        acc['root'].push(path.basename(file));
+      }
+      return acc;
+    }, {});
+    
+    // 顯示分類結構
+    Object.entries(filesByCategory).slice(0, 8).forEach(([category, files]: [string, any]) => {
+      if (category === 'root') {
+        console.log(`   📄 根目錄: ${files.length} 個檔案`);
+      } else {
+        console.log(`   📁 ${category}: ${files.length} 個檔案`);
+      }
+    });
+    
+    if (Object.keys(filesByCategory).length > 8) {
+      console.log(`   📁 ... 還有 ${Object.keys(filesByCategory).length - 8} 個分類`);
+    }
+    
+    console.log(`\n📋 目錄結構範例:`);
+    console.log(`   output/`);
+    if (filesByCategory['daily/tw']) console.log(`   ├── daily/tw/ (${filesByCategory['daily/tw'].length} 個檔案)`);
+    if (filesByCategory['quarterly/tw']) console.log(`   ├── quarterly/tw/ (${filesByCategory['quarterly/tw'].length} 個檔案)`);
+    if (filesByCategory['quarterly/us']) console.log(`   ├── quarterly/us/ (${filesByCategory['quarterly/us'].length} 個檔案)`);
+    if (filesByCategory['quarterly/jp']) console.log(`   ├── quarterly/jp/ (${filesByCategory['quarterly/jp'].length} 個檔案)`);
+    if (filesByCategory['metadata/symbols']) console.log(`   └── metadata/symbols/ (${filesByCategory['metadata/symbols'].length} 個檔案)`);
+  } else {
+    console.log(`\n📂 無輸出檔案生成`);
+  }
+
+  // 錯誤摘要
+  if (result.errors && result.errors.length > 0) {
+    console.log(`\n❌ 錯誤摘要 (前5個):`);
+    result.errors.slice(0, 5).forEach((error: string, index: number) => {
+      console.log(`   ${index + 1}. ${error.length > 80 ? error.substring(0, 80) + '...' : error}`);
+    });
+    if (result.errors.length > 5) {
+      console.log(`   ... 還有 ${result.errors.length - 5} 個錯誤`);
+    }
+  }
+
+  // 最終狀態
+  console.log('\n' + '='.repeat(60));
+  if (result.success) {
+    console.log('🎊 所有任務執行成功！');
+  } else {
+    console.log('⚠️  部分任務執行失敗，請檢查錯誤報告');
+    console.log('💡 使用以下命令重試失敗的配置:');
+    console.log(`   npm run crawl-batch --retry-failed=${result.progressId}`);
+  }
+  
+  // 下一步建議
+  console.log('\n💡 下一步操作:');
+  console.log('   📊 查看狀態: npm run crawl:status');
+  console.log('   📋 查看統計: npm run crawl:stats');
+  console.log('   📁 檢查輸出: ls -la output/');
+  
+  console.log('\n✅ 任務完成，系統正在關閉...');
+  
+  // 優雅退出
+  setTimeout(() => {
+    console.log('👋 再見！');
+    process.exit(0);
+  }, 2000);
 }
 
 process.on('uncaughtException', (error) => {

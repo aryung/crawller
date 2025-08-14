@@ -1,19 +1,28 @@
 #!/usr/bin/env tsx
 /**
- * 基本面資料 API 匯入腳本 v2.0
+ * 基本面資料 API 匯入腳本 v3.0
  * 透過 HTTP API 將 crawler 產出的 JSON 資料匯入到 finance-strategy
  * 
- * 新增功能：
+ * v3.0 新功能：
+ * - 支援結構化目錄掃描 (quarterly/daily/metadata)
+ * - 新增按類別、市場、類型的精確篩選
+ * - 自動識別新的分類目錄結構
+ * - 保持對舊格式的相容性支援
+ * 
+ * v2.0 功能：
  * - 支援 dry-run 模式
  * - 改進的批次處理和進度顯示
  * - 增強錯誤處理和資料驗證
  * - 支援不同地區數據格式的自動識別
  * 
- * 使用方式:
- * npx tsx scripts/import-fundamental-api.ts --file output/yahoo-finance-us-income-statement-AAPL_20250809.json
- * npx tsx scripts/import-fundamental-api.ts --dir output/ --pattern "*income-statement*"
- * npx tsx scripts/import-fundamental-api.ts --dir output/ --pattern "*" --api-url http://localhost:3000
- * npx tsx scripts/import-fundamental-api.ts --dir output/ --pattern "*" --dry-run
+ * 使用方式 (v3.0 結構化目錄):
+ * npx tsx scripts/import-fundamental-api.ts --category quarterly --market tw
+ * npx tsx scripts/import-fundamental-api.ts --market us --type balance-sheet
+ * npx tsx scripts/import-fundamental-api.ts --category daily --dry-run
+ * 
+ * 相容性模式 (v2.0):
+ * npx tsx scripts/import-fundamental-api.ts --file output/quarterly/tw/balance-sheet/file.json
+ * npx tsx scripts/import-fundamental-api.ts --dir output/ --pattern "all-json-files"
  */
 
 import 'dotenv/config';
@@ -419,10 +428,64 @@ async function importJsonFile(
 }
 
 /**
+ * 掃描結構化目錄以尋找 JSON 檔案
+ */
+function scanStructuredDirectory(baseDir: string, options: {
+  category?: string | null;
+  market?: string | null;
+  type?: string | null;
+}): string[] {
+  let patterns: string[] = [];
+  
+  if (options.category) {
+    // 指定類別
+    if (options.market) {
+      if (options.type) {
+        // 類別/市場/類型 都指定
+        patterns.push(path.join(baseDir, options.category, options.market, options.type, '*.json'));
+      } else {
+        // 類別/市場 指定
+        patterns.push(path.join(baseDir, options.category, options.market, '**', '*.json'));
+      }
+    } else {
+      // 只指定類別
+      patterns.push(path.join(baseDir, options.category, '**', '*.json'));
+    }
+  } else {
+    // 掃描所有結構化目錄
+    patterns = [
+      path.join(baseDir, 'quarterly', '**', '*.json'),
+      path.join(baseDir, 'daily', '**', '*.json'),
+      path.join(baseDir, 'metadata', '**', '*.json')
+    ];
+  }
+  
+  console.log(`📁 [診斷] 掃描模式:`, patterns);
+  
+  let allFiles: string[] = [];
+  for (const pattern of patterns) {
+    const files = glob.sync(pattern);
+    allFiles = allFiles.concat(files);
+  }
+  
+  // 過濾並排序
+  const jsonFiles = allFiles.filter(file => {
+    try {
+      const stat = fs.statSync(file);
+      return stat.isFile() && file.endsWith('.json');
+    } catch (err) {
+      return false;
+    }
+  }).sort();
+  
+  return jsonFiles;
+}
+
+/**
  * 主程式
  */
 async function main() {
-  console.log('🚀 基本面資料 API 匯入工具啟動 (診斷模式)');
+  console.log('🚀 基本面資料 API 匯入工具 v3.0 啟動 (結構化目錄支援)');
   
   // 🔍 診斷：顯示完整執行環境
   console.log(`📍 [診斷] 執行時間: ${new Date().toISOString()}`);
@@ -430,12 +493,15 @@ async function main() {
   console.log(`📍 [診斷] Node.js 版本: ${process.version}`);
   console.log(`📍 [診斷] 完整命令列:`, process.argv);
   
-  // 解析命令列參數 (v2.0 增強版)
+  // 解析命令列參數 (v3.0 結構化目錄支援)
   const args = process.argv.slice(2);
   console.log(`📍 [診斷] 解析參數:`, args);
   const fileIndex = args.indexOf('--file');
   const dirIndex = args.indexOf('--dir');
   const patternIndex = args.indexOf('--pattern');
+  const categoryIndex = args.indexOf('--category');
+  const marketIndex = args.indexOf('--market');
+  const typeIndex = args.indexOf('--type');
   const apiUrlIndex = args.indexOf('--api-url');
   const tokenIndex = args.indexOf('--token');
   const isDryRun = args.includes('--dry-run');
@@ -443,6 +509,9 @@ async function main() {
   
   const apiUrl = apiUrlIndex !== -1 ? args[apiUrlIndex + 1] : DEFAULT_API_URL;
   const token = tokenIndex !== -1 ? args[tokenIndex + 1] : DEFAULT_API_TOKEN;
+  const category = categoryIndex !== -1 ? args[categoryIndex + 1] : null;
+  const market = marketIndex !== -1 ? args[marketIndex + 1] : null;
+  const type = typeIndex !== -1 ? args[typeIndex + 1] : null;
   
   if (isDryRun) {
     console.log('🔍 執行模式: DRY-RUN (不會實際匯入數據)');
@@ -462,12 +531,24 @@ async function main() {
   if (fileIndex !== -1 && args[fileIndex + 1]) {
     // 單檔案模式
     filesToImport = [args[fileIndex + 1]];
+    console.log(`📄 單檔案模式: ${filesToImport[0]}`);
+  } else if (category || market || type) {
+    // 結構化目錄模式 (新功能)
+    const baseDir = dirIndex !== -1 ? args[dirIndex + 1] : 'output';
+    console.log(`📁 結構化目錄模式: ${baseDir}`);
+    console.log(`   分類: ${category || '全部'}`);
+    console.log(`   市場: ${market || '全部'}`);
+    console.log(`   類型: ${type || '全部'}`);
+    
+    filesToImport = scanStructuredDirectory(baseDir, { category, market, type });
+    console.log(`📁 找到 ${filesToImport.length} 個檔案符合條件`);
   } else if (dirIndex !== -1 && args[dirIndex + 1]) {
-    // 目錄模式
+    // 傳統目錄模式 (保留相容性)
     const dir = args[dirIndex + 1];
     const pattern = patternIndex !== -1 ? args[patternIndex + 1] : '*.json';
     const globPattern = path.join(dir, pattern);
     
+    console.log(`📁 傳統目錄模式: ${globPattern}`);
     filesToImport = await new Promise<string[]>((resolve, reject) => {
       glob.glob(globPattern, (error, matches) => {
         if (error) reject(error);
@@ -487,21 +568,39 @@ async function main() {
     });
     console.log(`📁 找到 ${filesToImport.length} 個檔案符合條件`);
   } else {
-    console.error('❌ 請指定 --file 或 --dir 參數');
-    console.log('\n📚 使用方式 (v2.0):');
-    console.log('  單檔案: npx tsx scripts/import-fundamental-api.ts --file output/file.json');
-    console.log('  多檔案: npx tsx scripts/import-fundamental-api.ts --dir output/ --pattern "*income*"');
-    console.log('  批次匯入: npx tsx scripts/import-fundamental-api.ts --dir output/ --pattern "*"');
+    console.error('❌ 請指定檔案或目錄參數');
+    console.log('\n📚 使用方式 (v3.0 結構化目錄支援):');
+    console.log('\n🔹 單檔案模式:');
+    console.log('  npx tsx scripts/import-fundamental-api.ts --file output/quarterly/tw/balance-sheet/file.json');
+    
+    console.log('\n🔹 結構化目錄模式 (推薦):');
+    console.log('  npx tsx scripts/import-fundamental-api.ts --category quarterly');
+    console.log('  npx tsx scripts/import-fundamental-api.ts --category quarterly --market tw');
+    console.log('  npx tsx scripts/import-fundamental-api.ts --category daily --market us');
+    console.log('  npx tsx scripts/import-fundamental-api.ts --market tw --type balance-sheet');
+    
+    console.log('\n🔹 傳統目錄模式 (相容性):');
+    console.log('  npx tsx scripts/import-fundamental-api.ts --dir output/ --pattern "**/*.json"');
+    console.log('  npx tsx scripts/import-fundamental-api.ts --dir output/quarterly --pattern "**/tw/*.json"');
+    
     console.log('\n🛠️  選項參數:');
+    console.log('  --category CAT    指定類別 (quarterly/daily/metadata)');
+    console.log('  --market MKT      指定市場 (tw/us/jp)');
+    console.log('  --type TYPE       指定類型 (balance-sheet/income-statement/cash-flow-statement/etc)');
+    console.log('  --dir DIR         指定基礎目錄 (預設: output)');
+    console.log('  --pattern PATTERN 檔案匹配模式');
     console.log('  --api-url URL     指定後端 API 地址 (預設: http://localhost:3000)');
     console.log('  --token TOKEN     指定 JWT Token (或使用環境變數 BACKEND_API_TOKEN)');
     console.log('  --dry-run         測試模式，不實際匯入數據');
     console.log('  --verbose, -v     顯示詳細處理資訊');
+    
     console.log('\n💡 範例:');
-    console.log('  # 測試匯入所有檔案');
-    console.log('  npx tsx scripts/import-fundamental-api.ts --dir output/ --dry-run');
-    console.log('  # 匯入美國股票數據並顯示詳細資訊');
-    console.log('  npx tsx scripts/import-fundamental-api.ts --dir output/ --pattern "*us*" --verbose');
+    console.log('  # 匯入所有台灣季度財務數據');
+    console.log('  npx tsx scripts/import-fundamental-api.ts --category quarterly --market tw');
+    console.log('  # 測試匯入美國資產負債表數據');
+    console.log('  npx tsx scripts/import-fundamental-api.ts --market us --type balance-sheet --dry-run');
+    console.log('  # 匯入所有元數據');
+    console.log('  npx tsx scripts/import-fundamental-api.ts --category metadata --verbose');
     process.exit(1);
   }
   

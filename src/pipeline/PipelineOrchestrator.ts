@@ -58,7 +58,7 @@ export class PipelineOrchestrator {
   constructor(config: PipelineConfig = {}) {
     this.config = {
       dataDir: config.dataDir || 'data',
-      configDir: config.configDir || 'config',
+      configDir: config.configDir || 'config-categorized',
       outputDir: config.outputDir || 'output',
       scriptsDir: config.scriptsDir || 'scripts',
       batchSize: config.batchSize || 100,
@@ -75,7 +75,7 @@ export class PipelineOrchestrator {
       apiToken: config.apiToken || process.env.BACKEND_API_TOKEN || '',
     };
 
-    this.fileManager = new OutputFileManager(this.config.outputDir);
+    this.fileManager = new OutputFileManager(this.config.outputDir, true); // Use structured layout
     this.apiClient = createApiClient({
       apiUrl: this.config.apiUrl,
       apiToken: this.config.apiToken,
@@ -206,14 +206,14 @@ export class PipelineOrchestrator {
       try {
         const scriptPath = path.join(
           this.config.scriptsDir,
-          `generate-yahoo-${region}-configs.js`
+          `generate-yahoo-${region}-configs.ts`
         );
 
         if (await fs.pathExists(scriptPath)) {
           console.log(`  Generating ${region.toUpperCase()} configurations...`);
           
-          // Execute generation script
-          const { stdout, stderr } = await execAsync(`node ${scriptPath}`);
+          // Execute generation script with tsx
+          const { stdout, stderr } = await execAsync(`npx tsx ${scriptPath}`);
           
           if (stderr) {
             result.errors.push(`${region} generation warning: ${stderr}`);
@@ -330,36 +330,41 @@ export class PipelineOrchestrator {
   }
 
   /**
-   * Collect all crawled UnifiedFinancialData directly from output files
+   * Collect all crawled UnifiedFinancialData directly from output files (supports structured layout)
    */
   private async collectUnifiedData(): Promise<UnifiedFinancialData[]> {
     const allData: UnifiedFinancialData[] = [];
     
     try {
-      // Get all output files  
-      const outputFiles = await fs.readdir(this.config.outputDir);
+      // Get all output JSON files recursively
+      const outputFiles = await this.getJsonFilesRecursively(this.config.outputDir);
       
-      for (const file of outputFiles) {
-        if (file.endsWith('.json') && file.includes('yahoo-finance-tw')) {
-          const filePath = path.join(this.config.outputDir, file);
-          
+      for (const filePath of outputFiles) {
+        const fileName = path.basename(filePath);
+        
+        // Process all yahoo-finance JSON files (not just TW)
+        if (fileName.endsWith('.json') && fileName.includes('yahoo-finance')) {
           try {
             const fileData = await fs.readJson(filePath);
             const results = fileData.results || [];
             
             for (const result of results) {
               if (result.data) {
-                // Extract different data types from Taiwan crawler output
+                // Extract different data types from crawler output
                 const data = result.data;
                 
-                // Extract all UnifiedFinancialData arrays
+                // Extract all UnifiedFinancialData arrays (support different regions)
                 const dataArrays = [
                   data.revenueData || [],
                   data.simpleEPSData || [],
                   data.dividendData || [],
                   data.incomeStatementData || [],
                   data.independentCashFlowData || [],
-                  data.balanceSheetData || []
+                  data.balanceSheetData || [],
+                  // US/JP data arrays
+                  data.financialData || [],
+                  data.cashflowData || [],
+                  data.performanceData || []
                 ];
                 
                 for (const dataArray of dataArrays) {
@@ -370,7 +375,7 @@ export class PipelineOrchestrator {
               }
             }
           } catch (error) {
-            console.warn(`  ⚠️ Failed to process file ${file}: ${(error as Error).message}`);
+            console.warn(`  ⚠️ Failed to process file ${path.relative(this.config.outputDir, filePath)}: ${(error as Error).message}`);
           }
         }
       }
@@ -385,34 +390,72 @@ export class PipelineOrchestrator {
 
 
   /**
-   * Get all config files to process
+   * Get all config files to process (supports both flat and categorized structures)
    */
   private async getConfigFiles(): Promise<string[]> {
     const files: string[] = [];
     
     for (const region of this.config.regions) {
       const pattern = new RegExp(`^yahoo-finance-${region}-.*\\.json$`);
-      const configFiles = await fs.readdir(this.config.configDir);
       
-      for (const file of configFiles) {
-        if (pattern.test(file)) {
+      // Get all JSON files recursively from config directory
+      const configFiles = await this.getJsonFilesRecursively(this.config.configDir);
+      
+      for (const filePath of configFiles) {
+        const fileName = path.basename(filePath);
+        
+        if (pattern.test(fileName)) {
           // Apply symbol filter if specified - 精確匹配
           if (this.config.symbolCodes.length > 0) {
             const hasSymbol = this.config.symbolCodes.some(symbol => {
               const normalizedSymbol = symbol.replace('.', '_');
               // 從檔名中提取符號部分進行精確比較
-              const symbolMatch = file.match(/yahoo-finance-\w+-[\w-]+-([A-Z0-9_]+)\.json/);
+              const symbolMatch = fileName.match(/yahoo-finance-\w+-[\w-]+-([A-Z0-9_]+)\.json/);
               return symbolMatch && symbolMatch[1] === normalizedSymbol;
             });
             if (!hasSymbol) continue;
           }
           
-          files.push(path.join(this.config.configDir, file));
+          files.push(filePath);
         }
       }
     }
 
     return files;
+  }
+
+  /**
+   * Recursively get all JSON files from a directory
+   */
+  private async getJsonFilesRecursively(dir: string): Promise<string[]> {
+    const results: string[] = [];
+    
+    try {
+      if (!(await fs.pathExists(dir))) {
+        return results;
+      }
+      
+      const items = await fs.readdir(dir, { withFileTypes: true });
+      
+      for (const item of items) {
+        const fullPath = path.join(dir, item.name);
+        
+        if (item.isDirectory()) {
+          // Skip certain directories
+          if (item.name === 'active' || item.name === 'templates') {
+            continue;
+          }
+          // Recursively scan subdirectories
+          results.push(...await this.getJsonFilesRecursively(fullPath));
+        } else if (item.isFile() && item.name.endsWith('.json')) {
+          results.push(fullPath);
+        }
+      }
+    } catch (error) {
+      console.warn(`Warning: Failed to scan directory ${dir}: ${(error as Error).message}`);
+    }
+    
+    return results;
   }
 
   /**
@@ -527,10 +570,16 @@ export class PipelineOrchestrator {
    */
   private async importSymbolsFromMappings(): Promise<void> {
     const { readFileSync, existsSync } = await import('fs');
-    const mappingFile = path.join(this.config.dataDir, 'category-symbol-mappings.json');
+    
+    // Try new metadata location first, fallback to data directory
+    let mappingFile = path.join(this.config.outputDir, 'metadata', 'category-symbol-mappings.json');
     
     if (!existsSync(mappingFile)) {
-      throw new Error(`找不到映射檔案: ${mappingFile}`);
+      mappingFile = path.join(this.config.dataDir, 'category-symbol-mappings.json');
+      
+      if (!existsSync(mappingFile)) {
+        throw new Error(`找不到映射檔案，嘗試了:\n  - output/metadata/category-symbol-mappings.json\n  - data/category-symbol-mappings.json`);
+      }
     }
 
     const fileContent = JSON.parse(readFileSync(mappingFile, 'utf-8'));
@@ -593,10 +642,16 @@ export class PipelineOrchestrator {
    */
   private async syncCategoryLabels(): Promise<void> {
     const { readFileSync, existsSync } = await import('fs');
-    const mappingFile = path.join(this.config.dataDir, 'category-symbol-mappings.json');
+    
+    // Try new metadata location first, fallback to data directory
+    let mappingFile = path.join(this.config.outputDir, 'metadata', 'category-symbol-mappings.json');
     
     if (!existsSync(mappingFile)) {
-      throw new Error(`找不到映射檔案: ${mappingFile}`);
+      mappingFile = path.join(this.config.dataDir, 'category-symbol-mappings.json');
+      
+      if (!existsSync(mappingFile)) {
+        throw new Error(`找不到映射檔案，嘗試了:\n  - output/metadata/category-symbol-mappings.json\n  - data/category-symbol-mappings.json`);
+      }
     }
 
     const fileContent = JSON.parse(readFileSync(mappingFile, 'utf-8'));

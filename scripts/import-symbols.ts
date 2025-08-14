@@ -126,10 +126,16 @@ class SymbolImporter {
    * 讀取類別映射資料
    */
   private loadCategoryMappings(): CategoryMappings {
-    const mappingFile = join(__dirname, 'data/category-symbol-mappings.json');
+    // 優先使用新的 metadata 目錄，向後兼容舊的 data 目錄
+    let mappingFile = join(__dirname, '../output/metadata/category-symbol-mappings.json');
     
     if (!existsSync(mappingFile)) {
-      throw new Error(`找不到映射檔案: ${mappingFile}`);
+      // 嘗試舊路徑
+      mappingFile = join(__dirname, 'data/category-symbol-mappings.json');
+      
+      if (!existsSync(mappingFile)) {
+        throw new Error(`找不到映射檔案，嘗試了:\n  - output/metadata/category-symbol-mappings.json\n  - data/category-symbol-mappings.json`);
+      }
     }
 
     const fileContent = JSON.parse(readFileSync(mappingFile, 'utf-8'));

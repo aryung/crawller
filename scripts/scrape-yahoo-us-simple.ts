@@ -1,20 +1,40 @@
-#!/usr/bin/env node
+#!/usr/bin/env tsx
 
-const { chromium } = require('playwright');
-const fs = require('fs');
-const path = require('path');
+import { chromium, Browser, BrowserContext, Page } from 'playwright';
+import * as fs from 'fs';
+import * as path from 'path';
+
+interface SectorStock {
+  symbol: string;
+  sector: string;
+  scraped_at: string;
+}
+
+interface SectorMetadata {
+  scraped_date: string;
+  total_pages: number;
+  total_records: number;
+  unique_stocks: number;
+  duplicates_removed: number;
+  sectors_distribution: Record<string, number>;
+}
+
+interface SectorOutput {
+  metadata: SectorMetadata;
+  data: SectorStock[];
+}
 
 const OUTPUT_DIR = path.join(__dirname, '../output/yahoo-us-sectors');
 const ITEMS_PER_PAGE = 100;
 const BASE_URL = 'https://finance.yahoo.com/research-hub/screener/sec-ind_sec-largest-equities_technology';
 
-async function ensureDir(dir) {
+async function ensureDir(dir: string): Promise<void> {
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir, { recursive: true });
   }
 }
 
-async function scrapePage(page, pageNum) {
+async function scrapePage(page: Page, pageNum: number): Promise<SectorStock[]> {
   const start = (pageNum - 1) * ITEMS_PER_PAGE;
   const url = `${BASE_URL}/?start=${start}&count=${ITEMS_PER_PAGE}`;
   
@@ -36,7 +56,7 @@ async function scrapePage(page, pageNum) {
   
   // Extract data
   const stocks = await page.evaluate(() => {
-    const results = [];
+    const results: { symbol: string; sector: string; scraped_at: string }[] = [];
     const rows = document.querySelectorAll('tbody tr');
     
     for (let i = 0; i < rows.length; i++) {
@@ -52,7 +72,7 @@ async function scrapePage(page, pageNum) {
         const href = symbolLink.getAttribute('href') || '';
         const match = href.match(/\/quote\/([^\/\?]+)/);
         const symbol = match ? match[1].toUpperCase() : '';
-        const sector = sectorCell ? sectorCell.textContent.trim() : 'Unknown';
+        const sector = sectorCell ? sectorCell.textContent?.trim() || 'Unknown' : 'Unknown';
         
         if (symbol) {
           results.push({
@@ -71,25 +91,48 @@ async function scrapePage(page, pageNum) {
   return stocks;
 }
 
-async function main() {
+async function main(): Promise<void> {
   const args = process.argv.slice(2);
-  const maxPages = args[0] ? parseInt(args[0]) : 10;
   
-  console.log('🚀 Yahoo US Stock Sectors Scraper (Simple Version)');
-  console.log('=' .repeat(60));
+  // Check for help flag
+  if (args.includes('--help') || args.includes('-h')) {
+    console.log(`
+Yahoo US Stock Sectors Scraper (Simple Version - Technology Only)
+
+使用方式:
+  tsx scripts/scrape-yahoo-us-simple.ts [pages]
+
+參數:
+  pages             要爬取的頁數 (預設: 10)
+
+選項:
+  --help, -h        顯示此說明
+
+範例:
+  tsx scripts/scrape-yahoo-us-simple.ts 5
+  tsx scripts/scrape-yahoo-us-simple.ts --help
+    `);
+    process.exit(0);
+  }
+  
+  const maxPages = args[0] && !args[0].startsWith('--') ? parseInt(args[0]) : 10;
+  
+  console.log('🚀 Yahoo US Stock Sectors Scraper (Simple Version - Technology Only)');
+  console.log('=' .repeat(70));
   console.log(`Target: ${maxPages} pages (${maxPages * 100} stocks)`);
+  console.log('Sector: Technology');
   console.log('');
   
   await ensureDir(OUTPUT_DIR);
   
-  const browser = await chromium.launch({ headless: true });
-  const context = await browser.newContext({
-    userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+  const browser: Browser = await chromium.launch({ headless: true });
+  const context: BrowserContext = await browser.newContext({
+    userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
   });
-  const page = await context.newPage();
+  const page: Page = await context.newPage();
   
-  const allStocks = [];
-  const sectorCount = {};
+  const allStocks: SectorStock[] = [];
+  const sectorCount: Record<string, number> = {};
   
   try {
     for (let pageNum = 1; pageNum <= maxPages; pageNum++) {
@@ -110,8 +153,8 @@ async function main() {
     }
     
     // Remove duplicates
-    const uniqueStocks = [];
-    const seenSymbols = new Set();
+    const uniqueStocks: SectorStock[] = [];
+    const seenSymbols = new Set<string>();
     
     for (const stock of allStocks) {
       if (!seenSymbols.has(stock.symbol)) {
@@ -122,10 +165,10 @@ async function main() {
     
     // Save results
     const timestamp = new Date().toISOString().slice(0, 10).replace(/-/g, '');
-    const filename = `yahoo-us-sectors-${timestamp}.json`;
+    const filename = `yahoo-us-technology-simple-${timestamp}.json`;
     const filepath = path.join(OUTPUT_DIR, filename);
     
-    const output = {
+    const output: SectorOutput = {
       metadata: {
         scraped_date: new Date().toISOString(),
         total_pages: maxPages,
@@ -139,9 +182,9 @@ async function main() {
     
     fs.writeFileSync(filepath, JSON.stringify(output, null, 2));
     
-    console.log('\n' + '='.repeat(60));
+    console.log('\n' + '='.repeat(70));
     console.log('✅ Scraping Complete!');
-    console.log('='.repeat(60));
+    console.log('='.repeat(70));
     console.log(`📊 Statistics:`);
     console.log(`   • Total pages: ${maxPages}`);
     console.log(`   • Total records: ${allStocks.length}`);
@@ -157,11 +200,25 @@ async function main() {
     
     console.log(`\n💾 Output saved to: ${filepath}`);
     
-  } catch (error) {
-    console.error('❌ Error:', error);
+  } catch (error: any) {
+    console.error('❌ Error:', error.message);
+    throw error;
   } finally {
     await browser.close();
   }
 }
 
-main().catch(console.error);
+// Execute if script is run directly
+if (require.main === module) {
+  main()
+    .then(() => {
+      console.log('🏆 Scraping task completed!');
+      process.exit(0);
+    })
+    .catch((error) => {
+      console.error('💥 Scraping task failed:', error);
+      process.exit(1);
+    });
+}
+
+export { main as scrapeYahooUSSimple };

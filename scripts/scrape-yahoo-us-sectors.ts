@@ -1,11 +1,38 @@
-#!/usr/bin/env node
+#!/usr/bin/env tsx
 
-const { chromium } = require('playwright');
-const fs = require('fs');
-const path = require('path');
+import { chromium, Browser, BrowserContext, Page } from 'playwright';
+import * as fs from 'fs';
+import * as path from 'path';
+
+interface SectorStock {
+  symbol: string;
+  sector: string;
+  scraped_at: string;
+}
+
+interface SectorMetadata {
+  sector_filter: string;
+  scraped_date: string;
+  total_pages_scraped: number;
+  total_records: number;
+  unique_stocks: number;
+  duplicates_removed: number;
+  detected_total_results?: number | null;
+  sectors_distribution: Record<string, number>;
+}
+
+interface SectorOutput {
+  metadata: SectorMetadata;
+  data: SectorStock[];
+}
+
+interface DetectionResult {
+  totalResults: number | null;
+  totalPages: number | null;
+}
 
 // Sector 對應表
-const SECTORS = {
+const SECTORS: Record<string, string> = {
   'technology': 'sec-ind_sec-largest-equities_technology',
   'financial': 'sec-ind_sec-largest-equities_financial-services',
   'healthcare': 'sec-ind_sec-largest-equities_healthcare',
@@ -21,13 +48,13 @@ const SECTORS = {
 
 const OUTPUT_DIR = path.join(__dirname, '../output/yahoo-us-sectors');
 
-async function ensureDir(dir) {
+async function ensureDir(dir: string): Promise<void> {
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir, { recursive: true });
   }
 }
 
-async function detectTotalResults(page, url) {
+async function detectTotalResults(page: Page, url: string): Promise<DetectionResult> {
   console.log('🔍 偵測總筆數...');
   
   // 訪問第一頁
@@ -61,7 +88,7 @@ async function detectTotalResults(page, url) {
     // 方法2: 尋找分頁元素
     const paginationElements = document.querySelectorAll('[data-testid*="pagination"], .pagination, [class*="pagination"]');
     for (const elem of paginationElements) {
-      const text = elem.innerText;
+      const text = elem.textContent || '';
       const match = text.match(/(\d+(?:,\d+)*)/);
       if (match) {
         const num = parseInt(match[1].replace(/,/g, ''));
@@ -91,7 +118,7 @@ async function detectTotalResults(page, url) {
   }
 }
 
-async function scrapePage(page, url, pageNum) {
+async function scrapePage(page: Page, url: string, pageNum: number): Promise<SectorStock[]> {
   // 構建 URL（如果有頁碼）
   const pageUrl = pageNum > 1 
     ? `${url}?start=${(pageNum - 1) * 100}&count=100`
@@ -114,7 +141,7 @@ async function scrapePage(page, url, pageNum) {
   
   // 提取資料
   const stocks = await page.evaluate(() => {
-    const results = [];
+    const results: { symbol: string; sector: string; scraped_at: string }[] = [];
     const rows = document.querySelectorAll('tbody tr');
     
     for (let i = 0; i < rows.length; i++) {
@@ -130,7 +157,7 @@ async function scrapePage(page, url, pageNum) {
         const href = symbolLink.getAttribute('href') || '';
         const match = href.match(/\/quote\/([^\/\?]+)/);
         const symbol = match ? match[1].toUpperCase() : '';
-        const sector = sectorCell ? sectorCell.textContent.trim() : 'Unknown';
+        const sector = sectorCell ? sectorCell.textContent?.trim() || 'Unknown' : 'Unknown';
         
         // 驗證 symbol
         if (symbol && symbol.length <= 5 && /^[A-Z][A-Z0-9.\-]*$/.test(symbol)) {
@@ -150,20 +177,20 @@ async function scrapePage(page, url, pageNum) {
   return stocks;
 }
 
-async function scrapeSector(sectorName, sectorPath, maxPages = null) {
+async function scrapeSector(sectorName: string, sectorPath: string, maxPages: number | null = null): Promise<number> {
   console.log('\n' + '='.repeat(60));
   console.log(`🏢 開始爬取 ${sectorName.toUpperCase()} Sector`);
   console.log('='.repeat(60));
   
-  const browser = await chromium.launch({ headless: true });
-  const context = await browser.newContext({
-    userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+  const browser: Browser = await chromium.launch({ headless: true });
+  const context: BrowserContext = await browser.newContext({
+    userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
   });
-  const page = await context.newPage();
+  const page: Page = await context.newPage();
   
   const baseUrl = `https://finance.yahoo.com/research-hub/screener/${sectorPath}`;
-  const allStocks = [];
-  const sectorCount = {};
+  const allStocks: SectorStock[] = [];
+  const sectorCount: Record<string, number> = {};
   
   try {
     // 偵測總筆數
@@ -212,8 +239,8 @@ async function scrapeSector(sectorName, sectorPath, maxPages = null) {
     }
     
     // 去重處理
-    const uniqueStocks = [];
-    const seenSymbols = new Set();
+    const uniqueStocks: SectorStock[] = [];
+    const seenSymbols = new Set<string>();
     
     for (const stock of allStocks) {
       if (!seenSymbols.has(stock.symbol)) {
@@ -228,7 +255,7 @@ async function scrapeSector(sectorName, sectorPath, maxPages = null) {
       const filename = `yahoo-us-${sectorName}-${timestamp}.json`;
       const filepath = path.join(OUTPUT_DIR, filename);
       
-      const output = {
+      const output: SectorOutput = {
         metadata: {
           sector_filter: sectorName,
           scraped_date: new Date().toISOString(),
@@ -274,8 +301,9 @@ async function scrapeSector(sectorName, sectorPath, maxPages = null) {
       console.log('⚠️ 沒有爬取到任何資料');
     }
     
-  } catch (error) {
-    console.error('❌ 錯誤:', error);
+  } catch (error: any) {
+    console.error('❌ 錯誤:', error.message);
+    throw error;
   } finally {
     await browser.close();
   }
@@ -283,11 +311,11 @@ async function scrapeSector(sectorName, sectorPath, maxPages = null) {
   return allStocks.length;
 }
 
-async function main() {
+async function main(): Promise<void> {
   // 解析命令列參數
   const args = process.argv.slice(2);
   let sectorName = 'technology';
-  let maxPages = null;
+  let maxPages: number | null = null;
   let scrapeAll = false;
   
   for (let i = 0; i < args.length; i++) {
@@ -304,7 +332,7 @@ async function main() {
 Yahoo Finance US Sectors 智能爬蟲
 
 使用方式:
-  node scrape-yahoo-us-sectors.js [選項]
+  tsx scripts/scrape-yahoo-us-sectors.ts [選項]
 
 選項:
   --sector <name>   指定 sector (預設: technology)
@@ -316,9 +344,9 @@ Yahoo Finance US Sectors 智能爬蟲
   ${Object.keys(SECTORS).join(', ')}
 
 範例:
-  node scrape-yahoo-us-sectors.js --sector healthcare
-  node scrape-yahoo-us-sectors.js --sector technology --limit 10
-  node scrape-yahoo-us-sectors.js --all
+  tsx scripts/scrape-yahoo-us-sectors.ts --sector healthcare
+  tsx scripts/scrape-yahoo-us-sectors.ts --sector technology --limit 10
+  tsx scripts/scrape-yahoo-us-sectors.ts --all
       `);
       process.exit(0);
     }
@@ -364,4 +392,17 @@ Yahoo Finance US Sectors 智能爬蟲
   }
 }
 
-main().catch(console.error);
+// Execute if script is run directly
+if (require.main === module) {
+  main()
+    .then(() => {
+      console.log('🏆 Scraping task completed!');
+      process.exit(0);
+    })
+    .catch((error) => {
+      console.error('💥 Scraping task failed:', error);
+      process.exit(1);
+    });
+}
+
+export { main as scrapeYahooUSSectors, scrapeSector };
