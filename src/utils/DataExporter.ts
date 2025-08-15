@@ -193,18 +193,31 @@ export class DataExporter {
    * 解析配置名稱並生成分類路徑
    */
   private getCategorizedPath(configName: string, filename: string): string {
+    console.log(`[DataExporter] 🔍 處理配置名稱: "${configName}", 檔案名: "${filename}"`);
+    
     if (!configName) {
+      console.log(`[DataExporter] ⚠️ 配置名稱為空，返回檔案名: "${filename}"`);
       return filename; // 無配置名稱時，直接返回檔案名
     }
 
+    // 提取實際的配置檔案名稱（去除路徑前綴）
+    // 處理格式如: quarterly/jp/financials/yahoo-finance-jp-financials-9993_T
+    const actualConfigName = configName.includes('/') 
+      ? configName.split('/').pop() || configName 
+      : configName;
+
+    console.log(`[DataExporter] 📋 提取的實際配置名稱: "${actualConfigName}"`);
+
     // 解析配置名稱格式: yahoo-finance-{market}-{type}-{symbol} 或 yahoo-finance-{market}-{detailed-type}-{symbol}
     // 支援格式如: yahoo-finance-tw-balance-sheet-2330_TW, yahoo-finance-tw-eps-2330_TW
-    const match = configName.match(/^yahoo-finance-([a-z]+)-(.+?)-.+/);
+    const match = actualConfigName.match(/^yahoo-finance-([a-z]+)-(.+?)-.+/);
     if (!match) {
+      console.log(`[DataExporter] ❌ 無法解析配置名稱，返回檔案名: "${filename}"`);
       return filename; // 無法解析時，直接返回檔案名
     }
 
     const [, market, typeSegment] = match;
+    console.log(`[DataExporter] ✅ 解析結果 - 市場: "${market}", 類型: "${typeSegment}"`);
     
     // 處理複合類型名稱 (如 balance-sheet, cash-flow-statement)
     const type = typeSegment;
@@ -222,11 +235,12 @@ export class DataExporter {
     }
 
     // 構建分類路徑: category/market/type/filename
-    if (category === 'metadata') {
-      return path.join(category, type, filename);
-    } else {
-      return path.join(category, market, type, filename);
-    }
+    const finalPath = category === 'metadata' 
+      ? path.join(category, type, filename)
+      : path.join(category, market, type, filename);
+    
+    console.log(`[DataExporter] 🎯 最終路徑: "${finalPath}"`);
+    return finalPath;
   }
 
   private generateFilename(options: ExportOptions): string {
@@ -235,8 +249,20 @@ export class DataExporter {
         ? options.filename.replace(`.${options.format}`, '')
         : options.filename;
 
-      // Add config name prefix if available
-      const finalFilename = options.configName
+      // Add config name prefix if available and not already present
+      // 檢查檔案名是否已經包含配置名稱，避免重複添加
+      const configName = options.configName || '';
+      // 更精確的檢測：將連字符和下劃線標準化後比較
+      const normalizedConfigName = configName.replace(/[-_]/g, '_');
+      const normalizedFilename = baseFilename.replace(/[-_]/g, '_');
+      const alreadyHasConfigName = configName && (
+        normalizedFilename.includes(normalizedConfigName) ||
+        normalizedFilename === normalizedConfigName ||
+        // 特殊處理：檔案名本身已經是完整的配置名
+        baseFilename.startsWith('yahoo_finance_') || baseFilename.startsWith('yahoo-finance-')
+      );
+      
+      const finalFilename = options.configName && !alreadyHasConfigName
         ? `${options.configName}_${baseFilename}`
         : baseFilename;
 

@@ -144,7 +144,7 @@ templateFiles.forEach(templateFile => {
   
   // 為每個股票代碼生成配置
   stockCodes.forEach(stock => {
-    const config: ConfigTemplate = { ...template };
+    const config: ConfigTemplate = JSON.parse(JSON.stringify(template));
     
     // 更新 URL 中的變數
     config.url = config.url.replace('${symbolCode}', stock.stockCode);

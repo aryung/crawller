@@ -73,7 +73,7 @@ export class BatchCrawlerManager {
     errorLogPath?: string;
   } = {}) {
     this.crawler = new UniversalCrawler({
-      configPath: options.configPath || 'config',
+      configPath: options.configPath || 'config-categorized',
       outputDir: options.outputDir || 'output'
     });
 
@@ -346,6 +346,11 @@ export class BatchCrawlerManager {
       if (configName.startsWith('templates/')) {
         return false;
       }
+      
+      // 排除測試配置（active 目錄下的配置）
+      if (configName.startsWith('active/')) {
+        return false;
+      }
       // 按類別篩選
       if (options.category) {
         switch (options.category) {
@@ -439,6 +444,46 @@ export class BatchCrawlerManager {
       if (result.success) {
         this.progressTracker?.updateProgress(task.configName, TaskStatus.COMPLETED);
         logger.debug(`完成: ${task.configName}`);
+        
+        // 自動導出成功的結果
+        try {
+          logger.debug(`🔍 開始自動導出: ${task.configName}`);
+          // 從配置加載 export 配置 - 需要構造正確的配置路徑
+          // task.configName 格式: quarterly/jp/financials/yahoo-finance-jp-financials-9993_T
+          // configManager 期望的是相對於 configPath 的路徑
+          const configPath = task.configName; // 保持完整路徑
+          logger.debug(`📂 使用配置路徑: ${configPath}`);
+          
+          // 直接讀取配置文件，不依賴 configManager 的路徑拼接
+          // BatchCrawlerManager 的 configPath 已經是 "config-categorized"
+          // task.configName 是 "quarterly/jp/financials/yahoo-finance-jp-financials-9993_T"
+          const fullConfigPath = path.join(this.crawler.configManager['configPath'] || 'config-categorized', `${configPath}.json`);
+          logger.debug(`📂 完整配置文件路徑: ${fullConfigPath}`);
+          
+          const configData = await fs.readJson(fullConfigPath);
+          logger.debug(`📋 配置數據加載成功，檢查 export 設定...`);
+          
+          if (configData.export && configData.export.formats) {
+            logger.debug(`🎯 找到 export 配置:`, configData.export);
+            const format = configData.export.formats[0] || 'json';
+            // 提取配置檔案的基本名稱，用於 DataExporter 的路徑解析
+            const configBaseName = task.configName.split('/').pop() || task.configName;
+            
+            const exportOptions = {
+              format: format as 'json' | 'csv' | 'xlsx',
+              filename: configData.export.filename || `${configBaseName}_${new Date().toISOString().split('T')[0]}`,
+              configName: configBaseName // 用於路徑解析，DataExporter 會智能處理重複前綴
+            };
+            
+            logger.debug(`📤 開始導出，選項:`, exportOptions);
+            const exportPath = await this.crawler.export([result], exportOptions);
+            logger.info(`✅ 已導出結果到: ${exportPath}`);
+          } else {
+            logger.warn(`⚠️ 配置中沒有找到 export 設定: ${task.configName}`);
+          }
+        } catch (exportError) {
+          logger.warn(`⚠️ 導出失敗: ${task.configName}`, exportError);
+        }
       } else {
         // 處理錯誤
         const error = new Error(result.error || '未知錯誤');

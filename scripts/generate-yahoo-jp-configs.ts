@@ -144,7 +144,7 @@ templateFiles.forEach(templateFile => {
   
   // 為每個股票代碼生成配置
   stockCodes.forEach(stock => {
-    const config: ConfigTemplate = { ...template };
+    const config: ConfigTemplate = JSON.parse(JSON.stringify(template));
     
     // 如果是 history 類型，需要特殊處理日期參數
     if (templateType === 'history') {

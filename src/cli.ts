@@ -863,9 +863,10 @@ async function runBatchCrawler(options: CLIOptions): Promise<void> {
       process.env.LOG_LEVEL = 'debug';
     }
 
-    // 創建批量管理器
+    // 創建批量管理器 - 支援分類配置目錄
+    const defaultConfigPath = options.config || 'config-categorized';
     const batchManager = new BatchCrawlerManager({
-      configPath: options.config || 'config',
+      configPath: defaultConfigPath,
       outputDir: options.output || 'output',
       maxConcurrency: parseInt(options.concurrent?.toString() || '3'),
       delayMs: parseInt(options.delayMs?.toString() || '5000')
@@ -930,7 +931,7 @@ async function runBatchCrawler(options: CLIOptions): Promise<void> {
       delayMs: parseInt(options.delayMs?.toString() || '5000'),
       retryAttempts: parseInt(options.retryAttempts?.toString() || '3'),
       outputDir: options.output || 'output',
-      configPath: options.config || 'config',
+      configPath: defaultConfigPath,
       progressDir: '.progress'
     };
 
