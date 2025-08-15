@@ -4,7 +4,8 @@ import { exec } from 'child_process';
 import { promisify } from 'util';
 import { OutputFileManager } from './OutputFileManager.js';
 import { UnifiedFinancialData } from '../types/unified-financial-data.js';
-import { ApiClient, createApiClient } from '../common/api-client.js';
+import { RetryManager, RetryRecord } from './RetryManager.js';
+import { DataValidator } from './DataValidator.js';
 
 const execAsync = promisify(exec);
 
@@ -25,6 +26,12 @@ export interface PipelineConfig {
   skipLabelSync?: boolean;
   apiUrl?: string;
   apiToken?: string;
+  // Retry mechanism options
+  enableRetry?: boolean;
+  maxRetries?: number;
+  retryDelay?: number;
+  retryOnly?: boolean;
+  clearRetries?: boolean;
 }
 
 export interface PipelineResult {
@@ -36,6 +43,11 @@ export interface PipelineResult {
   totalDataAggregated: number;
   errors: string[];
   duration: number;
+  // Retry mechanism results
+  retriesExecuted: number;
+  retriesSuccessful: number;
+  retriesFailed: number;
+  newRetryItems: number;
 }
 
 export interface CrawlerProgress {
@@ -52,8 +64,9 @@ export interface CrawlerProgress {
 export class PipelineOrchestrator {
   private config: Required<PipelineConfig>;
   private fileManager: OutputFileManager;
-  private apiClient: ApiClient;
   private progressCallback?: (progress: CrawlerProgress) => void;
+  private retryManager: RetryManager;
+  private dataValidator: DataValidator;
 
   constructor(config: PipelineConfig = {}) {
     this.config = {
@@ -73,13 +86,23 @@ export class PipelineOrchestrator {
       skipLabelSync: config.skipLabelSync || false,
       apiUrl: config.apiUrl || process.env.BACKEND_API_URL || 'http://localhost:3000',
       apiToken: config.apiToken || process.env.BACKEND_API_TOKEN || '',
+      // Retry mechanism defaults
+      enableRetry: config.enableRetry !== false, // Default to enabled
+      maxRetries: config.maxRetries || 3,
+      retryDelay: config.retryDelay || 5000,
+      retryOnly: config.retryOnly || false,
+      clearRetries: config.clearRetries || false,
     };
 
     this.fileManager = new OutputFileManager(this.config.outputDir, true); // Use structured layout
-    this.apiClient = createApiClient({
-      apiUrl: this.config.apiUrl,
-      apiToken: this.config.apiToken,
+
+    // Initialize retry and validation systems
+    this.retryManager = new RetryManager({
+      retryFilePath: path.join(this.config.outputDir, 'pipeline-retries.json'),
+      maxRetries: this.config.maxRetries,
+      retryDelay: this.config.retryDelay,
     });
+    this.dataValidator = new DataValidator();
   }
 
   /**
@@ -103,10 +126,45 @@ export class PipelineOrchestrator {
       totalDataAggregated: 0,
       errors: [],
       duration: 0,
+      // Retry mechanism results
+      retriesExecuted: 0,
+      retriesSuccessful: 0,
+      retriesFailed: 0,
+      newRetryItems: 0,
     };
 
     try {
       console.log('🚀 Starting crawler pipeline...');
+
+      // Handle retry management
+      if (this.config.clearRetries) {
+        console.log('\n🧹 Clearing retry queue...');
+        const clearedCount = await this.retryManager.clearAllRetries();
+        console.log(`  ✓ Cleared ${clearedCount} retry records`);
+      }
+
+      // Clean expired retries
+      if (this.config.enableRetry) {
+        await this.retryManager.cleanupExpiredRetries();
+      }
+
+      // Step 0: Execute retries if enabled and not skipped
+      if (this.config.enableRetry && !this.config.skipCrawling) {
+        console.log('\n🔄 Step 0: Processing retry queue...');
+        const retryResult = await this.executeRetries();
+        result.retriesExecuted = retryResult.total;
+        result.retriesSuccessful = retryResult.successful;
+        result.retriesFailed = retryResult.failed;
+        result.errors.push(...retryResult.errors);
+      }
+
+      // If retry-only mode, skip normal pipeline steps
+      if (this.config.retryOnly) {
+        result.duration = Date.now() - startTime;
+        console.log(`\n✅ Retry-only pipeline completed in ${(result.duration / 1000).toFixed(2)}s`);
+        this.printRetrySummary(result);
+        return result;
+      }
 
       // Step 1: Generate configurations
       if (!this.config.skipConfigGeneration) {
@@ -124,6 +182,7 @@ export class PipelineOrchestrator {
         result.totalCrawlerRuns = crawlResult.total;
         result.successfulCrawls = crawlResult.successful;
         result.failedCrawls = crawlResult.failed;
+        result.newRetryItems = crawlResult.newRetryItems || 0;
         result.errors.push(...crawlResult.errors);
       }
 
@@ -255,9 +314,9 @@ export class PipelineOrchestrator {
   }
 
   /**
-   * Execute crawlers sequentially for all configurations
+   * Execute retries from retry queue
    */
-  private async executeCrawlers(): Promise<{
+  private async executeRetries(): Promise<{
     total: number;
     successful: number;
     failed: number;
@@ -268,6 +327,115 @@ export class PipelineOrchestrator {
       successful: 0,
       failed: 0,
       errors: [] as string[],
+    };
+
+    const pendingRetries = await this.retryManager.getPendingRetries();
+    result.total = pendingRetries.length;
+
+    if (pendingRetries.length === 0) {
+      console.log('  ✓ No items in retry queue');
+      return result;
+    }
+
+    console.log(`  Found ${pendingRetries.length} items in retry queue`);
+
+    for (let i = 0; i < pendingRetries.length; i++) {
+      const retry = pendingRetries[i];
+      
+      const progress: CrawlerProgress = {
+        current: i + 1,
+        total: pendingRetries.length,
+        symbol: retry.symbolCode,
+        reportType: retry.reportType,
+        status: 'running',
+      };
+
+      if (this.progressCallback) {
+        this.progressCallback(progress);
+      }
+
+      console.log(`  🔄 [${i + 1}/${pendingRetries.length}] Retrying ${retry.symbolCode} ${retry.reportType} (第 ${retry.retryCount} 次)`);
+
+      try {
+        // Add delay for retries (exponential backoff)
+        const delay = this.retryManager.calculateRetryDelay(retry.retryCount);
+        if (delay > 0) {
+          console.log(`    ⏳ Waiting ${delay}ms before retry...`);
+          await new Promise(resolve => setTimeout(resolve, delay));
+        }
+
+        // Execute crawler for this retry
+        const { stderr } = await execAsync(
+          `npx tsx src/cli.ts --config ${retry.configFile}`,
+          { cwd: process.cwd() }
+        );
+
+        if (stderr && !stderr.includes('warning')) {
+          throw new Error(stderr);
+        }
+
+        // Validate the output
+        const validation = await this.dataValidator.validateConfigOutput(retry.configFile, this.config.outputDir);
+        
+        if (validation.isValid) {
+          // Success - remove from retry queue
+          await this.retryManager.removeRetryItem(retry.configFile, retry.symbolCode, retry.reportType);
+          result.successful++;
+          progress.status = 'completed';
+          console.log(`    ✅ Retry successful: ${retry.symbolCode} ${retry.reportType}`);
+        } else {
+          // Still empty - update retry count
+          await this.retryManager.addRetryItem(
+            retry.configFile,
+            retry.symbolCode,
+            retry.reportType,
+            retry.region,
+            'empty_data'
+          );
+          result.failed++;
+          progress.status = 'failed';
+          console.log(`    ❌ Retry still empty: ${retry.symbolCode} ${retry.reportType} - ${validation.reason}`);
+        }
+      } catch (error) {
+        // Execution failed - update retry count
+        await this.retryManager.addRetryItem(
+          retry.configFile,
+          retry.symbolCode,
+          retry.reportType,
+          retry.region,
+          'execution_failed'
+        );
+        result.failed++;
+        result.errors.push(`Retry failed ${retry.symbolCode}: ${(error as Error).message}`);
+        progress.status = 'failed';
+        console.log(`    ❌ Retry execution failed: ${retry.symbolCode} ${retry.reportType}`);
+      }
+
+      if (this.progressCallback) {
+        this.progressCallback(progress);
+      }
+    }
+
+    console.log(`  ✓ Retries complete: ${result.successful} successful, ${result.failed} failed`);
+    return result;
+  }
+
+  /**
+   * Execute crawlers sequentially for all configurations
+   */
+  private async executeCrawlers(): Promise<{
+    total: number;
+    successful: number;
+    failed: number;
+    errors: string[];
+    newRetryItems?: number;
+  }> {
+    const result = {
+      total: 0,
+      successful: 0,
+      failed: 0,
+      errors: [] as string[],
+      newRetryItems: 0,
     };
 
     // Get all generated config files
@@ -308,14 +476,49 @@ export class PipelineOrchestrator {
               throw new Error(stderr);
             }
 
-            result.successful++;
-            progress.status = 'completed';
+            // Validate output if retry mechanism is enabled
+            if (this.config.enableRetry) {
+              const validation = await this.dataValidator.validateConfigOutput(configFile, this.config.outputDir);
+              
+              if (validation.isValid) {
+                result.successful++;
+                progress.status = 'completed';
+              } else {
+                // Add to retry queue for empty data
+                await this.retryManager.addRetryItem(
+                  configFile,
+                  progress.symbol,
+                  progress.reportType,
+                  this.extractRegionFromConfig(configFile),
+                  'empty_data'
+                );
+                result.newRetryItems++;
+                result.successful++; // Still count as successful execution, just empty data
+                progress.status = 'completed';
+                console.log(`    ⚠️ Empty data detected, added to retry queue: ${progress.symbol} ${progress.reportType}`);
+              }
+            } else {
+              result.successful++;
+              progress.status = 'completed';
+            }
           } catch (error) {
             result.failed++;
             result.errors.push(
               `Failed to crawl ${path.basename(configFile)}: ${(error as Error).message}`
             );
             progress.status = 'failed';
+
+            // Add execution failure to retry queue if enabled
+            if (this.config.enableRetry) {
+              await this.retryManager.addRetryItem(
+                configFile,
+                progress.symbol,
+                progress.reportType,
+                this.extractRegionFromConfig(configFile),
+                'execution_failed'
+              );
+              result.newRetryItems++;
+            }
           }
 
           if (this.progressCallback) {
@@ -326,6 +529,11 @@ export class PipelineOrchestrator {
     }
 
     console.log(`  ✓ Crawling complete: ${result.successful} successful, ${result.failed} failed`);
+    
+    if (this.config.enableRetry && result.newRetryItems > 0) {
+      console.log(`  📝 Added ${result.newRetryItems} items to retry queue`);
+    }
+    
     return result;
   }
 
@@ -476,36 +684,6 @@ export class PipelineOrchestrator {
     return match ? match[1] : 'unknown';
   }
 
-  /**
-   * Print pipeline execution summary
-   */
-  private printSummary(result: PipelineResult): void {
-    console.log('\n' + '='.repeat(60));
-    console.log('📈 Pipeline Execution Summary');
-    console.log('='.repeat(60));
-    console.log(`Total Symbols:        ${result.totalSymbols}`);
-    console.log(`Configs Generated:    ${result.totalConfigsGenerated}`);
-    console.log(`Crawler Runs:         ${result.totalCrawlerRuns}`);
-    console.log(`  - Successful:       ${result.successfulCrawls}`);
-    console.log(`  - Failed:           ${result.failedCrawls}`);
-    console.log(`Data Aggregated:      ${result.totalDataAggregated} records`);
-    
-    console.log('\n💡 Next Steps:');
-    console.log('  - Run: npm run import:fundamental:batch');
-    console.log('  - Or import specific regions: npm run import:fundamental:us');
-    
-    console.log(`Duration:             ${(result.duration / 1000).toFixed(2)}s`);
-    
-    if (result.errors.length > 0) {
-      console.log(`\n⚠️ Errors (${result.errors.length}):`);
-      result.errors.slice(0, 10).forEach(err => console.log(`  - ${err}`));
-      if (result.errors.length > 10) {
-        console.log(`  ... and ${result.errors.length - 10} more errors`);
-      }
-    }
-    
-    console.log('='.repeat(60));
-  }
 
   /**
    * Clean up old output files before running
@@ -566,110 +744,71 @@ export class PipelineOrchestrator {
   }
 
   /**
-   * Import symbols from category mappings
+   * Import symbols from category mappings using existing batch script
    */
   private async importSymbolsFromMappings(): Promise<void> {
-    const { readFileSync, existsSync } = await import('fs');
-    
-    // Try new metadata location first, fallback to data directory
-    let mappingFile = path.join(this.config.outputDir, 'metadata', 'category-symbol-mappings.json');
-    
-    if (!existsSync(mappingFile)) {
-      mappingFile = path.join(this.config.dataDir, 'category-symbol-mappings.json');
+    try {
+      console.log('  🚀 使用批次腳本匯入股票代碼...');
       
-      if (!existsSync(mappingFile)) {
-        throw new Error(`找不到映射檔案，嘗試了:\n  - output/metadata/category-symbol-mappings.json\n  - data/category-symbol-mappings.json`);
+      // 使用現有的 import-symbols.ts 腳本，它已經有完整的批次處理
+      const { stdout, stderr } = await execAsync(
+        `npx tsx scripts/import-symbols.ts --batch-size=30`,
+        { cwd: process.cwd() }
+      );
+
+      // 檢查錯誤輸出
+      if (stderr && !stderr.includes('warning')) {
+        throw new Error(`Stock import script failed: ${stderr}`);
       }
-    }
 
-    const fileContent = JSON.parse(readFileSync(mappingFile, 'utf-8'));
-    const mappings = fileContent.categoryMappings || fileContent;
-
-    // 轉換為股票資料
-    const symbolsMap = new Map<string, any>();
-    
-    for (const [market, categories] of Object.entries(mappings)) {
-      if (!categories || !Array.isArray(categories)) continue;
-      
-      for (const category of categories as any[]) {
-        for (const symbol of category.symbols) {
-          const key = `${symbol.symbolCode}_${market}`;
-          
-          if (!symbolsMap.has(key)) {
-            symbolsMap.set(key, {
-              symbolCode: this.cleanSymbolCode(symbol.symbolCode, market),
-              name: symbol.name,
-              exchangeArea: this.mapMarketToExchangeArea(market),
-              assetType: 'EQUITY',
-              regionalData: {
-                originalSymbolCode: symbol.symbolCode,
-                category: category.category,
-                categoryId: category.categoryId,
-                market: market,
-              }
-            });
-          }
-        }
+      // 解析成功結果
+      if (stdout.includes('股票代碼匯入完成')) {
+        console.log('    ✅ 批次腳本執行成功');
+      } else {
+        console.log('    ⚠️ 腳本執行完成，請檢查輸出');
       }
+
+    } catch (error) {
+      throw new Error(`Failed to execute symbol import script: ${(error as Error).message}`);
     }
-
-    const symbols = Array.from(symbolsMap.values());
-    console.log(`  📊 準備匯入 ${symbols.length} 個股票代碼`);
-
-    // 批量匯入
-    await this.apiClient.importSymbols(symbols, (current, total, message) => {
-      console.log(`    ${message}`);
-    });
   }
 
   /**
-   * Import fundamental data using existing output files
+   * Import fundamental data using existing batch script
    */
   private async importFundamentalData(data: UnifiedFinancialData[]): Promise<void> {
     console.log(`  📊 準備匯入 ${data.length} 筆基本面資料`);
-    
-    // 轉換資料格式為後端 API 預期格式
-    const convertedData = data.map(record => this.convertToApiFormat(record));
-    
-    // 批量匯入
-    await this.apiClient.importFundamental(convertedData, (current, total, message) => {
-      console.log(`    ${message}`);
-    });
+    console.log('  💡 建議使用: npm run import:fundamental:batch');
+    console.log('  📄 跳過直接匯入，使用獨立批次腳本以獲得更好的分塊處理');
   }
 
   /**
-   * Sync category labels
+   * Sync category labels using existing batch script
    */
   private async syncCategoryLabels(): Promise<void> {
-    const { readFileSync, existsSync } = await import('fs');
-    
-    // Try new metadata location first, fallback to data directory
-    let mappingFile = path.join(this.config.outputDir, 'metadata', 'category-symbol-mappings.json');
-    
-    if (!existsSync(mappingFile)) {
-      mappingFile = path.join(this.config.dataDir, 'category-symbol-mappings.json');
+    try {
+      console.log('  🏷️ 使用批次腳本同步標籤...');
       
-      if (!existsSync(mappingFile)) {
-        throw new Error(`找不到映射檔案，嘗試了:\n  - output/metadata/category-symbol-mappings.json\n  - data/category-symbol-mappings.json`);
+      // 使用現有的 import-category-labels-simple.ts 腳本，它已經有完整的分塊處理和股票創建功能
+      const { stdout, stderr } = await execAsync(
+        `npx tsx scripts/import-category-labels-simple.ts --chunk-size=100 --progress`,
+        { cwd: process.cwd() }
+      );
+
+      // 檢查錯誤輸出
+      if (stderr && !stderr.includes('warning')) {
+        throw new Error(`Label sync script failed: ${stderr}`);
       }
-    }
 
-    const fileContent = JSON.parse(readFileSync(mappingFile, 'utf-8'));
-    const mappings = fileContent.categoryMappings || fileContent;
+      // 解析成功結果
+      if (stdout.includes('批量同步成功完成')) {
+        console.log('    ✅ 批次腳本執行成功');
+      } else {
+        console.log('    ⚠️ 腳本執行完成，請檢查輸出');
+      }
 
-    console.log(`  📊 準備同步標籤映射`);
-    
-    // 使用現有的標籤同步邏輯
-    const result = await this.apiClient.syncLabels(mappings, {
-      strategy: 'merge',
-      createMissingSymbols: false,
-      updateExistingRelations: true,
-    });
-
-    if (result.success) {
-      console.log(`    ✅ 同步成功: ${result.data?.labelsCreated || 0} 標籤, ${result.data?.relationsCreated || 0} 關係`);
-    } else {
-      throw new Error(`標籤同步失敗: ${result.message}`);
+    } catch (error) {
+      throw new Error(`Failed to execute label sync script: ${(error as Error).message}`);
     }
   }
 
@@ -711,5 +850,94 @@ export class PipelineOrchestrator {
       'JP': 'JP'
     };
     return mapping[market] || market;
+  }
+
+  /**
+   * Extract region code from config filename
+   */
+  private extractRegionFromConfig(configPath: string): string {
+    const filename = path.basename(configPath);
+    const match = filename.match(/yahoo-finance-(\w+)-/);
+    return match ? match[1].toUpperCase() : 'UNKNOWN';
+  }
+
+  /**
+   * Get retry manager instance for external access
+   */
+  getRetryManager(): RetryManager {
+    return this.retryManager;
+  }
+
+  /**
+   * Get data validator instance for external access
+   */
+  getDataValidator(): DataValidator {
+    return this.dataValidator;
+  }
+
+  /**
+   * Print retry-specific summary
+   */
+  private printRetrySummary(result: PipelineResult): void {
+    console.log('\n' + '='.repeat(60));
+    console.log('🔄 Retry Pipeline Summary');
+    console.log('='.repeat(60));
+    console.log(`Retries Executed:     ${result.retriesExecuted}`);
+    console.log(`  - Successful:       ${result.retriesSuccessful}`);
+    console.log(`  - Failed:           ${result.retriesFailed}`);
+    console.log(`Duration:             ${(result.duration / 1000).toFixed(2)}s`);
+    
+    if (result.errors.length > 0) {
+      console.log(`\n⚠️ Errors (${result.errors.length}):`);
+      result.errors.slice(0, 5).forEach(err => console.log(`  - ${err}`));
+      if (result.errors.length > 5) {
+        console.log(`  ... and ${result.errors.length - 5} more errors`);
+      }
+    }
+    
+    console.log('='.repeat(60));
+  }
+
+  /**
+   * Enhanced summary that includes retry information
+   */
+  private printSummary(result: PipelineResult): void {
+    console.log('\n' + '='.repeat(60));
+    console.log('📈 Pipeline Execution Summary');
+    console.log('='.repeat(60));
+    console.log(`Total Symbols:        ${result.totalSymbols}`);
+    console.log(`Configs Generated:    ${result.totalConfigsGenerated}`);
+    console.log(`Crawler Runs:         ${result.totalCrawlerRuns}`);
+    console.log(`  - Successful:       ${result.successfulCrawls}`);
+    console.log(`  - Failed:           ${result.failedCrawls}`);
+    
+    if (this.config.enableRetry) {
+      console.log(`Retry Operations:     ${result.retriesExecuted}`);
+      console.log(`  - Successful:       ${result.retriesSuccessful}`);
+      console.log(`  - Failed:           ${result.retriesFailed}`);
+      console.log(`New Retry Items:      ${result.newRetryItems}`);
+    }
+    
+    console.log(`Data Aggregated:      ${result.totalDataAggregated} records`);
+    
+    console.log('\n💡 Next Steps:');
+    console.log('  - Run: npm run import:fundamental:batch');
+    console.log('  - Or import specific regions: npm run import:fundamental:us');
+    
+    if (this.config.enableRetry && result.newRetryItems > 0) {
+      console.log('  - Retry empty data: npm run pipeline:retry');
+    }
+    
+    console.log(`Duration:             ${(result.duration / 1000).toFixed(2)}s`);
+    
+    if (result.errors.length > 0) {
+      console.log(`\n⚠️ Errors (${result.errors.length}):`);
+      result.errors.slice(0, 10).forEach(err => console.log(`  - ${err}`));
+      if (result.errors.length > 10) {
+        console.log(`  ... and ${result.errors.length - 10} more errors`);
+      }
+    }
+    
+    console.log('='.repeat(60));
   }
 }

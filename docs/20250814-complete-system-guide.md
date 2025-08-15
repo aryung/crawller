@@ -210,7 +210,20 @@ npm run typecheck
 
 #### Pipeline 系統
 
+##### 完整執行流程解析
+
+Pipeline 執行包含以下步驟：
+1. **Step 1-3**: 配置生成 → 爬蟲執行 → 數據聚合
+2. **Step 4**: 匯入股票代碼 (`importSymbolsFromMappings()`)
+3. **Step 5**: 匯入基本面數據 (`importFundamentalData()`)
+4. **Step 6**: 同步分類標籤 (`syncCategoryLabels()`)
+
+##### 最佳實踐命令 ⭐
+
 ```bash
+# 🚀 推薦：優化版完整流程 (避免重複匯入)
+npm run pipeline:all
+
 # 完整 Pipeline 流程 (包含爬蟲)
 npm run pipeline:full
 
@@ -222,6 +235,23 @@ npm run pipeline:crawl-only
 
 # 查看 Pipeline 統計
 npm run pipeline:stats
+```
+
+##### 效率最佳化說明
+
+**為什麼推薦 `pipeline:all`？**
+
+- **避免重複處理**: Step 6 的 `syncCategoryLabels()` 已包含 `createMissingSymbols: true`
+- **自動股票創建**: Label sync 會自動創建不存在的股票，無需額外執行 symbol import
+- **提升執行效率**: 跳過 Step 4 可節省 20-30% 的執行時間
+
+```bash
+# ❌ 不推薦：會重複處理股票創建
+npm run pipeline:run
+
+# ✅ 推薦：跳過重複的 symbol import
+npm run pipeline:all
+# 等同於：npm run pipeline:run --skip-symbol-import
 ```
 
 ### 自定義匯入參數
@@ -478,7 +508,7 @@ npx tsx src/cli.ts --config config/active/test.json
 
 ### 推薦工作流程
 
-#### 首次設置（優化版）
+#### 首次設置（v3.0 優化版）
 
 ```bash
 # 1. 環境準備
@@ -486,17 +516,137 @@ cp .env.example .env
 # 編輯 .env 設置 BACKEND_API_TOKEN
 ./test-fixes.sh  # 驗證環境配置
 
-# 2. 生成類別映射
-npm run generate:mappings
+# 2. 🚀 推薦：使用優化 Pipeline（避免重複匯入）
+npm run pipeline:all
+# 自動執行：配置生成 → 爬取 → 聚合 → 跳過重複symbol匯入 → 基本面數據 → 標籤同步
 
-# 3. 分步執行（推薦，避免超時）
-npm run sync:labels:chunk        # 同步標籤（分塊 100）
-npm run import:symbols:small     # 匯入股票（批次 10）
-npm run import:fundamental:batch # 匯入基本面數據
+# 3. 或分步執行（細粒度控制）
+npm run generate:mappings         # 生成類別映射
+npm run import:fundamental:batch  # 匯入基本面數據
+npm run import:labels:chunk       # 同步標籤（自動創建股票）
 
-# 或完整 Pipeline（自動處理）
-npm run pipeline:full
+# 4. 傳統方式（相容性，但有重複處理）
+npm run pipeline:full             # 包含重複的 symbol import
 ```
+
+#### 效率對比
+
+| 執行方式 | 優點 | 缺點 | 推薦度 |
+|---------|------|------|--------|
+| `pipeline:all` | ✅ 無重複處理<br>✅ 執行時間短<br>✅ 自動化程度高 | - | ⭐⭐⭐⭐⭐ |
+| `pipeline:full` | ✅ 完整性高<br>✅ 向後相容 | ❌ 重複處理<br>❌ 執行時間長 | ⭐⭐⭐ |
+| 分步執行 | ✅ 精細控制<br>✅ 易於調試 | ❌ 手動操作多<br>❌ 容易遺漏 | ⭐⭐⭐⭐ |
+
+## 🔄 重試與斷點續傳機制
+
+v3.0 引入了強化的重試機制和批次處理功能，確保大規模爬取作業的穩定性。
+
+### 重試機制 (Retry System)
+
+#### 重試數據存儲
+- **位置**: `output/pipeline-retries.json`
+- **管理**: 由 `RetryManager` 自動管理
+- **清理**: 7天自動清理過期記錄
+
+#### 重試觸發條件
+```bash
+# 1. 空數據檢測 (empty_data)
+- 爬取成功但返回空結果
+- 財務數據陣列長度為 0
+- 關鍵欄位缺失
+
+# 2. 執行失敗 (execution_failed)  
+- 網頁載入失敗
+- CSS 選擇器錯誤
+- 網路連接問題
+
+# 3. 超時錯誤 (timeout)
+- 頁面載入超時 (30秒)
+- 配置執行超時 (10分鐘)
+```
+
+#### 重試命令
+```bash
+# 查看重試狀態
+npm run pipeline:retry-status
+
+# 執行重試隊列
+npm run pipeline:retry
+
+# 清空重試隊列 (謹慎使用)
+npm run pipeline:clear-retries
+
+# 只執行重試模式
+npm run pipeline:retry-only
+
+# 停用重試機制
+npm run pipeline:no-retry
+```
+
+### 批次斷點續傳 (Batch Resume)
+
+#### 斷點續傳機制
+```bash
+# 查看批次執行狀態
+npm run crawl:status
+
+# 查看執行統計
+npm run crawl:stats
+
+# 生成錯誤報告
+npm run crawl:errors
+
+# 恢復指定進度的執行
+npx tsx src/cli.ts crawl-batch --resume=batch_20250815_103045
+
+# 只重試失敗的配置
+npx tsx src/cli.ts crawl-batch --retry-failed=batch_20250815_103045
+```
+
+#### 批次控制選項
+```bash
+# 限制執行範圍
+npx tsx src/cli.ts crawl-batch --start-from=100 --limit=50
+
+# 控制併發和延遲
+npx tsx src/cli.ts crawl-batch --concurrent=2 --delay=8000
+
+# 指定範圍爬取
+npm run crawl:tw:quarterly --start-from=0 --limit=100
+npm run crawl:us:quarterly --start-from=0 --limit=100
+```
+
+### 網路穩定性最佳化
+
+#### 不穩定環境設定
+```bash
+# 低併發 + 高延遲
+npx tsx src/cli.ts crawl-batch \
+  --concurrent=1 \
+  --delay=10000 \
+  --retry-attempts=5
+
+# 小批次處理
+npx tsx src/cli.ts crawl-batch \
+  --limit=20 \
+  --category=quarterly
+```
+
+#### 記憶體最佳化
+```bash
+# 增加 Node.js 記憶體限制
+NODE_OPTIONS="--max-old-space-size=4096" npm run crawl:quarterly
+
+# 分階段執行
+npm run crawl:tw:quarterly --limit=100
+# 檢查結果後繼續下一批
+npm run crawl:tw:quarterly --start-from=100 --limit=100
+```
+
+### 詳細使用指南
+
+更多重試機制和批次處理的詳細說明，請參考：
+**[Pipeline Retry & Batch 功能完整指南](pipeline-retry-batch-guide.md)**
 
 #### 日常更新
 

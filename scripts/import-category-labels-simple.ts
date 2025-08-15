@@ -22,7 +22,7 @@ import { join } from 'path';
 import axios, { AxiosInstance } from 'axios';
 import chalk from 'chalk';
 import ora from 'ora';
-import { ApiClient, createApiClient } from '../src/common/api-client';
+// ApiClient 已移除，直接使用 axios
 
 const __dirname = process.cwd();
 
@@ -81,7 +81,7 @@ interface BulkSyncResponse {
 }
 
 class SimplifiedCategoryLabelSyncer {
-  private apiClient: ApiClient;
+  private apiClient: AxiosInstance;
   private isDryRun: boolean;
   private spinner: any;
   private chunkSize: number | undefined;
@@ -96,9 +96,17 @@ class SimplifiedCategoryLabelSyncer {
     this.chunkSize = this.parseChunkSize(args);
     this.enableProgressReport = args.includes('--progress');
     
-    this.apiClient = createApiClient({
-      apiUrl,
-      apiToken,
+    const headers: any = {
+      'Content-Type': 'application/json',
+    };
+    
+    if (apiToken) {
+      headers['Authorization'] = `Bearer ${apiToken}`;
+    }
+    
+    this.apiClient = axios.create({
+      baseURL: apiUrl,
+      headers,
       timeout: 300000, // 5 分鐘
     });
   }
@@ -156,8 +164,7 @@ class SimplifiedCategoryLabelSyncer {
           options,
         };
 
-        const apiResponse = await this.apiClient.post<BulkSyncResponse>('/label-industry/bulk-sync-mappings', request);
-        const response = { data: apiResponse };
+        const apiResponse = await this.apiClient.post('/label-industry/bulk-sync-mappings', request);
         response = apiResponse.data;
         this.spinner.succeed(`批量同步完成`);
       }
@@ -284,8 +291,8 @@ class SimplifiedCategoryLabelSyncer {
           },
         };
 
-        const responseData = await this.apiClient.post<BulkSyncResponse>('/label-industry/bulk-sync-mappings', request);
-        const response = { data: responseData };
+        const responseData = await this.apiClient.post('/label-industry/bulk-sync-mappings', request);
+        const response = responseData;
         
         if (response.data.success) {
           const data = response.data.data;

@@ -31,7 +31,7 @@ import { join } from 'path';
 import { program } from 'commander';
 import chalk from 'chalk';
 import ora from 'ora';
-import { ApiClient, createApiClient } from '../src/common/api-client';
+import axios, { AxiosInstance } from 'axios';
 
 const __dirname = process.cwd();
 
@@ -65,15 +65,25 @@ interface ImportConfig {
  * 股票代碼匯入器
  */
 class SymbolImporter {
-  private apiClient: ApiClient;
+  private apiClient: AxiosInstance;
   private config: ImportConfig;
   private spinner: any;
 
   constructor(config: ImportConfig) {
     this.config = config;
-    this.apiClient = createApiClient({
-      apiUrl: config.apiUrl,
-      apiToken: config.apiToken,
+    
+    const headers: any = {
+      'Content-Type': 'application/json',
+    };
+    
+    if (config.apiToken) {
+      headers['Authorization'] = `Bearer ${config.apiToken}`;
+    }
+    
+    this.apiClient = axios.create({
+      baseURL: config.apiUrl,
+      headers,
+      timeout: 30000,
     });
   }
 
@@ -278,19 +288,35 @@ class SymbolImporter {
       this.spinner = ora(`處理批次 ${batchNum}/${totalBatches} (${batch.length} 個股票)...`).start();
 
       try {
-        const result = await this.apiClient.importSymbols(batch, (current, total, message) => {
-          this.spinner.text = `批次 ${batchNum}/${totalBatches}: ${message}`;
-        });
-
-        if (result.success) {
-          successCount += batch.length;
-          this.spinner.succeed(`批次 ${batchNum}/${totalBatches} 完成 (${batch.length} 個股票)`);
-        } else {
+        // 嘗試多個可能的端點
+        const possibleEndpoints = ['/symbols/bulk', '/symbols/bulk-create', '/symbols'];
+        let lastError: any = null;
+        let success = false;
+        
+        for (const endpoint of possibleEndpoints) {
+          try {
+            const response = await this.apiClient.post(endpoint, {
+              symbols: batch,
+              updateExisting: true,
+            });
+            
+            // 請求成功
+            successCount += batch.length;
+            this.spinner.succeed(`批次 ${batchNum}/${totalBatches} 完成 (${batch.length} 個股票)`);
+            success = true;
+            break;
+          } catch (error: any) {
+            lastError = error;
+            if (error.response?.status !== 404) {
+              break; // 非 404 錯誤直接跳出
+            }
+          }
+        }
+        
+        if (!success) {
           failureCount += batch.length;
           this.spinner.fail(`批次 ${batchNum}/${totalBatches} 失敗`);
-          if (result.errors) {
-            errors.push(...result.errors);
-          }
+          errors.push(`批次 ${batchNum} 失敗: ${lastError?.message || 'Unknown error'}`);
         }
       } catch (error) {
         failureCount += batch.length;

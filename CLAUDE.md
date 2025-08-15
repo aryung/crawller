@@ -415,6 +415,83 @@ npx tsx scripts/import-fundamental-api.ts --category metadata --verbose
 # --verbose: 顯示詳細處理資訊
 ```
 
+### 🔄 Pipeline 命令與重試機制 (v3.0 新功能)
+
+#### Pipeline 最佳實踐命令 ⭐
+
+```bash
+# 🚀 推薦：優化版完整流程 (避免重複匯入)
+npm run pipeline:all                  # 跳過重複symbol匯入的完整流程
+npm run pipeline:full                 # 同上，完整流程最佳化版本
+
+# 基本執行模式
+npm run pipeline:run                  # 標準完整流程（包含所有步驟）
+npm run pipeline:legacy               # 傳統模式（向後相容）
+
+# 部分執行
+npm run pipeline:crawl-only           # 只執行爬取
+npm run pipeline:symbols-only         # 只匯入股票代碼
+npm run pipeline:labels-only          # 只同步標籤
+
+# Pipeline 統計和清理
+npm run pipeline:stats                # 查看 Pipeline 統計
+npm run pipeline:clean                # 清理舊檔案
+```
+
+#### 命令效率對比
+
+| 命令 | 執行步驟 | 重複處理 | 推薦度 |
+|------|---------|---------|--------|
+| `pipeline:all` | 1-3,5-6 (跳過Step 4) | ❌ 無 | ⭐⭐⭐⭐⭐ |
+| `pipeline:full` | 1-3,5-6 (跳過Step 4) | ❌ 無 | ⭐⭐⭐⭐⭐ |
+| `pipeline:run` | 1-6 (全部步驟) | ⚠️ Symbol匯入重複 | ⭐⭐⭐ |
+| `pipeline:legacy` | 1-6 (全部步驟) | ⚠️ Symbol匯入重複 | ⭐⭐ |
+
+#### 重試機制命令 ⭐
+```bash
+# 查看重試隊列狀態
+npm run pipeline:retry-status
+# 輸出: 總項目數、按區域分布、按失敗原因分析
+
+# 執行重試隊列
+npm run pipeline:retry
+# 自動重試失敗的爬取任務 (最多3次，指數退避延遲)
+
+# 清空重試隊列 (謹慎使用)
+npm run pipeline:clear-retries
+
+# 只執行重試模式
+npm run pipeline:retry-only
+# 跳過正常流程，只處理重試隊列
+
+# 停用重試機制
+npm run pipeline:no-retry
+# 執行時不加入重試隊列
+```
+
+#### 批次斷點續傳 ⭐
+```bash
+# 查看批次執行狀態
+npm run crawl:status                  # 顯示當前進度和統計
+
+# 查看執行統計
+npm run crawl:stats                   # 詳細統計資訊
+
+# 生成錯誤報告
+npm run crawl:errors                  # 分析失敗原因
+
+# 斷點續傳操作
+npx tsx src/cli.ts crawl-batch --resume=batch_20250815_103045
+npx tsx src/cli.ts crawl-batch --retry-failed=batch_20250815_103045
+npx tsx src/cli.ts crawl-batch --start-from=100 --limit=50
+```
+
+#### 重試數據存儲
+- **位置**: `output/pipeline-retries.json`
+- **管理**: 由 `RetryManager` 自動管理  
+- **清理**: 7天自動清理過期記錄
+- **觸發**: 空數據 (empty_data)、執行失敗 (execution_failed)、超時 (timeout)
+
 ### 🔄 完整工作流程
 
 ```bash
@@ -426,6 +503,12 @@ npm run import:fundamental:tw:quarterly # 匯入台灣季度數據
 
 # 或者一次性設置 (跳過爬蟲，使用現有數據)
 npm run setup:structured              # 使用現有 output/ 數據
+
+# 🚀 推薦：Pipeline 最佳化流程 (包含重試機制，避免重複處理)
+npm run pipeline:all                  # 自動配置→爬取→重試→跳過重複symbol匯入→基本面數據→標籤同步
+
+# 傳統 Pipeline 流程 (包含重複的 symbol 匯入)
+npm run pipeline:legacy               # 自動配置→爬取→重試→symbol匯入→基本面數據→標籤同步
 ```
 
 ## 調試與故障排除
@@ -436,6 +519,41 @@ npm run setup:structured              # 使用現有 output/ 數據
 2. **數據對齊問題**: 採用位置獨立選擇器方法
 3. **營業現金流為 0**: 將 `debugFieldExtraction` 限制從 10 項增加到 50 項
 4. **TypeScript 錯誤**: 在 `YahooFinanceTWTransforms` 介面中加入新函數定義
+
+### 重試和批次處理故障排除
+
+#### 重試隊列過大
+```bash
+# 查看重試狀態和原因
+npm run pipeline:retry-status
+
+# 分析錯誤模式
+npm run crawl:errors
+
+# 分批處理重試隊列
+npm run pipeline:retry --limit=20
+```
+
+#### 批次處理中斷
+```bash
+# 查看執行狀態和進度
+npm run crawl:status
+
+# 從中斷點恢復
+npx tsx src/cli.ts crawl-batch --resume=batch_20250815_103045
+
+# 只重試失敗項目
+npx tsx src/cli.ts crawl-batch --retry-failed=batch_20250815_103045
+```
+
+#### 網路穩定性最佳化
+```bash
+# 不穩定網路環境設定
+npx tsx src/cli.ts crawl-batch --concurrent=1 --delay=10000 --retry-attempts=5
+
+# 記憶體最佳化設定
+NODE_OPTIONS="--max-old-space-size=4096" npm run crawl:quarterly --limit=50
+```
 
 ### 調試技巧
 
@@ -477,8 +595,14 @@ document.querySelectorAll("tr:has(td:contains('每股盈餘')) td:last-child");
 
 - **系統使用**: 查看 [完整系統指南](docs/20250814-complete-system-guide.md) 的快速開始章節
 - **API 整合**: 查看 [API 整合指南](docs/20250814-api-integration-guide.md) 的批次處理優化
+- **重試和批次處理**: 查看 [Pipeline Retry & Batch 功能完整指南](docs/pipeline-retry-batch-guide.md) 的詳細使用說明
 - **CSS 選擇器最佳實踐**: 查看 [開發參考手冊](docs/20250814-development-reference.md) 的六大核心原則
 - **位置獨立選擇器方法**: 查看 [開發參考手冊](docs/20250814-development-reference.md) 的複雜 DOM 處理章節
+
+### 專門功能指南
+
+- **[Pipeline Retry & Batch 功能完整指南](docs/pipeline-retry-batch-guide.md)** - 重試機制和批次處理詳細說明  
+  _包含故障排除、最佳實踐、詳細參數說明_
 
 ### 歸檔文檔
 

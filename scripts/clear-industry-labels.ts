@@ -22,7 +22,7 @@ import axios, { AxiosInstance } from 'axios';
 import chalk from 'chalk';
 import ora from 'ora';
 import { program } from 'commander';
-import { ApiClient, createApiClient } from '../src/common/api-client';
+// ApiClient 已移除，直接使用 axios
 
 interface Label {
   id: string;
@@ -43,15 +43,25 @@ interface ClearConfig {
 }
 
 class IndustryLabelCleaner {
-  private apiClient: ApiClient;
+  private apiClient: AxiosInstance;
   private config: ClearConfig;
   private spinner: any;
 
   constructor(config: ClearConfig) {
     this.config = config;
-    this.apiClient = createApiClient({
-      apiUrl: config.apiUrl,
-      apiToken: config.apiToken,
+    
+    const headers: any = {
+      'Content-Type': 'application/json',
+    };
+    
+    if (config.apiToken) {
+      headers['Authorization'] = `Bearer ${config.apiToken}`;
+    }
+    
+    this.apiClient = axios.create({
+      baseURL: config.apiUrl,
+      headers,
+      timeout: 30000,
     });
   }
 
@@ -188,12 +198,12 @@ class IndustryLabelCleaner {
       try {
         console.log(chalk.gray('  嘗試查詢方法 1: /label-industry/labels/all-including-inactive'));
         const result = await this.apiClient.get('/label-industry/labels/all-including-inactive');
-        response = { data: result };
-        console.log(chalk.gray(`  方法 1 回應長度: ${Array.isArray(result) ? result.length : 'unknown'}`));
+        response = { data: result.data };
+        console.log(chalk.gray(`  方法 1 回應長度: ${Array.isArray(result.data) ? result.data.length : 'unknown'}`));
         
         // 檢查是否成功獲取數據
-        if (result && Array.isArray(result) && result.length > 0) {
-          console.log(chalk.green(`  ✓ 方法 1 成功獲取 ${result.length} 個標籤`));
+        if (result.data && Array.isArray(result.data) && result.data.length > 0) {
+          console.log(chalk.green(`  ✓ 方法 1 成功獲取 ${result.data.length} 個標籤`));
         }
       } catch (error) {
         console.log(chalk.yellow(`  方法 1 失敗: ${error.message}`));
@@ -204,10 +214,10 @@ class IndustryLabelCleaner {
         try {
           console.log(chalk.gray('  嘗試查詢方法 2: /labels?type=SYSTEM_DEFINED'));
           const result = await this.apiClient.get('/labels', {
-            type: 'SYSTEM_DEFINED'
+            params: { type: 'SYSTEM_DEFINED' }
           });
-          response = { data: result };
-          console.log(chalk.gray(`  方法 2 回應: ${JSON.stringify(result).substring(0, 100)}...`));
+          response = { data: result.data };
+          console.log(chalk.gray(`  方法 2 回應: ${JSON.stringify(result.data).substring(0, 100)}...`));
         } catch (error) {
           console.log(chalk.yellow(`  方法 2 失敗: ${error.message}`));
         }
@@ -218,8 +228,8 @@ class IndustryLabelCleaner {
         try {
           console.log(chalk.gray('  嘗試查詢方法 3: /label-industry/labels/all'));
           const result = await this.apiClient.get('/label-industry/labels/all');
-          response = { data: result };
-          console.log(chalk.gray(`  方法 3 回應長度: ${Array.isArray(result) ? result.length : 'unknown'}`));
+          response = { data: result.data };
+          console.log(chalk.gray(`  方法 3 回應長度: ${Array.isArray(result.data) ? result.data.length : 'unknown'}`));
         } catch (error) {
           console.log(chalk.yellow(`  方法 3 失敗: ${error.message}`));
         }
@@ -232,8 +242,8 @@ class IndustryLabelCleaner {
           const result = await this.apiClient.post('/label-industry/labels/search', {
             type: 'SYSTEM_DEFINED'
           });
-          response = { data: result.data || result };
-          console.log(chalk.gray(`  方法 4 回應長度: ${Array.isArray(result.data) ? result.data.length : Array.isArray(result) ? result.length : 'unknown'}`));
+          response = { data: result.data };
+          console.log(chalk.gray(`  方法 4 回應長度: ${Array.isArray(result.data) ? result.data.length : 'unknown'}`));
         } catch (error) {
           console.log(chalk.yellow(`  方法 4 失敗: ${error.message}`));
         }
