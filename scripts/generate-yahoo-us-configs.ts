@@ -146,22 +146,55 @@ templateFiles.forEach(templateFile => {
   stockCodes.forEach(stock => {
     const config: ConfigTemplate = JSON.parse(JSON.stringify(template));
     
-    // 更新 URL 中的變數
-    config.url = config.url.replace('${symbolCode}', stock.stockCode);
+    // 美國股票代碼處理 (替換特殊字符)
+    const safeCode = stock.stockCode.replace(/[^A-Za-z0-9]/g, '_');
     
-    // 更新變數
-    config.variables = {
-      ...config.variables,
-      symbolCode: stock.stockCode,
-      companyName: stock.companyName,
-      sector: stock.sector
-    };
-    
-    // 更新導出文件名
-    if (config.export && config.export.filename) {
-      // 美國股票代碼處理 (替換特殊字符)
-      const safeCode = stock.stockCode.replace(/[^A-Za-z0-9]/g, '_');
-      config.export.filename = config.export.filename.replace('${symbolCode}', safeCode);
+    if (templateType === 'history') {
+      // 處理 history 類型：生成 Unix timestamp
+      const now = new Date();
+      const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+      const period1 = Math.floor(thirtyDaysAgo.getTime() / 1000);
+      const period2 = Math.floor(now.getTime() / 1000);
+      
+      // 更新 URL 中的所有變數
+      config.url = config.url
+        .replace('${symbolCode}', stock.stockCode)
+        .replace('${period1}', period1.toString())
+        .replace('${period2}', period2.toString());
+      
+      // 更新變數包含時間戳
+      config.variables = {
+        ...config.variables,
+        symbolCode: stock.stockCode,
+        period1: period1,
+        period2: period2,
+        companyName: stock.companyName,
+        sector: stock.sector
+      };
+      
+      // 更新導出文件名，替換所有變數
+      if (config.export && config.export.filename) {
+        config.export.filename = config.export.filename
+          .replace('${symbolCode}', safeCode)
+          .replace('${period1}', period1.toString())
+          .replace('${period2}', period2.toString());
+      }
+    } else {
+      // 處理非 history 類型
+      config.url = config.url.replace('${symbolCode}', stock.stockCode);
+      
+      // 更新變數
+      config.variables = {
+        ...config.variables,
+        symbolCode: stock.stockCode,
+        companyName: stock.companyName,
+        sector: stock.sector
+      };
+      
+      // 更新導出文件名
+      if (config.export && config.export.filename) {
+        config.export.filename = config.export.filename.replace('${symbolCode}', safeCode);
+      }
     }
     
     // 生成配置文件名 (替換特殊字符，如 BRK.B -> BRK_B)

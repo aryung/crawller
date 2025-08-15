@@ -148,13 +148,13 @@ templateFiles.forEach(templateFile => {
     
     // 如果是 history 類型，需要特殊處理日期參數
     if (templateType === 'history') {
-      // 設置默認日期範圍（最近15天）
+      // 設置默認日期範圍：fromDate 為今日前14天，toDate 為今天
       const now = new Date();
-      const fifteenDaysAgo = new Date(now.getTime() - 15 * 24 * 60 * 60 * 1000);
+      const fourteenDaysAgo = new Date(now.getTime() - 14 * 24 * 60 * 60 * 1000);
       const formatDate = (date: Date): string => {
         return date.toISOString().split('T')[0].replace(/-/g, '');
       };
-      const fromDate = formatDate(fifteenDaysAgo);
+      const fromDate = formatDate(fourteenDaysAgo);
       const toDate = formatDate(now);
       
       // 更新 URL 中的所有變數
@@ -190,7 +190,20 @@ templateFiles.forEach(templateFile => {
     
     // 更新導出文件名
     if (config.export && config.export.filename) {
-      config.export.filename = config.export.filename.replace('${symbolCode}', stock.stockCode.replace(/\.(T|S)$/, '_$1'));
+      if (templateType === 'history') {
+        // history 類型：使用當前生成的日期值（與 variables 中的值一致）
+        const variableFromDate = config.variables?.fromDate || fromDate;
+        const variableToDate = config.variables?.toDate || toDate;
+        
+        // 替換所有變數包含日期
+        config.export.filename = config.export.filename
+          .replace('${symbolCode}', stock.stockCode.replace(/\.(T|S)$/, '_$1'))
+          .replace('${fromDate}', variableFromDate)
+          .replace('${toDate}', variableToDate);
+      } else {
+        // 非 history 類型：只替換股票代碼
+        config.export.filename = config.export.filename.replace('${symbolCode}', stock.stockCode.replace(/\.(T|S)$/, '_$1'));
+      }
     }
     
     // 生成配置文件名 (將 .T/.S 轉換為 _T/_S 避免文件系統問題)
@@ -255,5 +268,5 @@ console.log('   - 使用 --type=<type> 只生成特定類型的配置');
 console.log('   - 可用類型: cashflow, financials, performance, history');
 console.log('   - 配置文件已按類型分類到 config-categorized/ 目錄');
 console.log('   - 可以直接編輯模板文件來調整所有配置');
-console.log('   - history 類型會自動設置最近15天的日期範圍');
+console.log('   - history 類型會自動設置最近14天的日期範圍（fromDate=今日前14天, toDate=今日）');
 console.log('   - 生成後無需手動遷移，CLI 會自動找到分類配置');

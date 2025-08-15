@@ -9,6 +9,7 @@ import * as fs from 'fs-extra';
 import { EnhancedCrawlerConfig, ExportOptions } from './types';
 import { BatchCrawlerManager, BatchOptions } from './batch/BatchCrawlerManager';
 import { ProgressTracker } from './batch/ProgressTracker';
+import { MarketRegion } from './common/shared-types/interfaces/market-data.interface';
 
 interface CLIOptions {
   config?: string;
@@ -32,7 +33,7 @@ interface CLIOptions {
   
   // Batch command options
   category?: 'daily' | 'quarterly' | 'metadata';
-  market?: 'tw' | 'us' | 'jp';
+  market?: MarketRegion;
   type?: string;
   delayMs?: number;
   retryAttempts?: number;

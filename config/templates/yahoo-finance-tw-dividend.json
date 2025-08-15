@@ -79,6 +79,6 @@
   },
   "export": {
     "formats": ["json"],
-    "filename": "yahoo_finance_tw_dividend_${symbolCode}"
+    "filename": "yahoo-finance-tw-dividend-${symbolCode}"
   }
 }

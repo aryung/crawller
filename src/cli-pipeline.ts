@@ -26,6 +26,7 @@ program
   .option('--skip-aggregate', 'Skip data aggregation')
   .option('--skip-symbol-import', 'Skip symbol import to backend')
   .option('--skip-fundamental-import', 'Skip fundamental data import to backend')
+  .option('--skip-ohlcv-import', 'Skip OHLCV historical data import to backend')
   .option('--skip-label-sync', 'Skip category label synchronization')
   .option('--api-url <url>', 'Backend API URL', process.env.BACKEND_API_URL || 'http://localhost:3000')
   .option('--api-token <token>', 'API authentication token', process.env.BACKEND_API_TOKEN)
@@ -50,6 +51,7 @@ program
       skipAggregation: options.skipAggregate,
       skipSymbolImport: options.skipSymbolImport,
       skipFundamentalImport: options.skipFundamentalImport,
+      skipOhlcvImport: options.skipOhlcvImport,
       skipLabelSync: options.skipLabelSync,
       apiUrl: options.apiUrl,
       apiToken: options.apiToken,
@@ -211,6 +213,7 @@ program
       skipAggregation: true,
       skipSymbolImport: true,
       skipFundamentalImport: true,
+      skipOhlcvImport: true,
       skipLabelSync: true,
     };
 

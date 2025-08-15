@@ -6,6 +6,8 @@ import { OutputFileManager } from './OutputFileManager.js';
 import { UnifiedFinancialData } from '../types/unified-financial-data.js';
 import { RetryManager, RetryRecord } from './RetryManager.js';
 import { DataValidator } from './DataValidator.js';
+import { MarketRegion } from '../common/shared-types/interfaces/market-data.interface';
+import { MarketRegionPathMapping } from '../common/constants/report';
 
 const execAsync = promisify(exec);
 
@@ -24,6 +26,7 @@ export interface PipelineConfig {
   skipAggregation?: boolean;
   skipSymbolImport?: boolean;
   skipFundamentalImport?: boolean;
+  skipOhlcvImport?: boolean;
   skipLabelSync?: boolean;
   apiUrl?: string;
   apiToken?: string;
@@ -77,7 +80,7 @@ export class PipelineOrchestrator {
       scriptsDir: config.scriptsDir || 'scripts',
       batchSize: config.batchSize || 100,
       maxConcurrent: config.maxConcurrent || 1,
-      regions: config.regions || ['tw', 'us', 'jp'],
+      regions: config.regions || Object.values(MarketRegionPathMapping),
       symbolCodes: config.symbolCodes || [],
       dataTypes: config.dataTypes || ['financials'], // Default to financials only
       skipConfigGeneration: config.skipConfigGeneration || false,
@@ -85,6 +88,7 @@ export class PipelineOrchestrator {
       skipAggregation: config.skipAggregation || false,
       skipSymbolImport: config.skipSymbolImport || false,
       skipFundamentalImport: config.skipFundamentalImport || false,
+      skipOhlcvImport: config.skipOhlcvImport || false,
       skipLabelSync: config.skipLabelSync || false,
       apiUrl: config.apiUrl || process.env.BACKEND_API_URL || 'http://localhost:3000',
       apiToken: config.apiToken || process.env.BACKEND_API_TOKEN || '',
@@ -118,6 +122,27 @@ export class PipelineOrchestrator {
    * Run the complete pipeline
    */
   async run(): Promise<PipelineResult> {
+    console.log('\n' + '='.repeat(80));
+    console.log('📦 Pipeline Orchestrator v3.0 - Starting');
+    
+    // 清理已成功的 retry 項目
+    if (this.config.enableRetry) {
+      console.log('\n🧹 Cleaning up successful retry items...');
+      try {
+        const cleaned = await this.retryManager.cleanupSuccessfulRetries(
+          this.dataValidator,
+          this.config.outputDir
+        );
+        if (cleaned > 0) {
+          console.log(`  ✓ Cleaned ${cleaned} successful items from retry queue`);
+        } else {
+          console.log('  ✓ No successful items to clean from retry queue');
+        }
+      } catch (error) {
+        console.warn(`  ⚠️ Failed to clean retry queue: ${(error as Error).message}`);
+      }
+    }
+    
     const startTime = Date.now();
     const result: PipelineResult = {
       totalSymbols: 0,
@@ -220,6 +245,20 @@ export class PipelineOrchestrator {
         }
       } else if (!this.config.skipFundamentalImport) {
         console.log('\n💾 Step 5: No fundamental data to import (use: npm run import:fundamental:batch)');
+      }
+
+      // Step 5b: Import OHLCV historical data if history data type is requested
+      if (!this.config.skipOhlcvImport && this.config.dataTypes.includes('history')) {
+        console.log('\n📈 Step 5b: Importing OHLCV historical data to backend...');
+        try {
+          await this.importOhlcvData();
+          console.log('  ✅ OHLCV data import completed');
+        } catch (error) {
+          console.error('  ❌ OHLCV data import failed:', (error as Error).message);
+          result.errors.push(`OHLCV data import failed: ${(error as Error).message}`);
+        }
+      } else if (!this.config.skipOhlcvImport && !this.config.dataTypes.includes('history')) {
+        console.log('\n📈 Step 5b: Skipping OHLCV import (history data type not requested)');
       }
 
       // Step 6: Sync category labels
@@ -387,37 +426,69 @@ export class PipelineOrchestrator {
         const validation = await this.dataValidator.validateConfigOutput(retry.configFile, this.config.outputDir);
         
         if (validation.isValid) {
-          // Success - remove from retry queue
-          await this.retryManager.removeRetryItem(retry.configFile, retry.symbolCode, retry.reportType);
+          // Success - remove all retry items for this symbol + region
+          const region = this.extractRegionFromConfig(retry.configFile);
+          const removedCount = await this.retryManager.removeAllRetryItemsForSymbol(retry.symbolCode, region);
           result.successful++;
           progress.status = 'completed';
           console.log(`    ✅ Retry successful: ${retry.symbolCode} ${retry.reportType}`);
+          if (removedCount > 1) {
+            console.log(`    🎯 Removed all ${removedCount} retry items for ${retry.symbolCode}/${region}`);
+          }
         } else {
-          // Still empty - update retry count
+          // Still empty - provide detailed diagnostic information
+          console.log(`    ❌ Retry still empty: ${retry.symbolCode} ${retry.reportType}`);
+          console.log(`       Validation reason: ${validation.reason}`);
+          console.log(`       Validation details: ${validation.details || 'No additional details'}`);
+          console.log(`       Config file: ${retry.configFile}`);
+          console.log(`       Current retry count: ${retry.retryCount}/${retry.maxRetries}`);
+          
+          // 檢查是否應該繼續重試
+          if (retry.retryCount >= retry.maxRetries) {
+            console.log(`       ⚠️ 已達最大重試次數，不再加入重試隊列`);
+            result.failed++;
+            progress.status = 'failed';
+          } else {
+            // Still can retry - update retry count
+            await this.retryManager.addRetryItem(
+              retry.configFile,
+              retry.symbolCode,
+              retry.reportType,
+              retry.region,
+              'empty_data'
+            );
+            result.failed++;
+            progress.status = 'failed';
+            console.log(`       🔄 加入重試隊列，下次重試`);
+          }
+        }
+      } catch (error) {
+        // Execution failed - provide detailed diagnostic information
+        console.log(`    ❌ Retry execution failed: ${retry.symbolCode} ${retry.reportType}`);
+        console.log(`       Error message: ${(error as Error).message}`);
+        console.log(`       Config file: ${retry.configFile}`);
+        console.log(`       Current retry count: ${retry.retryCount}/${retry.maxRetries}`);
+        
+        // 檢查是否應該繼續重試
+        if (retry.retryCount >= retry.maxRetries) {
+          console.log(`       ⚠️ 已達最大重試次數，不再加入重試隊列`);
+          result.failed++;
+          result.errors.push(`Retry failed ${retry.symbolCode}: ${(error as Error).message}`);
+          progress.status = 'failed';
+        } else {
+          // Still can retry - update retry count
           await this.retryManager.addRetryItem(
             retry.configFile,
             retry.symbolCode,
             retry.reportType,
             retry.region,
-            'empty_data'
+            'execution_failed'
           );
           result.failed++;
+          result.errors.push(`Retry failed ${retry.symbolCode}: ${(error as Error).message}`);
           progress.status = 'failed';
-          console.log(`    ❌ Retry still empty: ${retry.symbolCode} ${retry.reportType} - ${validation.reason}`);
+          console.log(`       🔄 加入重試隊列，下次重試`);
         }
-      } catch (error) {
-        // Execution failed - update retry count
-        await this.retryManager.addRetryItem(
-          retry.configFile,
-          retry.symbolCode,
-          retry.reportType,
-          retry.region,
-          'execution_failed'
-        );
-        result.failed++;
-        result.errors.push(`Retry failed ${retry.symbolCode}: ${(error as Error).message}`);
-        progress.status = 'failed';
-        console.log(`    ❌ Retry execution failed: ${retry.symbolCode} ${retry.reportType}`);
       }
 
       if (this.progressCallback) {
@@ -492,6 +563,17 @@ export class PipelineOrchestrator {
               if (validation.isValid) {
                 result.successful++;
                 progress.status = 'completed';
+                
+                // 如果成功了，從 retry queue 中移除該 symbol + region 的所有項目
+                const region = this.extractRegionFromConfig(configFile);
+                const removedCount = await this.retryManager.removeAllRetryItemsForSymbol(
+                  progress.symbol,
+                  region
+                );
+                
+                if (removedCount > 0) {
+                  console.log(`    🎯 Symbol ${progress.symbol}/${region} 成功，已移除所有 ${removedCount} 個相關 retry 項目`);
+                }
               } else {
                 // Add to retry queue for empty data
                 await this.retryManager.addRetryItem(
@@ -792,6 +874,118 @@ export class PipelineOrchestrator {
   }
 
   /**
+   * Import OHLCV historical data using the new import-ohlcv-api.ts script
+   */
+  private async importOhlcvData(): Promise<void> {
+    try {
+      console.log('  📈 檢查歷史數據檔案...');
+      
+      // Check if there are any history files to import
+      const historyFiles = await this.findHistoryFiles();
+      
+      if (historyFiles.length === 0) {
+        console.log('  📄 沒有找到歷史數據檔案，跳過 OHLCV 匯入');
+        return;
+      }
+      
+      console.log(`  📊 找到 ${historyFiles.length} 個歷史數據檔案`);
+      console.log('  🚀 開始執行 OHLCV 匯入腳本...');
+      
+      // Construct the import command
+      let importCommand = 'npx tsx scripts/import-ohlcv-api.ts --category daily';
+      
+      // Add API URL and token if available
+      if (this.config.apiUrl) {
+        importCommand += ` --api-url "${this.config.apiUrl}"`;
+      }
+      if (this.config.apiToken) {
+        importCommand += ` --token "${this.config.apiToken}"`;
+      }
+      
+      console.log('  💡 執行命令:', importCommand);
+      
+      // Execute the import script
+      const { stdout, stderr } = await execAsync(importCommand, { 
+        cwd: process.cwd(),
+        maxBuffer: 1024 * 1024 * 10 // 10MB buffer for large outputs
+      });
+
+      // Check for errors in stderr (warnings are OK)
+      if (stderr && !stderr.includes('warning') && !stderr.includes('⚠️')) {
+        throw new Error(`OHLCV import script failed: ${stderr}`);
+      }
+
+      // Parse success results from stdout
+      if (stdout.includes('OHLCV 歷史數據匯入作業完成')) {
+        console.log('    ✅ OHLCV 匯入腳本執行成功');
+        
+        // Extract statistics if available
+        const importedMatch = stdout.match(/總計匯入: (\d+) 筆/);
+        const failedMatch = stdout.match(/總計失敗: (\d+) 筆/);
+        const filesMatch = stdout.match(/處理檔案: (\d+) 個/);
+        
+        if (importedMatch) {
+          console.log(`    📊 成功匯入: ${importedMatch[1]} 筆 OHLCV 數據`);
+        }
+        if (failedMatch && parseInt(failedMatch[1]) > 0) {
+          console.log(`    ⚠️ 失敗記錄: ${failedMatch[1]} 筆`);
+        }
+        if (filesMatch) {
+          console.log(`    📁 處理檔案: ${filesMatch[1]} 個`);
+        }
+        
+      } else {
+        console.log('    ⚠️ 腳本執行完成，請檢查輸出');
+        console.log('    💡 詳細輸出:');
+        console.log(stdout.split('\n').map(line => `    ${line}`).join('\n'));
+      }
+
+    } catch (error) {
+      throw new Error(`Failed to execute OHLCV import script: ${(error as Error).message}`);
+    }
+  }
+
+  /**
+   * Find history files in the output directory
+   */
+  private async findHistoryFiles(): Promise<string[]> {
+    const historyPatterns = [
+      path.join(this.config.outputDir, 'daily', '**', 'history', '*.json'),
+      path.join(this.config.outputDir, 'daily', '**', '*.json') // Alternative pattern
+    ];
+    
+    let allFiles: string[] = [];
+    
+    for (const pattern of historyPatterns) {
+      try {
+        const files = await new Promise<string[]>((resolve, reject) => {
+          // Using glob to find files
+          const glob = require('glob');
+          glob.glob(pattern, (err: any, matches: string[]) => {
+            if (err) reject(err);
+            else resolve(matches || []);
+          });
+        });
+        allFiles = allFiles.concat(files);
+      } catch (error) {
+        // Ignore errors in file scanning
+        console.log(`    📄 掃描模式 ${pattern} 無結果`);
+      }
+    }
+    
+    // Remove duplicates and filter for actual JSON files
+    const uniqueFiles = [...new Set(allFiles)].filter(file => {
+      try {
+        return fs.existsSync(file) && file.endsWith('.json');
+      } catch {
+        return false;
+      }
+    });
+    
+    return uniqueFiles;
+  }
+
+  /**
    * Sync category labels using existing batch script
    */
   private async syncCategoryLabels(): Promise<void> {
@@ -864,10 +1058,25 @@ export class PipelineOrchestrator {
   /**
    * Extract region code from config filename
    */
-  private extractRegionFromConfig(configPath: string): string {
+  private extractRegionFromConfig(configPath: string): MarketRegion {
+    // 從檔案路徑提取 region
+    if (configPath.includes('/tw/')) return MarketRegion.TPE;
+    if (configPath.includes('/us/')) return MarketRegion.US;
+    if (configPath.includes('/jp/')) return MarketRegion.JP;
+    
+    // 從檔名提取
     const filename = path.basename(configPath);
     const match = filename.match(/yahoo-finance-(\w+)-/);
-    return match ? match[1].toUpperCase() : 'UNKNOWN';
+    if (match) {
+      const region = match[1].toUpperCase();
+      switch (region) {
+        case 'TW': return MarketRegion.TPE;
+        case 'US': return MarketRegion.US;
+        case 'JP': return MarketRegion.JP;
+      }
+    }
+    
+    throw new Error(`Cannot extract region from config file: ${configPath}`);
   }
 
   /**

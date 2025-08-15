@@ -30,22 +30,22 @@ const fromDateArg = args.find(arg => arg.startsWith('--from='));
 const toDateArg = args.find(arg => arg.startsWith('--to='));
 const limitArg = args.find(arg => arg.startsWith('--limit='));
 
-// 設置默認日期範圍 (最近15天)
+// 設置默認日期範圍：fromDate 為今日前14天，toDate 為今天
 const now = new Date();
-const fifteenDaysAgo = new Date(now.getTime() - 15 * 24 * 60 * 60 * 1000);
+const fourteenDaysAgo = new Date(now.getTime() - 14 * 24 * 60 * 60 * 1000);
 
 // 格式化日期為 YYYYMMDD 格式
 const formatDate = (date: Date): string => {
   return date.toISOString().split('T')[0].replace(/-/g, '');
 };
 
-const fromDate = fromDateArg ? fromDateArg.split('=')[1] : formatDate(fifteenDaysAgo);
+const fromDate = fromDateArg ? fromDateArg.split('=')[1] : formatDate(fourteenDaysAgo);
 const toDate = toDateArg ? toDateArg.split('=')[1] : formatDate(now);
 const limit = limitArg ? parseInt(limitArg.split('=')[1]) : undefined; // 默認生成所有股票
 
 console.log('🔍 Yahoo Finance Japan 歷史股價配置生成器');
 console.log('=====================================');
-console.log(`📅 日期範圍: ${fromDate} -> ${toDate}`);
+console.log(`📅 日期範圍: ${fromDate} -> ${toDate} (14天範圍)`);
 console.log(`📊 生成限制: ${limit ? `${limit} 個配置` : '所有股票 (無限制)'}`);
 
 // 讀取模板
@@ -111,9 +111,12 @@ const generateConfigs = async (): Promise<void> => {
       // 更新 URL
       config.url = `https://finance.yahoo.co.jp/quote/${symbolCode}/history?from=${fromDate}&to=${toDate}&timeFrame=d&page=1`;
       
-      // 更新導出文件名，支援 .T 和 .S 後綴
+      // 更新導出文件名，支援 .T 和 .S 後綴，替換所有變數為實際值
       if (config.export && config.export.filename) {
-        config.export.filename = `yahoo_finance_jp_history_${symbolCode.replace(/\.(T|S)$/, '_$1')}_${fromDate}_${toDate}`;
+        config.export.filename = config.export.filename
+          .replace('${symbolCode}', symbolCode.replace(/\.(T|S)$/, '_$1'))
+          .replace('${fromDate}', fromDate)
+          .replace('${toDate}', toDate);
       }
       
       // 更新註釋

@@ -58,6 +58,6 @@
   },
   "export": {
     "formats": ["json", "csv"],
-    "filename": "yahoo_finance_tw_eps_${symbolCode}"
+    "filename": "yahoo-finance-tw-eps-${symbolCode}"
   }
 }

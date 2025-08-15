@@ -2,6 +2,7 @@
 
 import * as fs from 'fs-extra';
 import * as path from 'path';
+import { MarketRegionPathMapping } from '../src/common/constants/report';
 import { logger } from '../src/utils';
 
 interface ValidationResult {
@@ -100,7 +101,7 @@ export class ConfigValidator {
     }
 
     // 檢查季度更新子目錄
-    const quarterlyMarkets = ['tw', 'us', 'jp'];
+    const quarterlyMarkets = Object.values(MarketRegionPathMapping);
     for (const market of quarterlyMarkets) {
       const dirPath = path.join(this.configDir, 'quarterly', market);
       if (!await fs.pathExists(dirPath)) {

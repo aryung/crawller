@@ -79,7 +79,7 @@
   },
   "export": {
     "formats": ["json"],
-    "filename": "yahoo_finance_jp_history_${symbolCode}_${fromDate}_${toDate}",
+    "filename": "yahoo-finance-jp-history-${symbolCode}-${fromDate}-${toDate}",
     "structure": {
       "historicalData": "historicalPeriods,historicalData"
     }

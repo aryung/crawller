@@ -1,11 +1,12 @@
 import * as fs from 'fs-extra';
 import * as path from 'path';
+import { MarketRegion } from '../common/shared-types/interfaces/market-data.interface';
 
 export interface RetryRecord {
   configFile: string;
   symbolCode: string;
   reportType: string;
-  region: string;
+  region: MarketRegion;  // 使用 enum 而非 string
   timestamp: string;
   reason: 'empty_data' | 'execution_failed' | 'timeout';
   retryCount: number;
@@ -71,7 +72,7 @@ export class RetryManager {
     configFile: string,
     symbolCode: string,
     reportType: string,
-    region: string,
+    region: MarketRegion,
     reason: RetryRecord['reason']
   ): Promise<void> {
     const records = await this.loadRetryRecords();
@@ -81,22 +82,35 @@ export class RetryManager {
       r => r.configFile === configFile && r.symbolCode === symbolCode && r.reportType === reportType
     );
 
+    let isNewItem = false;
+    let currentRetryCount = 1;
+
     if (existingIndex >= 0) {
       // 更新現有記錄
       const existing = records[existingIndex];
-      if (existing.retryCount < existing.maxRetries) {
-        existing.retryCount++;
-        existing.lastRetryAt = new Date().toISOString();
-        existing.reason = reason;
-      } else {
-        // 達到最大重試次數，移除記錄
+      
+      // 修復：檢查是否已達到或超過最大重試次數
+      if (existing.retryCount >= existing.maxRetries) {
+        // 已達到最大重試次數，移除記錄
         records.splice(existingIndex, 1);
-        console.log(`⚠️ ${symbolCode} ${reportType}: 達到最大重試次數 (${existing.maxRetries})，移除重試隊列`);
+        console.log(`⚠️ ${symbolCode} ${reportType}: 已達到最大重試次數 (${existing.maxRetries})，移除重試隊列`);
         await this.saveRetryRecords(records);
         return;
       }
+      
+      // 還可以重試，更新記錄
+      existing.retryCount++;
+      existing.lastRetryAt = new Date().toISOString();
+      existing.reason = reason;
+      currentRetryCount = existing.retryCount;
+      
+      // 檢查更新後是否達到最大次數
+      if (existing.retryCount >= existing.maxRetries) {
+        console.log(`⚠️ ${symbolCode} ${reportType}: 更新後達到最大重試次數 (${existing.maxRetries})，將在下次檢查時移除`);
+      }
     } else {
       // 創建新記錄
+      isNewItem = true;
       const newRecord: RetryRecord = {
         configFile,
         symbolCode,
@@ -109,10 +123,16 @@ export class RetryManager {
         lastRetryAt: new Date().toISOString(),
       };
       records.push(newRecord);
+      currentRetryCount = 1;
     }
 
     await this.saveRetryRecords(records);
-    console.log(`📝 添加重試項目: ${symbolCode} ${reportType} (第 ${records.find(r => r.symbolCode === symbolCode && r.reportType === reportType)?.retryCount} 次嘗試)`);
+    
+    if (isNewItem) {
+      console.log(`📝 加入重試隊列: ${symbolCode} ${reportType} (${reason})`);
+    } else {
+      console.log(`🔄 更新重試記錄: ${symbolCode} ${reportType} (第 ${currentRetryCount} 次嘗試，${reason})`);
+    }
   }
 
   /**
@@ -126,7 +146,7 @@ export class RetryManager {
   /**
    * 移除重試項目（成功後）
    */
-  async removeRetryItem(configFile: string, symbolCode: string, reportType: string): Promise<void> {
+  async removeRetryItem(configFile: string, symbolCode: string, reportType: string): Promise<boolean> {
     const records = await this.loadRetryRecords();
     const filteredRecords = records.filter(
       r => !(r.configFile === configFile && r.symbolCode === symbolCode && r.reportType === reportType)
@@ -135,7 +155,36 @@ export class RetryManager {
     if (filteredRecords.length !== records.length) {
       await this.saveRetryRecords(filteredRecords);
       console.log(`✅ 移除重試項目: ${symbolCode} ${reportType} (成功)`);
+      return true;
     }
+    
+    return false;
+  }
+
+  /**
+   * 移除特定 symbol + region 的所有 retry 項目
+   * 當該 symbol 的任何報表成功時，移除所有相關的 retry 項目
+   */
+  async removeAllRetryItemsForSymbol(
+    symbolCode: string, 
+    region: MarketRegion
+  ): Promise<number> {
+    const records = await this.loadRetryRecords();
+    const originalCount = records.length;
+    
+    // 直接比較 enum 值，不需要轉換
+    const filteredRecords = records.filter(
+      r => !(r.symbolCode === symbolCode && r.region === region)
+    );
+    
+    const removedCount = originalCount - filteredRecords.length;
+    
+    if (removedCount > 0) {
+      await this.saveRetryRecords(filteredRecords);
+      console.log(`✅ 移除 ${symbolCode}/${region} 的所有 ${removedCount} 個 retry 項目`);
+    }
+    
+    return removedCount;
   }
 
   /**
@@ -215,5 +264,54 @@ export class RetryManager {
    */
   calculateRetryDelay(retryCount: number): number {
     return this.config.retryDelay * Math.pow(2, retryCount - 1);
+  }
+
+  /**
+   * 清理已經成功的 retry 項目
+   * 掃描所有 retry 項目，驗證對應檔案，移除已成功的項目
+   */
+  async cleanupSuccessfulRetries(
+    dataValidator: any, 
+    outputDir: string
+  ): Promise<number> {
+    const records = await this.loadRetryRecords();
+    const symbolRegionMap = new Map<string, Set<string>>();
+    
+    // 檢查每個 retry 項目
+    for (const record of records) {
+      try {
+        const validation = await dataValidator.validateConfigOutput(
+          record.configFile,
+          outputDir
+        );
+        
+        if (validation.isValid) {
+          // 記錄成功的 symbol + region
+          const key = `${record.symbolCode}|${record.region}`;
+          if (!symbolRegionMap.has(key)) {
+            symbolRegionMap.set(key, new Set());
+          }
+          symbolRegionMap.get(key)!.add(record.reportType);
+        }
+      } catch (error) {
+        // 忽略驗證錯誤，繼續處理其他項目
+        console.warn(`Validation error for ${record.symbolCode}/${record.region}: ${(error as Error).message}`);
+      }
+    }
+    
+    // 移除所有成功的 symbol + region 的項目
+    let totalRemoved = 0;
+    for (const [key, reportTypes] of symbolRegionMap.entries()) {
+      const [symbolCode, regionStr] = key.split('|');
+      const region = regionStr as MarketRegion;
+      const removed = await this.removeAllRetryItemsForSymbol(symbolCode, region);
+      totalRemoved += removed;
+      
+      if (removed > 0) {
+        console.log(`🧹 ${symbolCode}/${region}: 發現 ${reportTypes.size} 個成功的報表，移除所有 ${removed} 個 retry 項目`);
+      }
+    }
+    
+    return totalRemoved;
   }
 }

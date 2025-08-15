@@ -3,6 +3,8 @@
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import { logger } from '../src/utils';
+import { MarketRegion } from '../src/common/shared-types/interfaces/market-data.interface';
+import { MarketRegionPathMapping } from '../src/common/constants/report';
 
 interface MigrationStats {
   total: number;
@@ -18,7 +20,7 @@ interface ConfigMapping {
   originalPath: string;
   newPath: string;
   category: 'daily' | 'quarterly' | 'metadata';
-  market?: 'tw' | 'us' | 'jp';
+  market?: MarketRegion;
   type: string;
 }
 
@@ -98,7 +100,7 @@ export class ConfigMigrator {
       originalPath,
       newPath,
       category,
-      market: market as 'tw' | 'us' | 'jp',
+      market: this.pathToMarketRegion(market),
       type
     };
   }
@@ -114,6 +116,18 @@ export class ConfigMigrator {
       'details',
       'sectors'
     ].includes(type);
+  }
+
+  /**
+   * 將路徑字串轉換為 MarketRegion
+   */
+  private pathToMarketRegion(pathStr: string): MarketRegion {
+    const mapping: Record<string, MarketRegion> = {
+      'tw': MarketRegion.TPE,
+      'us': MarketRegion.US,
+      'jp': MarketRegion.JP
+    };
+    return mapping[pathStr] || MarketRegion.TPE;
   }
 
   /**

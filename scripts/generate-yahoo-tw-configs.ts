@@ -150,20 +150,47 @@ templateFiles.forEach(templateFile => {
     const pureStockCode = stock.stockCode.replace('.TW', '');
     const symbolCodeForAPI = templateType === 'history' ? pureStockCode : stock.stockCode;
     
-    // 更新 URL 中的變數
-    config.url = config.url.replace('${symbolCode}', symbolCodeForAPI);
+    // 更新 URL 中的變數 (統一方案 1：所有類型都替換變數為實際值)
+    if (templateType === 'history') {
+      // history 類型：替換 URL 中的 ${symbolCode} 和 ${date}
+      const currentDate = new Date().toISOString().split('T')[0].replace(/-/g, '');
+      config.url = config.url
+        .replace('${symbolCode}', symbolCodeForAPI)
+        .replace('${date}', currentDate);
+    } else {
+      // 非 history 類型：只替換 ${symbolCode}
+      config.url = config.url.replace('${symbolCode}', symbolCodeForAPI);
+    }
     
     // 更新變數
-    config.variables = {
-      ...config.variables,
-      symbolCode: symbolCodeForAPI,
-      companyName: stock.companyName,
-      sector: stock.sector
-    };
+    if (templateType === 'history') {
+      // history 類型：包含當前日期
+      const currentDate = new Date().toISOString().split('T')[0].replace(/-/g, '');
+      config.variables = {
+        ...config.variables,
+        symbolCode: symbolCodeForAPI,
+        date: currentDate,
+        companyName: stock.companyName,
+        sector: stock.sector
+      };
+    } else {
+      // 非 history 類型：標準變數
+      config.variables = {
+        ...config.variables,
+        symbolCode: symbolCodeForAPI,
+        companyName: stock.companyName,
+        sector: stock.sector
+      };
+    }
     
     // 更新導出文件名
     if (config.export && config.export.filename) {
-      config.export.filename = config.export.filename.replace('${symbolCode}', stock.stockCode.replace('.TW', '_TW'));
+      // 生成當前日期 (YYYYMMDD 格式)
+      const currentDate = new Date().toISOString().split('T')[0].replace(/-/g, '');
+      
+      config.export.filename = config.export.filename
+        .replace('${symbolCode}', stock.stockCode.replace('.TW', '_TW'))
+        .replace('${date}', currentDate); // 替換日期變數為實際值
     }
     
     // 生成配置文件名 (將 .TW 轉換為 _TW 避免文件系統問題)

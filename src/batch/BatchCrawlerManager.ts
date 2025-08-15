@@ -4,11 +4,12 @@ import { ErrorRecovery, ErrorAction, ErrorType } from './ErrorRecovery';
 import { logger } from '../utils';
 import * as fs from 'fs-extra';
 import * as path from 'path';
+import { MarketRegion } from '../common/shared-types/interfaces/market-data.interface';
 
 export interface BatchOptions {
   // 篩選選項
   category?: 'daily' | 'quarterly' | 'metadata';
-  market?: 'tw' | 'us' | 'jp';
+  market?: MarketRegion;
   type?: string;
   
   // 執行控制

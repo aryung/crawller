@@ -65,7 +65,7 @@
   },
   "export": {
     "formats": ["json"],
-    "filename": "yahoo_finance_tw_revenue_${symbolCode}",
+    "filename": "yahoo-finance-tw-revenue-${symbolCode}",
     "structure": {
       "revenueData": "fiscalPeriods,revenueData"
     }

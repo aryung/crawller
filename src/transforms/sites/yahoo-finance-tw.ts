@@ -1418,19 +1418,21 @@ function combineTWHistoricalData(content: any, context?: any): HistoricalStockPr
     const volumes = context?.volumes || context?.variables?.volumes || [];
     
     // 優先從 URL 提取 symbolCode
-    let symbolCode = '1560'; // 預設值
+    let symbolCode = '1560.TW'; // 預設值
     if (context?.url) {
       const urlMatch = context.url.match(/stockNo=([^&]+)/);
       if (urlMatch) {
-        symbolCode = urlMatch[1];
+        symbolCode = urlMatch[1] + '.TW'; // Add .TW suffix for consistency with pipeline expectations
         console.log(`[Combine TW Historical] 從 URL 提取 symbolCode: ${symbolCode}`);
       }
     }
-    if (!symbolCode || symbolCode === '1560') {
-      symbolCode = context?.symbolCode || 
+    if (!symbolCode || symbolCode === '1560.TW') {
+      let fallbackCode = context?.symbolCode || 
         context?.variables?.symbolCode || 
         context?.variables?.stockSymbol || 
         '1560';
+      // Ensure fallback code has .TW suffix
+      symbolCode = fallbackCode.includes('.TW') ? fallbackCode : fallbackCode + '.TW';
     }
     
     console.log(`[Combine TW Historical] 📊 數據統計:`);

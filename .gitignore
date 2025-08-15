@@ -15,6 +15,6 @@ logs/
 
 .progress/
 config-backup/
-config-categorized/
+# config-categorized/
 
-config/*.json
+# config/*.json

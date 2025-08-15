@@ -17,6 +17,8 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import chalk from 'chalk';
+import { MarketRegion } from '../src/common/shared-types/interfaces/market-data.interface';
+import { MarketRegionPathMapping } from '../src/common/constants/report';
 
 interface StockCode {
   stockCode: string;
@@ -414,15 +416,15 @@ async function main() {
   
   try {
     // 根據選擇的市場執行更新
-    if (selectedMarket === 'all' || selectedMarket === 'tw') {
+    if (selectedMarket === 'all' || selectedMarket === MarketRegionPathMapping[MarketRegion.TPE]) {
       allStats.tw = updateTWStockCodes();
     }
     
-    if (selectedMarket === 'all' || selectedMarket === 'jp') {
+    if (selectedMarket === 'all' || selectedMarket === MarketRegionPathMapping[MarketRegion.JP]) {
       allStats.jp = updateJPStockCodes();
     }
     
-    if (selectedMarket === 'all' || selectedMarket === 'us') {
+    if (selectedMarket === 'all' || selectedMarket === MarketRegionPathMapping[MarketRegion.US]) {
       allStats.us = updateUSStockCodes();
     }
     
@@ -430,13 +432,13 @@ async function main() {
     console.log(chalk.blue('\n📈 總結'));
     console.log(chalk.gray('─'.repeat(50)));
     
-    if (selectedMarket === 'all' || selectedMarket === 'tw') {
+    if (selectedMarket === 'all' || selectedMarket === MarketRegionPathMapping[MarketRegion.TPE]) {
       showStats('台灣', allStats.tw);
     }
-    if (selectedMarket === 'all' || selectedMarket === 'jp') {
+    if (selectedMarket === 'all' || selectedMarket === MarketRegionPathMapping[MarketRegion.JP]) {
       showStats('日本', allStats.jp);
     }
-    if (selectedMarket === 'all' || selectedMarket === 'us') {
+    if (selectedMarket === 'all' || selectedMarket === MarketRegionPathMapping[MarketRegion.US]) {
       showStats('美國', allStats.us);
     }
     

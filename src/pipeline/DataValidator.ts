@@ -1,5 +1,6 @@
 import * as fs from 'fs-extra';
 import * as path from 'path';
+import { REPORT_DATA_FIELDS, getPossibleDataFields } from '../common/constants/report';
 
 export interface ValidationResult {
   isValid: boolean;
@@ -108,6 +109,7 @@ export class DataValidator {
       case 'balance-sheet':
         return this.validateBalanceSheetData(data);
       case 'cash-flow-statement':
+      case 'cashflow':  // 美國和日本使用的簡化名稱
         return this.validateCashFlowData(data);
       case 'eps':
         return this.validateEPSData(data);
@@ -115,6 +117,10 @@ export class DataValidator {
         return this.validateDividendData(data);
       case 'performance':
         return this.validatePerformanceData(data);
+      case 'history':     // 歷史價格數據
+      case 'revenue':     // 營收數據
+      case 'financials':  // 通用財務數據
+        return this.validateDataArray(data, reportType);
       default:
         return this.validateGenericFinancialData(data);
     }
@@ -124,277 +130,85 @@ export class DataValidator {
    * 驗證損益表數據
    */
   private validateIncomeStatementData(data: any): ValidationResult {
-    const requiredArrays = [
-      'fiscalPeriodsArray',
-      'totalRevenueValues',
-      'netIncomeCommonStockholdersValues',
-    ];
-
-    const missingArrays = requiredArrays.filter(key => {
-      const value = data[key];
-      return !Array.isArray(value) || value.length === 0;
-    });
-
-    if (missingArrays.length > 0) {
-      return {
-        isValid: false,
-        isEmpty: true,
-        reason: 'empty_financial_arrays',
-        details: `Missing or empty arrays: ${missingArrays.join(', ')}`,
-      };
-    }
-
-    // 檢查數據陣列是否包含實際的財務記錄
-    const hasValidData = data.data && Array.isArray(data.data) && data.data.length > 0;
-    if (!hasValidData) {
-      return {
-        isValid: false,
-        isEmpty: true,
-        reason: 'no_structured_data',
-        details: 'Missing structured financial data array',
-      };
-    }
-
-    return {
-      isValid: true,
-      isEmpty: false,
-    };
+    return this.validateDataArray(data, 'income-statement');
   }
 
   /**
    * 驗證資產負債表數據
    */
   private validateBalanceSheetData(data: any): ValidationResult {
-    const requiredArrays = [
-      'fiscalPeriodsArray',
-      'totalAssetsValues',
-      'totalLiabilitiesValues',
-      'totalEquityValues',
-    ];
-
-    const missingArrays = requiredArrays.filter(key => {
-      const value = data[key];
-      return !Array.isArray(value) || value.length === 0;
-    });
-
-    if (missingArrays.length > 0) {
-      return {
-        isValid: false,
-        isEmpty: true,
-        reason: 'empty_balance_arrays',
-        details: `Missing or empty arrays: ${missingArrays.join(', ')}`,
-      };
-    }
-
-    const hasValidData = data.data && Array.isArray(data.data) && data.data.length > 0;
-    if (!hasValidData) {
-      return {
-        isValid: false,
-        isEmpty: true,
-        reason: 'no_structured_data',
-      };
-    }
-
-    return {
-      isValid: true,
-      isEmpty: false,
-    };
+    return this.validateDataArray(data, 'balance-sheet');
   }
 
   /**
    * 驗證現金流量表數據
    */
   private validateCashFlowData(data: any): ValidationResult {
-    const requiredArrays = [
-      'fiscalPeriodsArray',
-      'operatingCashFlowValues',
-    ];
-
-    const missingArrays = requiredArrays.filter(key => {
-      const value = data[key];
-      return !Array.isArray(value) || value.length === 0;
-    });
-
-    if (missingArrays.length > 0) {
-      return {
-        isValid: false,
-        isEmpty: true,
-        reason: 'empty_cashflow_arrays',
-        details: `Missing or empty arrays: ${missingArrays.join(', ')}`,
-      };
-    }
-
-    const hasValidData = data.independentCashFlowData && Array.isArray(data.independentCashFlowData) && data.independentCashFlowData.length > 0;
-    if (!hasValidData) {
-      return {
-        isValid: false,
-        isEmpty: true,
-        reason: 'no_structured_cashflow_data',
-      };
-    }
-
-    return {
-      isValid: true,
-      isEmpty: false,
-    };
+    return this.validateDataArray(data, 'cash-flow-statement');
   }
 
   /**
    * 驗證每股盈餘數據
    */
   private validateEPSData(data: any): ValidationResult {
-    const requiredArrays = [
-      'fiscalPeriods',
-      'epsValues',
-    ];
-
-    const missingArrays = requiredArrays.filter(key => {
-      const value = data[key];
-      return !Array.isArray(value) || value.length === 0;
-    });
-
-    if (missingArrays.length > 0) {
-      return {
-        isValid: false,
-        isEmpty: true,
-        reason: 'empty_eps_arrays',
-        details: `Missing or empty arrays: ${missingArrays.join(', ')}`,
-      };
-    }
-
-    const hasValidData = data.simpleEPSData && Array.isArray(data.simpleEPSData) && data.simpleEPSData.length > 0;
-    if (!hasValidData) {
-      return {
-        isValid: false,
-        isEmpty: true,
-        reason: 'no_structured_eps_data',
-      };
-    }
-
-    return {
-      isValid: true,
-      isEmpty: false,
-    };
+    return this.validateDataArray(data, 'eps');
   }
 
   /**
    * 驗證股利數據
    */
   private validateDividendData(data: any): ValidationResult {
-    const requiredArrays = [
-      'fiscalPeriods',
-      'dividendValues',
-    ];
-
-    const missingArrays = requiredArrays.filter(key => {
-      const value = data[key];
-      return !Array.isArray(value) || value.length === 0;
-    });
-
-    if (missingArrays.length > 0) {
-      return {
-        isValid: false,
-        isEmpty: true,
-        reason: 'empty_dividend_arrays',
-        details: `Missing or empty arrays: ${missingArrays.join(', ')}`,
-      };
-    }
-
-    const hasValidData = data.dividendData && Array.isArray(data.dividendData) && data.dividendData.length > 0;
-    if (!hasValidData) {
-      return {
-        isValid: false,
-        isEmpty: true,
-        reason: 'no_structured_dividend_data',
-      };
-    }
-
-    return {
-      isValid: true,
-      isEmpty: false,
-    };
+    return this.validateDataArray(data, 'dividend');
   }
 
   /**
    * 驗證日本績效數據
    */
   private validatePerformanceData(data: any): ValidationResult {
-    const requiredArrays = [
-      'fiscalPeriods',
-      'performanceValues',
-    ];
-
-    const missingArrays = requiredArrays.filter(key => {
-      const value = data[key];
-      return !Array.isArray(value) || value.length === 0;
-    });
-
-    if (missingArrays.length > 0) {
-      return {
-        isValid: false,
-        isEmpty: true,
-        reason: 'empty_performance_arrays',
-        details: `Missing or empty arrays: ${missingArrays.join(', ')}`,
-      };
-    }
-
-    const hasValidData = data.performanceData && Array.isArray(data.performanceData) && data.performanceData.length > 0;
-    if (!hasValidData) {
-      return {
-        isValid: false,
-        isEmpty: true,
-        reason: 'no_structured_performance_data',
-      };
-    }
-
-    return {
-      isValid: true,
-      isEmpty: false,
-    };
+    return this.validateDataArray(data, 'performance');
   }
 
   /**
    * 通用財務數據驗證
    */
   private validateGenericFinancialData(data: any): ValidationResult {
-    // 尋找任何看起來像是期間數據的陣列
-    const periodArrays = Object.keys(data).filter(key => 
-      key.toLowerCase().includes('period') || 
-      key.toLowerCase().includes('fiscal')
-    );
+    return this.validateDataArray(data, 'generic-financial');
+  }
 
-    // 尋找任何看起來像是數值數據的陣列
-    const valueArrays = Object.keys(data).filter(key => 
-      key.toLowerCase().includes('values') || 
-      key.toLowerCase().includes('data')
-    );
-
-    if (periodArrays.length === 0 && valueArrays.length === 0) {
+  /**
+   * 統一的數據驗證方法
+   * 所有報表類型都使用相同的驗證邏輯：檢查最終的數據陣列是否有值
+   */
+  private validateDataArray(data: any, reportType: string): ValidationResult {
+    // 檢查主要欄位
+    const hasMainData = data[REPORT_DATA_FIELDS.PRIMARY] && 
+                       Array.isArray(data[REPORT_DATA_FIELDS.PRIMARY]) && 
+                       data[REPORT_DATA_FIELDS.PRIMARY].length > 0;
+    
+    if (hasMainData) {
       return {
-        isValid: false,
-        isEmpty: true,
-        reason: 'no_recognizable_data_arrays',
+        isValid: true,
+        isEmpty: false,
       };
     }
-
-    // 檢查是否有非空的數據陣列
-    const hasNonEmptyArrays = [...periodArrays, ...valueArrays].some(key => {
-      const value = data[key];
-      return Array.isArray(value) && value.length > 0;
-    });
-
-    if (!hasNonEmptyArrays) {
+    
+    // 檢查替代欄位
+    const hasAlternativeData = REPORT_DATA_FIELDS.ALTERNATIVE.some(field => 
+      data[field] && Array.isArray(data[field]) && data[field].length > 0
+    );
+    
+    if (hasAlternativeData) {
       return {
-        isValid: false,
-        isEmpty: true,
-        reason: 'all_arrays_empty',
-        details: `Checked arrays: ${[...periodArrays, ...valueArrays].join(', ')}`,
+        isValid: true,
+        isEmpty: false,
       };
     }
-
+    
     return {
-      isValid: true,
-      isEmpty: false,
+      isValid: false,
+      isEmpty: true,
+      reason: 'empty_data',
+      details: `No valid data array found in ${reportType}. Checked fields: ${getPossibleDataFields().join(', ')}`,
     };
   }
 
@@ -477,24 +291,94 @@ export class DataValidator {
    * 在結構化目錄中尋找輸出文件
    */
   private async findOutputFile(outputDir: string, filename: string): Promise<string | null> {
+    // v3.0 統一變數處理：大多數變數已在配置生成時替換，使用通配符搜尋實際文件
+    const searchPattern = this.convertFilenameToGlobPattern(filename);
+    
     const possiblePaths = [
       // 結構化目錄路徑
-      path.join(outputDir, 'quarterly', '**', `${filename}.json`),
-      path.join(outputDir, 'daily', '**', `${filename}.json`),
-      path.join(outputDir, 'metadata', '**', `${filename}.json`),
+      path.join(outputDir, 'quarterly', '**', `${searchPattern}.json`),
+      path.join(outputDir, 'daily', '**', `${searchPattern}.json`),
+      path.join(outputDir, 'metadata', '**', `${searchPattern}.json`),
       // 扁平目錄路徑 (向後兼容)
-      path.join(outputDir, `${filename}.json`),
+      path.join(outputDir, `${searchPattern}.json`),
     ];
 
     for (const pattern of possiblePaths) {
       // 使用 glob 模式搜尋
       const files = await this.globSearch(pattern);
       if (files.length > 0) {
-        return files[0]; // 返回第一個匹配的文件
+        // 如果有多個匹配，選擇最新的檔案（根據修改時間）
+        if (files.length === 1) {
+          return files[0];
+        }
+        
+        // 多個檔案時，選擇最新的
+        const latestFile = await this.selectLatestFile(files);
+        return latestFile;
       }
     }
 
     return null;
+  }
+
+  /**
+   * 從多個檔案中選擇最新的（根據修改時間）
+   */
+  private async selectLatestFile(files: string[]): Promise<string> {
+    let latestFile = files[0];
+    let latestTime = 0;
+    
+    for (const file of files) {
+      try {
+        const stats = await fs.stat(file);
+        if (stats.mtime.getTime() > latestTime) {
+          latestTime = stats.mtime.getTime();
+          latestFile = file;
+        }
+      } catch (error) {
+        // 忽略無法讀取的檔案
+        continue;
+      }
+    }
+    
+    return latestFile;
+  }
+
+  /**
+   * 將包含變數的文件名轉換為 glob 搜尋模式
+   * v3.0 統一變數處理 + 跨日容錯：使用模糊匹配容忍日期差異
+   */
+  private convertFilenameToGlobPattern(filename: string): string {
+    // 方案 1 實施後：所有日期和其他變數都已在配置生成時替換為實際值
+    // 但考慮跨日問題，對日期部分使用通配符
+    
+    let pattern = filename;
+    
+    // 處理跨日問題：日期部分使用通配符
+    // TW: yahoo-finance-tw-history-9955_TW_20250815 -> yahoo-finance-tw-history-9955_TW_*
+    pattern = pattern.replace(/_\d{8}(?=\.json|$)/, '_*');
+    
+    // US: yahoo-finance-us-history-AAL-1752681364-1755273364 -> yahoo-finance-us-history-AAL-*-*
+    pattern = pattern.replace(/-\d{10}-\d{10}(?=\.json|$)/, '-*-*');
+    
+    // JP: yahoo-finance-jp-history-9993_T-20250801-20250815 -> yahoo-finance-jp-history-9993_T-*-*
+    pattern = pattern.replace(/-\d{8}-\d{8}(?=\.json|$)/, '-*-*');
+    
+    // 修復：如果檔名沒有明確的日期後綴但可能需要通配符
+    // 例如：yahoo-finance-tw-balance-sheet-9943_TW 應該變成 yahoo-finance-tw-balance-sheet-9943_TW*
+    if (!pattern.includes('*') && !pattern.endsWith('.json')) {
+      // 檢查是否以 symbolCode 格式結尾（包含 .TW, .T 等）
+      if (/_(TW|T|US)$/.test(pattern) || /[A-Z]{1,5}$/.test(pattern)) {
+        pattern = pattern + '*';
+      }
+    }
+    
+    // 處理任何殘留變數（向後兼容）
+    pattern = pattern.replace(/\$\{[^}]+\}/g, '*');
+    
+    console.log(`  🔍 Pattern conversion: "${filename}" -> "${pattern}"`);
+    
+    return pattern;
   }
 
   /**
@@ -504,15 +388,32 @@ export class DataValidator {
     const results: string[] = [];
     
     try {
-      // 替換 ** 為實際目錄掃描
-      const basePath = pattern.split('**')[0];
-      const fileName = path.basename(pattern);
-      
-      if (await fs.pathExists(basePath)) {
-        await this.searchRecursively(basePath, fileName, results);
+      if (pattern.includes('**')) {
+        // 處理遞歸搜尋模式
+        const parts = pattern.split('**');
+        const basePath = parts[0].replace(/\/$/, ''); // 移除尾隨斜杠
+        const fileName = path.basename(pattern);
+        
+        if (await fs.pathExists(basePath)) {
+          await this.searchRecursively(basePath, fileName, results);
+        }
+      } else {
+        // 處理直接路徑 - 使用 Node.js 內建的文件系統操作
+        const dir = path.dirname(pattern);
+        const fileName = path.basename(pattern);
+        
+        if (await fs.pathExists(dir)) {
+          const items = await fs.readdir(dir);
+          for (const item of items) {
+            if (this.matchesPattern(item, fileName)) {
+              results.push(path.join(dir, item));
+            }
+          }
+        }
       }
     } catch (error) {
       // 忽略搜尋錯誤
+      console.error('globSearch error:', (error as Error).message);
     }
 
     return results;
@@ -530,12 +431,30 @@ export class DataValidator {
         
         if (item.isDirectory()) {
           await this.searchRecursively(fullPath, fileName, results);
-        } else if (item.isFile() && item.name === fileName) {
+        } else if (item.isFile() && this.matchesPattern(item.name, fileName)) {
           results.push(fullPath);
         }
       }
     } catch (error) {
       // 忽略權限或存取錯誤
     }
+  }
+
+  /**
+   * 簡單的通配符模式匹配
+   */
+  private matchesPattern(filename: string, pattern: string): boolean {
+    // 如果沒有通配符，使用精確匹配
+    if (!pattern.includes('*')) {
+      return filename === pattern;
+    }
+    
+    // 將模式轉換為正則表達式
+    const regexPattern = pattern
+      .replace(/\./g, '\\.')  // 轉義點號
+      .replace(/\*/g, '.*');  // * 替換為 .*
+    
+    const regex = new RegExp(`^${regexPattern}$`);
+    return regex.test(filename);
   }
 }

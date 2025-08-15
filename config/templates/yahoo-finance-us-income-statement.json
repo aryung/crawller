@@ -201,6 +201,6 @@
   },
   "export": {
     "formats": ["json", "csv"],
-    "filename": "yahoo_finance_us_income_statement_${symbolCode}"
+    "filename": "yahoo-finance-us-income-statement-${symbolCode}"
   }
 }
