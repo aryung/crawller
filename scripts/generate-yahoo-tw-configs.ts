@@ -146,13 +146,17 @@ templateFiles.forEach(templateFile => {
   stockCodes.forEach(stock => {
     const config: ConfigTemplate = JSON.parse(JSON.stringify(template));
     
+    // 對於 TWSE API，需要移除 .TW 後綴，只使用純股票代碼
+    const pureStockCode = stock.stockCode.replace('.TW', '');
+    const symbolCodeForAPI = templateType === 'history' ? pureStockCode : stock.stockCode;
+    
     // 更新 URL 中的變數
-    config.url = config.url.replace('${symbolCode}', stock.stockCode);
+    config.url = config.url.replace('${symbolCode}', symbolCodeForAPI);
     
     // 更新變數
     config.variables = {
       ...config.variables,
-      symbolCode: stock.stockCode,
+      symbolCode: symbolCodeForAPI,
       companyName: stock.companyName,
       sector: stock.sector
     };

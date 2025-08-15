@@ -7,6 +7,20 @@ import { UnifiedFinancialData } from '../../types/unified-financial-data';
 import { FiscalReportType, MarketRegion, UNIT_MULTIPLIERS } from '../../common/';
 
 /**
+ * 歷史股價數據類型定義
+ */
+export interface HistoricalStockPrice {
+  date: string;
+  open: number;
+  high: number;
+  low: number;
+  close: number;
+  volume: number;
+  adjustedClose?: number;
+  symbolCode: string;
+}
+
+/**
  * Yahoo Finance US 轉換函數接口 (簡化版本)
  * 統一返回 UnifiedFinancialData[] 格式
  */
@@ -29,6 +43,11 @@ export interface YahooFinanceUSTransforms {
   };
   parseUSFinancialDatesArray: (content: string | string[]) => string[];
   combineUSFinancialData: (content: any, context?: any) => UnifiedFinancialData[];
+  // 歷史股價數據轉換函數
+  parseUSDateArray: (content: string | string[]) => string[];
+  parseUSStockPriceArray: (content: string | string[]) => number[];
+  parseUSVolumeArray: (content: string | string[]) => number[];
+  combineUSHistoricalData: (content: any, context?: any) => HistoricalStockPrice[];
 }
 
 /**
@@ -465,6 +484,167 @@ export const yahooFinanceUSTransforms: YahooFinanceUSTransforms = {
     }
 
     console.log(`[US Combine] ✅ 成功組合 ${results.length} 筆美國財務數據`);
+    return results;
+  },
+
+  /**
+   * 解析美國日期陣列 (歷史股價專用)
+   * 處理美國格式: "Aug 14, 2025" -> "2025-08-14"
+   */
+  parseUSDateArray: (content: string | string[]): string[] => {
+    console.log('[US Date Array] 📅 處理美國歷史日期陣列...');
+    const contentArray = Array.isArray(content) ? content : [content];
+    const dates: string[] = [];
+
+    for (const item of contentArray) {
+      if (!item || typeof item !== 'string') continue;
+
+      const str = item.toString().trim();
+
+      // 美國日期格式: "Aug 14, 2025"
+      const dateMatch = str.match(/(\w{3})\s+(\d{1,2}),\s+(\d{4})/);
+      if (dateMatch) {
+        const [, monthStr, day, year] = dateMatch;
+        
+        // 月份映射
+        const monthMap: { [key: string]: string } = {
+          'Jan': '01', 'Feb': '02', 'Mar': '03', 'Apr': '04',
+          'May': '05', 'Jun': '06', 'Jul': '07', 'Aug': '08',
+          'Sep': '09', 'Oct': '10', 'Nov': '11', 'Dec': '12'
+        };
+        
+        const month = monthMap[monthStr] || '01';
+        const standardDate = `${year}-${month}-${day.padStart(2, '0')}`;
+        dates.push(standardDate);
+        console.log(`[US Date Array] ✅ 轉換日期: "${str}" -> "${standardDate}"`);
+      } else {
+        // 如果無法解析，使用當前日期
+        const fallbackDate = new Date().toISOString().split('T')[0];
+        dates.push(fallbackDate);
+        console.log(`[US Date Array] ⚠️ 無法解析日期: "${str}"，使用默認: "${fallbackDate}"`);
+      }
+    }
+
+    console.log(`[US Date Array] ✅ 成功處理 ${dates.length} 個日期:`, dates);
+    return dates;
+  },
+
+  /**
+   * 解析美國股價陣列 (歷史股價專用)
+   * 處理美國格式: "2.2900" -> 2.29
+   */
+  parseUSStockPriceArray: (content: string | string[]): number[] => {
+    console.log('[US Stock Price Array] 💰 處理美國股價陣列...');
+    const contentArray = Array.isArray(content) ? content : [content];
+    const prices: number[] = [];
+
+    for (const item of contentArray) {
+      if (!item || typeof item !== 'string') continue;
+
+      const str = item.toString().trim();
+
+      // 移除千分位逗號
+      const cleanValue = str.replace(/,/g, '');
+      const price = parseFloat(cleanValue);
+
+      if (isNaN(price)) {
+        console.log(`[US Stock Price Array] ⚠️ 無法解析價格: "${str}" -> 0`);
+        prices.push(0);
+      } else {
+        prices.push(price);
+        console.log(`[US Stock Price Array] ✅ 解析價格: "${str}" -> ${price}`);
+      }
+    }
+
+    console.log(`[US Stock Price Array] ✅ 成功處理 ${prices.length} 個價格:`, prices);
+    return prices;
+  },
+
+  /**
+   * 解析美國成交量陣列 (歷史股價專用)
+   * 處理美國格式: "320,244,000" -> 320244000
+   */
+  parseUSVolumeArray: (content: string | string[]): number[] => {
+    console.log('[US Volume Array] 📊 處理美國成交量陣列...');
+    const contentArray = Array.isArray(content) ? content : [content];
+    const volumes: number[] = [];
+
+    for (const item of contentArray) {
+      if (!item || typeof item !== 'string') continue;
+
+      const str = item.toString().trim();
+
+      // 移除千分位逗號
+      const cleanValue = str.replace(/,/g, '');
+      const volume = parseInt(cleanValue);
+
+      if (isNaN(volume)) {
+        console.log(`[US Volume Array] ⚠️ 無法解析成交量: "${str}" -> 0`);
+        volumes.push(0);
+      } else {
+        volumes.push(volume);
+        console.log(`[US Volume Array] ✅ 解析成交量: "${str}" -> ${volume}`);
+      }
+    }
+
+    console.log(`[US Volume Array] ✅ 成功處理 ${volumes.length} 個成交量:`, volumes);
+    return volumes;
+  },
+
+  /**
+   * 組合美國歷史股價數據
+   * 將個別提取的數據組合成統一的 HistoricalStockPrice 格式，符合 OhlcvDaysEntity 要求
+   */
+  combineUSHistoricalData: (content: any, context?: any): HistoricalStockPrice[] => {
+    console.log('[US History Combine] 🔗 開始組合美國歷史股價數據...', context?.variables || {});
+
+    if (!context) return [];
+
+    const results: HistoricalStockPrice[] = [];
+    const symbolCode = context.variables?.symbolCode || context.symbolCode || 'UNKNOWN';
+    const vars = context.variables || {};
+
+    // 獲取各類數據陣列
+    const datesArray = vars.historicalDates || [];
+    const openPricesArray = vars.openPrices || [];
+    const highPricesArray = vars.highPrices || [];
+    const lowPricesArray = vars.lowPrices || [];
+    const closePricesArray = vars.closePrices || [];
+    const volumesArray = vars.volumes || [];
+    const adjustedClosePricesArray = vars.adjustedClosePrices || [];
+
+    // 找出最大陣列長度
+    const maxLength = Math.max(
+      datesArray.length,
+      openPricesArray.length,
+      highPricesArray.length,
+      lowPricesArray.length,
+      closePricesArray.length,
+      volumesArray.length,
+      adjustedClosePricesArray.length,
+    );
+
+    console.log(`[US History Combine] 📊 偵測到最大陣列長度: ${maxLength}`);
+
+    // 為每個歷史記錄創建對象
+    for (let i = 0; i < maxLength; i++) {
+      const historicalData: HistoricalStockPrice = {
+        date: datesArray[i] || new Date().toISOString().split('T')[0],
+        open: openPricesArray[i] || 0,
+        high: highPricesArray[i] || 0,
+        low: lowPricesArray[i] || 0,
+        close: closePricesArray[i] || 0,
+        volume: volumesArray[i] || 0,
+        adjustedClose: adjustedClosePricesArray[i] || undefined,
+        symbolCode: symbolCode, // 美國股票代碼保持原樣
+      };
+
+      results.push(historicalData);
+
+      console.log(`[US History Combine] ✅ 記錄 ${i + 1}: ${historicalData.date} | O:${historicalData.open} H:${historicalData.high} L:${historicalData.low} C:${historicalData.close} V:${historicalData.volume}`);
+    }
+
+    console.log(`[US History Combine] ✅ 成功組合 ${results.length} 筆美國歷史股價數據`);
     return results;
   },
 };

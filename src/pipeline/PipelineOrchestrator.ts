@@ -18,6 +18,7 @@ export interface PipelineConfig {
   maxConcurrent?: number;
   regions?: string[];
   symbolCodes?: string[];
+  dataTypes?: string[]; // Support for different data types like 'financials', 'history', etc.
   skipConfigGeneration?: boolean;
   skipCrawling?: boolean;
   skipAggregation?: boolean;
@@ -78,6 +79,7 @@ export class PipelineOrchestrator {
       maxConcurrent: config.maxConcurrent || 1,
       regions: config.regions || ['tw', 'us', 'jp'],
       symbolCodes: config.symbolCodes || [],
+      dataTypes: config.dataTypes || ['financials'], // Default to financials only
       skipConfigGeneration: config.skipConfigGeneration || false,
       skipCrawling: config.skipCrawling || false,
       skipAggregation: config.skipAggregation || false,
@@ -262,47 +264,54 @@ export class PipelineOrchestrator {
     };
 
     for (const region of this.config.regions) {
-      try {
-        const scriptPath = path.join(
-          this.config.scriptsDir,
-          `generate-yahoo-${region}-configs.ts`
-        );
-
-        if (await fs.pathExists(scriptPath)) {
-          console.log(`  Generating ${region.toUpperCase()} configurations...`);
-          
-          // Execute generation script with tsx
-          const { stdout, stderr } = await execAsync(`npx tsx ${scriptPath}`);
-          
-          if (stderr) {
-            result.errors.push(`${region} generation warning: ${stderr}`);
-          }
-
-          // Parse output to count generated configs
-          const matches = stdout.match(/(\d+) 個配置文件/g);
-          if (matches) {
-            for (const match of matches) {
-              const count = parseInt(match.match(/\d+/)?.[0] || '0');
-              result.totalGenerated += count;
-            }
-          }
-
-          // Count unique symbols from data file
-          const dataFile = path.join(
-            this.config.dataDir,
-            `yahoo-finance-${region}-stockcodes.json`
+      for (const dataType of this.config.dataTypes) {
+        try {
+          const scriptPath = path.join(
+            this.config.scriptsDir,
+            `generate-yahoo-${region}-configs.ts`
           );
-          if (await fs.pathExists(dataFile)) {
-            const stockData = await fs.readJson(dataFile);
-            for (const stock of stockData) {
-              result.uniqueSymbols.add(stock.stockCode);
+
+          if (await fs.pathExists(scriptPath)) {
+            console.log(`  Generating ${region.toUpperCase()} ${dataType} configurations...`);
+            
+            // Execute generation script with tsx and specific data type
+            const command = `npx tsx ${scriptPath} --type=${dataType}`;
+            const { stdout, stderr } = await execAsync(command);
+            
+            if (stderr) {
+              result.errors.push(`${region} ${dataType} generation warning: ${stderr}`);
             }
+
+            // Parse output to count generated configs
+            const matches = stdout.match(/(\d+) 個配置文件/g);
+            if (matches) {
+              for (const match of matches) {
+                const count = parseInt(match.match(/\d+/)?.[0] || '0');
+                result.totalGenerated += count;
+              }
+            }
+          } else {
+            result.errors.push(`Script not found: ${scriptPath}`);
           }
-        } else {
-          result.errors.push(`Script not found: ${scriptPath}`);
+        } catch (error) {
+          result.errors.push(`Error generating ${region} ${dataType} configs: ${(error as Error).message}`);
+        }
+      }
+
+      // Count unique symbols from data file (once per region)
+      try {
+        const dataFile = path.join(
+          this.config.dataDir,
+          `yahoo-finance-${region}-stockcodes.json`
+        );
+        if (await fs.pathExists(dataFile)) {
+          const stockData = await fs.readJson(dataFile);
+          for (const stock of stockData) {
+            result.uniqueSymbols.add(stock.stockCode);
+          }
         }
       } catch (error) {
-        result.errors.push(`Error generating ${region} configs: ${(error as Error).message}`);
+        result.errors.push(`Error reading stock data for ${region}: ${(error as Error).message}`);
       }
     }
 

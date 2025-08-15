@@ -7,6 +7,20 @@ import { UnifiedFinancialData } from '../../types/unified-financial-data';
 import { FiscalReportType, MarketRegion, UNIT_MULTIPLIERS } from '../../common';
 
 /**
+ * 歷史股價數據介面 (TWSE API)
+ */
+export interface HistoricalStockPrice {
+  date: string;
+  open: number;
+  high: number;
+  low: number;
+  close: number;
+  volume: number;
+  adjustedClose?: number;
+  symbolCode: string;
+}
+
+/**
  * Yahoo Finance TW 转换函数接口 (大幅清理后的版本)
  * 只保留配置文件中实际使用的20个函数
  */
@@ -77,6 +91,16 @@ export interface YahooFinanceTWTransforms {
     originalPeriod?: string;
   }>;
   parseTWFinancialValuesArray: (content: string | string[]) => number[];
+
+  // === 歷史股價數據轉換函數 (TWSE API) ===
+  parseTWStockInfo: (content: string | string[]) => string;
+  parseTWDateArray: (content: string | string[]) => string[];
+  parseTWOpenPriceArray: (content: string | string[]) => number[];
+  parseTWHighPriceArray: (content: string | string[]) => number[];
+  parseTWLowPriceArray: (content: string | string[]) => number[];
+  parseTWClosePriceArray: (content: string | string[]) => number[];
+  parseTWVolumeArray: (content: string | string[]) => number[];
+  combineTWHistoricalData: (content: any, context?: any) => HistoricalStockPrice[];
 }
 
 /**
@@ -1238,6 +1262,241 @@ function parseTWFinancialValuesArray(content: string | string[]): number[] {
   return values;
 }
 
+/**
+ * === 歷史股價數據轉換函數實現 (TWSE API) ===
+ */
+
+/**
+ * 解析台灣股票資訊 (從 TWSE API JSON 回應)
+ */
+function parseTWStockInfo(content: string | string[]): string {
+  console.log('[TW Stock Info] 📈 解析台灣股票資訊...');
+  
+  try {
+    const contentStr = Array.isArray(content) ? content[0] : content;
+    if (!contentStr) return '';
+
+    // 嘗試解析 JSON
+    const jsonData = JSON.parse(contentStr);
+    
+    // TWSE API 回應格式: { "stat": "OK", "date": "20250815", "title": "XXX股份有限公司" }
+    if (jsonData.title) {
+      console.log(`[TW Stock Info] ✅ 解析到股票資訊: ${jsonData.title}`);
+      return jsonData.title;
+    }
+    
+    return jsonData.stat === 'OK' ? 'TWSE Stock Data' : '';
+  } catch (error) {
+    console.error('[TW Stock Info] ❌ JSON 解析失敗:', error);
+    return '';
+  }
+}
+
+/**
+ * 解析台灣歷史價格日期陣列 (從 TWSE API JSON 回應)
+ */
+function parseTWDateArray(content: string | string[]): string[] {
+  console.log('[TW Date Array] 📅 解析台灣歷史價格日期...');
+  
+  try {
+    const contentStr = Array.isArray(content) ? content[0] : content;
+    if (!contentStr) return [];
+
+    const jsonData = JSON.parse(contentStr);
+    const dates: string[] = [];
+    
+    // TWSE API 回應格式: { "data": [["114/08/01", "價格數據..."], ["114/08/02", "價格數據..."]] }
+    if (jsonData.data && Array.isArray(jsonData.data)) {
+      for (const row of jsonData.data) {
+        if (Array.isArray(row) && row.length > 0) {
+          const rocDate = row[0]; // ROC 年格式: 114/08/01
+          const standardDate = convertROCToStandardDate(rocDate);
+          if (standardDate) {
+            dates.push(standardDate);
+          }
+        }
+      }
+    }
+    
+    console.log(`[TW Date Array] ✅ 解析到 ${dates.length} 個日期`);
+    return dates;
+  } catch (error) {
+    console.error('[TW Date Array] ❌ JSON 解析失敗:', error);
+    return [];
+  }
+}
+
+/**
+ * 解析台灣歷史開盤價陣列
+ */
+function parseTWOpenPriceArray(content: string | string[]): number[] {
+  return parseTWPriceColumnArray(content, 3, 'Open Price');
+}
+
+/**
+ * 解析台灣歷史最高價陣列  
+ */
+function parseTWHighPriceArray(content: string | string[]): number[] {
+  return parseTWPriceColumnArray(content, 4, 'High Price');
+}
+
+/**
+ * 解析台灣歷史最低價陣列
+ */
+function parseTWLowPriceArray(content: string | string[]): number[] {
+  return parseTWPriceColumnArray(content, 5, 'Low Price');
+}
+
+/**
+ * 解析台灣歷史收盤價陣列
+ */
+function parseTWClosePriceArray(content: string | string[]): number[] {
+  return parseTWPriceColumnArray(content, 6, 'Close Price');
+}
+
+/**
+ * 解析台灣歷史成交量陣列
+ */
+function parseTWVolumeArray(content: string | string[]): number[] {
+  return parseTWPriceColumnArray(content, 1, 'Volume');
+}
+
+/**
+ * 通用的台灣價格欄位解析函數
+ */
+function parseTWPriceColumnArray(content: string | string[], columnIndex: number, fieldName: string): number[] {
+  console.log(`[TW ${fieldName} Array] 💰 解析台灣歷史${fieldName}...`);
+  
+  try {
+    const contentStr = Array.isArray(content) ? content[0] : content;
+    if (!contentStr) return [];
+
+    const jsonData = JSON.parse(contentStr);
+    const values: number[] = [];
+    
+    // TWSE API 回應格式: { "data": [["114/08/01", "成交股數", "成交金額", "開盤價", "最高價", "最低價", "收盤價", "漲跌價差"]] }
+    if (jsonData.data && Array.isArray(jsonData.data)) {
+      for (const row of jsonData.data) {
+        if (Array.isArray(row) && row.length > columnIndex) {
+          const valueStr = row[columnIndex];
+          
+          // 處理台灣數據格式 (移除逗號，處理 "--" 等)
+          if (valueStr === '--' || valueStr === '-' || valueStr === '') {
+            values.push(0);
+          } else {
+            const cleanValue = valueStr.toString().replace(/,/g, '');
+            const numValue = parseFloat(cleanValue);
+            values.push(isNaN(numValue) ? 0 : numValue);
+          }
+        }
+      }
+    }
+    
+    console.log(`[TW ${fieldName} Array] ✅ 解析到 ${values.length} 個${fieldName}數值`);
+    return values;
+  } catch (error) {
+    console.error(`[TW ${fieldName} Array] ❌ JSON 解析失敗:`, error);
+    return [];
+  }
+}
+
+/**
+ * 組合台灣歷史股價數據
+ */
+function combineTWHistoricalData(content: any, context?: any): HistoricalStockPrice[] {
+  console.log('[Combine TW Historical] 🔗 開始組合台灣歷史股價數據...');
+  
+  const results: HistoricalStockPrice[] = [];
+  
+  try {
+    // 從 context.variables 獲取各項數據
+    const dates = context?.historicalDates || context?.variables?.historicalDates || [];
+    const openPrices = context?.openPrices || context?.variables?.openPrices || [];
+    const highPrices = context?.highPrices || context?.variables?.highPrices || [];
+    const lowPrices = context?.lowPrices || context?.variables?.lowPrices || [];
+    const closePrices = context?.closePrices || context?.variables?.closePrices || [];
+    const volumes = context?.volumes || context?.variables?.volumes || [];
+    
+    // 優先從 URL 提取 symbolCode
+    let symbolCode = '1560'; // 預設值
+    if (context?.url) {
+      const urlMatch = context.url.match(/stockNo=([^&]+)/);
+      if (urlMatch) {
+        symbolCode = urlMatch[1];
+        console.log(`[Combine TW Historical] 從 URL 提取 symbolCode: ${symbolCode}`);
+      }
+    }
+    if (!symbolCode || symbolCode === '1560') {
+      symbolCode = context?.symbolCode || 
+        context?.variables?.symbolCode || 
+        context?.variables?.stockSymbol || 
+        '1560';
+    }
+    
+    console.log(`[Combine TW Historical] 📊 數據統計:`);
+    console.log(`  日期: ${dates.length} 個`);
+    console.log(`  開盤價: ${openPrices.length} 個`);
+    console.log(`  最高價: ${highPrices.length} 個`);
+    console.log(`  最低價: ${lowPrices.length} 個`);
+    console.log(`  收盤價: ${closePrices.length} 個`);
+    console.log(`  成交量: ${volumes.length} 個`);
+    
+    // 確保所有陣列長度一致
+    const minLength = Math.min(
+      dates.length,
+      openPrices.length,
+      highPrices.length,
+      lowPrices.length,
+      closePrices.length,
+      volumes.length
+    );
+    
+    for (let i = 0; i < minLength; i++) {
+      const historicalData: HistoricalStockPrice = {
+        date: dates[i],
+        open: openPrices[i],
+        high: highPrices[i],
+        low: lowPrices[i],
+        close: closePrices[i],
+        volume: volumes[i],
+        adjustedClose: closePrices[i], // TWSE 通常提供調整後收盤價
+        symbolCode: symbolCode
+      };
+      
+      results.push(historicalData);
+    }
+    
+    console.log(`[Combine TW Historical] ✅ 成功組合 ${results.length} 筆台灣歷史股價數據`);
+  } catch (error) {
+    console.error('[Combine TW Historical] ❌ 組合過程中發生錯誤:', error);
+  }
+  
+  return results;
+}
+
+/**
+ * 將 ROC (民國) 年格式轉換為標準日期格式
+ * 例如: "114/08/01" -> "2025-08-01"
+ */
+function convertROCToStandardDate(rocDate: string): string | null {
+  try {
+    const match = rocDate.match(/^(\d+)\/(\d+)\/(\d+)$/);
+    if (!match) return null;
+    
+    const rocYear = parseInt(match[1]);
+    const month = match[2].padStart(2, '0');
+    const day = match[3].padStart(2, '0');
+    
+    // ROC 年份 + 1911 = 西元年份
+    const adYear = rocYear + 1911;
+    
+    return `${adYear}-${month}-${day}`;
+  } catch (error) {
+    console.error(`[ROC Date Convert] ❌ 轉換失敗: ${rocDate}`, error);
+    return null;
+  }
+}
+
 
 /**
  * 导出对象 - 只包含实际使用的20个函数
@@ -1268,6 +1527,15 @@ export const yahooFinanceTWTransforms: YahooFinanceTWTransforms = {
   // === 新增：統一的陣列轉換函數 ===
   parseTWFinancialPeriodsArray,
   parseTWFinancialValuesArray,
+  // === 歷史股價數據轉換函數 (TWSE API) ===
+  parseTWStockInfo,
+  parseTWDateArray,
+  parseTWOpenPriceArray,
+  parseTWHighPriceArray,
+  parseTWLowPriceArray,
+  parseTWClosePriceArray,
+  parseTWVolumeArray,
+  combineTWHistoricalData,
 };
 
 export default yahooFinanceTWTransforms;

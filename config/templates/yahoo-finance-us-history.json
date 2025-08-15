@@ -1,0 +1,86 @@
+{
+  "templateType": "history",
+  "url": "https://finance.yahoo.com/quote/${symbolCode}/history/?period1=${period1}&period2=${period2}",
+  "_note": "US STOCK HISTORY CONFIG (Unified Naming): Simple independent selectors following CLAUDE.md principles. Each field uses its own CSS selector for precise data extraction from historical stock price table.",
+  "selectors": {
+    "stockInfo": {
+      "selector": "h1, .symbol",
+      "transform": "cleanStockSymbol"
+    },
+    "historicalDates": {
+      "selector": "section.main tbody > tr > td:nth-child(1)",
+      "multiple": true,
+      "transform": "parseUSDateArray"
+    },
+    "openPrices": {
+      "selector": "section.main tbody > tr > td:nth-child(2)",
+      "multiple": true,
+      "transform": "parseUSStockPriceArray"
+    },
+    "highPrices": {
+      "selector": "section.main tbody > tr > td:nth-child(3)",
+      "multiple": true,
+      "transform": "parseUSStockPriceArray"
+    },
+    "lowPrices": {
+      "selector": "section.main tbody > tr > td:nth-child(4)",
+      "multiple": true,
+      "transform": "parseUSStockPriceArray"
+    },
+    "closePrices": {
+      "selector": "section.main tbody > tr > td:nth-child(5)",
+      "multiple": true,
+      "transform": "parseUSStockPriceArray"
+    },
+    "adjustedClosePrices": {
+      "selector": "section.main tbody > tr > td:nth-child(6)",
+      "multiple": true,
+      "transform": "parseUSStockPriceArray"
+    },
+    "volumes": {
+      "selector": "section.main tbody > tr > td:nth-child(7)",
+      "multiple": true,
+      "transform": "parseUSVolumeArray"
+    },
+    "data": {
+      "selector": "body",
+      "transform": "combineUSHistoricalData"
+    }
+  },
+  "headers": {
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
+    "Accept-Language": "en-US,en;q=0.9",
+    "Accept-Encoding": "gzip, deflate, br",
+    "Cache-Control": "no-cache",
+    "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+  },
+  "options": {
+    "timeout": 45000,
+    "retries": 3,
+    "headless": true,
+    "screenshot": true,
+    "encoding": "utf-8",
+    "domainDelay": 5000,
+    "waitFor": 8000,
+    "waitForNetworkIdle": true,
+    "networkIdleTimeout": 3000,
+    "engine": "playwright",
+    "viewport": {
+      "width": 1920,
+      "height": 1080
+    }
+  },
+  "variables": {
+    "symbolCode": "OPEN",
+    "period1": "1754668800",
+    "period2": "1755273599",
+    "baseUrl": "https://finance.yahoo.com"
+  },
+  "export": {
+    "formats": ["json"],
+    "filename": "yahoo_finance_us_history_${symbolCode}_${period1}_${period2}",
+    "structure": {
+      "historicalData": "historicalPeriods,historicalData"
+    }
+  }
+}

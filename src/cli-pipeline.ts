@@ -17,6 +17,7 @@ program
   .command('run')
   .description('Run the complete crawler pipeline')
   .option('-r, --regions <regions>', 'Comma-separated list of regions (tw,us,jp)', 'tw,us,jp')
+  .option('-t, --data-types <types>', 'Comma-separated list of data types (financials,history)', 'financials')
   .option('-s, --symbols <symbols>', 'Comma-separated list of specific symbols to process')
   .option('-b, --batch-size <size>', 'Database import batch size', '100')
   .option('-c, --concurrent <count>', 'Maximum concurrent crawlers', '1')
@@ -40,6 +41,7 @@ program
 
     const config: PipelineConfig = {
       regions: options.regions.split(',').map((r: string) => r.trim()),
+      dataTypes: options.dataTypes.split(',').map((t: string) => t.trim()),
       symbolCodes: options.symbols ? options.symbols.split(',').map((s: string) => s.trim()) : [],
       batchSize: parseInt(options.batchSize),
       maxConcurrent: parseInt(options.concurrent),
@@ -336,6 +338,12 @@ program
     
     console.log(chalk.cyan('\n# Run complete pipeline for Taiwan stocks:'));
     console.log('  npx tsx src/cli-pipeline.ts run --regions tw');
+    
+    console.log(chalk.cyan('\n# Run historical data pipeline for all regions:'));
+    console.log('  npx tsx src/cli-pipeline.ts run --data-types history');
+    
+    console.log(chalk.cyan('\n# Run both financials and historical data:'));
+    console.log('  npx tsx src/cli-pipeline.ts run --data-types financials,history');
     
     console.log(chalk.cyan('\n# Run for specific symbols:'));
     console.log('  npx tsx src/cli-pipeline.ts run --symbols 2330.TW,2454.TW');

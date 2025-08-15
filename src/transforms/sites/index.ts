@@ -50,7 +50,7 @@ export function detectSiteFromUrl(url: string): string | null {
       return 'yahoo-finance-us';
     }
 
-    if (hostname.includes('tw.stock.yahoo.com')) {
+    if (hostname.includes('tw.stock.yahoo.com') || hostname.includes('twse.com.tw')) {
       return 'yahoo-finance-tw';
     }
 
