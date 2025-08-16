@@ -189,6 +189,14 @@
     "import:symbols:jp": "tsx scripts/import-symbols.ts --market=JP --batch-size=30",
     "import:symbols:small": "tsx scripts/import-symbols.ts --batch-size=10",
     
+    "//": "=== 進度檢查與維護 (Progress Check & Maintenance) ===",
+    "progress:check": "tsx scripts/check-progress-status.ts",
+    "progress:stats": "du -sh .progress 2>/dev/null || echo 'No .progress directory' && ls -lh .progress 2>/dev/null | wc -l || echo '0 files'",
+    "progress:analyze": "tsx scripts/check-progress-status.ts .progress",
+    "maintenance": "npm run progress:check && npm run clean:progress:old && npm run clean:outputs",
+    "maintenance:dry": "npm run progress:check && echo '建議執行: npm run maintenance'",
+    "maintenance:full": "npm run clean:progress:safe && npm run clean:outputs && npm run clean:configs:all",
+    
     "//": "=== 快速設置與重置 (Quick Setup & Reset) ===",
     "setup:all": "npm run pipeline:data-only",
     "setup:structured": "npm run import:fundamental:batch && npm run import:symbols && npm run import:labels",

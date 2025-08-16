@@ -5,6 +5,7 @@ import { SiteConcurrencyManager } from './SiteConcurrencyManager';
 import { logger } from '../utils';
 import * as fs from 'fs-extra';
 import * as path from 'path';
+import * as readline from 'readline';
 import { MarketRegion } from '../common/shared-types/interfaces/market-data.interface';
 
 export interface BatchOptions {
@@ -127,6 +128,9 @@ export class BatchCrawlerManager {
       this.isPaused = false;
 
       logger.info('開始批量爬取任務', options);
+
+      // 檢查進度目錄並提醒
+      await this.checkProgressDirectory(options.progressDir || '.progress');
 
       // 獲取配置列表
       const configNames = await this.getConfigNames(options);
@@ -654,6 +658,121 @@ export class BatchCrawlerManager {
         failed: progress.failed,
         skipped: progress.skipped,
         percentage: progress.percentage
+      });
+    });
+  }
+
+  /**
+   * 檢查進度目錄並提醒用戶
+   */
+  private async checkProgressDirectory(progressDir: string): Promise<void> {
+    try {
+      if (!await fs.pathExists(progressDir)) {
+        return; // 目錄不存在，無需檢查
+      }
+
+      const progressFiles = await ProgressTracker.listProgressFiles(progressDir);
+      const fileCount = progressFiles.length;
+      
+      if (fileCount > 10) {  // 超過 10 個檔案時提醒
+        const oldFiles = await this.getOldProgressFiles(progressDir, 7);  // 7 天前的檔案
+        const totalSize = await this.getDirectorySize(progressDir);
+        
+        console.log(`
+╔════════════════════════════════════════════════════════════╗
+║                    📁 進度檔案提醒                          ║
+╠════════════════════════════════════════════════════════════╣
+║  目前 ${progressDir} 目錄狀態：                              ║
+║  • 檔案數量：${fileCount} 個                                ║
+║  • 目錄大小：${totalSize}                                   ║
+║  • 7 天前檔案：${oldFiles.length} 個                       ║
+║                                                            ║
+║  建議執行清理命令：                                          ║
+║  • npm run clean:progress:safe  (清理 3 天前)              ║
+║  • npm run clean:progress:old   (清理 7 天前)              ║
+║  • npm run clean:progress:keep-recent (保留最近 5 個)      ║
+╚════════════════════════════════════════════════════════════╝
+        `);
+        
+        // 如果是互動模式，詢問是否繼續
+        if (process.stdout.isTTY && !process.env.CI) {
+          const answer = await this.promptUser('是否繼續執行？(Y/n): ');
+          if (answer.toLowerCase() === 'n') {
+            console.log('已取消執行');
+            process.exit(0);
+          }
+        }
+      }
+    } catch (error) {
+      logger.warn('檢查進度目錄時發生錯誤:', error);
+      // 不阻塞執行，只記錄警告
+    }
+  }
+
+  /**
+   * 取得舊進度檔案列表
+   */
+  private async getOldProgressFiles(progressDir: string, days: number): Promise<string[]> {
+    try {
+      const files = await fs.readdir(progressDir);
+      const oldFiles: string[] = [];
+      const cutoffTime = Date.now() - (days * 24 * 60 * 60 * 1000);
+      
+      for (const file of files) {
+        if (file.endsWith('.json')) {
+          const filePath = path.join(progressDir, file);
+          const stats = await fs.stat(filePath);
+          if (stats.mtime.getTime() < cutoffTime) {
+            oldFiles.push(file);
+          }
+        }
+      }
+      
+      return oldFiles;
+    } catch (error) {
+      return [];
+    }
+  }
+
+  /**
+   * 取得目錄大小
+   */
+  private async getDirectorySize(dir: string): Promise<string> {
+    try {
+      const files = await fs.readdir(dir);
+      let totalSize = 0;
+      
+      for (const file of files) {
+        const filePath = path.join(dir, file);
+        const stats = await fs.stat(filePath);
+        if (stats.isFile()) {
+          totalSize += stats.size;
+        }
+      }
+      
+      // 格式化大小
+      if (totalSize < 1024) return `${totalSize} B`;
+      if (totalSize < 1024 * 1024) return `${(totalSize / 1024).toFixed(1)} KB`;
+      if (totalSize < 1024 * 1024 * 1024) return `${(totalSize / 1024 / 1024).toFixed(1)} MB`;
+      return `${(totalSize / 1024 / 1024 / 1024).toFixed(1)} GB`;
+    } catch (error) {
+      return 'Unknown';
+    }
+  }
+
+  /**
+   * 提示用戶輸入
+   */
+  private async promptUser(message: string): Promise<string> {
+    const rl = readline.createInterface({
+      input: process.stdin,
+      output: process.stdout
+    });
+
+    return new Promise((resolve) => {
+      rl.question(message, (answer) => {
+        rl.close();
+        resolve(answer || 'y');
       });
     });
   }
