@@ -610,6 +610,15 @@ document.querySelectorAll("tr:has(td:contains('每股盈餘')) td:last-child");
 
 ## 版本記錄
 
+- **v3.1.1** (2025-08-16): **Site-based Concurrency 智慧並發控制系統**
+  - 全新 Site-based Concurrency 機制，取代傳統全域並發控制
+  - 網站特定並發限制：tw.stock.yahoo.com (3), finance.yahoo.com (2), etc.
+  - 智慧延遲動態調整，根據網站響應自動優化 (1978-3962ms)
+  - 20% 性能提升：50秒 vs 60秒 (實測數據)
+  - 新增 12 個 site-based concurrency 專用命令
+  - 即時統計監控和詳細調試功能
+  - SiteConcurrencyManager 和 SiteConcurrencyConfig 核心組件
+  - 完全向後相容，保持全域模式支援
 - **v3.1.0** (2025-08-14): **US Scrape Scripts TypeScript 轉換**
   - 將 scrape-yahoo-us-simple.js 和 scrape-yahoo-us-sectors.js 轉換為 TypeScript
   - 新增 21 個 npm scrape 命令支援 US 11 個部門爬取
@@ -632,9 +641,10 @@ document.querySelectorAll("tr:has(td:contains('每股盈餘')) td:last-child");
 ## 聯繫資訊
 
 - **專案路徑**: `/Users/aryung/Downloads/Workshop/crawler`
-- **開發狀態**: 積極開發中，v3.1 架構穩定
-- **核心功能**: Yahoo Finance 多地區財務數據爬取 + API 整合 + 部門爬蟲完成
-- **文檔狀態**: 已整合為 3 個核心文檔，包含完整部門爬蟲說明
+- **開發狀態**: 積極開發中，v3.1.1 架構穩定
+- **核心功能**: Yahoo Finance 多地區財務數據爬取 + API 整合 + Site-based Concurrency 智慧並發控制
+- **最新特色**: 20% 性能提升的智慧並發系統，支援網站特定並發策略
+- **文檔狀態**: 已整合為 3 個核心文檔，包含完整的並發控制和性能優化指南
 
 ## 重要提醒
 

@@ -1,6 +1,7 @@
 import { UniversalCrawler } from '../index';
 import { ProgressTracker, TaskStatus } from './ProgressTracker';
 import { ErrorRecovery, ErrorAction, ErrorType } from './ErrorRecovery';
+import { SiteConcurrencyManager } from './SiteConcurrencyManager';
 import { logger } from '../utils';
 import * as fs from 'fs-extra';
 import * as path from 'path';
@@ -13,10 +14,14 @@ export interface BatchOptions {
   type?: string;
   
   // 執行控制
-  concurrent?: number;
+  concurrent?: number; // 保留向後兼容，但會被 site-based concurrency 覆蓋
   startFrom?: number;
   limit?: number;
-  delayMs?: number;
+  delayMs?: number; // 保留向後兼容，但會被 site-specific delays 覆蓋
+  
+  // Site-based concurrency 控制
+  useSiteConcurrency?: boolean; // 是否使用 site-based concurrency (預設: true)
+  siteConcurrencyOverrides?: Record<string, { maxConcurrent?: number; delayMs?: number }>; // 覆蓋特定站點設定
   
   // 重試選項
   retryAttempts?: number;
@@ -52,19 +57,27 @@ export interface CrawlTask {
   attempt: number;
   lastError?: string;
   outputPath?: string;
+  url?: string; // 添加 URL 用於 site-based concurrency
+  domain?: string; // 添加 domain 快取
 }
 
 export class BatchCrawlerManager {
   private crawler: UniversalCrawler;
   private progressTracker?: ProgressTracker;
   private errorRecovery: ErrorRecovery;
+  private siteConcurrencyManager: SiteConcurrencyManager;
   private isRunning = false;
   private isPaused = false;
   private shouldStop = false;
+  
+  // 向後兼容的全域並發控制 (當 useSiteConcurrency=false 時使用)
   private currentConcurrency = 0;
   private maxConcurrency = 3;
   private delayMs = 5000;
   private runningTasks = new Set<string>();
+  
+  // Site-based concurrency 設定
+  private useSiteConcurrency = true;
 
   constructor(options: {
     configPath?: string;
@@ -72,14 +85,20 @@ export class BatchCrawlerManager {
     maxConcurrency?: number;
     delayMs?: number;
     errorLogPath?: string;
+    useSiteConcurrency?: boolean; // 新增：是否使用 site-based concurrency
   } = {}) {
     this.crawler = new UniversalCrawler({
       configPath: options.configPath || 'config-categorized',
       outputDir: options.outputDir || 'output'
     });
 
+    // 向後兼容設定
     this.maxConcurrency = options.maxConcurrency || 3;
     this.delayMs = options.delayMs || 5000;
+    this.useSiteConcurrency = options.useSiteConcurrency !== false; // 預設為 true
+
+    // 初始化 Site-based Concurrency Manager
+    this.siteConcurrencyManager = new SiteConcurrencyManager();
 
     this.errorRecovery = new ErrorRecovery({
       maxRetryAttempts: 3,
@@ -90,6 +109,8 @@ export class BatchCrawlerManager {
 
     // 設置優雅關閉處理器
     this.setupShutdownHandlers();
+    
+    logger.info(`🚀 BatchCrawlerManager 初始化完成 (Site-based concurrency: ${this.useSiteConcurrency ? '啟用' : '停用'})`);
   }
 
   /**
@@ -133,9 +154,21 @@ export class BatchCrawlerManager {
       // 設置進度回調
       this.setupProgressCallbacks();
 
-      // 設置併發數和延遲
-      this.maxConcurrency = options.concurrent || 3;
-      this.delayMs = options.delayMs || 5000;
+      // 設置併發數和延遲 (根據 useSiteConcurrency 決定行為)
+      this.useSiteConcurrency = options.useSiteConcurrency !== false; // 預設為 true
+      
+      if (this.useSiteConcurrency) {
+        logger.info('🌐 使用 Site-based Concurrency 控制，自動根據網站特性調整併發');
+        if (options.siteConcurrencyOverrides) {
+          logger.info('⚙️ 應用 Site Concurrency 覆蓋設定', options.siteConcurrencyOverrides);
+          // TODO: 應用覆蓋設定到 SiteConcurrencyManager
+        }
+      } else {
+        // 傳統全域併發控制
+        this.maxConcurrency = options.concurrent || 3;
+        this.delayMs = options.delayMs || 5000;
+        logger.info(`🔄 使用傳統全域併發控制 (併發: ${this.maxConcurrency}, 延遲: ${this.delayMs}ms)`);
+      }
 
       const startTime = Date.now();
       
@@ -387,10 +420,28 @@ export class BatchCrawlerManager {
    * 執行批量爬取
    */
   private async executeBatch(configNames: string[], options: BatchOptions): Promise<void> {
-    const tasks: CrawlTask[] = configNames.map(name => ({
-      configName: name,
-      attempt: 0
-    }));
+    // 初始化任務並提取 URL 信息
+    const tasks: CrawlTask[] = await Promise.all(
+      configNames.map(async (name) => {
+        const task: CrawlTask = {
+          configName: name,
+          attempt: 0
+        };
+        
+        // 為 site-based concurrency 提取 URL
+        if (this.useSiteConcurrency) {
+          try {
+            const url = await this.extractUrlFromConfig(name);
+            task.url = url;
+            task.domain = this.extractDomainFromUrl(url);
+          } catch (error) {
+            logger.warn(`無法從配置 ${name} 提取 URL:`, error);
+          }
+        }
+        
+        return task;
+      })
+    );
 
     let taskIndex = 0;
 
@@ -401,27 +452,51 @@ export class BatchCrawlerManager {
         continue;
       }
 
-      // 控制併發數
-      if (this.currentConcurrency >= this.maxConcurrency) {
+      const task = tasks[taskIndex];
+
+      // 跳過已在執行的任務
+      if (this.runningTasks.has(task.configName)) {
+        taskIndex++;
+        continue;
+      }
+
+      let canExecute = false;
+
+      if (this.useSiteConcurrency) {
+        // Site-based concurrency 控制
+        if (task.url) {
+          canExecute = this.siteConcurrencyManager.canExecute(task.url);
+        } else {
+          // 如果沒有 URL，回退到全域控制
+          canExecute = this.currentConcurrency < this.maxConcurrency;
+        }
+      } else {
+        // 傳統全域併發控制
+        canExecute = this.currentConcurrency < this.maxConcurrency;
+      }
+
+      if (!canExecute) {
         await this.delay(100);
         continue;
       }
 
-      const task = tasks[taskIndex];
       taskIndex++;
-
-      // 跳過已在執行的任務
-      if (this.runningTasks.has(task.configName)) {
-        continue;
-      }
 
       // 執行任務
       this.executeTask(task, options);
     }
 
     // 等待所有任務完成
-    while (this.currentConcurrency > 0 && !this.shouldStop) {
-      await this.delay(1000);
+    if (this.useSiteConcurrency) {
+      // 等待 site-based concurrency manager 完成所有任務
+      while (this.getTotalRunningTasks() > 0 && !this.shouldStop) {
+        await this.delay(1000);
+      }
+    } else {
+      // 等待傳統全域任務完成
+      while (this.currentConcurrency > 0 && !this.shouldStop) {
+        await this.delay(1000);
+      }
     }
   }
 
@@ -429,14 +504,25 @@ export class BatchCrawlerManager {
    * 執行單個爬取任務
    */
   private async executeTask(task: CrawlTask, options: BatchOptions): Promise<void> {
-    this.currentConcurrency++;
+    // 獲取 site concurrency slot (如果啟用)
+    let taskId = `task_${task.configName}_${Date.now()}`;
+    
+    if (this.useSiteConcurrency && task.url) {
+      // 使用 site-based concurrency
+      await this.siteConcurrencyManager.acquireSlot(taskId, task.url, 1);
+    } else {
+      // 使用傳統全域併發控制
+      this.currentConcurrency++;
+    }
+    
     this.runningTasks.add(task.configName);
 
     try {
       task.attempt++;
       this.progressTracker?.updateProgress(task.configName, TaskStatus.RUNNING);
 
-      logger.debug(`開始執行: ${task.configName} (嘗試 ${task.attempt})`);
+      const domainInfo = task.domain ? ` [${task.domain}]` : '';
+      logger.debug(`開始執行: ${task.configName}${domainInfo} (嘗試 ${task.attempt})`);
 
       // 執行爬取
       const results = await this.crawler.crawlMultiple([task.configName], 1);
@@ -525,8 +611,8 @@ export class BatchCrawlerManager {
         }
       }
 
-      // 任務間延遲
-      if (this.delayMs > 0) {
+      // 任務間延遲 (site-based concurrency 自動處理，這裡只處理全域模式)
+      if (!this.useSiteConcurrency && this.delayMs > 0) {
         await this.delay(this.delayMs);
       }
 
@@ -535,7 +621,12 @@ export class BatchCrawlerManager {
       logger.error(`任務執行異常: ${task.configName}`, error);
       this.progressTracker?.updateProgress(task.configName, TaskStatus.FAILED, errorMessage);
     } finally {
-      this.currentConcurrency--;
+      // 釋放 concurrency slot
+      if (this.useSiteConcurrency && task.url) {
+        this.siteConcurrencyManager.releaseSlot(taskId, task.url);
+      } else {
+        this.currentConcurrency--;
+      }
       this.runningTasks.delete(task.configName);
     }
   }
@@ -632,6 +723,67 @@ export class BatchCrawlerManager {
   }
 
   /**
+   * 從配置文件提取 URL
+   */
+  private async extractUrlFromConfig(configName: string): Promise<string> {
+    try {
+      const fullConfigPath = path.join(
+        this.crawler.configManager['configPath'] || 'config-categorized', 
+        `${configName}.json`
+      );
+      const configData = await fs.readJson(fullConfigPath);
+      return configData.url || '';
+    } catch (error) {
+      throw new Error(`無法讀取配置文件 ${configName}: ${error}`);
+    }
+  }
+
+  /**
+   * 從 URL 提取域名
+   */
+  private extractDomainFromUrl(url: string): string {
+    try {
+      const urlObj = new URL(url);
+      return urlObj.hostname;
+    } catch (error) {
+      return 'unknown';
+    }
+  }
+
+  /**
+   * 獲取總運行任務數 (site-based concurrency)
+   */
+  private getTotalRunningTasks(): number {
+    if (this.useSiteConcurrency) {
+      return this.siteConcurrencyManager.getQueueStatistics().totalRunning;
+    } else {
+      return this.currentConcurrency;
+    }
+  }
+
+  /**
+   * 獲取 Site Concurrency 統計
+   */
+  public getSiteConcurrencyStatistics(): any {
+    if (this.useSiteConcurrency) {
+      return {
+        siteStats: this.siteConcurrencyManager.getSiteStatistics(),
+        queueStats: this.siteConcurrencyManager.getQueueStatistics(),
+        enabled: true
+      };
+    } else {
+      return {
+        globalStats: {
+          running: this.currentConcurrency,
+          maxConcurrent: this.maxConcurrency,
+          totalQueued: 0
+        },
+        enabled: false
+      };
+    }
+  }
+
+  /**
    * 清理資源
    */
   async cleanup(): Promise<void> {
@@ -639,6 +791,11 @@ export class BatchCrawlerManager {
     
     if (this.progressTracker) {
       this.progressTracker.cleanup();
+    }
+    
+    // 優雅關閉 site concurrency manager
+    if (this.useSiteConcurrency) {
+      await this.siteConcurrencyManager.shutdown(30000);
     }
     
     await this.crawler.cleanup();

@@ -46,6 +46,12 @@ interface CLIOptions {
   performanceReport?: boolean;
   progressId?: string;
   limit?: number;
+  
+  // Site-based concurrency options
+  useSiteConcurrency?: boolean;  // 是否使用 site-based concurrency
+  siteConcurrencyStats?: boolean; // 顯示 site concurrency 統計
+  globalConcurrency?: boolean;   // 強制使用傳統全域併發 (向後兼容)
+  siteOverrides?: string;        // JSON 字串，覆蓋特定站點設定
 }
 
 async function main() {
@@ -141,16 +147,16 @@ async function main() {
 
   program
     .command('crawl-batch')
-    .description('批量爬取工具 - 支援斷點續傳、錯誤恢復、進度追蹤')
+    .description('批量爬取工具 - 支援斷點續傳、錯誤恢復、進度追蹤、Site-based Concurrency')
     .option('-c, --config <path>', '配置檔案目錄', 'config-categorized')
     .option('-o, --output <path>', '輸出目錄', 'output')
     .option('--category <type>', '指定類別 (daily|quarterly|metadata)')
     .option('--market <region>', '指定市場 (tw|us|jp)')
     .option('--type <datatype>', '指定數據類型 (eps|history|financials等)')
-    .option('--concurrent <num>', '併發數量', '3')
+    .option('--concurrent <num>', '併發數量 (傳統模式，site-based 時被忽略)', '3')
     .option('--start-from <num>', '從第幾個開始執行', '0')
     .option('--limit <num>', '限制執行數量')
-    .option('--delay <ms>', '請求間隔毫秒數', '5000')
+    .option('--delay <ms>', '請求間隔毫秒數 (傳統模式，site-based 時被忽略)', '5000')
     .option('--retry-attempts <num>', '最大重試次數', '3')
     .option('--resume <id>', '恢復指定進度ID的執行')
     .option('--retry-failed <id>', '只重試失敗的配置')
@@ -161,6 +167,13 @@ async function main() {
     .option('--performance-report', '生成性能報告')
     .option('--progress-id <id>', '指定進度ID')
     .option('-v, --verbose', '詳細日誌')
+    
+    // Site-based concurrency options
+    .option('--site-concurrency', '啟用 Site-based Concurrency (預設啟用)', true)
+    .option('--global-concurrency', '強制使用傳統全域併發控制')
+    .option('--site-stats', '顯示 Site Concurrency 統計資訊')
+    .option('--site-overrides <json>', '覆蓋特定站點設定 (JSON格式)')
+    
     .action(async (options: CLIOptions) => {
       await runBatchCrawler(options);
     });
@@ -864,13 +877,18 @@ async function runBatchCrawler(options: CLIOptions): Promise<void> {
       process.env.LOG_LEVEL = 'debug';
     }
 
-    // 創建批量管理器 - 支援分類配置目錄
+    // 創建批量管理器 - 支援分類配置目錄和 Site-based Concurrency
     const defaultConfigPath = options.config || 'config-categorized';
+    
+    // 決定使用 site-based 還是 global concurrency
+    const useSiteConcurrency = !options.globalConcurrency && options.siteConcurrency !== false;
+    
     const batchManager = new BatchCrawlerManager({
       configPath: defaultConfigPath,
       outputDir: options.output || 'output',
       maxConcurrency: parseInt(options.concurrent?.toString() || '3'),
-      delayMs: parseInt(options.delayMs?.toString() || '5000')
+      delayMs: parseInt(options.delayMs?.toString() || '5000'),
+      useSiteConcurrency: useSiteConcurrency
     });
 
     // 處理特殊命令
@@ -894,13 +912,36 @@ async function runBatchCrawler(options: CLIOptions): Promise<void> {
       return;
     }
 
+    // 顯示 Site Concurrency 統計
+    if (options.siteStats) {
+      console.log('🌐 Site Concurrency 統計資訊');
+      console.log('='.repeat(50));
+      const stats = batchManager.getSiteConcurrencyStatistics();
+      console.log(JSON.stringify(stats, null, 2));
+      return;
+    }
+
     // 恢復執行
     if (options.resume) {
       console.log(`🔄 恢復批量執行: ${options.resume}`);
+      
+      // 解析 site overrides (如果提供)
+      let siteConcurrencyOverrides;
+      if (options.siteOverrides) {
+        try {
+          siteConcurrencyOverrides = JSON.parse(options.siteOverrides);
+        } catch (error) {
+          console.error('❌ Site overrides JSON 格式錯誤:', error);
+          process.exit(1);
+        }
+      }
+      
       const result = await batchManager.resumeBatch(options.resume, {
         concurrent: parseInt(options.concurrent?.toString() || '3'),
         delayMs: parseInt(options.delayMs?.toString() || '5000'),
-        outputDir: options.output || 'output'
+        outputDir: options.output || 'output',
+        useSiteConcurrency: useSiteConcurrency,
+        siteConcurrencyOverrides: siteConcurrencyOverrides
       });
       displayBatchResult(result);
       return;
@@ -909,10 +950,24 @@ async function runBatchCrawler(options: CLIOptions): Promise<void> {
     // 重試失敗
     if (options.retryFailed) {
       console.log(`🔄 重試失敗配置: ${options.retryFailed}`);
+      
+      // 解析 site overrides (如果提供)
+      let siteConcurrencyOverrides;
+      if (options.siteOverrides) {
+        try {
+          siteConcurrencyOverrides = JSON.parse(options.siteOverrides);
+        } catch (error) {
+          console.error('❌ Site overrides JSON 格式錯誤:', error);
+          process.exit(1);
+        }
+      }
+      
       const result = await batchManager.retryFailed(options.retryFailed, {
         concurrent: parseInt(options.concurrent?.toString() || '3'),
         delayMs: parseInt(options.delayMs?.toString() || '5000'),
-        outputDir: options.output || 'output'
+        outputDir: options.output || 'output',
+        useSiteConcurrency: useSiteConcurrency,
+        siteConcurrencyOverrides: siteConcurrencyOverrides
       });
       displayBatchResult(result);
       return;
@@ -921,6 +976,17 @@ async function runBatchCrawler(options: CLIOptions): Promise<void> {
     // 標準批量執行
     console.log('🚀 Universal Web Crawler - 批量模式');
     console.log('='.repeat(50));
+
+    // 解析 site overrides (如果提供)
+    let siteConcurrencyOverrides;
+    if (options.siteOverrides) {
+      try {
+        siteConcurrencyOverrides = JSON.parse(options.siteOverrides);
+      } catch (error) {
+        console.error('❌ Site overrides JSON 格式錯誤:', error);
+        process.exit(1);
+      }
+    }
 
     const batchOptions: BatchOptions = {
       category: options.category,
@@ -933,13 +999,25 @@ async function runBatchCrawler(options: CLIOptions): Promise<void> {
       retryAttempts: parseInt(options.retryAttempts?.toString() || '3'),
       outputDir: options.output || 'output',
       configPath: defaultConfigPath,
-      progressDir: '.progress'
+      progressDir: '.progress',
+      // Site-based concurrency 選項
+      useSiteConcurrency: useSiteConcurrency,
+      siteConcurrencyOverrides: siteConcurrencyOverrides
     };
 
     console.log(`📁 配置目錄: ${batchOptions.configPath}`);
     console.log(`📂 輸出目錄: ${batchOptions.outputDir}`);
-    console.log(`🔢 併發數: ${batchOptions.concurrent}`);
-    console.log(`⏰ 延遲: ${batchOptions.delayMs}ms`);
+    
+    // 顯示併發控制模式
+    if (useSiteConcurrency) {
+      console.log(`🌐 併發控制: Site-based Concurrency (自動根據網站調整)`);
+      if (siteConcurrencyOverrides) {
+        console.log(`⚙️ 站點覆蓋設定: ${JSON.stringify(siteConcurrencyOverrides)}`);
+      }
+    } else {
+      console.log(`🔢 併發控制: 傳統全域模式 (併發: ${batchOptions.concurrent}, 延遲: ${batchOptions.delayMs}ms)`);
+    }
+    
     if (batchOptions.category) console.log(`📋 類別: ${batchOptions.category}`);
     if (batchOptions.market) console.log(`🌍 市場: ${batchOptions.market}`);
     if (batchOptions.type) console.log(`📊 類型: ${batchOptions.type}`);
