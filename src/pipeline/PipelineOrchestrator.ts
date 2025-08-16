@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import * as path from 'path';
 import * as fs from 'fs-extra';
 import { exec } from 'child_process';
@@ -7,7 +8,7 @@ import { UnifiedFinancialData } from '../types/unified-financial-data.js';
 import { RetryManager, RetryRecord } from './RetryManager.js';
 import { DataValidator } from './DataValidator.js';
 import { MarketRegion } from '../common/shared-types/interfaces/market-data.interface';
-import { MarketRegionPathMapping } from '../common/constants/report';
+import { MarketRegionPathMapping, getDataTypePatterns } from '../common/constants/report';
 
 const execAsync = promisify(exec);
 
@@ -234,7 +235,7 @@ export class PipelineOrchestrator {
       }
 
       // Step 5: Import fundamental data to backend
-      if (!this.config.skipFundamentalImport && unifiedData.length > 0) {
+      if (!this.config.skipFundamentalImport) {
         console.log('\n💾 Step 5: Importing fundamental data to backend...');
         try {
           await this.importFundamentalData(unifiedData);
@@ -243,8 +244,8 @@ export class PipelineOrchestrator {
           console.error('  ❌ Fundamental data import failed:', (error as Error).message);
           result.errors.push(`Fundamental data import failed: ${(error as Error).message}`);
         }
-      } else if (!this.config.skipFundamentalImport) {
-        console.log('\n💾 Step 5: No fundamental data to import (use: npm run import:fundamental:batch)');
+      } else {
+        console.log('\n💾 Step 5: Skipping fundamental data import (--skip-fundamental-import specified)');
       }
 
       // Step 5b: Import OHLCV historical data if history data type is requested
@@ -637,37 +638,62 @@ export class PipelineOrchestrator {
     try {
       // Get all output JSON files recursively
       const outputFiles = await this.getJsonFilesRecursively(this.config.outputDir);
+      console.log(`  🔍 Scanning output directory: ${this.config.outputDir}`);
+      console.log(`  📁 Found ${outputFiles.length} output files`);
+      
+      if (outputFiles.length > 0) {
+        console.log(`  📋 Sample files:`, outputFiles.slice(0, 3).map(f => path.basename(f)));
+      }
+      
+      let processedFiles = 0;
+      let validFiles = 0;
       
       for (const filePath of outputFiles) {
         const fileName = path.basename(filePath);
         
         // Process all yahoo-finance JSON files (not just TW)
         if (fileName.endsWith('.json') && fileName.includes('yahoo-finance')) {
+          processedFiles++;
           try {
             const fileData = await fs.readJson(filePath);
             const results = fileData.results || [];
+            
+            console.log(`    🔍 Processing ${fileName}: has results=${!!fileData.results}, results.length=${results.length}`);
+            
+            if (results.length > 0) {
+              validFiles++;
+            }
             
             for (const result of results) {
               if (result.data) {
                 // Extract different data types from crawler output
                 const data = result.data;
                 
+                // 顯示可用的數據欄位
+                const availableFields = Object.keys(data).filter(key => 
+                  Array.isArray(data[key]) && data[key].length > 0
+                );
+                if (availableFields.length > 0) {
+                  console.log(`      📊 Available data fields: ${availableFields.join(', ')}`);
+                }
+                
                 // Extract all UnifiedFinancialData arrays (support different regions)
                 const dataArrays = [
-                  data.revenueData || [],
-                  data.simpleEPSData || [],
-                  data.dividendData || [],
-                  data.incomeStatementData || [],
-                  data.independentCashFlowData || [],
-                  data.balanceSheetData || [],
+                  { name: 'revenueData', data: data.revenueData || [] },
+                  { name: 'simpleEPSData', data: data.simpleEPSData || [] },
+                  { name: 'dividendData', data: data.dividendData || [] },
+                  { name: 'incomeStatementData', data: data.incomeStatementData || [] },
+                  { name: 'independentCashFlowData', data: data.independentCashFlowData || [] },
+                  { name: 'balanceSheetData', data: data.balanceSheetData || [] },
                   // US/JP data arrays
-                  data.financialData || [],
-                  data.cashflowData || [],
-                  data.performanceData || []
+                  { name: 'financialData', data: data.financialData || [] },
+                  { name: 'cashflowData', data: data.cashflowData || [] },
+                  { name: 'performanceData', data: data.performanceData || [] }
                 ];
                 
-                for (const dataArray of dataArrays) {
-                  if (Array.isArray(dataArray)) {
+                for (const { name, data: dataArray } of dataArrays) {
+                  if (Array.isArray(dataArray) && dataArray.length > 0) {
+                    console.log(`      ✅ Found ${dataArray.length} records in ${name}`);
                     allData.push(...dataArray);
                   }
                 }
@@ -679,7 +705,14 @@ export class PipelineOrchestrator {
         }
       }
 
+      console.log(`  📈 Summary: processed ${processedFiles} files, ${validFiles} had data`);
       console.log(`  ✓ Collected ${allData.length} unified data records from crawler outputs`);
+      
+      if (allData.length === 0 && processedFiles > 0) {
+        console.log(`  💡 Note: If no data was collected, the crawler outputs might not contain UnifiedFinancialData format.`);
+        console.log(`  💡 Consider using: npm run import:fundamental:tw:quarterly instead`);
+      }
+      
     } catch (error) {
       console.error('  ❌ Data collection error:', error);
     }
@@ -695,7 +728,25 @@ export class PipelineOrchestrator {
     const files: string[] = [];
     
     for (const region of this.config.regions) {
-      const pattern = new RegExp(`^yahoo-finance-${region}-.*\\.json$`);
+      // 收集所有允許的檔案模式
+      const allowedPatterns: string[] = [];
+      for (const dataType of this.config.dataTypes) {
+        const patterns = getDataTypePatterns(dataType);
+        if (patterns.length > 0) {
+          allowedPatterns.push(...patterns);
+        }
+      }
+      
+      // 如果沒有指定 data-types，預設允許所有
+      if (allowedPatterns.length === 0) {
+        console.warn('  ⚠️ No valid data types specified, will process all files');
+      }
+      
+      // Debug mode: show patterns being used
+      const isDebugMode = process.env.DEBUG_PIPELINE === 'true' || this.config.dataTypes.includes('debug');
+      if (isDebugMode && allowedPatterns.length > 0) {
+        console.log(`  🔍 Debug: Allowed patterns for ${region}: ${allowedPatterns.join(', ')}`);
+      }
       
       // Get all JSON files recursively from config directory
       const configFiles = await this.getJsonFilesRecursively(this.config.configDir);
@@ -703,21 +754,45 @@ export class PipelineOrchestrator {
       for (const filePath of configFiles) {
         const fileName = path.basename(filePath);
         
-        if (pattern.test(fileName)) {
-          // Apply symbol filter if specified - 精確匹配
-          if (this.config.symbolCodes.length > 0) {
-            const hasSymbol = this.config.symbolCodes.some(symbol => {
-              const normalizedSymbol = symbol.replace('.', '_');
-              // 從檔名中提取符號部分進行精確比較
-              const symbolMatch = fileName.match(/yahoo-finance-\w+-[\w-]+-([A-Z0-9_]+)\.json/);
-              return symbolMatch && symbolMatch[1] === normalizedSymbol;
-            });
-            if (!hasSymbol) continue;
+        // 檢查是否為該 region 的檔案
+        if (!fileName.startsWith(`yahoo-finance-${region}-`)) continue;
+        
+        // 如果有 data-types 過濾，檢查是否符合
+        if (allowedPatterns.length > 0) {
+          const matchesDataType = allowedPatterns.some(pattern => 
+            fileName.includes(`-${pattern}-`)
+          );
+          
+          // Debug info for filtering
+          if (isDebugMode) {
+            console.log(`  🔍 Debug: ${fileName} - Matches data type: ${matchesDataType ? 'Yes' : 'No'}`);
+            if (!matchesDataType) {
+              console.log(`     Available patterns: ${allowedPatterns.join(', ')}`);
+            }
           }
           
-          files.push(filePath);
+          if (!matchesDataType) continue;
         }
+        
+        // Apply symbol filter if specified - 精確匹配
+        if (this.config.symbolCodes.length > 0) {
+          const hasSymbol = this.config.symbolCodes.some(symbol => {
+            const normalizedSymbol = symbol.replace('.', '_');
+            // 從檔名中提取符號部分進行精確比較
+            const symbolMatch = fileName.match(/yahoo-finance-\w+-[\w-]+-([A-Z0-9_]+)\.json/);
+            return symbolMatch && symbolMatch[1] === normalizedSymbol;
+          });
+          if (!hasSymbol) continue;
+        }
+        
+        files.push(filePath);
       }
+    }
+
+    console.log(`  📁 Found ${files.length} config files matching filters`);
+    if (files.length > 0 && this.config.dataTypes.length > 0) {
+      console.log(`     Regions: ${this.config.regions.join(', ')}`);
+      console.log(`     Data types: ${this.config.dataTypes.join(', ')}`);
     }
 
     return files;
@@ -865,12 +940,94 @@ export class PipelineOrchestrator {
   }
 
   /**
+   * Build fundamental import command based on configuration
+   */
+  private buildFundamentalImportCommand(): string {
+    let command = 'npx tsx scripts/import-fundamental-api.ts';
+    
+    // 根據 dataTypes 決定 category
+    if (this.config.dataTypes.includes('financials')) {
+      command += ' --category quarterly';
+    } else if (this.config.dataTypes.includes('history')) {
+      command += ' --category daily';
+    } else if (this.config.dataTypes.includes('metadata')) {
+      command += ' --category metadata';
+    }
+    
+    // 根據 regions 決定 market
+    if (this.config.regions.length === 1) {
+      command += ` --market ${this.config.regions[0]}`;
+    }
+    
+    // 添加 API URL 參數
+    if (this.config.apiUrl) {
+      command += ` --api-url "${this.config.apiUrl}"`;
+    }
+    
+    // 添加 API token 參數（優先使用 config，其次環境變數）
+    const token = this.config.apiToken || process.env.BACKEND_API_TOKEN;
+    if (token) {
+      command += ` --token "${token}"`;
+    }
+    
+    // 添加 verbose 模式以獲得更多輸出
+    command += ' --verbose';
+    
+    return command;
+  }
+
+  /**
    * Import fundamental data using existing batch script
    */
   private async importFundamentalData(data: UnifiedFinancialData[]): Promise<void> {
-    console.log(`  📊 準備匯入 ${data.length} 筆基本面資料`);
-    console.log('  💡 建議使用: npm run import:fundamental:batch');
-    console.log('  📄 跳過直接匯入，使用獨立批次腳本以獲得更好的分塊處理');
+    try {
+      console.log(`  📊 執行基本面資料匯入...`);
+      
+      // 使用已存在的 import-fundamental-api.ts 腳本
+      const importCommand = this.buildFundamentalImportCommand();
+      console.log('  💡 執行命令:', importCommand);
+      
+      const { stdout, stderr } = await execAsync(importCommand, {
+        cwd: process.cwd(),
+        env: {
+          ...process.env,
+          // 環境變數作為備份，命令行參數優先
+          BACKEND_API_URL: this.config.apiUrl || process.env.BACKEND_API_URL,
+          BACKEND_API_TOKEN: this.config.apiToken || process.env.BACKEND_API_TOKEN,
+        },
+        maxBuffer: 1024 * 1024 * 20, // 20MB buffer for large outputs
+        timeout: 300000, // 5 minutes timeout
+      });
+      
+      // 檢查錯誤輸出（warnings 可以忽略）
+      if (stderr && !stderr.includes('warning') && !stderr.includes('⚠️')) {
+        console.warn(`  ⚠️ Import warnings: ${stderr}`);
+      }
+      
+      // 解析成功結果
+      if (stdout.includes('基本面資料匯入作業完成') || stdout.includes('import complete') || stdout.includes('Successfully imported')) {
+        console.log('    ✅ 基本面資料匯入腳本執行成功');
+        
+        // 提取統計資訊
+        const importedMatch = stdout.match(/成功匯入.*?(\d+).*?筆|Successfully imported (\d+)|imported (\d+)/i);
+        if (importedMatch) {
+          const count = importedMatch[1] || importedMatch[2] || importedMatch[3];
+          console.log(`    📊 成功匯入: ${count} 筆基本面資料`);
+        }
+        
+        // 提取處理檔案數量
+        const filesMatch = stdout.match(/處理檔案.*?(\d+).*?個|processed (\d+) files/i);
+        if (filesMatch) {
+          const fileCount = filesMatch[1] || filesMatch[2];
+          console.log(`    📁 處理檔案: ${fileCount} 個`);
+        }
+      } else {
+        console.log('    ⚠️ 匯入腳本執行完成，請檢查後端日誌');
+      }
+      
+    } catch (error) {
+      throw new Error(`Failed to execute fundamental import script: ${(error as Error).message}`);
+    }
   }
 
   /**
@@ -893,6 +1050,22 @@ export class PipelineOrchestrator {
       
       // Construct the import command
       let importCommand = 'npx tsx scripts/import-ohlcv-api.ts --category daily';
+      
+      // 根據 regions 配置添加 market 參數
+      if (this.config.regions.length === 1) {
+        const marketMap: Record<string, string> = {
+          'tw': 'tw',
+          'us': 'us', 
+          'jp': 'jp'
+        };
+        const market = marketMap[this.config.regions[0]];
+        if (market) {
+          importCommand += ` --market ${market}`;
+          console.log(`  🎯 Restricting OHLCV import to market: ${market}`);
+        }
+      } else if (this.config.regions.length > 1) {
+        console.log(`  📊 Multiple regions specified (${this.config.regions.join(', ')}), importing all OHLCV data`);
+      }
       
       // Add API URL and token if available
       if (this.config.apiUrl) {

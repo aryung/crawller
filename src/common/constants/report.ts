@@ -61,6 +61,40 @@ export const REPORT_TYPES = {
 } as const;
 
 /**
+ * Data type 到檔案模式的映射
+ * 用於 pipeline 過濾配置檔案
+ */
+export const DATA_TYPE_PATTERNS = {
+  financials: [
+    REPORT_TYPES.QUARTERLY.EPS,
+    REPORT_TYPES.QUARTERLY.BALANCE_SHEET,
+    REPORT_TYPES.QUARTERLY.CASH_FLOW,
+    REPORT_TYPES.QUARTERLY.CASHFLOW,
+    REPORT_TYPES.QUARTERLY.INCOME_STATEMENT,
+    REPORT_TYPES.QUARTERLY.DIVIDEND,
+    REPORT_TYPES.QUARTERLY.PERFORMANCE,
+    REPORT_TYPES.QUARTERLY.FINANCIALS,
+    REPORT_TYPES.QUARTERLY.REVENUE,
+  ],
+  history: [
+    REPORT_TYPES.DAILY.HISTORY,
+    REPORT_TYPES.DAILY.PRICE,
+  ],
+  metadata: [
+    REPORT_TYPES.METADATA.SYMBOLS,
+    REPORT_TYPES.METADATA.LABELS,
+  ],
+} as const;
+
+/**
+ * 獲取 data type 對應的所有檔案模式
+ */
+export function getDataTypePatterns(dataType: string): string[] {
+  const patterns = DATA_TYPE_PATTERNS[dataType as keyof typeof DATA_TYPE_PATTERNS];
+  return patterns ? [...patterns] : [];
+}
+
+/**
  * 獲取報表類型的所有可能數據欄位
  */
 export function getPossibleDataFields(): string[] {
