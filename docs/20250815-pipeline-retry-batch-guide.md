@@ -8,6 +8,73 @@
 
 Universal Web Crawler v3.0 提供完整的重試機制和批次處理功能，確保大規模數據爬取的穩定性和可靠性。本指南詳細說明重試機制的工作原理、批次處理功能、以及最佳實踐。
 
+## 🏗️ 三層記錄系統架構
+
+Universal Web Crawler 採用三層記錄系統來管理大量配置文件的執行狀態，確保在處理數千個配置時能準確追蹤每個文件的執行情況並支援斷點續傳。
+
+### 📊 系統架構概覽
+
+```mermaid
+graph TB
+    A[BatchCrawlerManager] --> B[ProgressTracker]
+    A --> C[RetryManager]
+    B --> D[".progress/{batch-id}.json"]
+    C --> E["output/pipeline-retries.json"]
+    A --> F[並發控制 & 任務調度]
+    
+    subgraph "記錄層級"
+        B2[ProgressTracker<br/>進度追蹤器]
+        C2[RetryManager<br/>重試管理器]
+        A2[BatchCrawlerManager<br/>批次管理器]
+    end
+```
+
+### 🎯 各層職責
+
+#### 1. **BatchCrawlerManager (批次管理器)**
+- **主要職責**: 協調整體執行流程
+- **功能特色**:
+  - 生成唯一批次 ID
+  - 管理並發執行（預設3個）
+  - 控制執行延遲和重試策略
+  - 協調 ProgressTracker 和 RetryManager
+
+#### 2. **ProgressTracker (進度追蹤器)**
+- **主要職責**: 實時追蹤每個配置文件的執行狀態
+- **存儲位置**: `.progress/{batch-id}.json`
+- **核心功能**:
+  - 記錄每個配置的狀態（pending/running/completed/failed/skipped）
+  - 自動每30秒保存進度
+  - 支援斷點續傳
+  - 計算執行統計和預估時間
+
+#### 3. **RetryManager (重試管理器)**
+- **主要職責**: 管理失敗項目的重試隊列
+- **存儲位置**: `output/pipeline-retries.json`
+- **核心功能**:
+  - 記錄失敗原因和重試次數
+  - 指數退避重試策略
+  - 自動清理過期記錄（7天）
+  - 智能重試排程
+
+### 🔄 工作流程
+
+```
+1. BatchCrawlerManager 啟動
+   ↓
+2. 掃描配置文件 & 生成批次 ID
+   ↓
+3. ProgressTracker 初始化 (.progress/{batch-id}.json)
+   ↓
+4. 並發執行配置文件
+   ├─ 成功 → ProgressTracker 標記 completed
+   └─ 失敗 → RetryManager 加入重試隊列
+   ↓
+5. 自動保存進度 (每30秒)
+   ↓
+6. 支援中斷後續傳
+```
+
 ## 📊 重試機制 (Retry System)
 
 ### 🗂️ 數據存儲
@@ -202,17 +269,124 @@ npx tsx src/cli.ts crawl-batch [選項]
 
 ### 🔄 斷點續傳機制
 
-#### 進度追蹤
+#### 進度追蹤詳細說明
+
+##### 🗂️ 進度文件存儲結構
+```
+.progress/
+├── batch-quarterly-tw-eps-20250815103045.json
+├── batch-quarterly-us-financials-20250815110230.json
+└── batch-daily-jp-history-20250815120000.json
+```
+
+##### 📋 批次 ID 生成規則
 ```typescript
-// 進度記錄格式
-interface BatchProgress {
-  progressId: string;           // 唯一進度ID
-  startTime: string;           // 開始時間
-  totalConfigs: number;        // 總配置數量
-  completedConfigs: number;    // 已完成數量
-  failedConfigs: string[];     // 失敗配置列表
-  currentConfig?: string;      // 當前處理配置
-  estimatedTimeRemaining?: number;  // 預估剩餘時間
+// ID 格式: batch-{category}-{market}-{type}-{timestamp}
+const batchId = [
+  'batch',
+  options.category || 'all',    // quarterly/daily/metadata
+  options.market || 'all',      // tw/us/jp
+  options.type || 'all',        // eps/balance-sheet/cash-flow/etc
+  timestamp                     // YYYYMMDDHHMMSS
+].join('-');
+
+// 範例:
+// - batch-quarterly-tw-eps-20250815103045
+// - batch-daily-us-history-20250815110230
+// - batch-metadata-all-symbols-20250815120000
+```
+
+##### 📊 完整進度記錄結構
+```typescript
+interface ProgressSummary {
+  id: string;                   // 批次 ID
+  category?: string;            // 類別 (quarterly/daily/metadata)
+  market?: string;              // 市場 (tw/us/jp)
+  type?: string;                // 類型 (eps/balance-sheet/etc)
+  total: number;                // 總配置數量
+  completed: number;            // 已完成數量
+  failed: number;               // 失敗數量
+  skipped: number;              // 跳過數量
+  running: number;              // 執行中數量
+  pending: number;              // 待處理數量
+  percentage: number;           // 完成百分比
+  estimatedTimeRemaining: number;   // 預估剩餘時間(ms)
+  averageTimePerTask: number;   // 平均每任務時間(ms)
+  currentItem?: string;         // 當前處理項目
+  startTime: number;            // 開始時間戳
+  lastUpdateTime: number;       // 最後更新時間
+  tasks: Map<string, TaskProgress>;  // 詳細任務狀態
+  errors: string[];             // 錯誤列表
+}
+
+interface TaskProgress {
+  configName: string;           // 配置名稱
+  status: TaskStatus;           // 任務狀態
+  startTime?: number;           // 開始時間
+  endTime?: number;             // 結束時間
+  error?: string;               // 錯誤信息
+  attempts?: number;            // 嘗試次數
+  outputPath?: string;          // 輸出路徑
+}
+
+enum TaskStatus {
+  PENDING = 'pending',          // 待處理
+  RUNNING = 'running',          // 執行中
+  COMPLETED = 'completed',      // 已完成
+  FAILED = 'failed',            // 失敗
+  SKIPPED = 'skipped'           // 跳過
+}
+```
+
+##### 🔄 自動保存機制
+- **保存頻率**: 每30秒自動保存
+- **觸發條件**:
+  - 任務狀態變更時立即保存
+  - 批次開始/結束時保存
+  - 發生錯誤時保存
+- **文件格式**: JSON，包含完整的進度和任務狀態
+
+##### 📁 進度文件範例
+```json
+{
+  "id": "batch-quarterly-tw-eps-20250815103045",
+  "category": "quarterly",
+  "market": "tw",
+  "type": "eps",
+  "total": 1000,
+  "completed": 800,
+  "failed": 50,
+  "skipped": 10,
+  "running": 2,
+  "pending": 138,
+  "percentage": 86.0,
+  "estimatedTimeRemaining": 420000,
+  "averageTimePerTask": 3000,
+  "currentItem": "yahoo-finance-tw-eps-2330_TW",
+  "startTime": 1692701034567,
+  "lastUpdateTime": 1692704634567,
+  "tasks": {
+    "yahoo-finance-tw-eps-2330_TW": {
+      "configName": "yahoo-finance-tw-eps-2330_TW",
+      "status": "completed",
+      "startTime": 1692701034567,
+      "endTime": 1692701037567,
+      "attempts": 1,
+      "outputPath": "output/quarterly/tw/eps/yahoo-finance-tw-eps-2330_TW_20250815.json"
+    },
+    "yahoo-finance-tw-eps-2454_TW": {
+      "configName": "yahoo-finance-tw-eps-2454_TW",
+      "status": "failed",
+      "startTime": 1692701040567,
+      "endTime": 1692701070567,
+      "error": "Timeout after 30000ms",
+      "attempts": 2
+    }
+  },
+  "errors": [
+    "yahoo-finance-tw-eps-2454_TW: Timeout after 30000ms",
+    "yahoo-finance-tw-eps-1101_TW: Empty data returned"
+  ]
 }
 ```
 
@@ -269,6 +443,209 @@ JP: 37/50 (74%)
 empty_data: 8
 execution_failed: 5
 timeout: 2
+```
+
+## 🔍 執行狀態判定機制
+
+### 📊 配置文件狀態分類
+
+系統通過以下邏輯判斷每個配置文件的執行狀態：
+
+#### 1. **已完成 (completed)**
+```typescript
+// 判定條件
+- ProgressTracker 中標記為 "completed"
+- 存在對應的輸出文件且數據有效
+- 不在重試隊列 (pipeline-retries.json) 中
+- TaskProgress.status === TaskStatus.COMPLETED
+
+// 驗證方式
+const isCompleted = (configName: string) => {
+  const task = progressTracker.getTask(configName);
+  const outputExists = fs.existsSync(getOutputPath(configName));
+  const notInRetryQueue = !retryManager.hasRetryRecord(configName);
+  
+  return task?.status === 'completed' && outputExists && notInRetryQueue;
+};
+```
+
+#### 2. **失敗 (failed)**
+```typescript
+// 判定條件
+- ProgressTracker 中標記為 "failed"
+- 存在於 pipeline-retries.json 重試隊列
+- 記錄了具體錯誤原因和重試次數
+- TaskProgress.error 包含錯誤信息
+
+// 判定邏輯
+const isFailed = (configName: string) => {
+  const task = progressTracker.getTask(configName);
+  const retryRecord = retryManager.getRetryRecord(configName);
+  
+  return task?.status === 'failed' && retryRecord !== null;
+};
+```
+
+#### 3. **待重試 (retry)**
+```typescript
+// 判定條件
+- 在 pipeline-retries.json 中存在記錄
+- retryCount < maxRetries (通常為 3)
+- 可以被重新執行
+- 失敗原因為可重試類型
+
+// 判定邏輯
+const isRetryable = (configName: string) => {
+  const retryRecord = retryManager.getRetryRecord(configName);
+  
+  return retryRecord && 
+         retryRecord.retryCount < retryRecord.maxRetries &&
+         ['empty_data', 'execution_failed', 'timeout'].includes(retryRecord.reason);
+};
+```
+
+#### 4. **執行中 (running)**
+```typescript
+// 判定條件
+- ProgressTracker 中標記為 "running"
+- 在 BatchCrawlerManager.runningTasks Set 中
+- 有 startTime 但沒有 endTime
+- 當前併發執行列表中
+
+// 判定邏輯
+const isRunning = (configName: string) => {
+  const task = progressTracker.getTask(configName);
+  const isInRunningSet = batchManager.runningTasks.has(configName);
+  
+  return task?.status === 'running' && 
+         task.startTime && 
+         !task.endTime && 
+         isInRunningSet;
+};
+```
+
+#### 5. **待執行 (pending)**
+```typescript
+// 判定條件
+- ProgressTracker 中標記為 "pending"
+- 尚未開始執行（無 startTime）
+- 不在執行中列表
+- 等待併發槽位可用
+
+// 判定邏輯
+const isPending = (configName: string) => {
+  const task = progressTracker.getTask(configName);
+  
+  return task?.status === 'pending' && !task.startTime;
+};
+```
+
+#### 6. **跳過 (skipped)**
+```typescript
+// 判定條件
+- ProgressTracker 中標記為 "skipped"
+- 輸出文件已存在且有效（避免重複處理）
+- 手動標記為跳過
+- 不符合篩選條件
+
+// 判定邏輯
+const isSkipped = (configName: string) => {
+  const task = progressTracker.getTask(configName);
+  const outputExists = fs.existsSync(getOutputPath(configName));
+  
+  return task?.status === 'skipped' || 
+         (outputExists && !shouldOverwrite);
+};
+```
+
+### 🔄 狀態轉換流程
+
+```mermaid
+stateDiagram-v2
+    [*] --> PENDING: 配置載入
+    PENDING --> RUNNING: 開始執行
+    RUNNING --> COMPLETED: 成功完成
+    RUNNING --> FAILED: 執行失敗
+    FAILED --> PENDING: 重試 (< maxRetries)
+    FAILED --> [*]: 放棄 (>= maxRetries)
+    COMPLETED --> [*]: 完成
+    PENDING --> SKIPPED: 輸出已存在
+    SKIPPED --> [*]: 跳過
+```
+
+### 🔍 狀態查詢工具
+
+#### 批次狀態總覽
+```bash
+# 查看所有狀態分布
+npm run crawl:status
+
+# 輸出範例:
+# 📊 批次狀態分布:
+# ✅ 已完成: 800 (80%)
+# ❌ 失敗: 50 (5%)
+# 🔄 執行中: 2 (0.2%)
+# ⏳ 待執行: 138 (13.8%)
+# ⏭️ 跳過: 10 (1%)
+```
+
+#### 詳細狀態查詢
+```bash
+# 查看特定狀態的配置列表
+npm run crawl:status --filter=failed     # 只顯示失敗項目
+npm run crawl:status --filter=pending    # 只顯示待執行項目
+npm run crawl:status --filter=retryable  # 只顯示可重試項目
+```
+
+### 🛡️ 數據完整性保證
+
+#### 冪等性檢查
+```typescript
+// 避免重複執行同一配置
+const preventDuplicate = (configName: string) => {
+  // 1. 檢查是否已在執行中
+  if (batchManager.runningTasks.has(configName)) {
+    return false; // 已在執行，跳過
+  }
+  
+  // 2. 檢查輸出文件是否存在且有效
+  const outputPath = getOutputPath(configName);
+  if (fs.existsSync(outputPath) && isValidOutput(outputPath)) {
+    progressTracker.updateProgress(configName, TaskStatus.SKIPPED);
+    return false; // 已完成，跳過
+  }
+  
+  return true; // 可以執行
+};
+```
+
+#### 狀態一致性驗證
+```typescript
+// 定期驗證狀態一致性
+const validateStateConsistency = async () => {
+  const progressRecords = await progressTracker.getAllTasks();
+  const retryRecords = await retryManager.loadRetryRecords();
+  
+  for (const [configName, task] of progressRecords) {
+    // 驗證完成狀態的配置確實有輸出文件
+    if (task.status === 'completed') {
+      const outputExists = fs.existsSync(getOutputPath(configName));
+      if (!outputExists) {
+        console.warn(`⚠️ 狀態不一致: ${configName} 標記為完成但無輸出文件`);
+        // 重置為待執行狀態
+        progressTracker.resetConfig(configName);
+      }
+    }
+    
+    // 驗證失敗狀態的配置在重試隊列中
+    if (task.status === 'failed') {
+      const hasRetryRecord = retryRecords.some(r => r.configFile === configName);
+      if (!hasRetryRecord) {
+        console.warn(`⚠️ 狀態不一致: ${configName} 標記為失敗但不在重試隊列`);
+      }
+    }
+  }
+};
 ```
 
 ## 💡 最佳實踐
@@ -465,8 +842,260 @@ grep "執行時間" logs/pipeline-*.log | awk '{print $NF}' | sort -n
 ### Q: 批次處理中斷後如何恢復？
 **A**: 使用 `npm run crawl:status` 查看進度ID，然後用 `--resume=progress_id` 恢復執行。
 
+## 🛠️ 實用工具命令完整指南
+
+### 📊 狀態監控命令
+
+#### 基本狀態查詢
+```bash
+# 查看所有進行中的批次狀態
+npm run crawl:status
+npm run pipeline:retry-status
+
+# 查看詳細統計信息
+npm run crawl:stats
+npm run pipeline:stats
+
+# 生成錯誤報告
+npm run crawl:errors
+```
+
+#### 進階狀態查詢
+```bash
+# 查看特定進度的詳細信息
+npx tsx src/cli.ts crawl-batch --status --progress-id=batch_20250815_103045
+
+# 查看特定類別的執行狀態
+npm run crawl:status --category=quarterly --market=tw
+
+# 顯示執行性能報告
+npx tsx src/cli.ts crawl-batch --performance-report
+
+# 查看記憶體使用情況
+npx tsx src/cli.ts crawl-batch --memory-report
+```
+
+### 🔄 續傳和重試命令
+
+#### 標準續傳操作
+```bash
+# 從斷點恢復執行
+npm run crawl:batch --resume=batch_20250815_103045
+
+# 只重試失敗的配置
+npm run crawl:batch --retry-failed=batch_20250815_103045
+
+# 從特定位置開始執行
+npm run crawl:batch --start-from=500 --limit=100 --category=quarterly
+
+# 跳過已完成項目的智能續傳
+npm run crawl:batch --smart-resume --category=quarterly --market=tw
+```
+
+#### 重試隊列管理
+```bash
+# 查看重試隊列狀態
+npm run pipeline:retry-status
+
+# 執行重試隊列
+npm run pipeline:retry
+
+# 只執行重試，跳過正常流程
+npm run pipeline:retry-only
+
+# 清空重試隊列 (謹慎使用)
+npm run pipeline:clear-retries
+
+# 重試特定失敗原因的項目
+npm run pipeline:retry --reason=timeout
+npm run pipeline:retry --reason=empty_data
+```
+
+### 🔧 調試和故障排除
+
+#### 調試模式執行
+```bash
+# 啟用詳細日誌
+npm run crawl:batch --verbose --category=quarterly --limit=5
+
+# 乾運行模式 (不實際執行)
+npm run crawl:batch --dry-run --category=quarterly
+
+# 單線程調試模式
+npm run crawl:batch --concurrent=1 --delay=10000 --verbose
+
+# 記憶體優化模式
+NODE_OPTIONS="--max-old-space-size=4096" npm run crawl:batch --concurrent=1
+```
+
+#### 數據驗證工具
+```bash
+# 驗證輸出文件完整性
+npx tsx scripts/validate-output.ts --category=quarterly --market=tw
+
+# 檢查配置文件語法
+npx tsx scripts/validate-configs.ts --path=config-categorized
+
+# 清理損壞的輸出文件
+npx tsx scripts/cleanup-invalid-output.ts --dry-run
+
+# 重建進度文件
+npx tsx scripts/rebuild-progress.ts --batch-id=batch_20250815_103045
+```
+
+### 🧹 維護和清理命令
+
+#### 日誌和緩存清理
+```bash
+# 清理舊的進度文件 (7天以前)
+npx tsx scripts/cleanup-progress.ts --days=7
+
+# 清理過期的重試記錄
+npm run pipeline:cleanup
+
+# 清理臨時文件和快照
+npx tsx scripts/cleanup-temp.ts
+
+# 清理所有日誌文件
+rm -rf logs/*.log
+```
+
+#### 數據庫和輸出管理
+```bash
+# 清理特定日期的輸出文件
+npx tsx scripts/cleanup-output.ts --before=2025-08-01
+
+# 備份重要數據
+npx tsx scripts/backup-data.ts --type=progress,retries,output
+
+# 重置特定類別的所有狀態
+npx tsx scripts/reset-category.ts --category=quarterly --market=tw --confirm
+```
+
+## 🚨 常見問題故障排除
+
+### ❌ 常見錯誤和解決方案
+
+#### 1. **進度文件損壞**
+```bash
+# 症狀: 無法恢復執行，進度文件讀取失敗
+# 原因: JSON 格式錯誤或文件截斷
+
+# 解決方案:
+npx tsx scripts/repair-progress.ts --batch-id=batch_20250815_103045
+# 或重建進度文件:
+npx tsx scripts/rebuild-progress.ts --batch-id=batch_20250815_103045 --from-output
+```
+
+#### 2. **重試隊列過大**
+```bash
+# 症狀: pipeline-retries.json 包含大量項目
+# 原因: 網路不穩定或配置問題
+
+# 解決方案:
+# 1. 分析失敗原因
+npm run crawl:errors --group-by=reason
+
+# 2. 分批重試
+npm run pipeline:retry --limit=20 --delay=15000
+
+# 3. 清理無法修復的項目
+npm run pipeline:clear-retries --reason=execution_failed --max-attempts=3
+```
+
+#### 3. **記憶體不足**
+```bash
+# 症狀: 程序崩潰或執行緩慢
+# 原因: 併發數過高或資料處理量大
+
+# 解決方案:
+# 1. 降低併發數
+npm run crawl:batch --concurrent=1 --category=quarterly
+
+# 2. 增加記憶體限制
+NODE_OPTIONS="--max-old-space-size=8192" npm run crawl:batch
+
+# 3. 分批執行
+npm run crawl:batch --limit=50 --category=quarterly
+npm run crawl:batch --start-from=50 --limit=50 --category=quarterly
+```
+
+#### 4. **網路連接問題**
+```bash
+# 症狀: 大量 timeout 錯誤
+# 原因: 網路不穩定或目標網站限制
+
+# 解決方案:
+# 1. 增加延遲和重試
+npm run crawl:batch --concurrent=1 --delay=15000 --retry-attempts=5
+
+# 2. 使用代理 (如果支援)
+export HTTP_PROXY=http://proxy.example.com:8080
+npm run crawl:batch
+
+# 3. 分時段執行
+# 避開目標網站高峰期
+```
+
+#### 5. **配置文件衝突**
+```bash
+# 症狀: 部分配置無法載入或執行異常
+# 原因: 配置文件語法錯誤或路徑問題
+
+# 解決方案:
+# 1. 驗證配置語法
+npx tsx scripts/validate-configs.ts --path=config-categorized
+
+# 2. 檢查路徑和權限
+ls -la config-categorized/quarterly/tw/
+
+# 3. 重新生成配置
+npx tsx scripts/generate-configs.ts --market=tw --type=eps --overwrite
+```
+
+### 🔍 性能優化建議
+
+#### 網路不穩定環境
+```bash
+# 保守設定 - 穩定性優先
+npm run crawl:batch \
+  --concurrent=1 \
+  --delay=10000 \
+  --retry-attempts=5 \
+  --category=quarterly
+
+# 漸進式設定 - 逐步提高併發
+npm run crawl:batch --concurrent=2 --delay=5000  # 第一階段
+npm run crawl:batch --concurrent=3 --delay=3000  # 第二階段
+```
+
+#### 大量數據處理
+```bash
+# 分類別執行策略
+npm run crawl:quarterly:eps       # 優先處理 EPS
+npm run crawl:quarterly:balance   # 再處理資產負債表
+npm run crawl:quarterly:cash-flow # 最後處理現金流
+
+# 分市場執行策略
+npm run crawl:tw:quarterly        # 先處理台灣市場
+npm run crawl:us:quarterly        # 再處理美國市場
+npm run crawl:jp:quarterly        # 最後處理日本市場
+```
+
+#### 資源監控
+```bash
+# 即時監控系統資源
+htop  # 查看 CPU 和記憶體使用
+
+# 監控爬蟲進程
+ps aux | grep "tsx.*cli.ts"
+
+# 監控網路連接
+netstat -an | grep :443 | wc -l  # HTTPS 連接數
+```
+
 ---
 
-**最後更新**: 2025-08-15  
-**文檔版本**: v3.0.0  
+**最後更新**: 2025-08-16  
+**文檔版本**: v3.1.0  
 **維護者**: Universal Web Crawler Team
