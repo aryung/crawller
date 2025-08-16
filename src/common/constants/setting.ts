@@ -33,7 +33,7 @@ export const SITE_CONCURRENCY_SETTINGS: Record<string, SiteConcurrencyConfig> =
     // Taiwan Stock Exchange (Official API) - High reliability, can handle more concurrent requests
     'www.twse.com.tw': {
       maxConcurrent: 2,
-      delayBetweenRequests: 2000,
+      delayBetweenRequests: 3000,
       requestTimeout: 30000,
       maxRetries: 3,
       supportsParallel: true,
@@ -43,7 +43,7 @@ export const SITE_CONCURRENCY_SETTINGS: Record<string, SiteConcurrencyConfig> =
     // Taiwan Yahoo Finance - Moderate concurrency for quarterly data
     'tw.stock.yahoo.com': {
       maxConcurrent: 2,
-      delayBetweenRequests: 2000,
+      delayBetweenRequests: 3000,
       requestTimeout: 30000,
       maxRetries: 3,
       supportsParallel: true,
@@ -53,7 +53,7 @@ export const SITE_CONCURRENCY_SETTINGS: Record<string, SiteConcurrencyConfig> =
     // US Yahoo Finance - Conservative settings due to higher traffic volume
     'finance.yahoo.com': {
       maxConcurrent: 2,
-      delayBetweenRequests: 2000,
+      delayBetweenRequests: 3000,
       requestTimeout: 30000,
       maxRetries: 3,
       supportsParallel: true,
@@ -63,7 +63,7 @@ export const SITE_CONCURRENCY_SETTINGS: Record<string, SiteConcurrencyConfig> =
     // Japan Yahoo Finance - Conservative settings for international access
     'finance.yahoo.co.jp': {
       maxConcurrent: 2,
-      delayBetweenRequests: 2000,
+      delayBetweenRequests: 3000,
       requestTimeout: 30000,
       maxRetries: 3,
       supportsParallel: true,
@@ -142,4 +142,3 @@ export const SITE_DISTRIBUTION = {
 
 export type DataType = keyof typeof SITE_DISTRIBUTION;
 export type MarketRegion = keyof typeof SITE_DISTRIBUTION.daily;
-
