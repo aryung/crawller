@@ -1,12 +1,12 @@
-# API 整合與數據匯入指南 (v3.0)
+# API 整合與數據匯入指南 (v3.1.1)
 
 **專案**: Universal Web Crawler API Integration  
-**版本**: v3.0.0  
-**更新日期**: 2025-08-14
+**版本**: v3.1.1  
+**更新日期**: 2025-08-16
 
 ## 🎯 API 整合概述
 
-Universal Web Crawler v3.0 提供完整的後端 API 整合解決方案，支援：
+Universal Web Crawler v3.1.1 提供完整的後端 API 整合解決方案，包含智慧批次處理和並發控制，支援：
 
 - **結構化數據匯入**: quarterly/daily/metadata 分類匯入
 - **批次處理優化**: 智能批次大小和重試機制

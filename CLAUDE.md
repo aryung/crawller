@@ -595,18 +595,24 @@ document.querySelectorAll("tr:has(td:contains('每股盈餘')) td:last-child");
 
 - **系統使用**: 查看 [完整系統指南](docs/20250814-complete-system-guide.md) 的快速開始章節
 - **API 整合**: 查看 [API 整合指南](docs/20250814-api-integration-guide.md) 的批次處理優化
-- **重試和批次處理**: 查看 [Pipeline Retry & Batch 功能完整指南](docs/pipeline-retry-batch-guide.md) 的詳細使用說明
+- **重試和批次處理**: 查看 [Pipeline Retry & Batch 功能完整指南](docs/20250815-pipeline-retry-batch-guide.md) 的詳細使用說明
 - **CSS 選擇器最佳實踐**: 查看 [開發參考手冊](docs/20250814-development-reference.md) 的六大核心原則
 - **位置獨立選擇器方法**: 查看 [開發參考手冊](docs/20250814-development-reference.md) 的複雜 DOM 處理章節
 
 ### 專門功能指南
 
-- **[Pipeline Retry & Batch 功能完整指南](docs/pipeline-retry-batch-guide.md)** - 重試機制和批次處理詳細說明  
+- **[Pipeline Retry & Batch 功能完整指南](docs/20250815-pipeline-retry-batch-guide.md)** - 重試機制和批次處理詳細說明  
   _包含故障排除、最佳實踐、詳細參數說明_
+
+- **[Site-based Concurrency 智慧並發控制指南](docs/20250816-site-based-concurrency-guide.md)** - 智慧並發控制系統完整說明  
+  _v3.1.1 新功能，20% 性能提升，網站特定並發策略_
+
+- **[Batch Crawler 重試機制指南](docs/20250816-batch-crawler-retry-guide.md)** - 批量爬取重試機制詳細說明  
+  _三層記錄系統、錯誤分類、斷點續傳_
 
 ### 歸檔文檔
 
-- **[完整工作流程歸檔](docs/20250814-complete-workflow-archive.md)** - 詳細工作流程參考
+- **[完整工作流程歸檔](docs/archive/20250814-complete-workflow-archive.md)** - 詳細工作流程參考
 
 ## 版本記錄
 

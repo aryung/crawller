@@ -1,12 +1,12 @@
-# Universal Web Crawler 完整系統指南 (v3.0)
+# Universal Web Crawler 完整系統指南 (v3.1.1)
 
 **專案**: 通用網路爬蟲系統  
-**版本**: v3.0.0  
-**更新日期**: 2025-08-14
+**版本**: v3.1.1  
+**更新日期**: 2025-08-16
 
 ## 🎯 系統概述
 
-Universal Web Crawler v3.0 提供完整的財務數據爬取和匯入解決方案，支援：
+Universal Web Crawler v3.1.1 提供完整的財務數據爬取和匯入解決方案，包含智慧並發控制和增強重試機制，支援：
 
 - **三大市場**: 台灣 (TW)、美國 (US)、日本 (JP)
 - **結構化目錄**: quarterly/daily/metadata 分類系統

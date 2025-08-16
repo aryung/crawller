@@ -1,12 +1,18 @@
 # Pipeline Retry & Batch 功能完整指南
 
-**版本**: v3.0.0  
-**更新日期**: 2025-08-15  
+**版本**: v3.1.1  
+**更新日期**: 2025-08-16  
 **適用系統**: Universal Web Crawler
 
 ## 🎯 概述
 
-Universal Web Crawler v3.0 提供完整的重試機制和批次處理功能，確保大規模數據爬取的穩定性和可靠性。本指南詳細說明重試機制的工作原理、批次處理功能、以及最佳實踐。
+Universal Web Crawler v3.1.1 提供完整的重試機制和批次處理功能，包含智慧錯誤分類和 Site-based Concurrency 控制，確保大規模數據爬取的穩定性和可靠性。本指南詳細說明重試機制的工作原理、批次處理功能、以及最佳實踐。
+
+### 🆕 v3.1.1 新特性
+- **智慧錯誤分類**: 自動區分暫時性/永久性錯誤，採用不同重試策略
+- **Site-based Concurrency**: 按網站域名的智慧並發控制，20% 性能提升
+- **增強重試邏輯**: 指數退避延遲 + 隨機抖動，避免系統過載
+- **完整進度追蹤**: 三層記錄系統，支援精確斷點續傳
 
 ## 🏗️ 三層記錄系統架構
 
@@ -176,6 +182,107 @@ delay = baseDelay * Math.pow(2, retryCount - 1)
 - **最大隊列長度**: 1000項目
 - **過期清理**: 7天自動清理
 - **記憶體保護**: 大隊列自動分批處理
+
+### 🧠 智慧錯誤分類與策略 (v3.1.1)
+
+#### 錯誤類型自動分類
+
+##### 1. 暫時性錯誤 (TEMPORARY)
+**可重試，最多3次**
+
+```javascript
+// 判斷條件
+message.includes('timeout') ||
+message.includes('connection reset') ||
+message.includes('connection refused') ||
+message.includes('socket hang up') ||
+message.includes('network error') ||
+message.includes('econnreset') ||
+message.includes('enotfound') ||
+message.includes('etimedout')
+```
+
+##### 2. 速率限制錯誤 (RATE_LIMIT)
+**可重試，最多2次，延遲30秒**
+
+```javascript
+// 判斷條件
+message.includes('429') ||
+message.includes('too many requests') ||
+message.includes('rate limit') ||
+message.includes('quota exceeded') ||
+message.includes('throttle')
+```
+
+##### 3. 永久性錯誤 (PERMANENT)
+**不重試，直接跳過**
+
+```javascript
+// 判斷條件
+message.includes('404') ||
+message.includes('not found') ||
+message.includes('invalid configuration') ||
+message.includes('parse error') ||
+message.includes('malformed') ||
+message.includes('unauthorized') ||
+message.includes('403') ||
+message.includes('access denied')
+```
+
+##### 4. 系統錯誤 (SYSTEM)
+**可重試1次，延遲60秒**
+
+```javascript
+// 判斷條件
+message.includes('out of memory') ||
+message.includes('enospc') ||
+message.includes('enomem') ||
+message.includes('system error') ||
+message.includes('internal server error') ||
+message.includes('500')
+```
+
+#### 智慧重試延遲計算
+
+```typescript
+calculateRetryDelay(attempt: number, errorType?: ErrorType): number {
+  // 基於錯誤類型的基礎延遲
+  let baseDelay = 5000; // 預設5秒
+  
+  switch (errorType) {
+    case ErrorType.RATE_LIMIT:
+      baseDelay = 30000; // 速率限制延遲30秒
+      break;
+    case ErrorType.TIMEOUT:
+      baseDelay = 10000; // 超時延遲10秒
+      break;
+    case ErrorType.NETWORK:
+      baseDelay = 15000; // 網路錯誤延遲15秒
+      break;
+    case ErrorType.SYSTEM:
+      baseDelay = 60000; // 系統錯誤延遲1分鐘
+      break;
+  }
+
+  // 指數退避：每次重試延遲翻倍
+  const exponentialDelay = baseDelay * Math.pow(2, attempt - 1);
+  
+  // 加入隨機抖動 (±25%)
+  const jitter = exponentialDelay * 0.25 * (Math.random() * 2 - 1);
+  const finalDelay = Math.max(1000, exponentialDelay + jitter);
+  
+  // 限制最大延遲時間
+  return Math.min(finalDelay, 300000); // 最多5分鐘
+}
+```
+
+#### 重試延遲範例表
+
+| 嘗試次數 | 暫時性錯誤 | 速率限制 | 系統錯誤 |
+|----------|------------|----------|----------|
+| **第1次** | 5 秒 | 30 秒 | 60 秒 |
+| **第2次** | 10 秒 | 60 秒 | - |
+| **第3次** | 20 秒 | - | - |
 
 ## 🔧 重試管理命令
 
@@ -1380,11 +1487,25 @@ netstat -an | grep :443 | wc -l  # HTTPS 連接數
 **文檔版本**: v3.1.1  
 **維護者**: Universal Web Crawler Team
 
+## 🔗 相關重試系統
+
+### 📚 文檔對照
+- **本文檔 (Pipeline Retry)**: 完整的 Pipeline 流程重試機制
+- **[Batch Crawler Retry 指南](20250816-batch-crawler-retry-guide.md)**: 專注於單次批量爬取的重試邏輯
+- **區別**: Pipeline 重試管理整個工作流程，Batch 重試專注於爬取執行階段
+
+### 🔄 使用場景對比
+| 重試類型 | 適用場景 | 重試範圍 | 主要命令 |
+|---------|---------|---------|---------|
+| **Pipeline Retry** | 完整工作流程失敗 | 配置生成→爬取→匯入→標籤同步 | `npm run pipeline:retry` |
+| **Batch Crawler Retry** | 爬取階段執行失敗 | 個別配置文件執行 | `npm run crawl:retry:failed` |
+
 ### 🆕 v3.1.1 更新記錄 (2025-08-16)
 
 - **新功能**: Site-based Concurrency 智慧並發控制系統
 - **性能提升**: 20% 爬取效率提升 (實測數據)
 - **智慧延遲**: 動態調整機制，根據網站響應自動優化
 - **全面向後相容**: 保持傳統全域並發模式支援
+- **文檔整合**: 整合 Batch Crawler 重試機制到 Pipeline 系統
 - **新增命令**: 12個 site-based concurrency 專用命令
 - **即時監控**: 網站層級統計和調試功能
