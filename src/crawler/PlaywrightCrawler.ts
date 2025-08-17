@@ -1,11 +1,12 @@
 import { chromium, Browser, Page } from 'playwright';
 import { CrawlerConfig, CrawlerResult, CrawlerOptions, EnhancedCrawlerConfig, ActionItem } from '../types';
 import { DataExtractor } from './DataExtractor';
+import { BrowserPool, PooledBrowser } from './BrowserPool';
 import { logger, delay, validateCrawlerConfig } from '../utils';
 import { builtinTransforms, getTransformFunction } from '../transforms';
 
 export class PlaywrightCrawler {
-  private browser: Browser | null = null;
+  private browserPool: BrowserPool | null = null;
   private dataExtractor: DataExtractor;
   private defaultOptions: CrawlerOptions = {
     waitFor: 2000,
@@ -16,8 +17,16 @@ export class PlaywrightCrawler {
     viewport: { width: 1920, height: 1080 }
   };
 
-  constructor() {
+  constructor(browserPool?: BrowserPool) {
+    this.browserPool = browserPool || null;
     this.dataExtractor = new DataExtractor();
+  }
+
+  /**
+   * 設置瀏覽器池（用於批次處理）
+   */
+  setBrowserPool(browserPool: BrowserPool): void {
+    this.browserPool = browserPool;
   }
 
   async crawl(config: CrawlerConfig | EnhancedCrawlerConfig): Promise<CrawlerResult> {
@@ -42,7 +51,7 @@ export class PlaywrightCrawler {
         
         if (attempt < (options.retries || 3)) {
           await delay(options.delay || 1000);
-          await this.cleanup();
+          // 不再調用 cleanup，讓瀏覽器池處理錯誤恢復
         }
       }
     }
@@ -58,10 +67,31 @@ export class PlaywrightCrawler {
 
   private async crawlWithPlaywright(config: CrawlerConfig | EnhancedCrawlerConfig, options: CrawlerOptions): Promise<CrawlerResult> {
     let page: Page | null = null;
+    let pooledBrowser: PooledBrowser | null = null;
+    let browser: Browser | null = null;
+    let hasError = false;
     
     try {
-      if (!this.browser) {
-        this.browser = await chromium.launch({
+      if (this.browserPool) {
+        // 使用瀏覽器池
+        pooledBrowser = await this.browserPool.acquire();
+        browser = pooledBrowser.browser;
+        
+        // 使用瀏覽器池中的 context 創建頁面
+        page = await pooledBrowser.context.newPage();
+        
+        // 設置頁面選項
+        if (options.viewport) {
+          await page.setViewportSize(options.viewport);
+        }
+        if (options.userAgent) {
+          await page.setExtraHTTPHeaders({
+            'User-Agent': options.userAgent
+          });
+        }
+      } else {
+        // 回退到直接創建瀏覽器（向後兼容）
+        browser = await chromium.launch({
           headless: options.headless ?? true,
           args: [
             '--no-sandbox',
@@ -69,12 +99,12 @@ export class PlaywrightCrawler {
             '--disable-dev-shm-usage'
           ]
         });
-      }
 
-      page = await this.browser.newPage({
-        viewport: options.viewport,
-        userAgent: options.userAgent || 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
-      });
+        page = await browser.newPage({
+          viewport: options.viewport,
+          userAgent: options.userAgent || 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+        });
+      }
 
       // 設定額外的 headers
       if (config.headers) {
@@ -120,17 +150,52 @@ export class PlaywrightCrawler {
         screenshot = await page.screenshot({ fullPage: true });
       }
 
+      // 如果 data.data 存在且是陣列，表示使用了組合轉換函數
+      // 將內部的 data 提升到頂層，避免雙重嵌套
+      let finalData = data;
+      if (data.data && Array.isArray(data.data)) {
+        // 保留其他欄位，但用 data.data 替換整個 data
+        const otherFields: Record<string, any> = {};
+        for (const key in data) {
+          if (key !== 'data') {
+            otherFields[key] = data[key];
+          }
+        }
+        // 將組合後的數據陣列和其他欄位合併
+        finalData = {
+          ...otherFields,
+          data: data.data
+        };
+      }
+
       return {
         url: config.url,
-        data,
+        data: finalData,
         timestamp: new Date(),
         success: true,
         screenshot
       };
 
+    } catch (error) {
+      hasError = true;
+      throw error;
     } finally {
+      // 關閉頁面
       if (page) {
         await page.close().catch(() => {});
+      }
+      
+      // 處理瀏覽器池歸還或清理
+      if (this.browserPool && pooledBrowser) {
+        // 歸還到瀏覽器池
+        await this.browserPool.release(pooledBrowser, hasError);
+      } else if (browser && !this.browserPool) {
+        // 直接創建的瀏覽器需要手動關閉
+        try {
+          await browser.close();
+        } catch (error) {
+          logger.warn('Error closing standalone browser:', error);
+        }
       }
     }
   }
@@ -431,9 +496,9 @@ export class PlaywrightCrawler {
     for (const selector of excludeSelectors) {
       try {
         const removedCount = await page.evaluate((sel: string) => {
-          const elements = document.querySelectorAll(sel);
+          const elements = (globalThis as any).document.querySelectorAll(sel);
           let count = 0;
-          elements.forEach((el: Element) => {
+          elements.forEach((el: any) => {
             el.remove();
             count++;
           });
@@ -451,14 +516,14 @@ export class PlaywrightCrawler {
   }
 
   async cleanup(): Promise<void> {
-    if (this.browser) {
+    if (this.browserPool) {
       try {
-        await this.browser.close();
-        this.browser = null;
-        logger.info('Playwright browser closed successfully');
+        await this.browserPool.destroy();
+        this.browserPool = null;
+        logger.info('Browser pool destroyed successfully');
       } catch (error) {
-        logger.warn('Error closing Playwright browser:', error);
-        this.browser = null;
+        logger.warn('Error destroying browser pool:', error);
+        this.browserPool = null;
       }
     }
   }

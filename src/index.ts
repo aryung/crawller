@@ -1,4 +1,5 @@
 import { PlaywrightCrawler } from './crawler';
+import { BrowserPool } from './crawler/BrowserPool';
 import { EnhancedConfigManager } from './config';
 import { DataExporter, logger, DomainRateLimiter } from './utils';
 import { CrawlerConfig, CrawlerResult, ExportOptions, EnhancedCrawlerConfig, EnhancedSelectorConfig, EnhancedSelectorItem, ExtractConfig, SelectorConfig, TransformFunction } from './types';
@@ -20,16 +21,27 @@ export class UniversalCrawler {
   public configManager: EnhancedConfigManager;  // Made public for CLI access
   private dataExporter: DataExporter;
   private domainRateLimiter: DomainRateLimiter;
+  private browserPool: BrowserPool | null = null;
 
   constructor(options?: {
     configPath?: string;
     outputDir?: string;
     defaultDomainDelay?: number;
+    browserPool?: BrowserPool;
   }) {
-    this.playwrightCrawler = new PlaywrightCrawler();
+    this.browserPool = options?.browserPool || null;
+    this.playwrightCrawler = new PlaywrightCrawler(this.browserPool || undefined);
     this.configManager = new EnhancedConfigManager(options?.configPath);
     this.dataExporter = new DataExporter(options?.outputDir);
     this.domainRateLimiter = new DomainRateLimiter(options?.defaultDomainDelay || 2000);
+  }
+
+  /**
+   * 設置瀏覽器池（用於批次處理）
+   */
+  setBrowserPool(browserPool: BrowserPool): void {
+    this.browserPool = browserPool;
+    this.playwrightCrawler.setBrowserPool(browserPool);
   }
 
   async crawl(config: CrawlerConfig | EnhancedCrawlerConfig | string): Promise<CrawlerResult> {

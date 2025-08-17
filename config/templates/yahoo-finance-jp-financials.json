@@ -96,7 +96,7 @@
   },
   "export": {
     "formats": ["json"],
-    "filename": "yahoo_finance_jp_financials_${symbolCode}",
+    "filename": "yahoo-finance-jp-financials-${symbolCode}",
     "structure": {
       "financialsData": "financialsPeriods,financialsData"
     }

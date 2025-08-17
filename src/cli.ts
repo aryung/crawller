@@ -7,6 +7,9 @@ import { formatTimestamp } from './utils/helpers';
 import * as path from 'path';
 import * as fs from 'fs-extra';
 import { EnhancedCrawlerConfig, ExportOptions } from './types';
+import { BatchCrawlerManager, BatchOptions } from './batch/BatchCrawlerManager';
+import { ProgressTracker } from './batch/ProgressTracker';
+import { MarketRegion } from './common/shared-types/interfaces/market-data.interface';
 
 interface CLIOptions {
   config?: string;
@@ -24,6 +27,39 @@ interface CLIOptions {
   batchSize?: number;
   startFrom?: number;
   generateReport?: boolean;  // New: explicitly enable markdown report generation (default: false)
+  debugSelectors?: boolean;  // New: output all intermediate selector data (fiscalPeriodsArray, etc.)
+  showIntermediate?: boolean; // New: show intermediate processing steps data
+  includeArrays?: boolean;   // New: include raw array data in output
+  
+  // Batch command options
+  category?: 'daily' | 'quarterly' | 'metadata';
+  market?: MarketRegion;
+  type?: string;
+  delayMs?: number;
+  retryAttempts?: number;
+  resume?: string;
+  retryFailed?: string;
+  retryAll?: string;       // New: retry all failed and skipped tasks
+  retrySkippedOnly?: string; // New: retry only skipped tasks
+  forceRetry?: boolean;    // New: force retry even if attempts > 3
+  resetAttempts?: boolean; // New: reset attempt counters
+  pause?: boolean;
+  status?: boolean;
+  stats?: boolean;
+  errorReport?: boolean;
+  performanceReport?: boolean;
+  progressId?: string;
+  limit?: number;
+  
+  // Site-based concurrency options
+  useSiteConcurrency?: boolean;  // 是否使用 site-based concurrency
+  siteConcurrencyStats?: boolean; // 顯示 site concurrency 統計
+  globalConcurrency?: boolean;   // 強制使用傳統全域併發 (向後兼容)
+  siteOverrides?: string;        // JSON 字串，覆蓋特定站點設定
+  
+  // Browser pool options
+  browserPoolSize?: number;      // 瀏覽器池大小
+  browserPoolStats?: boolean;    // 顯示瀏覽器池統計
 }
 
 async function main() {
@@ -35,7 +71,7 @@ async function main() {
   program
     .command('crawl [configs...]')
     .description('執行爬蟲任務')
-    .option('-c, --config <path>', '配置檔案目錄或特定配置檔案路徑', 'config')
+    .option('-c, --config <path>', '配置檔案目錄或特定配置檔案路徑', 'config-categorized')
     .option('-o, --output <path>', '輸出目錄', 'output')
     .option('-f, --format <format>', '匯出格式 (json|csv|xlsx)', 'json')
     .option('--concurrent <number>', '同時處理的配置檔案數量（非引擎併發）', '1')
@@ -43,9 +79,23 @@ async function main() {
     .option('--start-from <number>', '從第幾個配置開始執行', '0')
     .option('--report', '生成 MD 格式的爬蟲報告（預設只輸出 JSON）')
     .option('-v, --verbose', '詳細日誌')
+    .option('--debug-selectors', '輸出所有選擇器的中間數據（fiscalPeriodsArray 等）')
+    .option('--show-intermediate', '顯示中間處理步驟的資料')
+    .option('--include-arrays', '在輸出中包含原始陣列數據')
     .action(async (configs: string[], options: CLIOptions) => {
       if (options.verbose) {
         process.env.LOG_LEVEL = 'debug';
+      }
+      
+      // 設置 debug 環境變數供 transform 函數使用
+      if (options.debugSelectors) {
+        process.env.DEBUG_SELECTORS = 'true';
+      }
+      if (options.showIntermediate) {
+        process.env.SHOW_INTERMEDIATE = 'true';
+      }
+      if (options.includeArrays) {
+        process.env.INCLUDE_ARRAYS = 'true';
       }
 
       // Default behavior: skip markdown report generation unless explicitly requested
@@ -104,6 +154,47 @@ async function main() {
     });
 
   program
+    .command('crawl-batch')
+    .description('批量爬取工具 - 支援斷點續傳、錯誤恢復、進度追蹤、Site-based Concurrency')
+    .option('-c, --config <path>', '配置檔案目錄', 'config-categorized')
+    .option('-o, --output <path>', '輸出目錄', 'output')
+    .option('--category <type>', '指定類別 (daily|quarterly|metadata)')
+    .option('--market <region>', '指定市場 (tw|us|jp)')
+    .option('--type <datatype>', '指定數據類型 (eps|history|financials等)')
+    .option('--concurrent <num>', '併發數量 (傳統模式，site-based 時被忽略)', '3')
+    .option('--start-from <num>', '從第幾個開始執行', '0')
+    .option('--limit <num>', '限制執行數量')
+    .option('--delay <ms>', '請求間隔毫秒數 (傳統模式，site-based 時被忽略)', '5000')
+    .option('--retry-attempts <num>', '最大重試次數', '3')
+    .option('--resume <id>', '恢復指定進度ID的執行')
+    .option('--retry-failed <id>', '只重試失敗的配置')
+    .option('--retry-all <id>', '重試所有失敗和跳過的配置')
+    .option('--retry-skipped-only <id>', '只重試跳過的配置')
+    .option('--force-retry', '強制重試，忽略重試次數限制')
+    .option('--reset-attempts', '重置重試計數器')
+    .option('--pause', '暫停當前執行')
+    .option('--status', '查看執行狀態')
+    .option('--stats', '顯示統計資訊')
+    .option('--error-report', '生成錯誤報告')
+    .option('--performance-report', '生成性能報告')
+    .option('--progress-id <id>', '指定進度ID')
+    .option('-v, --verbose', '詳細日誌')
+    
+    // Site-based concurrency options
+    .option('--site-concurrency', '啟用 Site-based Concurrency (預設啟用)', true)
+    .option('--global-concurrency', '強制使用傳統全域併發控制')
+    .option('--site-stats', '顯示 Site Concurrency 統計資訊')
+    .option('--site-overrides <json>', '覆蓋特定站點設定 (JSON格式)')
+    
+    // Browser pool options
+    .option('--browser-pool-size <num>', '瀏覽器池大小', '3')
+    .option('--browser-pool-stats', '顯示瀏覽器池統計資訊')
+    
+    .action(async (options: CLIOptions) => {
+      await runBatchCrawler(options);
+    });
+
+  program
     .command('curl2config <curl-command>')
     .description('將 curl 命令轉換為配置檔案')
     .option('-c, --config <path>', '配置檔案目錄', 'configs')
@@ -155,11 +246,25 @@ async function main() {
           format: 'json',
           concurrent: 1,
           verbose: verboseIndex >= 0,
-          generateReport
+          generateReport,
+          debugSelectors: remainingArgs.includes('--debug-selectors'),
+          showIntermediate: remainingArgs.includes('--show-intermediate'),
+          includeArrays: remainingArgs.includes('--include-arrays')
         };
         
         if (options.verbose) {
           process.env.LOG_LEVEL = 'debug';
+        }
+        
+        // 設置 debug 環境變數供 transform 函數使用
+        if (options.debugSelectors) {
+          process.env.DEBUG_SELECTORS = 'true';
+        }
+        if (options.showIntermediate) {
+          process.env.SHOW_INTERMEDIATE = 'true';
+        }
+        if (options.includeArrays) {
+          process.env.INCLUDE_ARRAYS = 'true';
         }
         
         await runDirectConfigFile(configFilePath, options);
@@ -183,16 +288,30 @@ async function main() {
         const configIndex = args.findIndex(arg => arg === '-c' || arg === '--config');
         
         const options: CLIOptions = {
-          config: configIndex >= 0 && args[configIndex + 1] ? args[configIndex + 1] : 'configs',
+          config: configIndex >= 0 && args[configIndex + 1] ? args[configIndex + 1] : 'config',
           output: outputIndex >= 0 && args[outputIndex + 1] ? args[outputIndex + 1] : 'output',
           format: formatIndex >= 0 && args[formatIndex + 1] ? args[formatIndex + 1] as ExportOptions['format'] : 'json',
           concurrent: concurrentIndex >= 0 && args[concurrentIndex + 1] ? Number(args[concurrentIndex + 1]) : 3,
           verbose: verboseIndex >= 0,
-          generateReport
+          generateReport,
+          debugSelectors: args.includes('--debug-selectors'),
+          showIntermediate: args.includes('--show-intermediate'),
+          includeArrays: args.includes('--include-arrays')
         };
         
         if (options.verbose) {
           process.env.LOG_LEVEL = 'debug';
+        }
+        
+        // 設置 debug 環境變數供 transform 函數使用
+        if (options.debugSelectors) {
+          process.env.DEBUG_SELECTORS = 'true';
+        }
+        if (options.showIntermediate) {
+          process.env.SHOW_INTERMEDIATE = 'true';
+        }
+        if (options.includeArrays) {
+          process.env.INCLUDE_ARRAYS = 'true';
         }
         
         await runCrawler([firstArg], options);
@@ -762,6 +881,497 @@ async function curl2config(curlCommand: string, options: CLIOptions) {
     console.error('❌ 轉換失敗:', (error as Error).message);
     process.exit(1);
   }
+}
+
+/**
+ * 批量爬取命令處理器
+ */
+async function runBatchCrawler(options: CLIOptions): Promise<void> {
+  try {
+    // 設置日誌級別
+    if (options.verbose) {
+      process.env.LOG_LEVEL = 'debug';
+    }
+
+    // 創建批量管理器 - 支援分類配置目錄和 Site-based Concurrency
+    const defaultConfigPath = options.config || 'config-categorized';
+    
+    // 決定使用 site-based 還是 global concurrency
+    const useSiteConcurrency = !options.globalConcurrency && options.useSiteConcurrency !== false;
+    
+    const batchManager = new BatchCrawlerManager({
+      configPath: defaultConfigPath,
+      outputDir: options.output || 'output',
+      maxConcurrency: parseInt(options.concurrent?.toString() || '3'),
+      delayMs: parseInt(options.delayMs?.toString() || '5000'),
+      useSiteConcurrency: useSiteConcurrency,
+      browserPoolSize: parseInt(options.browserPoolSize?.toString() || '3')
+    });
+
+    // 處理特殊命令
+    if (options.status) {
+      await showBatchStatus(options);
+      return;
+    }
+
+    if (options.stats) {
+      await showBatchStats(options);
+      return;
+    }
+
+    if (options.errorReport) {
+      await generateErrorReport(options);
+      return;
+    }
+
+    if (options.performanceReport) {
+      await generatePerformanceReport(options);
+      return;
+    }
+
+    // 顯示 Site Concurrency 統計
+    if (options.siteConcurrencyStats) {
+      console.log('🌐 Site Concurrency 統計資訊');
+      console.log('='.repeat(50));
+      const stats = batchManager.getSiteConcurrencyStatistics();
+      console.log(JSON.stringify(stats, null, 2));
+      return;
+    }
+
+    // 顯示瀏覽器池統計
+    if (options.browserPoolStats) {
+      console.log('🏊 瀏覽器池統計資訊');
+      console.log('='.repeat(50));
+      const stats = batchManager.getBrowserPoolStatistics();
+      if (stats) {
+        console.log(`總瀏覽器數: ${stats.total}/${stats.maxSize}`);
+        console.log(`使用中: ${stats.inUse}`);
+        console.log(`可用: ${stats.available}`);
+        console.log(`使用率: ${stats.utilization}%`);
+      } else {
+        console.log('瀏覽器池未初始化');
+      }
+      return;
+    }
+
+    // 恢復執行
+    if (options.resume !== undefined) {
+      // 檢查是否提供了有效的進度ID
+      if (options.resume === true || options.resume === 'true' || !options.resume || options.resume.trim() === '') {
+        console.error('❌ 錯誤: --resume 需要指定進度ID');
+        console.log('');
+        console.log('📋 使用方式:');
+        console.log('  npx tsx src/cli.ts crawl-batch --resume=<進度ID>');
+        console.log('');
+        console.log('🔍 查看可用的進度檔案:');
+        console.log('  ls -la .progress/');
+        console.log('');
+        console.log('💡 範例:');
+        console.log('  npx tsx src/cli.ts crawl-batch --resume=batch-quarterly-us-all-20250817T062052');
+        console.log('');
+        console.log('📋 更多幫助: npm run crawl:retry:help');
+        process.exit(1);
+      }
+
+      console.log(`🔄 恢復批量執行: ${options.resume}`);
+      
+      // 解析 site overrides (如果提供)
+      let siteConcurrencyOverrides;
+      if (options.siteOverrides) {
+        try {
+          siteConcurrencyOverrides = JSON.parse(options.siteOverrides);
+        } catch (error) {
+          console.error('❌ Site overrides JSON 格式錯誤:', error);
+          process.exit(1);
+        }
+      }
+      
+      const result = await batchManager.resumeBatch(options.resume, {
+        concurrent: parseInt(options.concurrent?.toString() || '3'),
+        delayMs: parseInt(options.delayMs?.toString() || '5000'),
+        outputDir: options.output || 'output',
+        useSiteConcurrency: useSiteConcurrency,
+        siteConcurrencyOverrides: siteConcurrencyOverrides
+      });
+      displayBatchResult(result);
+      return;
+    }
+
+    // 重試失敗
+    if (options.retryFailed !== undefined) {
+      // 檢查是否提供了有效的進度ID
+      if (options.retryFailed === true || options.retryFailed === 'true' || !options.retryFailed || options.retryFailed.trim() === '') {
+        console.error('❌ 錯誤: --retry-failed 需要指定進度ID');
+        console.log('');
+        console.log('📋 使用方式:');
+        console.log('  npx tsx src/cli.ts crawl-batch --retry-failed=<進度ID>');
+        console.log('');
+        console.log('🔍 查看可用的進度檔案:');
+        console.log('  ls -la .progress/');
+        console.log('');
+        console.log('💡 範例:');
+        console.log('  npx tsx src/cli.ts crawl-batch --retry-failed=batch-quarterly-us-all-20250817T062052');
+        console.log('');
+        console.log('📋 更多幫助: npm run crawl:retry:help');
+        process.exit(1);
+      }
+
+      console.log(`🔄 重試失敗配置: ${options.retryFailed}`);
+      
+      // 解析 site overrides (如果提供)
+      let siteConcurrencyOverrides;
+      if (options.siteOverrides) {
+        try {
+          siteConcurrencyOverrides = JSON.parse(options.siteOverrides);
+        } catch (error) {
+          console.error('❌ Site overrides JSON 格式錯誤:', error);
+          process.exit(1);
+        }
+      }
+      
+      const result = await batchManager.retryFailed(options.retryFailed, {
+        concurrent: parseInt(options.concurrent?.toString() || '3'),
+        delayMs: parseInt(options.delayMs?.toString() || '5000'),
+        outputDir: options.output || 'output',
+        useSiteConcurrency: useSiteConcurrency,
+        siteConcurrencyOverrides: siteConcurrencyOverrides
+      });
+      displayBatchResult(result);
+      return;
+    }
+
+    // 重試所有失敗和跳過的配置
+    if (options.retryAll !== undefined) {
+      // 檢查是否提供了有效的進度ID
+      if (options.retryAll === true || options.retryAll === 'true' || !options.retryAll || options.retryAll.trim() === '') {
+        console.error('❌ 錯誤: --retry-all 需要指定進度ID');
+        console.log('');
+        console.log('📋 使用方式:');
+        console.log('  npx tsx src/cli.ts crawl-batch --retry-all=<進度ID>');
+        console.log('');
+        console.log('🔍 查看可用的進度檔案:');
+        console.log('  ls -la .progress/');
+        console.log('');
+        console.log('💡 範例:');
+        console.log('  npx tsx src/cli.ts crawl-batch --retry-all=batch-quarterly-us-all-20250817T062052');
+        console.log('  npx tsx src/cli.ts crawl-batch --retry-all=batch-quarterly-us-all-20250817T062052 --reset-attempts');
+        console.log('');
+        console.log('📋 更多幫助: npm run crawl:retry:help');
+        process.exit(1);
+      }
+
+      console.log(`🔄 重試所有失敗和跳過的配置: ${options.retryAll}`);
+      if (options.forceRetry) {
+        console.log('⚡ 強制重試模式：忽略重試次數限制');
+      }
+      if (options.resetAttempts) {
+        console.log('🔄 重置重試計數器');
+      }
+      
+      // 解析 site overrides (如果提供)
+      let siteConcurrencyOverrides;
+      if (options.siteOverrides) {
+        try {
+          siteConcurrencyOverrides = JSON.parse(options.siteOverrides);
+        } catch (error) {
+          console.error('❌ Site overrides JSON 格式錯誤:', error);
+          process.exit(1);
+        }
+      }
+      
+      const result = await batchManager.retryAll(options.retryAll, {
+        concurrent: parseInt(options.concurrent?.toString() || '3'),
+        delayMs: parseInt(options.delayMs?.toString() || '5000'),
+        outputDir: options.output || 'output',
+        useSiteConcurrency: useSiteConcurrency,
+        siteConcurrencyOverrides: siteConcurrencyOverrides,
+        includeSkipped: true,
+        resetAttempts: options.resetAttempts || false
+      });
+      displayBatchResult(result);
+      return;
+    }
+
+    // 只重試跳過的配置
+    if (options.retrySkippedOnly !== undefined) {
+      // 檢查是否提供了有效的進度ID
+      if (options.retrySkippedOnly === true || options.retrySkippedOnly === 'true' || !options.retrySkippedOnly || options.retrySkippedOnly.trim() === '') {
+        console.error('❌ 錯誤: --retry-skipped-only 需要指定進度ID');
+        console.log('');
+        console.log('📋 使用方式:');
+        console.log('  npx tsx src/cli.ts crawl-batch --retry-skipped-only=<進度ID>');
+        console.log('');
+        console.log('🔍 查看可用的進度檔案:');
+        console.log('  ls -la .progress/');
+        console.log('');
+        console.log('💡 範例:');
+        console.log('  npx tsx src/cli.ts crawl-batch --retry-skipped-only=batch-quarterly-us-all-20250817T062052');
+        console.log('  npx tsx src/cli.ts crawl-batch --retry-skipped-only=batch-quarterly-us-all-20250817T062052 --reset-attempts');
+        console.log('');
+        console.log('📋 更多幫助: npm run crawl:retry:help');
+        process.exit(1);
+      }
+
+      console.log(`🔄 重試跳過的配置: ${options.retrySkippedOnly}`);
+      if (options.forceRetry) {
+        console.log('⚡ 強制重試模式：忽略重試次數限制');
+      }
+      if (options.resetAttempts) {
+        console.log('🔄 重置重試計數器');
+      }
+      
+      // 解析 site overrides (如果提供)
+      let siteConcurrencyOverrides;
+      if (options.siteOverrides) {
+        try {
+          siteConcurrencyOverrides = JSON.parse(options.siteOverrides);
+        } catch (error) {
+          console.error('❌ Site overrides JSON 格式錯誤:', error);
+          process.exit(1);
+        }
+      }
+      
+      const result = await batchManager.retryAll(options.retrySkippedOnly, {
+        concurrent: parseInt(options.concurrent?.toString() || '3'),
+        delayMs: parseInt(options.delayMs?.toString() || '5000'),
+        outputDir: options.output || 'output',
+        useSiteConcurrency: useSiteConcurrency,
+        siteConcurrencyOverrides: siteConcurrencyOverrides,
+        includeSkipped: true,
+        skippedOnly: true,
+        resetAttempts: options.resetAttempts || false
+      });
+      displayBatchResult(result);
+      return;
+    }
+
+    // 標準批量執行
+    console.log('🚀 Universal Web Crawler - 批量模式');
+    console.log('='.repeat(50));
+
+    // 解析 site overrides (如果提供)
+    let siteConcurrencyOverrides;
+    if (options.siteOverrides) {
+      try {
+        siteConcurrencyOverrides = JSON.parse(options.siteOverrides);
+      } catch (error) {
+        console.error('❌ Site overrides JSON 格式錯誤:', error);
+        process.exit(1);
+      }
+    }
+
+    const batchOptions: BatchOptions = {
+      category: options.category,
+      market: options.market,
+      type: options.type,
+      concurrent: parseInt(options.concurrent?.toString() || '3'),
+      startFrom: parseInt(options.startFrom?.toString() || '0'),
+      limit: options.limit ? parseInt(options.limit.toString()) : undefined,
+      delayMs: parseInt(options.delayMs?.toString() || '5000'),
+      retryAttempts: parseInt(options.retryAttempts?.toString() || '3'),
+      outputDir: options.output || 'output',
+      configPath: defaultConfigPath,
+      progressDir: '.progress',
+      // Site-based concurrency 選項
+      useSiteConcurrency: useSiteConcurrency,
+      siteConcurrencyOverrides: siteConcurrencyOverrides
+    };
+
+    console.log(`📁 配置目錄: ${batchOptions.configPath}`);
+    console.log(`📂 輸出目錄: ${batchOptions.outputDir}`);
+    
+    // 顯示併發控制模式
+    if (useSiteConcurrency) {
+      console.log(`🌐 併發控制: Site-based Concurrency (自動根據網站調整)`);
+      if (siteConcurrencyOverrides) {
+        console.log(`⚙️ 站點覆蓋設定: ${JSON.stringify(siteConcurrencyOverrides)}`);
+      }
+    } else {
+      console.log(`🔢 併發控制: 傳統全域模式 (併發: ${batchOptions.concurrent}, 延遲: ${batchOptions.delayMs}ms)`);
+    }
+    
+    if (batchOptions.category) console.log(`📋 類別: ${batchOptions.category}`);
+    if (batchOptions.market) console.log(`🌍 市場: ${batchOptions.market}`);
+    if (batchOptions.type) console.log(`📊 類型: ${batchOptions.type}`);
+    console.log('='.repeat(50));
+
+    const result = await batchManager.startBatch(batchOptions);
+    displayBatchResult(result);
+
+  } catch (error) {
+    console.error('❌ 批量爬取失敗:', (error as Error).message);
+    if (options.verbose) {
+      console.error(error);
+    }
+    process.exit(1);
+  }
+}
+
+/**
+ * 顯示批量狀態
+ */
+async function showBatchStatus(options: CLIOptions): Promise<void> {
+  try {
+    const progressFiles = await ProgressTracker.listProgressFiles(options.progressId ? '.' : '.progress');
+    
+    if (progressFiles.length === 0) {
+      console.log('📊 沒有找到進行中的批量任務');
+      return;
+    }
+
+    console.log('📊 批量任務狀態');
+    console.log('='.repeat(50));
+
+    for (const file of progressFiles) {
+      try {
+        const tracker = await ProgressTracker.load(file);
+        const progress = tracker.getProgress();
+        
+        console.log(`\n📋 進度ID: ${progress.id}`);
+        if (progress.category) console.log(`   類別: ${progress.category}`);
+        if (progress.market) console.log(`   市場: ${progress.market}`);
+        if (progress.type) console.log(`   類型: ${progress.type}`);
+        console.log(`   進度: ${progress.percentage.toFixed(1)}% (${progress.completed + progress.failed + progress.skipped}/${progress.total})`);
+        console.log(`   狀態: 完成 ${progress.completed}, 失敗 ${progress.failed}, 跳過 ${progress.skipped}, 執行中 ${progress.running}, 待處理 ${progress.pending}`);
+        
+        if (progress.currentItem) {
+          console.log(`   當前: ${progress.currentItem}`);
+        }
+
+        const duration = Date.now() - progress.startTime;
+        console.log(`   耗時: ${Math.round(duration / 1000)}s`);
+        
+        if (progress.estimatedTimeRemaining > 0) {
+          console.log(`   預估剩餘: ${Math.round(progress.estimatedTimeRemaining / 1000)}s`);
+        }
+      } catch (error) {
+        console.log(`   ❌ 無法讀取進度檔案: ${file}`);
+      }
+    }
+  } catch (error) {
+    console.error('❌ 獲取狀態失敗:', (error as Error).message);
+  }
+}
+
+/**
+ * 顯示批量統計
+ */
+async function showBatchStats(options: CLIOptions): Promise<void> {
+  console.log('📊 批量爬取統計功能開發中...');
+}
+
+/**
+ * 生成錯誤報告
+ */
+async function generateErrorReport(options: CLIOptions): Promise<void> {
+  console.log('📋 錯誤報告生成功能開發中...');
+}
+
+/**
+ * 生成性能報告
+ */
+async function generatePerformanceReport(options: CLIOptions): Promise<void> {
+  console.log('📈 性能報告生成功能開發中...');
+}
+
+/**
+ * 顯示批量執行結果
+ */
+function displayBatchResult(result: any): void {
+  console.log('\n🎉 批量爬取完成!');
+  console.log('='.repeat(60));
+  
+  // 執行統計
+  console.log(`📊 執行統計:`);
+  console.log(`   總數: ${result.total}`);
+  console.log(`   ✅ 成功: ${result.completed} (${((result.completed / result.total) * 100).toFixed(1)}%)`);
+  console.log(`   ❌ 失敗: ${result.failed} (${((result.failed / result.total) * 100).toFixed(1)}%)`);
+  console.log(`   ⏭️  跳過: ${result.skipped} (${((result.skipped / result.total) * 100).toFixed(1)}%)`);
+  console.log(`   ⏱️  耗時: ${Math.round(result.duration / 1000)} 秒`);
+  
+  // 輸出檔案信息
+  if (result.outputFiles && result.outputFiles.length > 0) {
+    console.log(`\n📂 輸出檔案: ${result.outputFiles.length} 個`);
+    console.log(`   📁 保存位置: output/`);
+    
+    // 按目錄結構分組顯示檔案
+    const filesByCategory = result.outputFiles.reduce((acc: any, file: string) => {
+      const relativePath = path.relative('output', file);
+      const pathParts = relativePath.split(path.sep);
+      
+      if (pathParts.length >= 2) {
+        const category = pathParts[0]; // daily, quarterly, metadata
+        const subcategory = pathParts[1]; // market 或 type
+        const key = `${category}/${subcategory}`;
+        
+        if (!acc[key]) acc[key] = [];
+        acc[key].push(path.basename(file));
+      } else {
+        // 根目錄下的檔案
+        if (!acc['root']) acc['root'] = [];
+        acc['root'].push(path.basename(file));
+      }
+      return acc;
+    }, {});
+    
+    // 顯示分類結構
+    Object.entries(filesByCategory).slice(0, 8).forEach(([category, files]: [string, any]) => {
+      if (category === 'root') {
+        console.log(`   📄 根目錄: ${files.length} 個檔案`);
+      } else {
+        console.log(`   📁 ${category}: ${files.length} 個檔案`);
+      }
+    });
+    
+    if (Object.keys(filesByCategory).length > 8) {
+      console.log(`   📁 ... 還有 ${Object.keys(filesByCategory).length - 8} 個分類`);
+    }
+    
+    console.log(`\n📋 目錄結構範例:`);
+    console.log(`   output/`);
+    if (filesByCategory['daily/tw']) console.log(`   ├── daily/tw/ (${filesByCategory['daily/tw'].length} 個檔案)`);
+    if (filesByCategory['quarterly/tw']) console.log(`   ├── quarterly/tw/ (${filesByCategory['quarterly/tw'].length} 個檔案)`);
+    if (filesByCategory['quarterly/us']) console.log(`   ├── quarterly/us/ (${filesByCategory['quarterly/us'].length} 個檔案)`);
+    if (filesByCategory['quarterly/jp']) console.log(`   ├── quarterly/jp/ (${filesByCategory['quarterly/jp'].length} 個檔案)`);
+    if (filesByCategory['metadata/symbols']) console.log(`   └── metadata/symbols/ (${filesByCategory['metadata/symbols'].length} 個檔案)`);
+  } else {
+    console.log(`\n📂 無輸出檔案生成`);
+  }
+
+  // 錯誤摘要
+  if (result.errors && result.errors.length > 0) {
+    console.log(`\n❌ 錯誤摘要 (前5個):`);
+    result.errors.slice(0, 5).forEach((error: string, index: number) => {
+      console.log(`   ${index + 1}. ${error.length > 80 ? error.substring(0, 80) + '...' : error}`);
+    });
+    if (result.errors.length > 5) {
+      console.log(`   ... 還有 ${result.errors.length - 5} 個錯誤`);
+    }
+  }
+
+  // 最終狀態
+  console.log('\n' + '='.repeat(60));
+  if (result.success) {
+    console.log('🎊 所有任務執行成功！');
+  } else {
+    console.log('⚠️  部分任務執行失敗，請檢查錯誤報告');
+    console.log('💡 使用以下命令重試失敗的配置:');
+    console.log(`   npm run crawl-batch --retry-failed=${result.progressId}`);
+  }
+  
+  // 下一步建議
+  console.log('\n💡 下一步操作:');
+  console.log('   📊 查看狀態: npm run crawl:status');
+  console.log('   📋 查看統計: npm run crawl:stats');
+  console.log('   📁 檢查輸出: ls -la output/');
+  
+  console.log('\n✅ 任務完成，系統正在關閉...');
+  
+  // 優雅退出
+  setTimeout(() => {
+    console.log('👋 再見！');
+    process.exit(0);
+  }, 2000);
 }
 
 process.on('uncaughtException', (error) => {

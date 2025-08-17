@@ -84,7 +84,7 @@
   },
   "export": {
     "formats": ["json", "csv"],
-    "filename": "yahoo_finance_tw_balance_sheet_${symbolCode}"
+    "filename": "yahoo-finance-tw-balance-sheet-${symbolCode}"
   }
 }
 

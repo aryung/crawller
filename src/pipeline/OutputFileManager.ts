@@ -23,52 +23,117 @@ export interface FileGroup {
  */
 export class OutputFileManager {
   private outputDir: string;
+  private useStructuredLayout: boolean;
 
-  constructor(outputDir: string = 'output') {
+  constructor(outputDir: string = 'output', useStructuredLayout: boolean = true) {
     this.outputDir = outputDir;
+    this.useStructuredLayout = useStructuredLayout;
   }
 
   /**
    * Get all financial data files for a specific symbol
-   * Pattern: yahoo-finance-{region}-{type}-{symbol}_{date}.json
+   * Supports both flat and structured directory layouts
    */
   async getFinancialDataFiles(symbolCode?: string, region?: string): Promise<FileInfo[]> {
-    const files = await fs.readdir(this.outputDir);
     const fileInfos: FileInfo[] = [];
 
-    for (const fileName of files) {
-      // Parse financial data file pattern
-      const match = fileName.match(
-        /^yahoo-finance-(tw|us|jp)-([^-]+)-([\w\.]+)_(\d{8})\.json$/i
-      );
-
-      if (match) {
-        const [, fileRegion, reportType, fileSymbol, dateStr] = match;
-        
-        // Apply filters if provided - 精確匹配
-        if (symbolCode && fileSymbol !== symbolCode.replace('.', '_')) {
-          continue;
+    if (this.useStructuredLayout) {
+      // Scan structured directories: quarterly/, daily/, metadata/
+      const categories = ['quarterly', 'daily', 'metadata'];
+      
+      for (const category of categories) {
+        const categoryPath = path.join(this.outputDir, category);
+        if (await fs.pathExists(categoryPath)) {
+          await this.scanStructuredDirectory(categoryPath, fileInfos, symbolCode, region);
         }
-        if (region && fileRegion.toUpperCase() !== region.toUpperCase()) {
-          continue;
+      }
+    } else {
+      // Legacy flat directory structure
+      const files = await fs.readdir(this.outputDir);
+      
+      for (const fileName of files) {
+        // Parse financial data file pattern
+        const match = fileName.match(
+          /^yahoo-finance-(tw|us|jp)-([^-]+)-([\w\.]+)_(\d{8})\.json$/i
+        );
+
+        if (match) {
+          const [, fileRegion, reportType, fileSymbol, dateStr] = match;
+          
+          // Apply filters if provided - 精確匹配
+          if (symbolCode && fileSymbol !== symbolCode.replace('.', '_')) {
+            continue;
+          }
+          if (region && fileRegion.toUpperCase() !== region.toUpperCase()) {
+            continue;
+          }
+
+          const filePath = path.join(this.outputDir, fileName);
+          const stats = await fs.stat(filePath);
+
+          fileInfos.push({
+            filePath,
+            fileName,
+            region: fileRegion.toUpperCase(),
+            reportType: reportType.replace(/-/g, '_'),
+            symbolCode: fileSymbol.replace('_', '.'),
+            dateCreated: dateStr,
+            size: stats.size,
+          });
         }
-
-        const filePath = path.join(this.outputDir, fileName);
-        const stats = await fs.stat(filePath);
-
-        fileInfos.push({
-          filePath,
-          fileName,
-          region: fileRegion.toUpperCase(),
-          reportType: reportType.replace(/-/g, '_'),
-          symbolCode: fileSymbol.replace('_', '.'),
-          dateCreated: dateStr,
-          size: stats.size,
-        });
       }
     }
 
     return fileInfos;
+  }
+
+  /**
+   * Recursively scan structured directory for financial data files
+   */
+  private async scanStructuredDirectory(
+    dirPath: string,
+    fileInfos: FileInfo[],
+    symbolCode?: string,
+    region?: string
+  ): Promise<void> {
+    const items = await fs.readdir(dirPath);
+    
+    for (const item of items) {
+      const itemPath = path.join(dirPath, item);
+      const stats = await fs.stat(itemPath);
+      
+      if (stats.isDirectory()) {
+        // Recursively scan subdirectories
+        await this.scanStructuredDirectory(itemPath, fileInfos, symbolCode, region);
+      } else if (item.endsWith('.json')) {
+        // Parse financial data file pattern
+        const match = item.match(
+          /^yahoo-finance-(tw|us|jp)-([^-]+)-([\w\.]+)_(\d{8})\.json$/i
+        );
+
+        if (match) {
+          const [, fileRegion, reportType, fileSymbol, dateStr] = match;
+          
+          // Apply filters if provided
+          if (symbolCode && fileSymbol !== symbolCode.replace('.', '_')) {
+            continue;
+          }
+          if (region && fileRegion.toUpperCase() !== region.toUpperCase()) {
+            continue;
+          }
+
+          fileInfos.push({
+            filePath: itemPath,
+            fileName: item,
+            region: fileRegion.toUpperCase(),
+            reportType: reportType.replace(/-/g, '_'),
+            symbolCode: fileSymbol.replace('_', '.'),
+            dateCreated: dateStr,
+            size: stats.size,
+          });
+        }
+      }
+    }
   }
 
   /**

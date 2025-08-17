@@ -91,7 +91,7 @@
   },
   "export": {
     "formats": ["json"],
-    "filename": "yahoo_finance_jp_performance_${symbolCode}",
+    "filename": "yahoo-finance-jp-performance-${symbolCode}",
     "structure": {
       "performanceData": "performancePeriods,performanceData"
     }

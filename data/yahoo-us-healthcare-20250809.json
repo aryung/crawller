@@ -1,0 +1,2626 @@
+{
+  "metadata": {
+    "sector_filter": "healthcare",
+    "scraped_date": "2025-08-09T08:26:20.649Z",
+    "total_pages_scraped": 100,
+    "total_records": 9847,
+    "unique_stocks": 522,
+    "duplicates_removed": 9325,
+    "detected_total_results": null,
+    "sectors_distribution": {
+      "Healthcare": 9847
+    }
+  },
+  "data": [
+    {
+      "symbol": "A",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:19.123Z"
+    },
+    {
+      "symbol": "AARD",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:02.459Z"
+    },
+    {
+      "symbol": "ABBV",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:26.937Z"
+    },
+    {
+      "symbol": "ABEO",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:02.459Z"
+    },
+    {
+      "symbol": "ABT",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:26.937Z"
+    },
+    {
+      "symbol": "ACAD",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:35.776Z"
+    },
+    {
+      "symbol": "ACHC",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:35.777Z"
+    },
+    {
+      "symbol": "ACLX",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:35.776Z"
+    },
+    {
+      "symbol": "ACOG",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:02.459Z"
+    },
+    {
+      "symbol": "ACON",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:02.459Z"
+    },
+    {
+      "symbol": "ACTU",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:02.459Z"
+    },
+    {
+      "symbol": "ADMA",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:35.776Z"
+    },
+    {
+      "symbol": "ADPT",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:35.777Z"
+    },
+    {
+      "symbol": "ADUS",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:35.777Z"
+    },
+    {
+      "symbol": "AGIO",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:35.777Z"
+    },
+    {
+      "symbol": "AHCO",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:45.076Z"
+    },
+    {
+      "symbol": "AIRS",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:53.925Z"
+    },
+    {
+      "symbol": "AKRO",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:35.776Z"
+    },
+    {
+      "symbol": "ALC",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:19.123Z"
+    },
+    {
+      "symbol": "ALDX",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:53.925Z"
+    },
+    {
+      "symbol": "ALGS",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:02.459Z"
+    },
+    {
+      "symbol": "ALHC",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:35.776Z"
+    },
+    {
+      "symbol": "ALKS",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:35.776Z"
+    },
+    {
+      "symbol": "ALNY",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:26.937Z"
+    },
+    {
+      "symbol": "ALVO",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:35.777Z"
+    },
+    {
+      "symbol": "AMED",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:35.776Z"
+    },
+    {
+      "symbol": "AMGN",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:26.937Z"
+    },
+    {
+      "symbol": "AMLX",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:53.925Z"
+    },
+    {
+      "symbol": "AMN",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:45.076Z"
+    },
+    {
+      "symbol": "AMPH",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:45.076Z"
+    },
+    {
+      "symbol": "AMRX",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:35.776Z"
+    },
+    {
+      "symbol": "AMWL",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:02.459Z"
+    },
+    {
+      "symbol": "ANAB",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:53.925Z"
+    },
+    {
+      "symbol": "ANGO",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:53.925Z"
+    },
+    {
+      "symbol": "ANIK",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:02.459Z"
+    },
+    {
+      "symbol": "ANIP",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:45.076Z"
+    },
+    {
+      "symbol": "AORT",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:45.076Z"
+    },
+    {
+      "symbol": "APGE",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:35.777Z"
+    },
+    {
+      "symbol": "APLM",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:02.459Z"
+    },
+    {
+      "symbol": "APLS",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:35.776Z"
+    },
+    {
+      "symbol": "ARCT",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:53.925Z"
+    },
+    {
+      "symbol": "ARDT",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:45.076Z"
+    },
+    {
+      "symbol": "ARDX",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:45.076Z"
+    },
+    {
+      "symbol": "ARGNF",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:19.123Z"
+    },
+    {
+      "symbol": "ARGX",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:19.123Z"
+    },
+    {
+      "symbol": "ARQT",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:35.777Z"
+    },
+    {
+      "symbol": "ARTL",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:02.459Z"
+    },
+    {
+      "symbol": "ARVN",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:53.925Z"
+    },
+    {
+      "symbol": "ARWR",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:35.777Z"
+    },
+    {
+      "symbol": "ASMB",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:02.459Z"
+    },
+    {
+      "symbol": "ASTH",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:45.076Z"
+    },
+    {
+      "symbol": "ATEC",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:35.777Z"
+    },
+    {
+      "symbol": "ATRA",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:02.459Z"
+    },
+    {
+      "symbol": "ATRC",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:35.777Z"
+    },
+    {
+      "symbol": "ATXS",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:53.925Z"
+    },
+    {
+      "symbol": "ATYR",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:53.925Z"
+    },
+    {
+      "symbol": "AUNA",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:53.925Z"
+    },
+    {
+      "symbol": "AUPH",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:45.076Z"
+    },
+    {
+      "symbol": "AURA",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:53.925Z"
+    },
+    {
+      "symbol": "AVAH",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:45.076Z"
+    },
+    {
+      "symbol": "AVBP",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:53.925Z"
+    },
+    {
+      "symbol": "AVDL",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:45.076Z"
+    },
+    {
+      "symbol": "AVNS",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:53.925Z"
+    },
+    {
+      "symbol": "AVTX",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:02.459Z"
+    },
+    {
+      "symbol": "AVXL",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:45.076Z"
+    },
+    {
+      "symbol": "AXGN",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:53.925Z"
+    },
+    {
+      "symbol": "AXSM",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:35.776Z"
+    },
+    {
+      "symbol": "AZN",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:19.123Z"
+    },
+    {
+      "symbol": "AZNCF",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:19.123Z"
+    },
+    {
+      "symbol": "AZTA",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:45.076Z"
+    },
+    {
+      "symbol": "BAYRY",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:19.123Z"
+    },
+    {
+      "symbol": "BAYZF",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:19.123Z"
+    },
+    {
+      "symbol": "BBNX",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:02.459Z"
+    },
+    {
+      "symbol": "BCAX",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:53.925Z"
+    },
+    {
+      "symbol": "BCRX",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:45.076Z"
+    },
+    {
+      "symbol": "BDX",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:19.123Z"
+    },
+    {
+      "symbol": "BEAM",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:45.076Z"
+    },
+    {
+      "symbol": "BEIGF",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:19.123Z"
+    },
+    {
+      "symbol": "BGM",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:02.459Z"
+    },
+    {
+      "symbol": "BHVN",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:45.076Z"
+    },
+    {
+      "symbol": "BKD",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:45.076Z"
+    },
+    {
+      "symbol": "BLFS",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:45.076Z"
+    },
+    {
+      "symbol": "BMY",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:26.937Z"
+    },
+    {
+      "symbol": "BNTC",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:02.459Z"
+    },
+    {
+      "symbol": "BNTX",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:19.123Z"
+    },
+    {
+      "symbol": "BOLT",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:02.459Z"
+    },
+    {
+      "symbol": "BRKR",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:35.776Z"
+    },
+    {
+      "symbol": "BSX",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:26.937Z"
+    },
+    {
+      "symbol": "BTSG",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:35.776Z"
+    },
+    {
+      "symbol": "BVS",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:53.925Z"
+    },
+    {
+      "symbol": "CADL",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:02.459Z"
+    },
+    {
+      "symbol": "CAH",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:19.123Z"
+    },
+    {
+      "symbol": "CAI",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:02.459Z"
+    },
+    {
+      "symbol": "CAPR",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:53.925Z"
+    },
+    {
+      "symbol": "CARL",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:02.459Z"
+    },
+    {
+      "symbol": "CBIO",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:02.459Z"
+    },
+    {
+      "symbol": "CBLL",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:53.925Z"
+    },
+    {
+      "symbol": "CCRN",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:53.925Z"
+    },
+    {
+      "symbol": "CDNA",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:53.925Z"
+    },
+    {
+      "symbol": "CDTX",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:45.076Z"
+    },
+    {
+      "symbol": "CELC",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:45.076Z"
+    },
+    {
+      "symbol": "CERO",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:45.076Z"
+    },
+    {
+      "symbol": "CERT",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:35.777Z"
+    },
+    {
+      "symbol": "CGEM",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:53.925Z"
+    },
+    {
+      "symbol": "CGON",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:45.076Z"
+    },
+    {
+      "symbol": "CHGCF",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:19.123Z"
+    },
+    {
+      "symbol": "CHGCY",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:19.123Z"
+    },
+    {
+      "symbol": "CI",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:26.937Z"
+    },
+    {
+      "symbol": "CLDI",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:02.459Z"
+    },
+    {
+      "symbol": "CLDX",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:45.076Z"
+    },
+    {
+      "symbol": "CLPBY",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:19.123Z"
+    },
+    {
+      "symbol": "CLPT",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:53.925Z"
+    },
+    {
+      "symbol": "CMXHF",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:19.123Z"
+    },
+    {
+      "symbol": "CNMD",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:45.076Z"
+    },
+    {
+      "symbol": "CNSP",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:53.925Z"
+    },
+    {
+      "symbol": "COEP",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:53.925Z"
+    },
+    {
+      "symbol": "COGT",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:45.076Z"
+    },
+    {
+      "symbol": "COLL",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:45.076Z"
+    },
+    {
+      "symbol": "CON",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:35.777Z"
+    },
+    {
+      "symbol": "COR",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:19.123Z"
+    },
+    {
+      "symbol": "COYA",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:02.459Z"
+    },
+    {
+      "symbol": "CPRX",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:35.777Z"
+    },
+    {
+      "symbol": "CRBP",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:02.459Z"
+    },
+    {
+      "symbol": "CRMD",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:53.925Z"
+    },
+    {
+      "symbol": "CRNX",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:35.777Z"
+    },
+    {
+      "symbol": "CRSP",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:35.776Z"
+    },
+    {
+      "symbol": "CRVO",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:02.459Z"
+    },
+    {
+      "symbol": "CSBR",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:02.459Z"
+    },
+    {
+      "symbol": "CSLLY",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:19.123Z"
+    },
+    {
+      "symbol": "CSTL",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:53.925Z"
+    },
+    {
+      "symbol": "CTEV",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:02.459Z"
+    },
+    {
+      "symbol": "CTNM",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:02.459Z"
+    },
+    {
+      "symbol": "CUPR",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:02.459Z"
+    },
+    {
+      "symbol": "CVAC",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:45.076Z"
+    },
+    {
+      "symbol": "CVKD",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:02.459Z"
+    },
+    {
+      "symbol": "CVM",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:53.925Z"
+    },
+    {
+      "symbol": "CVRX",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:02.459Z"
+    },
+    {
+      "symbol": "CVS",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:26.937Z"
+    },
+    {
+      "symbol": "CYCC",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:02.459Z"
+    },
+    {
+      "symbol": "CYTK",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:35.776Z"
+    },
+    {
+      "symbol": "DAWN",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:53.925Z"
+    },
+    {
+      "symbol": "DCTH",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:53.925Z"
+    },
+    {
+      "symbol": "DERM",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:02.459Z"
+    },
+    {
+      "symbol": "DHR",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:26.937Z"
+    },
+    {
+      "symbol": "DNA",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:45.076Z"
+    },
+    {
+      "symbol": "DNLI",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:35.777Z"
+    },
+    {
+      "symbol": "DNTH",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:53.925Z"
+    },
+    {
+      "symbol": "DRMA",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:02.459Z"
+    },
+    {
+      "symbol": "DSKYF",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:19.123Z"
+    },
+    {
+      "symbol": "DSNKY",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:19.123Z"
+    },
+    {
+      "symbol": "DVAX",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:45.076Z"
+    },
+    {
+      "symbol": "DXCM",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:19.123Z"
+    },
+    {
+      "symbol": "DXR",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:02.459Z"
+    },
+    {
+      "symbol": "DYN",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:45.076Z"
+    },
+    {
+      "symbol": "EBS",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:53.925Z"
+    },
+    {
+      "symbol": "EHAB",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:53.925Z"
+    },
+    {
+      "symbol": "ELMD",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:02.459Z"
+    },
+    {
+      "symbol": "ELTX",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:02.459Z"
+    },
+    {
+      "symbol": "ELV",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:26.937Z"
+    },
+    {
+      "symbol": "ELVN",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:45.076Z"
+    },
+    {
+      "symbol": "EMBC",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:45.076Z"
+    },
+    {
+      "symbol": "EMPG",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:02.459Z"
+    },
+    {
+      "symbol": "ENOV",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:45.076Z"
+    },
+    {
+      "symbol": "ENTA",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:02.459Z"
+    },
+    {
+      "symbol": "EOLS",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:53.925Z"
+    },
+    {
+      "symbol": "ESLOF",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:19.123Z"
+    },
+    {
+      "symbol": "ESLOY",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:19.123Z"
+    },
+    {
+      "symbol": "ESTA",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:45.076Z"
+    },
+    {
+      "symbol": "ETNB",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:45.076Z"
+    },
+    {
+      "symbol": "ETON",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:53.925Z"
+    },
+    {
+      "symbol": "EVH",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:45.076Z"
+    },
+    {
+      "symbol": "EVOK",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:02.459Z"
+    },
+    {
+      "symbol": "EW",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:19.123Z"
+    },
+    {
+      "symbol": "EWTX",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:45.076Z"
+    },
+    {
+      "symbol": "EXOZ",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:10.709Z"
+    },
+    {
+      "symbol": "EYPT",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:45.076Z"
+    },
+    {
+      "symbol": "FBRX",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:02.459Z"
+    },
+    {
+      "symbol": "FDMT",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:02.459Z"
+    },
+    {
+      "symbol": "FGEN",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:45.076Z"
+    },
+    {
+      "symbol": "FLGC",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:02.459Z"
+    },
+    {
+      "symbol": "FLGT",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:53.925Z"
+    },
+    {
+      "symbol": "FOLD",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:35.777Z"
+    },
+    {
+      "symbol": "FONR",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:02.459Z"
+    },
+    {
+      "symbol": "FSNUF",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:19.123Z"
+    },
+    {
+      "symbol": "FSNUY",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:19.123Z"
+    },
+    {
+      "symbol": "FTRE",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:53.925Z"
+    },
+    {
+      "symbol": "FULC",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:53.925Z"
+    },
+    {
+      "symbol": "GALDY",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:19.123Z"
+    },
+    {
+      "symbol": "GCTK",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:02.459Z"
+    },
+    {
+      "symbol": "GDERF",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:19.123Z"
+    },
+    {
+      "symbol": "GEHC",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:19.123Z"
+    },
+    {
+      "symbol": "GHRS",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:53.925Z"
+    },
+    {
+      "symbol": "GILD",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:26.937Z"
+    },
+    {
+      "symbol": "GKOS",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:35.776Z"
+    },
+    {
+      "symbol": "GLAXF",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:19.123Z"
+    },
+    {
+      "symbol": "GLSI",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:02.459Z"
+    },
+    {
+      "symbol": "GRAL",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:45.076Z"
+    },
+    {
+      "symbol": "GRDN",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:45.076Z"
+    },
+    {
+      "symbol": "GSK",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:19.123Z"
+    },
+    {
+      "symbol": "GYRE",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:53.925Z"
+    },
+    {
+      "symbol": "HAE",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:35.777Z"
+    },
+    {
+      "symbol": "HCA",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:26.937Z"
+    },
+    {
+      "symbol": "HCSG",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:45.076Z"
+    },
+    {
+      "symbol": "HLN",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:19.123Z"
+    },
+    {
+      "symbol": "HNGE",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:10.709Z"
+    },
+    {
+      "symbol": "HOCPF",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:19.123Z"
+    },
+    {
+      "symbol": "HOCPY",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:19.123Z"
+    },
+    {
+      "symbol": "HRMY",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:35.777Z"
+    },
+    {
+      "symbol": "HROW",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:45.076Z"
+    },
+    {
+      "symbol": "HSDT",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:02.459Z"
+    },
+    {
+      "symbol": "HSTM",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:45.076Z"
+    },
+    {
+      "symbol": "HTFL",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:10.709Z"
+    },
+    {
+      "symbol": "HUM",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:19.123Z"
+    },
+    {
+      "symbol": "HYPD",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:10.709Z"
+    },
+    {
+      "symbol": "IART",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:45.076Z"
+    },
+    {
+      "symbol": "ICCC",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:02.459Z"
+    },
+    {
+      "symbol": "ICUI",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:35.777Z"
+    },
+    {
+      "symbol": "IDXX",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:19.123Z"
+    },
+    {
+      "symbol": "IDYA",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:35.777Z"
+    },
+    {
+      "symbol": "IMA",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:10.709Z"
+    },
+    {
+      "symbol": "IMNM",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:53.925Z"
+    },
+    {
+      "symbol": "IMNN",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:02.459Z"
+    },
+    {
+      "symbol": "IMTX",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:45.076Z"
+    },
+    {
+      "symbol": "IMVT",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:35.777Z"
+    },
+    {
+      "symbol": "INBX",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:53.925Z"
+    },
+    {
+      "symbol": "INDP",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:02.459Z"
+    },
+    {
+      "symbol": "INDV",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:35.776Z"
+    },
+    {
+      "symbol": "INFU",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:02.459Z"
+    },
+    {
+      "symbol": "INGN",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:02.459Z"
+    },
+    {
+      "symbol": "INKT",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:53.925Z"
+    },
+    {
+      "symbol": "INMD",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:45.076Z"
+    },
+    {
+      "symbol": "INSP",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:35.777Z"
+    },
+    {
+      "symbol": "INVA",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:45.076Z"
+    },
+    {
+      "symbol": "IQV",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:19.123Z"
+    },
+    {
+      "symbol": "IRMD",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:45.076Z"
+    },
+    {
+      "symbol": "IRON",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:35.777Z"
+    },
+    {
+      "symbol": "IRTC",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:35.776Z"
+    },
+    {
+      "symbol": "ISRG",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:26.937Z"
+    },
+    {
+      "symbol": "ITGR",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:35.776Z"
+    },
+    {
+      "symbol": "ITOS",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:53.925Z"
+    },
+    {
+      "symbol": "JANX",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:45.076Z"
+    },
+    {
+      "symbol": "JBIO",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:10.709Z"
+    },
+    {
+      "symbol": "JNJ",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:26.937Z"
+    },
+    {
+      "symbol": "JYNT",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:02.459Z"
+    },
+    {
+      "symbol": "KALA",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:02.459Z"
+    },
+    {
+      "symbol": "KALV",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:53.925Z"
+    },
+    {
+      "symbol": "KIDS",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:53.925Z"
+    },
+    {
+      "symbol": "KMTS",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:10.709Z"
+    },
+    {
+      "symbol": "KNSA",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:35.777Z"
+    },
+    {
+      "symbol": "KOD",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:53.925Z"
+    },
+    {
+      "symbol": "KROS",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:53.925Z"
+    },
+    {
+      "symbol": "KRRO",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:02.459Z"
+    },
+    {
+      "symbol": "KRYS",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:35.776Z"
+    },
+    {
+      "symbol": "KURA",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:53.925Z"
+    },
+    {
+      "symbol": "KYMR",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:35.777Z"
+    },
+    {
+      "symbol": "LENZ",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:45.076Z"
+    },
+    {
+      "symbol": "LFCR",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:02.459Z"
+    },
+    {
+      "symbol": "LFMD",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:53.925Z"
+    },
+    {
+      "symbol": "LGND",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:35.776Z"
+    },
+    {
+      "symbol": "LH",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:19.123Z"
+    },
+    {
+      "symbol": "LIVN",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:35.777Z"
+    },
+    {
+      "symbol": "LLY",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:26.937Z"
+    },
+    {
+      "symbol": "LMAT",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:35.777Z"
+    },
+    {
+      "symbol": "LNSR",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:02.459Z"
+    },
+    {
+      "symbol": "LNTH",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:35.776Z"
+    },
+    {
+      "symbol": "LQDA",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:35.777Z"
+    },
+    {
+      "symbol": "LYEL",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:35.776Z"
+    },
+    {
+      "symbol": "LYRA",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:53.925Z"
+    },
+    {
+      "symbol": "LZAGF",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:19.123Z"
+    },
+    {
+      "symbol": "LZAGY",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:19.123Z"
+    },
+    {
+      "symbol": "MASS",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:02.459Z"
+    },
+    {
+      "symbol": "MAZE",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:10.709Z"
+    },
+    {
+      "symbol": "MBX",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:53.925Z"
+    },
+    {
+      "symbol": "MCK",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:26.937Z"
+    },
+    {
+      "symbol": "MCRB",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:35.777Z"
+    },
+    {
+      "symbol": "MD",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:45.076Z"
+    },
+    {
+      "symbol": "MDNC",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:02.459Z"
+    },
+    {
+      "symbol": "MDT",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:26.937Z"
+    },
+    {
+      "symbol": "MDWD",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:02.459Z"
+    },
+    {
+      "symbol": "MDXG",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:45.076Z"
+    },
+    {
+      "symbol": "MEIP",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:02.459Z"
+    },
+    {
+      "symbol": "MENS",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:10.709Z"
+    },
+    {
+      "symbol": "MGRM",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:02.459Z"
+    },
+    {
+      "symbol": "MGTX",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:53.925Z"
+    },
+    {
+      "symbol": "MIRM",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:35.776Z"
+    },
+    {
+      "symbol": "MKGAF",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:19.123Z"
+    },
+    {
+      "symbol": "MKKGY",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:19.123Z"
+    },
+    {
+      "symbol": "MLTX",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:35.776Z"
+    },
+    {
+      "symbol": "MLYS",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:53.925Z"
+    },
+    {
+      "symbol": "MMSI",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:35.776Z"
+    },
+    {
+      "symbol": "MNMD",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:45.076Z"
+    },
+    {
+      "symbol": "MNPR",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:02.459Z"
+    },
+    {
+      "symbol": "MRK",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:26.937Z"
+    },
+    {
+      "symbol": "MRSN",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:45.076Z"
+    },
+    {
+      "symbol": "MRUS",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:35.776Z"
+    },
+    {
+      "symbol": "MTD",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:19.123Z"
+    },
+    {
+      "symbol": "MTSR",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:10.709Z"
+    },
+    {
+      "symbol": "MYGN",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:53.925Z"
+    },
+    {
+      "symbol": "NAGE",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:10.709Z"
+    },
+    {
+      "symbol": "NAKA",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:10.709Z"
+    },
+    {
+      "symbol": "NAMS",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:35.777Z"
+    },
+    {
+      "symbol": "NEO",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:45.076Z"
+    },
+    {
+      "symbol": "NEOG",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:45.076Z"
+    },
+    {
+      "symbol": "NEUE",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:02.459Z"
+    },
+    {
+      "symbol": "NEUP",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:10.709Z"
+    },
+    {
+      "symbol": "NGNE",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:53.925Z"
+    },
+    {
+      "symbol": "NHC",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:45.076Z"
+    },
+    {
+      "symbol": "NKTR",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:35.776Z"
+    },
+    {
+      "symbol": "NNNN",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:10.709Z"
+    },
+    {
+      "symbol": "NONOF",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:19.123Z"
+    },
+    {
+      "symbol": "NPCE",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:02.459Z"
+    },
+    {
+      "symbol": "NRC",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:53.925Z"
+    },
+    {
+      "symbol": "NRIX",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:45.076Z"
+    },
+    {
+      "symbol": "NSYS",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:02.459Z"
+    },
+    {
+      "symbol": "NTLA",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:45.076Z"
+    },
+    {
+      "symbol": "NTRB",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:02.459Z"
+    },
+    {
+      "symbol": "NUTX",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:53.925Z"
+    },
+    {
+      "symbol": "NUVL",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:35.776Z"
+    },
+    {
+      "symbol": "NUWE",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:02.459Z"
+    },
+    {
+      "symbol": "NVAX",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:45.076Z"
+    },
+    {
+      "symbol": "NVCR",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:45.076Z"
+    },
+    {
+      "symbol": "NVCT",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:02.459Z"
+    },
+    {
+      "symbol": "NVO",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:19.123Z"
+    },
+    {
+      "symbol": "NVS",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:19.123Z"
+    },
+    {
+      "symbol": "NVSEF",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:19.123Z"
+    },
+    {
+      "symbol": "NVST",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:35.776Z"
+    },
+    {
+      "symbol": "OCS",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:45.076Z"
+    },
+    {
+      "symbol": "OCUL",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:35.777Z"
+    },
+    {
+      "symbol": "OFIX",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:53.925Z"
+    },
+    {
+      "symbol": "OGN",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:35.777Z"
+    },
+    {
+      "symbol": "OM",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:45.076Z"
+    },
+    {
+      "symbol": "OMCL",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:45.076Z"
+    },
+    {
+      "symbol": "OMDA",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:10.709Z"
+    },
+    {
+      "symbol": "OMI",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:53.925Z"
+    },
+    {
+      "symbol": "OPCH",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:35.776Z"
+    },
+    {
+      "symbol": "OPRX",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:53.925Z"
+    },
+    {
+      "symbol": "ORIC",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:45.076Z"
+    },
+    {
+      "symbol": "ORKA",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:53.925Z"
+    },
+    {
+      "symbol": "OSCR",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:35.776Z"
+    },
+    {
+      "symbol": "OTSKF",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:19.123Z"
+    },
+    {
+      "symbol": "OTSKY",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:19.123Z"
+    },
+    {
+      "symbol": "OWLT",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:02.459Z"
+    },
+    {
+      "symbol": "PACS",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:35.777Z"
+    },
+    {
+      "symbol": "PAHC",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:45.076Z"
+    },
+    {
+      "symbol": "PASG",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:53.925Z"
+    },
+    {
+      "symbol": "PBH",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:35.776Z"
+    },
+    {
+      "symbol": "PCRX",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:45.076Z"
+    },
+    {
+      "symbol": "PCVX",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:35.776Z"
+    },
+    {
+      "symbol": "PDEX",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:02.459Z"
+    },
+    {
+      "symbol": "PFE",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:26.937Z"
+    },
+    {
+      "symbol": "PGNY",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:35.777Z"
+    },
+    {
+      "symbol": "PHAT",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:45.076Z"
+    },
+    {
+      "symbol": "PHG",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:19.123Z"
+    },
+    {
+      "symbol": "PHLT",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:10.709Z"
+    },
+    {
+      "symbol": "PHR",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:45.076Z"
+    },
+    {
+      "symbol": "PHVS",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:45.076Z"
+    },
+    {
+      "symbol": "PIII",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:35.776Z"
+    },
+    {
+      "symbol": "PINC",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:35.777Z"
+    },
+    {
+      "symbol": "PLSE",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:45.076Z"
+    },
+    {
+      "symbol": "PMCUF",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:19.123Z"
+    },
+    {
+      "symbol": "PNTG",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:45.076Z"
+    },
+    {
+      "symbol": "PODD",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:19.123Z"
+    },
+    {
+      "symbol": "PRAX",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:45.076Z"
+    },
+    {
+      "symbol": "PRCT",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:35.777Z"
+    },
+    {
+      "symbol": "PRE",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:02.459Z"
+    },
+    {
+      "symbol": "PRGO",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:35.776Z"
+    },
+    {
+      "symbol": "PRPO",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:02.459Z"
+    },
+    {
+      "symbol": "PRTA",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:53.925Z"
+    },
+    {
+      "symbol": "PRTG",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:02.459Z"
+    },
+    {
+      "symbol": "PRVA",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:35.777Z"
+    },
+    {
+      "symbol": "PTCT",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:35.776Z"
+    },
+    {
+      "symbol": "PTGX",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:35.776Z"
+    },
+    {
+      "symbol": "PTHS",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:10.709Z"
+    },
+    {
+      "symbol": "PULM",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:02.459Z"
+    },
+    {
+      "symbol": "PVLA",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:10.709Z"
+    },
+    {
+      "symbol": "QDEL",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:45.076Z"
+    },
+    {
+      "symbol": "QURE",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:53.925Z"
+    },
+    {
+      "symbol": "RAPP",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:53.925Z"
+    },
+    {
+      "symbol": "RAPT",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:53.925Z"
+    },
+    {
+      "symbol": "RARE",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:35.777Z"
+    },
+    {
+      "symbol": "RBOT",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:02.459Z"
+    },
+    {
+      "symbol": "RCUS",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:45.076Z"
+    },
+    {
+      "symbol": "RDNT",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:35.776Z"
+    },
+    {
+      "symbol": "REGN",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:26.937Z"
+    },
+    {
+      "symbol": "REPL",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:53.925Z"
+    },
+    {
+      "symbol": "RGC",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:02.459Z"
+    },
+    {
+      "symbol": "RGEN",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:35.776Z"
+    },
+    {
+      "symbol": "RGNX",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:53.925Z"
+    },
+    {
+      "symbol": "RHHBF",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:19.123Z"
+    },
+    {
+      "symbol": "RHHBY",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:19.123Z"
+    },
+    {
+      "symbol": "RHHVF",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:19.123Z"
+    },
+    {
+      "symbol": "RIGL",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:53.925Z"
+    },
+    {
+      "symbol": "RMD",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:19.123Z"
+    },
+    {
+      "symbol": "RNA",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:35.776Z"
+    },
+    {
+      "symbol": "RNAC",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:02.459Z"
+    },
+    {
+      "symbol": "RNAZ",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:02.459Z"
+    },
+    {
+      "symbol": "RPRX",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:19.123Z"
+    },
+    {
+      "symbol": "RSMDF",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:19.123Z"
+    },
+    {
+      "symbol": "RVMD",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:35.776Z"
+    },
+    {
+      "symbol": "RXRX",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:35.777Z"
+    },
+    {
+      "symbol": "RXST",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:53.925Z"
+    },
+    {
+      "symbol": "RYLPF",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:19.123Z"
+    },
+    {
+      "symbol": "RYTM",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:35.776Z"
+    },
+    {
+      "symbol": "RZLT",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:53.925Z"
+    },
+    {
+      "symbol": "SCLX",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:35.777Z"
+    },
+    {
+      "symbol": "SDGR",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:45.076Z"
+    },
+    {
+      "symbol": "SDZNY",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:19.123Z"
+    },
+    {
+      "symbol": "SDZXF",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:19.123Z"
+    },
+    {
+      "symbol": "SEM",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:45.076Z"
+    },
+    {
+      "symbol": "SEMHF",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:19.123Z"
+    },
+    {
+      "symbol": "SEPN",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:53.925Z"
+    },
+    {
+      "symbol": "SER",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:02.459Z"
+    },
+    {
+      "symbol": "SGMT",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:02.459Z"
+    },
+    {
+      "symbol": "SGRY",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:35.776Z"
+    },
+    {
+      "symbol": "SHC",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:35.776Z"
+    },
+    {
+      "symbol": "SI",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:10.709Z"
+    },
+    {
+      "symbol": "SIBN",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:45.076Z"
+    },
+    {
+      "symbol": "SIGA",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:53.925Z"
+    },
+    {
+      "symbol": "SION",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:10.709Z"
+    },
+    {
+      "symbol": "SLDB",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:02.459Z"
+    },
+    {
+      "symbol": "SLGL",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:53.925Z"
+    },
+    {
+      "symbol": "SLNO",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:35.776Z"
+    },
+    {
+      "symbol": "SLP",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:02.459Z"
+    },
+    {
+      "symbol": "SLXN",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:02.459Z"
+    },
+    {
+      "symbol": "SMLR",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:53.925Z"
+    },
+    {
+      "symbol": "SMMNY",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:19.123Z"
+    },
+    {
+      "symbol": "SMTI",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:02.459Z"
+    },
+    {
+      "symbol": "SNDA",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:53.925Z"
+    },
+    {
+      "symbol": "SNDX",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:45.076Z"
+    },
+    {
+      "symbol": "SNSE",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:02.459Z"
+    },
+    {
+      "symbol": "SNWV",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:53.925Z"
+    },
+    {
+      "symbol": "SNY",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:19.123Z"
+    },
+    {
+      "symbol": "SNYNF",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:19.123Z"
+    },
+    {
+      "symbol": "SPOK",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:53.925Z"
+    },
+    {
+      "symbol": "SPRC",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:02.459Z"
+    },
+    {
+      "symbol": "SPRY",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:45.076Z"
+    },
+    {
+      "symbol": "SRDX",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:53.925Z"
+    },
+    {
+      "symbol": "SRPT",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:35.777Z"
+    },
+    {
+      "symbol": "SRRK",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:35.776Z"
+    },
+    {
+      "symbol": "SRZN",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:02.459Z"
+    },
+    {
+      "symbol": "SSII",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:45.076Z"
+    },
+    {
+      "symbol": "STAA",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:45.076Z"
+    },
+    {
+      "symbol": "STE",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:19.123Z"
+    },
+    {
+      "symbol": "STOK",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:45.076Z"
+    },
+    {
+      "symbol": "STRM",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:02.459Z"
+    },
+    {
+      "symbol": "STSS",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:02.459Z"
+    },
+    {
+      "symbol": "SUPN",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:35.777Z"
+    },
+    {
+      "symbol": "SYK",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:26.937Z"
+    },
+    {
+      "symbol": "SYRE",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:45.076Z"
+    },
+    {
+      "symbol": "TAK",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:19.123Z"
+    },
+    {
+      "symbol": "TANAF",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:53.925Z"
+    },
+    {
+      "symbol": "TARS",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:35.777Z"
+    },
+    {
+      "symbol": "TBPH",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:53.925Z"
+    },
+    {
+      "symbol": "TBRG",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:02.459Z"
+    },
+    {
+      "symbol": "TCMD",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:53.925Z"
+    },
+    {
+      "symbol": "TDOC",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:45.076Z"
+    },
+    {
+      "symbol": "TECX",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:53.925Z"
+    },
+    {
+      "symbol": "TENX",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:02.459Z"
+    },
+    {
+      "symbol": "TERN",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:53.925Z"
+    },
+    {
+      "symbol": "TFX",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:35.776Z"
+    },
+    {
+      "symbol": "TGTX",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:35.776Z"
+    },
+    {
+      "symbol": "TIL",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:02.459Z"
+    },
+    {
+      "symbol": "TKPHF",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:19.123Z"
+    },
+    {
+      "symbol": "TMCI",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:53.925Z"
+    },
+    {
+      "symbol": "TMDX",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:35.776Z"
+    },
+    {
+      "symbol": "TMO",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:26.937Z"
+    },
+    {
+      "symbol": "TNDM",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:45.076Z"
+    },
+    {
+      "symbol": "TNGX",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:45.076Z"
+    },
+    {
+      "symbol": "TPST",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:53.925Z"
+    },
+    {
+      "symbol": "TRDA",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:02.459Z"
+    },
+    {
+      "symbol": "TRML",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:53.925Z"
+    },
+    {
+      "symbol": "TRUMF",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:19.123Z"
+    },
+    {
+      "symbol": "TRUMY",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:19.123Z"
+    },
+    {
+      "symbol": "TRVI",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:53.925Z"
+    },
+    {
+      "symbol": "TVRD",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:10.709Z"
+    },
+    {
+      "symbol": "TVTX",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:45.076Z"
+    },
+    {
+      "symbol": "TWST",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:45.076Z"
+    },
+    {
+      "symbol": "TXG",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:45.076Z"
+    },
+    {
+      "symbol": "TYRA",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:53.925Z"
+    },
+    {
+      "symbol": "UCBJF",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:19.123Z"
+    },
+    {
+      "symbol": "UCBJY",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:19.123Z"
+    },
+    {
+      "symbol": "UFPT",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:45.076Z"
+    },
+    {
+      "symbol": "UNH",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:26.937Z"
+    },
+    {
+      "symbol": "UPB",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:45.076Z"
+    },
+    {
+      "symbol": "URGN",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:45.076Z"
+    },
+    {
+      "symbol": "USPH",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:45.076Z"
+    },
+    {
+      "symbol": "UTMD",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:02.459Z"
+    },
+    {
+      "symbol": "VCEL",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:35.777Z"
+    },
+    {
+      "symbol": "VCYT",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:35.777Z"
+    },
+    {
+      "symbol": "VEEV",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:19.123Z"
+    },
+    {
+      "symbol": "VERA",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:45.076Z"
+    },
+    {
+      "symbol": "VIGL",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:53.925Z"
+    },
+    {
+      "symbol": "VKTX",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:35.776Z"
+    },
+    {
+      "symbol": "VMD",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:02.459Z"
+    },
+    {
+      "symbol": "VRCA",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:53.925Z"
+    },
+    {
+      "symbol": "VRDN",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:45.076Z"
+    },
+    {
+      "symbol": "VREX",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:53.925Z"
+    },
+    {
+      "symbol": "VRTX",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:26.937Z"
+    },
+    {
+      "symbol": "VSTM",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:53.925Z"
+    },
+    {
+      "symbol": "VTVT",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:02.459Z"
+    },
+    {
+      "symbol": "WAY",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:35.776Z"
+    },
+    {
+      "symbol": "WEAV",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:53.925Z"
+    },
+    {
+      "symbol": "WGS",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:35.776Z"
+    },
+    {
+      "symbol": "WRBY",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:35.776Z"
+    },
+    {
+      "symbol": "WUXAY",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:19.123Z"
+    },
+    {
+      "symbol": "WUXIF",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:19.123Z"
+    },
+    {
+      "symbol": "WVE",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:45.076Z"
+    },
+    {
+      "symbol": "XCUR",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:02.459Z"
+    },
+    {
+      "symbol": "XENE",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:35.777Z"
+    },
+    {
+      "symbol": "XERS",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:45.076Z"
+    },
+    {
+      "symbol": "XGN",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:02.459Z"
+    },
+    {
+      "symbol": "XNCR",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:53.925Z"
+    },
+    {
+      "symbol": "XOMA",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:53.925Z"
+    },
+    {
+      "symbol": "XRAY",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:35.777Z"
+    },
+    {
+      "symbol": "YMAB",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:53.925Z"
+    },
+    {
+      "symbol": "ZBIO",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:53.925Z"
+    },
+    {
+      "symbol": "ZIMV",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:53.925Z"
+    },
+    {
+      "symbol": "ZIVO",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:02.459Z"
+    },
+    {
+      "symbol": "ZTS",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:26.937Z"
+    },
+    {
+      "symbol": "ZVRA",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:53.925Z"
+    },
+    {
+      "symbol": "ZYBT",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:12:10.709Z"
+    },
+    {
+      "symbol": "ZYME",
+      "sector": "Healthcare",
+      "scraped_at": "2025-08-09T08:11:45.076Z"
+    }
+  ]
+}

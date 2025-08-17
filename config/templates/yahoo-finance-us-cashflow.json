@@ -81,7 +81,7 @@
     },
     "data": {
       "selector": "body",
-      "transform": "combineUSCashFlowData"
+      "transform": "combineUSFinancialData"
     }
   },
   "headers": {
@@ -111,6 +111,6 @@
   },
   "export": {
     "formats": ["json", "csv"],
-    "filename": "yahoo_finance_us_cashflow_${symbolCode}"
+    "filename": "yahoo-finance-us-cashflow-${symbolCode}"
   }
 }

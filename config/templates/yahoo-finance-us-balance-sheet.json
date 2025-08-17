@@ -96,7 +96,7 @@
     },
     "data": {
       "selector": "body",
-      "transform": "combineUSBalanceSheetData"
+      "transform": "combineUSFinancialData"
     }
   },
   "headers": {
@@ -126,6 +126,6 @@
   },
   "export": {
     "formats": ["json", "csv"],
-    "filename": "yahoo_finance_us_balance_sheet_${symbolCode}"
+    "filename": "yahoo-finance-us-balance-sheet-${symbolCode}"
   }
 }

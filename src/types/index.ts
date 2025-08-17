@@ -1,6 +1,5 @@
 // 重新匯出增強型別
 export * from './enhanced';
-export * from './fundamental-data.interface';
 
 export interface CrawlerConfig {
   url: string;

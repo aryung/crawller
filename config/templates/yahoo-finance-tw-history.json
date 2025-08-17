@@ -1,0 +1,79 @@
+{
+  "templateType": "history",
+  "url": "https://www.twse.com.tw/rwd/zh/afterTrading/STOCK_DAY?stockNo=${symbolCode}&date=${date}",
+  "_note": "TW STOCK HISTORY CONFIG (TWSE API): Direct JSON API response processing following CLAUDE.md principles. Handles Taiwan Stock Exchange official API format with ROC year conversion and comma-separated number processing.",
+  "selectors": {
+    "stockInfo": {
+      "selector": "body",
+      "transform": "parseTWStockInfo"
+    },
+    "historicalDates": {
+      "selector": "body",
+      "transform": "parseTWDateArray"
+    },
+    "openPrices": {
+      "selector": "body",
+      "transform": "parseTWOpenPriceArray"
+    },
+    "highPrices": {
+      "selector": "body",
+      "transform": "parseTWHighPriceArray"
+    },
+    "lowPrices": {
+      "selector": "body",
+      "transform": "parseTWLowPriceArray"
+    },
+    "closePrices": {
+      "selector": "body",
+      "transform": "parseTWClosePriceArray"
+    },
+    "volumes": {
+      "selector": "body",
+      "transform": "parseTWVolumeArray"
+    },
+    "data": {
+      "selector": "body",
+      "transform": "combineTWHistoricalData"
+    }
+  },
+  "headers": {
+    "Accept": "application/json, text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
+    "Accept-Language": "zh-TW,zh;q=0.9,en-US;q=0.8,en;q=0.7",
+    "Accept-Encoding": "gzip, deflate, br, zstd",
+    "Cache-Control": "no-cache",
+    "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+    "Referer": "https://www.twse.com.tw/",
+    "X-Content-Type-Options": "nosniff",
+    "X-Request-Id": "system-generated",
+    "Permissions-Policy": "camera=(),microphone=(),geolocation=(),sync-xhr=*,gyroscope=()"
+  },
+  "options": {
+    "timeout": 45000,
+    "retries": 3,
+    "headless": true,
+    "screenshot": true,
+    "encoding": "utf-8",
+    "domainDelay": 3000,
+    "waitFor": 5000,
+    "waitForNetworkIdle": true,
+    "networkIdleTimeout": 2000,
+    "engine": "playwright",
+    "viewport": {
+      "width": 1920,
+      "height": 1080
+    }
+  },
+  "variables": {
+    "symbolCode": "1560",
+    "date": "20250815",
+    "baseUrl": "https://www.twse.com.tw",
+    "_note": "Important: symbolCode should be just the stock number (e.g., '1560'), NOT with .TW suffix for TWSE API"
+  },
+  "export": {
+    "formats": ["json"],
+    "filename": "yahoo-finance-tw-history-${symbolCode}_${date}",
+    "structure": {
+      "historicalData": "historicalPeriods,historicalData"
+    }
+  }
+}

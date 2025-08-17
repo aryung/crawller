@@ -1,0 +1,506 @@
+{
+  "metadata": {
+    "sector_filter": "utilities",
+    "scraped_date": "2025-08-09T10:11:25.381Z",
+    "total_pages_scraped": 100,
+    "total_records": 9727,
+    "unique_stocks": 98,
+    "duplicates_removed": 9629,
+    "detected_total_results": null,
+    "sectors_distribution": {
+      "Utilities": 9727
+    }
+  },
+  "data": [
+    {
+      "symbol": "AEE",
+      "sector": "Utilities",
+      "scraped_at": "2025-08-09T09:56:45.984Z"
+    },
+    {
+      "symbol": "AEP",
+      "sector": "Utilities",
+      "scraped_at": "2025-08-09T09:56:45.984Z"
+    },
+    {
+      "symbol": "ATO",
+      "sector": "Utilities",
+      "scraped_at": "2025-08-09T09:56:45.984Z"
+    },
+    {
+      "symbol": "AWK",
+      "sector": "Utilities",
+      "scraped_at": "2025-08-09T09:56:45.984Z"
+    },
+    {
+      "symbol": "BEP",
+      "sector": "Utilities",
+      "scraped_at": "2025-08-09T09:56:53.875Z"
+    },
+    {
+      "symbol": "BIP",
+      "sector": "Utilities",
+      "scraped_at": "2025-08-09T09:56:53.875Z"
+    },
+    {
+      "symbol": "CEG",
+      "sector": "Utilities",
+      "scraped_at": "2025-08-09T09:56:45.984Z"
+    },
+    {
+      "symbol": "CHUEF",
+      "sector": "Utilities",
+      "scraped_at": "2025-08-09T09:56:53.875Z"
+    },
+    {
+      "symbol": "CKISF",
+      "sector": "Utilities",
+      "scraped_at": "2025-08-09T09:56:53.875Z"
+    },
+    {
+      "symbol": "CKISY",
+      "sector": "Utilities",
+      "scraped_at": "2025-08-09T09:56:53.875Z"
+    },
+    {
+      "symbol": "CLPHF",
+      "sector": "Utilities",
+      "scraped_at": "2025-08-09T09:56:53.875Z"
+    },
+    {
+      "symbol": "CLPHY",
+      "sector": "Utilities",
+      "scraped_at": "2025-08-09T09:56:53.875Z"
+    },
+    {
+      "symbol": "CLPXY",
+      "sector": "Utilities",
+      "scraped_at": "2025-08-09T09:56:53.875Z"
+    },
+    {
+      "symbol": "CMS",
+      "sector": "Utilities",
+      "scraped_at": "2025-08-09T09:56:45.984Z"
+    },
+    {
+      "symbol": "CNP",
+      "sector": "Utilities",
+      "scraped_at": "2025-08-09T09:56:45.984Z"
+    },
+    {
+      "symbol": "CPYYY",
+      "sector": "Utilities",
+      "scraped_at": "2025-08-09T09:56:53.875Z"
+    },
+    {
+      "symbol": "CRPJY",
+      "sector": "Utilities",
+      "scraped_at": "2025-08-09T09:56:53.875Z"
+    },
+    {
+      "symbol": "CZAVF",
+      "sector": "Utilities",
+      "scraped_at": "2025-08-09T09:56:53.875Z"
+    },
+    {
+      "symbol": "D",
+      "sector": "Utilities",
+      "scraped_at": "2025-08-09T09:56:45.984Z"
+    },
+    {
+      "symbol": "DNNGY",
+      "sector": "Utilities",
+      "scraped_at": "2025-08-09T09:56:53.875Z"
+    },
+    {
+      "symbol": "DOGEF",
+      "sector": "Utilities",
+      "scraped_at": "2025-08-09T09:56:53.875Z"
+    },
+    {
+      "symbol": "DTE",
+      "sector": "Utilities",
+      "scraped_at": "2025-08-09T09:56:45.984Z"
+    },
+    {
+      "symbol": "DUK",
+      "sector": "Utilities",
+      "scraped_at": "2025-08-09T09:56:45.984Z"
+    },
+    {
+      "symbol": "EBR",
+      "sector": "Utilities",
+      "scraped_at": "2025-08-09T09:56:53.875Z"
+    },
+    {
+      "symbol": "EBR-B",
+      "sector": "Utilities",
+      "scraped_at": "2025-08-09T09:56:53.875Z"
+    },
+    {
+      "symbol": "ED",
+      "sector": "Utilities",
+      "scraped_at": "2025-08-09T09:56:45.984Z"
+    },
+    {
+      "symbol": "EDPFY",
+      "sector": "Utilities",
+      "scraped_at": "2025-08-09T09:56:53.875Z"
+    },
+    {
+      "symbol": "EDRVF",
+      "sector": "Utilities",
+      "scraped_at": "2025-08-09T09:56:53.875Z"
+    },
+    {
+      "symbol": "EDRVY",
+      "sector": "Utilities",
+      "scraped_at": "2025-08-09T09:56:53.875Z"
+    },
+    {
+      "symbol": "EIX",
+      "sector": "Utilities",
+      "scraped_at": "2025-08-09T09:56:45.984Z"
+    },
+    {
+      "symbol": "ELEZF",
+      "sector": "Utilities",
+      "scraped_at": "2025-08-09T09:56:53.875Z"
+    },
+    {
+      "symbol": "ELEZY",
+      "sector": "Utilities",
+      "scraped_at": "2025-08-09T09:56:53.875Z"
+    },
+    {
+      "symbol": "ENAKF",
+      "sector": "Utilities",
+      "scraped_at": "2025-08-09T09:56:53.874Z"
+    },
+    {
+      "symbol": "ENGIY",
+      "sector": "Utilities",
+      "scraped_at": "2025-08-09T09:56:53.874Z"
+    },
+    {
+      "symbol": "ENGQF",
+      "sector": "Utilities",
+      "scraped_at": "2025-08-09T09:56:53.874Z"
+    },
+    {
+      "symbol": "ENLAY",
+      "sector": "Utilities",
+      "scraped_at": "2025-08-09T09:56:53.874Z"
+    },
+    {
+      "symbol": "EONGY",
+      "sector": "Utilities",
+      "scraped_at": "2025-08-09T09:56:53.874Z"
+    },
+    {
+      "symbol": "ERRAF",
+      "sector": "Utilities",
+      "scraped_at": "2025-08-09T09:56:53.875Z"
+    },
+    {
+      "symbol": "ES",
+      "sector": "Utilities",
+      "scraped_at": "2025-08-09T09:56:45.984Z"
+    },
+    {
+      "symbol": "ESOCF",
+      "sector": "Utilities",
+      "scraped_at": "2025-08-09T09:56:53.874Z"
+    },
+    {
+      "symbol": "ETR",
+      "sector": "Utilities",
+      "scraped_at": "2025-08-09T09:56:53.875Z"
+    },
+    {
+      "symbol": "EVRG",
+      "sector": "Utilities",
+      "scraped_at": "2025-08-09T09:56:53.875Z"
+    },
+    {
+      "symbol": "EXC",
+      "sector": "Utilities",
+      "scraped_at": "2025-08-09T09:56:45.984Z"
+    },
+    {
+      "symbol": "FE",
+      "sector": "Utilities",
+      "scraped_at": "2025-08-09T09:56:45.984Z"
+    },
+    {
+      "symbol": "FOJCF",
+      "sector": "Utilities",
+      "scraped_at": "2025-08-09T09:56:53.875Z"
+    },
+    {
+      "symbol": "FTS",
+      "sector": "Utilities",
+      "scraped_at": "2025-08-09T09:56:53.875Z"
+    },
+    {
+      "symbol": "GAILF",
+      "sector": "Utilities",
+      "scraped_at": "2025-08-09T09:56:53.875Z"
+    },
+    {
+      "symbol": "GASNF",
+      "sector": "Utilities",
+      "scraped_at": "2025-08-09T09:56:53.875Z"
+    },
+    {
+      "symbol": "GASNY",
+      "sector": "Utilities",
+      "scraped_at": "2025-08-09T09:56:53.875Z"
+    },
+    {
+      "symbol": "HGKGF",
+      "sector": "Utilities",
+      "scraped_at": "2025-08-09T09:56:53.875Z"
+    },
+    {
+      "symbol": "HGKGY",
+      "sector": "Utilities",
+      "scraped_at": "2025-08-09T09:56:53.875Z"
+    },
+    {
+      "symbol": "HRNNF",
+      "sector": "Utilities",
+      "scraped_at": "2025-08-09T09:56:53.875Z"
+    },
+    {
+      "symbol": "IBDRY",
+      "sector": "Utilities",
+      "scraped_at": "2025-08-09T09:56:53.874Z"
+    },
+    {
+      "symbol": "IBDSF",
+      "sector": "Utilities",
+      "scraped_at": "2025-08-09T09:56:53.874Z"
+    },
+    {
+      "symbol": "KAEPF",
+      "sector": "Utilities",
+      "scraped_at": "2025-08-09T09:56:53.875Z"
+    },
+    {
+      "symbol": "KAEPY",
+      "sector": "Utilities",
+      "scraped_at": "2025-08-09T09:56:53.875Z"
+    },
+    {
+      "symbol": "KEP",
+      "sector": "Utilities",
+      "scraped_at": "2025-08-09T09:56:53.875Z"
+    },
+    {
+      "symbol": "LNT",
+      "sector": "Utilities",
+      "scraped_at": "2025-08-09T09:56:53.875Z"
+    },
+    {
+      "symbol": "MERVF",
+      "sector": "Utilities",
+      "scraped_at": "2025-08-09T09:56:53.875Z"
+    },
+    {
+      "symbol": "NEE",
+      "sector": "Utilities",
+      "scraped_at": "2025-08-09T09:56:45.984Z"
+    },
+    {
+      "symbol": "NGG",
+      "sector": "Utilities",
+      "scraped_at": "2025-08-09T09:56:53.874Z"
+    },
+    {
+      "symbol": "NGGTF",
+      "sector": "Utilities",
+      "scraped_at": "2025-08-09T09:56:53.874Z"
+    },
+    {
+      "symbol": "NI",
+      "sector": "Utilities",
+      "scraped_at": "2025-08-09T09:56:53.875Z"
+    },
+    {
+      "symbol": "NRG",
+      "sector": "Utilities",
+      "scraped_at": "2025-08-09T09:56:45.984Z"
+    },
+    {
+      "symbol": "OEZVF",
+      "sector": "Utilities",
+      "scraped_at": "2025-08-09T09:56:53.875Z"
+    },
+    {
+      "symbol": "OEZVY",
+      "sector": "Utilities",
+      "scraped_at": "2025-08-09T09:56:53.875Z"
+    },
+    {
+      "symbol": "OGFGF",
+      "sector": "Utilities",
+      "scraped_at": "2025-08-09T09:56:53.875Z"
+    },
+    {
+      "symbol": "OGFGY",
+      "sector": "Utilities",
+      "scraped_at": "2025-08-09T09:56:53.875Z"
+    },
+    {
+      "symbol": "OSGSY",
+      "sector": "Utilities",
+      "scraped_at": "2025-08-09T09:56:53.875Z"
+    },
+    {
+      "symbol": "PCG",
+      "sector": "Utilities",
+      "scraped_at": "2025-08-09T09:56:45.984Z"
+    },
+    {
+      "symbol": "PEG",
+      "sector": "Utilities",
+      "scraped_at": "2025-08-09T09:56:45.984Z"
+    },
+    {
+      "symbol": "PNW",
+      "sector": "Utilities",
+      "scraped_at": "2025-08-09T09:56:53.875Z"
+    },
+    {
+      "symbol": "PPL",
+      "sector": "Utilities",
+      "scraped_at": "2025-08-09T09:56:45.984Z"
+    },
+    {
+      "symbol": "RDEIF",
+      "sector": "Utilities",
+      "scraped_at": "2025-08-09T09:56:53.875Z"
+    },
+    {
+      "symbol": "RWEOY",
+      "sector": "Utilities",
+      "scraped_at": "2025-08-09T09:56:53.875Z"
+    },
+    {
+      "symbol": "RWNFF",
+      "sector": "Utilities",
+      "scraped_at": "2025-08-09T09:56:53.875Z"
+    },
+    {
+      "symbol": "SBS",
+      "sector": "Utilities",
+      "scraped_at": "2025-08-09T09:56:53.875Z"
+    },
+    {
+      "symbol": "SNMRF",
+      "sector": "Utilities",
+      "scraped_at": "2025-08-09T09:56:53.875Z"
+    },
+    {
+      "symbol": "SNMRY",
+      "sector": "Utilities",
+      "scraped_at": "2025-08-09T09:56:53.875Z"
+    },
+    {
+      "symbol": "SO",
+      "sector": "Utilities",
+      "scraped_at": "2025-08-09T09:56:45.984Z"
+    },
+    {
+      "symbol": "SRE",
+      "sector": "Utilities",
+      "scraped_at": "2025-08-09T09:56:45.984Z"
+    },
+    {
+      "symbol": "SSEZF",
+      "sector": "Utilities",
+      "scraped_at": "2025-08-09T09:56:53.875Z"
+    },
+    {
+      "symbol": "SSEZY",
+      "sector": "Utilities",
+      "scraped_at": "2025-08-09T09:56:53.875Z"
+    },
+    {
+      "symbol": "STRNY",
+      "sector": "Utilities",
+      "scraped_at": "2025-08-09T09:56:53.875Z"
+    },
+    {
+      "symbol": "SVTRF",
+      "sector": "Utilities",
+      "scraped_at": "2025-08-09T09:56:53.875Z"
+    },
+    {
+      "symbol": "TERRF",
+      "sector": "Utilities",
+      "scraped_at": "2025-08-09T09:56:53.875Z"
+    },
+    {
+      "symbol": "TEZNY",
+      "sector": "Utilities",
+      "scraped_at": "2025-08-09T09:56:53.875Z"
+    },
+    {
+      "symbol": "TKGSF",
+      "sector": "Utilities",
+      "scraped_at": "2025-08-09T09:56:53.875Z"
+    },
+    {
+      "symbol": "TKGSY",
+      "sector": "Utilities",
+      "scraped_at": "2025-08-09T09:56:53.875Z"
+    },
+    {
+      "symbol": "TLN",
+      "sector": "Utilities",
+      "scraped_at": "2025-08-09T09:56:53.875Z"
+    },
+    {
+      "symbol": "TNABY",
+      "sector": "Utilities",
+      "scraped_at": "2025-08-09T09:56:53.875Z"
+    },
+    {
+      "symbol": "UNPRF",
+      "sector": "Utilities",
+      "scraped_at": "2025-08-09T09:56:53.875Z"
+    },
+    {
+      "symbol": "UUGRY",
+      "sector": "Utilities",
+      "scraped_at": "2025-08-09T09:56:53.875Z"
+    },
+    {
+      "symbol": "UUGWF",
+      "sector": "Utilities",
+      "scraped_at": "2025-08-09T09:56:53.875Z"
+    },
+    {
+      "symbol": "VST",
+      "sector": "Utilities",
+      "scraped_at": "2025-08-09T09:56:45.984Z"
+    },
+    {
+      "symbol": "WEC",
+      "sector": "Utilities",
+      "scraped_at": "2025-08-09T09:56:45.984Z"
+    },
+    {
+      "symbol": "WTRG",
+      "sector": "Utilities",
+      "scraped_at": "2025-08-09T09:56:53.875Z"
+    },
+    {
+      "symbol": "XEL",
+      "sector": "Utilities",
+      "scraped_at": "2025-08-09T09:56:45.984Z"
+    }
+  ]
+}

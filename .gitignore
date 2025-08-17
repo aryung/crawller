@@ -5,6 +5,7 @@ node_modules/
 dist/
 
 .claude/
+.idea/
 
 output/screenshots/
 output/*.md
@@ -12,4 +13,8 @@ logs/
 
 .env
 
-config/*.json
+.progress/
+config-backup/
+config-categorized/
+
+# config/*.json

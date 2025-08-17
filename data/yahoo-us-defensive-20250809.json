@@ -1,0 +1,721 @@
+{
+  "metadata": {
+    "sector_filter": "defensive",
+    "scraped_date": "2025-08-09T10:26:35.649Z",
+    "total_pages_scraped": 100,
+    "total_records": 9866,
+    "unique_stocks": 141,
+    "duplicates_removed": 9725,
+    "detected_total_results": null,
+    "sectors_distribution": {
+      "Consumer Defensive": 9866
+    }
+  },
+  "data": [
+    {
+      "symbol": "ACU",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:50.746Z"
+    },
+    {
+      "symbol": "ADM",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:42.148Z"
+    },
+    {
+      "symbol": "ADRNY",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:59.197Z"
+    },
+    {
+      "symbol": "AFRI",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:50.746Z"
+    },
+    {
+      "symbol": "AHODF",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:59.197Z"
+    },
+    {
+      "symbol": "ALCO",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:50.746Z"
+    },
+    {
+      "symbol": "AMNF",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:50.746Z"
+    },
+    {
+      "symbol": "APEI",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:50.746Z"
+    },
+    {
+      "symbol": "ASBFF",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:59.197Z"
+    },
+    {
+      "symbol": "ASBFY",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:59.197Z"
+    },
+    {
+      "symbol": "ASBRF",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:59.197Z"
+    },
+    {
+      "symbol": "AVO",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:50.746Z"
+    },
+    {
+      "symbol": "BDRFF",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:59.197Z"
+    },
+    {
+      "symbol": "BDRFY",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:59.197Z"
+    },
+    {
+      "symbol": "BHST",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:50.746Z"
+    },
+    {
+      "symbol": "BRID",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:50.746Z"
+    },
+    {
+      "symbol": "BTAFF",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:59.197Z"
+    },
+    {
+      "symbol": "BTI",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:59.197Z"
+    },
+    {
+      "symbol": "BUD",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:59.197Z"
+    },
+    {
+      "symbol": "BUDFF",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:59.197Z"
+    },
+    {
+      "symbol": "CABGY",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:59.197Z"
+    },
+    {
+      "symbol": "CABJF",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:59.197Z"
+    },
+    {
+      "symbol": "CCEP",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:59.197Z"
+    },
+    {
+      "symbol": "CCHBF",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:59.197Z"
+    },
+    {
+      "symbol": "CCHGY",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:59.197Z"
+    },
+    {
+      "symbol": "CHD",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:59.197Z"
+    },
+    {
+      "symbol": "CHLSY",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:59.197Z"
+    },
+    {
+      "symbol": "CL",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:42.148Z"
+    },
+    {
+      "symbol": "CLEGF",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:59.197Z"
+    },
+    {
+      "symbol": "COCSF",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:59.197Z"
+    },
+    {
+      "symbol": "COST",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:42.148Z"
+    },
+    {
+      "symbol": "CVGW",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:50.746Z"
+    },
+    {
+      "symbol": "CWGL",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:50.746Z"
+    },
+    {
+      "symbol": "DANOY",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:59.197Z"
+    },
+    {
+      "symbol": "DDC",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:50.746Z"
+    },
+    {
+      "symbol": "DEO",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:59.197Z"
+    },
+    {
+      "symbol": "DG",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:42.148Z"
+    },
+    {
+      "symbol": "DGEAF",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:59.197Z"
+    },
+    {
+      "symbol": "DIDAF",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:59.197Z"
+    },
+    {
+      "symbol": "DIT",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:50.746Z"
+    },
+    {
+      "symbol": "DLMAF",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:59.197Z"
+    },
+    {
+      "symbol": "DLTR",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:42.148Z"
+    },
+    {
+      "symbol": "DQJCF",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:59.197Z"
+    },
+    {
+      "symbol": "DQJCY",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:59.197Z"
+    },
+    {
+      "symbol": "EL",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:42.148Z"
+    },
+    {
+      "symbol": "EMBVF",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:59.197Z"
+    },
+    {
+      "symbol": "EPSM",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:50.746Z"
+    },
+    {
+      "symbol": "ESGH",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:50.746Z"
+    },
+    {
+      "symbol": "ETTYF",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:59.197Z"
+    },
+    {
+      "symbol": "FC",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:50.746Z"
+    },
+    {
+      "symbol": "FMX",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:59.197Z"
+    },
+    {
+      "symbol": "FMXUF",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:59.197Z"
+    },
+    {
+      "symbol": "FTLF",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:50.746Z"
+    },
+    {
+      "symbol": "GIS",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:42.148Z"
+    },
+    {
+      "symbol": "GPDNF",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:59.197Z"
+    },
+    {
+      "symbol": "HEINY",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:59.197Z"
+    },
+    {
+      "symbol": "HELE",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:50.746Z"
+    },
+    {
+      "symbol": "HELKF",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:59.197Z"
+    },
+    {
+      "symbol": "HENKY",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:59.197Z"
+    },
+    {
+      "symbol": "HENOF",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:59.197Z"
+    },
+    {
+      "symbol": "HENOY",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:59.197Z"
+    },
+    {
+      "symbol": "HINKF",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:59.197Z"
+    },
+    {
+      "symbol": "HKHHF",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:59.197Z"
+    },
+    {
+      "symbol": "HKHHY",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:59.197Z"
+    },
+    {
+      "symbol": "HRL",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:59.198Z"
+    },
+    {
+      "symbol": "HSY",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:42.148Z"
+    },
+    {
+      "symbol": "IMBBF",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:59.197Z"
+    },
+    {
+      "symbol": "IMBBY",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:59.197Z"
+    },
+    {
+      "symbol": "JAPAF",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:59.197Z"
+    },
+    {
+      "symbol": "JAPAY",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:59.197Z"
+    },
+    {
+      "symbol": "JBS",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:50.746Z"
+    },
+    {
+      "symbol": "JBSS",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:50.746Z"
+    },
+    {
+      "symbol": "JRONF",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:59.198Z"
+    },
+    {
+      "symbol": "K",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:42.148Z"
+    },
+    {
+      "symbol": "KAOCF",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:59.197Z"
+    },
+    {
+      "symbol": "KAOOY",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:59.197Z"
+    },
+    {
+      "symbol": "KDP",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:42.148Z"
+    },
+    {
+      "symbol": "KHC",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:42.148Z"
+    },
+    {
+      "symbol": "KMB",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:42.148Z"
+    },
+    {
+      "symbol": "KO",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:42.148Z"
+    },
+    {
+      "symbol": "KOF",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:59.197Z"
+    },
+    {
+      "symbol": "KR",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:42.148Z"
+    },
+    {
+      "symbol": "KRYAF",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:59.197Z"
+    },
+    {
+      "symbol": "KRYAY",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:59.198Z"
+    },
+    {
+      "symbol": "KVUE",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:42.148Z"
+    },
+    {
+      "symbol": "LBLCF",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:59.197Z"
+    },
+    {
+      "symbol": "LFVN",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:50.746Z"
+    },
+    {
+      "symbol": "LGCY",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:50.746Z"
+    },
+    {
+      "symbol": "LINC",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:50.746Z"
+    },
+    {
+      "symbol": "LMNR",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:50.746Z"
+    },
+    {
+      "symbol": "LRLCF",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:59.197Z"
+    },
+    {
+      "symbol": "LRLCY",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:59.197Z"
+    },
+    {
+      "symbol": "LSF",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:50.746Z"
+    },
+    {
+      "symbol": "LWAY",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:50.746Z"
+    },
+    {
+      "symbol": "MAMA",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:50.746Z"
+    },
+    {
+      "symbol": "MDLZ",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:42.148Z"
+    },
+    {
+      "symbol": "MGPI",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:50.746Z"
+    },
+    {
+      "symbol": "MH",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:50.746Z"
+    },
+    {
+      "symbol": "MKC",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:59.197Z"
+    },
+    {
+      "symbol": "MKC-V",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:59.197Z"
+    },
+    {
+      "symbol": "MNST",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:42.148Z"
+    },
+    {
+      "symbol": "MO",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:42.148Z"
+    },
+    {
+      "symbol": "MTEX",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:50.746Z"
+    },
+    {
+      "symbol": "MTRAF",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:59.197Z"
+    },
+    {
+      "symbol": "MZTI",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:50.746Z"
+    },
+    {
+      "symbol": "NATR",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:50.746Z"
+    },
+    {
+      "symbol": "NNFSF",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:59.197Z"
+    },
+    {
+      "symbol": "NSRGF",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:59.197Z"
+    },
+    {
+      "symbol": "NSRGY",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:59.197Z"
+    },
+    {
+      "symbol": "NUS",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:50.746Z"
+    },
+    {
+      "symbol": "PDRDF",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:59.197Z"
+    },
+    {
+      "symbol": "PEP",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:42.148Z"
+    },
+    {
+      "symbol": "PG",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:42.148Z"
+    },
+    {
+      "symbol": "PM",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:42.148Z"
+    },
+    {
+      "symbol": "PRNDY",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:59.197Z"
+    },
+    {
+      "symbol": "RBGLY",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:59.197Z"
+    },
+    {
+      "symbol": "RBGPF",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:59.197Z"
+    },
+    {
+      "symbol": "SENEA",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:50.746Z"
+    },
+    {
+      "symbol": "SFD",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:50.746Z"
+    },
+    {
+      "symbol": "SKIL",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:50.746Z"
+    },
+    {
+      "symbol": "STZ",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:42.148Z"
+    },
+    {
+      "symbol": "SVNDF",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:59.197Z"
+    },
+    {
+      "symbol": "SVNDY",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:59.197Z"
+    },
+    {
+      "symbol": "SYY",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:42.148Z"
+    },
+    {
+      "symbol": "TGT",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:42.148Z"
+    },
+    {
+      "symbol": "TSCDF",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:59.197Z"
+    },
+    {
+      "symbol": "TSCDY",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:59.197Z"
+    },
+    {
+      "symbol": "TSN",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:59.197Z"
+    },
+    {
+      "symbol": "TWG",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:50.746Z"
+    },
+    {
+      "symbol": "UG",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:50.746Z"
+    },
+    {
+      "symbol": "UL",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:59.197Z"
+    },
+    {
+      "symbol": "UNLYF",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:59.197Z"
+    },
+    {
+      "symbol": "USFD",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:59.197Z"
+    },
+    {
+      "symbol": "USNA",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:50.746Z"
+    },
+    {
+      "symbol": "VLGEA",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:50.746Z"
+    },
+    {
+      "symbol": "WEST",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:50.746Z"
+    },
+    {
+      "symbol": "WILC",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:50.746Z"
+    },
+    {
+      "symbol": "WMMVY",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:59.197Z"
+    },
+    {
+      "symbol": "WMT",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:42.148Z"
+    },
+    {
+      "symbol": "WNGRF",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:59.197Z"
+    },
+    {
+      "symbol": "WOLWF",
+      "sector": "Consumer Defensive",
+      "scraped_at": "2025-08-09T10:11:59.197Z"
+    }
+  ]
+}
