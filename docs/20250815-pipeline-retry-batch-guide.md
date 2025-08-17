@@ -1,14 +1,17 @@
 # Pipeline Retry & Batch 功能完整指南
 
-**版本**: v3.1.1  
-**更新日期**: 2025-08-16  
+**版本**: v3.1.2  
+**更新日期**: 2025-08-17  
 **適用系統**: Universal Web Crawler
 
 ## 🎯 概述
 
-Universal Web Crawler v3.1.1 提供完整的重試機制和批次處理功能，包含智慧錯誤分類和 Site-based Concurrency 控制，確保大規模數據爬取的穩定性和可靠性。本指南詳細說明重試機制的工作原理、批次處理功能、以及最佳實踐。
+Universal Web Crawler v3.1.2 提供完整的重試機制和批次處理功能，包含智慧錯誤分類、Site-based Concurrency 控制以及跳過任務重試功能，確保大規模數據爬取的穩定性和可靠性。本指南詳細說明重試機制的工作原理、批次處理功能、以及最佳實踐。
 
-### 🆕 v3.1.1 新特性
+### 🆕 v3.1.2 新特性
+- **跳過任務重試功能**: 允許強制重試被標記為 SKIP 的任務，突破傳統限制
+- **Enhanced CLI 參數**: 新增 --retry-all, --retry-skipped-only, --force-retry, --reset-attempts
+- **進度重置腳本**: reset-progress-status.ts 提供完整的進度狀態管理
 - **智慧錯誤分類**: 自動區分暫時性/永久性錯誤，採用不同重試策略
 - **Site-based Concurrency**: 按網站域名的智慧並發控制，20% 性能提升
 - **增強重試邏輯**: 指數退避延遲 + 隨機抖動，避免系統過載
@@ -642,6 +645,12 @@ npx tsx src/cli.ts crawl-batch [選項]
 --resume <id>             恢復指定進度ID的執行
 --retry-failed <id>       只重試失敗的配置
 
+# ⭐ v3.1.2 新增：跳過任務重試選項
+--retry-all <id>          重試所有失敗和跳過的任務
+--retry-skipped-only <id> 只重試跳過的任務
+--force-retry             強制重試（即使重試次數 > 3）
+--reset-attempts          重置重試計數器
+
 # 狀態控制選項
 --pause                   暫停當前執行
 --status                  查看執行狀態
@@ -791,7 +800,116 @@ npx tsx src/cli.ts crawl-batch --retry-failed=batch_20250815_103045
 
 # 從特定位置繼續
 npx tsx src/cli.ts crawl-batch --start-from=150 --category=quarterly
+
+# ⭐ v3.1.2 新增：跳過任務重試操作
+npx tsx src/cli.ts crawl-batch --retry-skipped-only=batch_20250815_103045
+npx tsx src/cli.ts crawl-batch --retry-all=batch_20250815_103045 --reset-attempts
+npx tsx src/cli.ts crawl-batch --retry-failed=batch_20250815_103045 --force-retry
 ```
+
+### 🔄 跳過任務重試功能 (v3.1.2)
+
+#### 功能概述
+
+傳統上，被標記為 SKIP 的任務（通常是 404 錯誤、配置錯誤等永久性錯誤）不會被重試。v3.1.2 版本新增了強制重試這些跳過任務的能力，適用於以下場景：
+
+- **網站結構變化**: 原本 404 的頁面恢復正常
+- **權限問題解決**: 暫時的存取限制已解除  
+- **配置修復**: 修復配置錯誤後需要重新嘗試
+- **批量重新評估**: 需要重新評估大量跳過的任務
+
+#### Skip vs Fail 狀態區別
+
+```typescript
+// SKIP 狀態：永久性錯誤，傳統上不重試
+TaskStatus.SKIPPED = 'skipped'   // 404, 403, 配置錯誤等
+
+// FAIL 狀態：暫時性錯誤，會自動重試
+TaskStatus.FAILED = 'failed'    // 超時, 網路錯誤, 速率限制等
+```
+
+#### 跳過任務重試命令
+
+##### 1. 直接重試命令（推薦）
+
+```bash
+# 只重試跳過的任務
+npx tsx src/cli.ts crawl-batch --retry-skipped-only=batch_20250815_103045
+
+# 重試所有失敗和跳過的任務
+npx tsx src/cli.ts crawl-batch --retry-all=batch_20250815_103045
+
+# 強制重試 + 重置計數器
+npx tsx src/cli.ts crawl-batch --retry-skipped-only=batch_20250815_103045 --reset-attempts
+```
+
+##### 2. 進度重置腳本
+
+```bash
+# 預覽重置影響
+tsx scripts/reset-progress-status.ts \
+  --progress-id=batch_20250815_103045 \
+  --type=skipped \
+  --dry-run
+
+# 重置跳過任務狀態
+tsx scripts/reset-progress-status.ts \
+  --progress-id=batch_20250815_103045 \
+  --type=skipped \
+  --reset-attempts \
+  --force
+
+# 然後恢復執行
+npx tsx src/cli.ts crawl-batch --resume=batch_20250815_103045
+```
+
+#### 參數詳解
+
+| 參數 | 功能 | 說明 |
+|------|------|------|
+| `--retry-skipped-only` | 只重試跳過任務 | 不處理 FAILED 狀態任務 |
+| `--retry-all` | 重試所有失敗類型 | 包含 FAILED + SKIPPED |
+| `--force-retry` | 強制重試 | 即使重試次數 > 3 |
+| `--reset-attempts` | 重置計數器 | 清零重試計數，重新開始 |
+
+#### 使用範例
+
+##### 範例 1: 處理大量跳過任務
+
+假設執行結果：成功 1200/1500, 失敗 150, 跳過 150
+
+```bash
+# 1. 查看詳細狀態
+npm run crawl:status
+
+# 2. 預覽跳過任務
+tsx scripts/reset-progress-status.ts --progress-id=YOUR_BATCH_ID --type=skipped --dry-run
+# 輸出: 150個跳過任務將被重置為 PENDING
+
+# 3. 小批量測試
+npx tsx src/cli.ts crawl-batch --retry-skipped-only=YOUR_BATCH_ID --limit=10
+
+# 4. 確認成功後全量重試
+npx tsx src/cli.ts crawl-batch --retry-skipped-only=YOUR_BATCH_ID --reset-attempts
+```
+
+##### 範例 2: 一步到位重試
+
+```bash
+# 直接重試所有失敗和跳過的任務，重置計數器
+npx tsx src/cli.ts crawl-batch \
+  --retry-all=batch_20250815_103045 \
+  --force-retry \
+  --reset-attempts
+```
+
+#### 注意事項
+
+⚠️ **重要提醒**:
+- 重置 SKIP 任務會將其狀態改為 PENDING，重新加入執行隊列
+- `--reset-attempts` 會清零重試計數器，任務會重新開始 3 次重試週期  
+- 大量重置可能會增加網站負載，建議分批處理
+- 永久性錯誤（如真實的 404）重試後可能再次失敗
 
 ### 📊 批次狀態管理
 
@@ -1492,7 +1610,8 @@ netstat -an | grep :443 | wc -l  # HTTPS 連接數
 ### 📚 文檔對照
 - **本文檔 (Pipeline Retry)**: 完整的 Pipeline 流程重試機制
 - **[Batch Crawler Retry 指南](20250816-batch-crawler-retry-guide.md)**: 專注於單次批量爬取的重試邏輯
-- **區別**: Pipeline 重試管理整個工作流程，Batch 重試專注於爬取執行階段
+- **[爬蟲統計分析完整指南](20250817-stats-analysis-guide.md)**: 監控診斷和錯誤分析功能
+- **區別**: Pipeline 重試管理整個工作流程，Batch 重試專注於爬取執行階段，統計分析提供監控診斷支援
 
 ### 🔄 使用場景對比
 | 重試類型 | 適用場景 | 重試範圍 | 主要命令 |

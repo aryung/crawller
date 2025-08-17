@@ -1,4 +1,5 @@
 import { UniversalCrawler } from '../index';
+import { BrowserPool } from '../crawler/BrowserPool';
 import { ProgressTracker, TaskStatus } from './ProgressTracker';
 import { ErrorRecovery, ErrorAction, ErrorType } from './ErrorRecovery';
 import { SiteConcurrencyManager } from './SiteConcurrencyManager';
@@ -23,6 +24,9 @@ export interface BatchOptions {
   // Site-based concurrency 控制
   useSiteConcurrency?: boolean; // 是否使用 site-based concurrency (預設: true)
   siteConcurrencyOverrides?: Record<string, { maxConcurrent?: number; delayMs?: number }>; // 覆蓋特定站點設定
+  
+  // 瀏覽器池選項
+  browserPoolSize?: number; // 瀏覽器池大小 (預設: 3)
   
   // 重試選項
   retryAttempts?: number;
@@ -64,6 +68,7 @@ export interface CrawlTask {
 
 export class BatchCrawlerManager {
   private crawler: UniversalCrawler;
+  private browserPool: BrowserPool | null = null;
   private progressTracker?: ProgressTracker;
   private errorRecovery: ErrorRecovery;
   private siteConcurrencyManager: SiteConcurrencyManager;
@@ -87,10 +92,23 @@ export class BatchCrawlerManager {
     delayMs?: number;
     errorLogPath?: string;
     useSiteConcurrency?: boolean; // 新增：是否使用 site-based concurrency
+    browserPoolSize?: number; // 新增：瀏覽器池大小
   } = {}) {
+    // 創建瀏覽器池
+    const browserPoolSize = options.browserPoolSize || options.maxConcurrency || 3;
+    this.browserPool = new BrowserPool({
+      maxSize: browserPoolSize,
+      maxIdleTime: 300000, // 5分鐘
+      browserLaunchOptions: {
+        headless: true,
+        timeout: 30000
+      }
+    });
+
     this.crawler = new UniversalCrawler({
       configPath: options.configPath || 'config-categorized',
-      outputDir: options.outputDir || 'output'
+      outputDir: options.outputDir || 'output',
+      browserPool: this.browserPool
     });
 
     // 向後兼容設定
@@ -111,7 +129,32 @@ export class BatchCrawlerManager {
     // 設置優雅關閉處理器
     this.setupShutdownHandlers();
     
-    logger.info(`🚀 BatchCrawlerManager 初始化完成 (Site-based concurrency: ${this.useSiteConcurrency ? '啟用' : '停用'})`);
+    logger.info(`🚀 BatchCrawlerManager 初始化完成 (Site-based concurrency: ${this.useSiteConcurrency ? '啟用' : '停用'}, 瀏覽器池大小: ${browserPoolSize})`);
+  }
+
+  /**
+   * 分類跳過錯誤類型
+   */
+  private categorizeSkipError(error: string): string {
+    const lowerError = error.toLowerCase();
+    
+    if (lowerError.includes('404') || lowerError.includes('not found')) {
+      return '404 頁面不存在';
+    }
+    if (lowerError.includes('403') || lowerError.includes('forbidden') || lowerError.includes('access denied')) {
+      return '403 權限錯誤';
+    }
+    if (lowerError.includes('401') || lowerError.includes('unauthorized')) {
+      return '401 未授權';
+    }
+    if (lowerError.includes('invalid configuration') || lowerError.includes('parse error')) {
+      return '配置錯誤';
+    }
+    if (lowerError.includes('malformed') || lowerError.includes('format')) {
+      return '格式錯誤';
+    }
+    
+    return '其他永久性錯誤';
   }
 
   /**
@@ -294,6 +337,131 @@ export class BatchCrawlerManager {
   }
 
   /**
+   * 重試所有失敗和跳過的配置（強制重試）
+   */
+  async retryAll(progressId: string, options: BatchOptions & {
+    includeSkipped?: boolean;
+    resetAttempts?: boolean;
+    skippedOnly?: boolean;
+  } = {}): Promise<BatchResult> {
+    const progressFiles = await ProgressTracker.listProgressFiles(options.progressDir || '.progress');
+    const progressFile = progressFiles.find(file => file.includes(progressId));
+
+    if (!progressFile) {
+      throw new Error(`找不到進度檔案: ${progressId}`);
+    }
+
+    this.progressTracker = await ProgressTracker.load(progressFile);
+    
+    let configsToRetry: string[];
+    
+    if (options.skippedOnly) {
+      // 只重試跳過的任務
+      configsToRetry = this.progressTracker.getSkippedConfigs();
+      console.log(`🔄 準備重試 ${configsToRetry.length} 個跳過的任務...`);
+    } else if (options.includeSkipped) {
+      // 重試失敗 + 跳過的任務
+      configsToRetry = this.progressTracker.getRetryableConfigsIncludeSkipped();
+      console.log(`🔄 準備重試 ${configsToRetry.length} 個失敗和跳過的任務...`);
+    } else {
+      // 強制重試所有失敗和跳過的任務（忽略重試次數限制）
+      configsToRetry = this.progressTracker.getAllFailedAndSkippedConfigs();
+      console.log(`🔄 準備強制重試 ${configsToRetry.length} 個失敗和跳過的任務...`);
+    }
+
+    if (configsToRetry.length === 0) {
+      const progress = this.progressTracker.getProgress();
+      console.log('');
+      console.log('✅ 沒有需要重試的任務');
+      console.log('='.repeat(60));
+      console.log(`📋 批次 ID: ${progress.id}`);
+      console.log(`📊 當前狀態:`);
+      console.log(`   • 總任務數: ${progress.total}`);
+      console.log(`   • ✅ 成功: ${progress.completed}`);
+      console.log(`   • ❌ 失敗: ${progress.failed}`);
+      console.log(`   • ⏭️  跳過: ${progress.skipped}`);
+      console.log('='.repeat(60));
+      console.log('');
+
+      return {
+        success: true,
+        total: 0,
+        completed: 0,
+        failed: 0,
+        skipped: 0,
+        duration: 0,
+        errors: [],
+        progressId: progress.id,
+        outputFiles: []
+      };
+    }
+
+    // 顯示即將重試的任務詳情
+    const progress = this.progressTracker.getProgress();
+    const tasks = progress.tasks instanceof Map ? 
+      Object.fromEntries(progress.tasks) : 
+      progress.tasks;
+
+    console.log('');
+    console.log('📋 重試任務詳情：');
+    console.log('='.repeat(60));
+
+    // 按狀態分組顯示
+    const failedTasks = configsToRetry.filter(name => 
+      tasks[name]?.status === 'failed'
+    );
+    const skippedTasks = configsToRetry.filter(name => 
+      tasks[name]?.status === 'skipped'
+    );
+
+    if (failedTasks.length > 0) {
+      console.log(`⚠️  失敗任務 (${failedTasks.length} 個) - 將重新嘗試:`);
+      failedTasks.slice(0, 5).forEach((name, i) => {
+        const task = tasks[name];
+        console.log(`   ${i + 1}. ${name} (已嘗試 ${task.attempts || 0} 次)`);
+      });
+      if (failedTasks.length > 5) {
+        console.log(`   ... 還有 ${failedTasks.length - 5} 個失敗任務`);
+      }
+    }
+
+    if (skippedTasks.length > 0) {
+      console.log(`⏭️  跳過任務 (${skippedTasks.length} 個) - 將強制重試:`);
+      skippedTasks.slice(0, 5).forEach((name, i) => {
+        const task = tasks[name];
+        console.log(`   ${i + 1}. ${name} (原因: ${task.error || '未知'})`);
+      });
+      if (skippedTasks.length > 5) {
+        console.log(`   ... 還有 ${skippedTasks.length - 5} 個跳過任務`);
+      }
+      
+      console.log('');
+      console.log('💡 跳過任務重試說明:');
+      console.log('   • 這些任務原本因永久性錯誤被跳過');
+      console.log('   • 強制重試可能有助於處理暫時性問題');
+      console.log('   • 如果仍然失敗，考慮檢查股票代碼有效性');
+    }
+
+    console.log('='.repeat(60));
+
+    // 重置任務狀態
+    const resetCount = this.progressTracker.resetConfigs(configsToRetry, {
+      resetAttempts: options.resetAttempts
+    });
+    
+    console.log(`🔄 已重置 ${resetCount} 個任務狀態為 PENDING`);
+    if (options.resetAttempts) {
+      console.log('🔢 已重置所有任務的嘗試次數');
+    }
+
+    // 保存進度
+    await this.progressTracker.save();
+
+    // 開始執行重試
+    return this.executeBatch(configsToRetry, options);
+  }
+
+  /**
    * 只重試失敗的配置
    */
   async retryFailed(progressId: string, options: BatchOptions = {}): Promise<BatchResult> {
@@ -308,8 +476,82 @@ export class BatchCrawlerManager {
     const retryableConfigs = this.progressTracker.getRetryableConfigs();
 
     if (retryableConfigs.length === 0) {
-      logger.info('沒有可重試的失敗配置');
       const progress = this.progressTracker.getProgress();
+      const startTime = new Date(progress.startTime);
+      const endTime = new Date(progress.lastUpdateTime);
+      const originalDuration = (progress.lastUpdateTime - progress.startTime) / 1000;
+      
+      // 分析跳過的任務
+      const skippedTasks: Array<{configName: string; error?: string; stockCode?: string}> = [];
+      const tasks = progress.tasks instanceof Map ? 
+        Object.fromEntries(progress.tasks) : 
+        progress.tasks;
+
+      Object.entries(tasks).forEach(([configName, task]) => {
+        if (task.status === 'skipped') {
+          const stockCodeMatch = configName.match(/-([A-Z0-9]+(?:_TW)?).json$/);
+          const stockCode = stockCodeMatch ? stockCodeMatch[1].replace('_TW', '') : undefined;
+          skippedTasks.push({
+            configName,
+            error: (task as any).error || '未知原因',
+            stockCode
+          });
+        }
+      });
+      
+      console.log('');
+      if (progress.skipped > 0) {
+        console.log('⚠️  批次任務完成，但有部分任務被跳過');
+      } else {
+        console.log('✅ 批次任務已完全成功，無需重試');
+      }
+      console.log('='.repeat(60));
+      console.log(`📋 批次 ID: ${progress.id}`);
+      console.log(`📊 原始執行統計:`);
+      console.log(`   • 執行時間: ${startTime.toISOString().replace('T', ' ').slice(0, 19)}`);
+      console.log(`   • 結束時間: ${endTime.toISOString().replace('T', ' ').slice(0, 19)}`);
+      console.log(`   • 總耗時: ${originalDuration.toFixed(1)} 秒 (${(originalDuration/60).toFixed(1)} 分鐘)`);
+      console.log(`   • 總任務數: ${progress.total}`);
+      console.log(`   • ✅ 成功: ${progress.completed} (${(progress.completed/progress.total*100).toFixed(1)}%)`);
+      console.log(`   • ❌ 失敗: ${progress.failed} (暫時性錯誤，已全部重試完成)`);
+      console.log(`   • ⏭️  跳過: ${progress.skipped} (永久性錯誤，不可重試)`);
+      if (progress.averageTimePerTask) {
+        console.log(`   • ⏱️  平均每任務: ${(progress.averageTimePerTask/1000).toFixed(1)} 秒`);
+      }
+
+      // 顯示跳過任務的詳細信息
+      if (skippedTasks.length > 0) {
+        console.log('');
+        console.log('⏭️  跳過任務詳情（永久性錯誤）:');
+        
+        // 按錯誤類型分組
+        const errorGroups: Record<string, typeof skippedTasks> = {};
+        skippedTasks.forEach(task => {
+          const errorType = this.categorizeSkipError(task.error || '');
+          if (!errorGroups[errorType]) {
+            errorGroups[errorType] = [];
+          }
+          errorGroups[errorType].push(task);
+        });
+
+        Object.entries(errorGroups).forEach(([errorType, tasks]) => {
+          console.log(`   📌 ${errorType} (${tasks.length} 個股票):`);
+          const stockCodes = tasks.slice(0, 10).map(t => t.stockCode || 'Unknown').join(', ');
+          console.log(`      股票: ${stockCodes}${tasks.length > 10 ? '...' : ''}`);
+        });
+
+        console.log('');
+        console.log('💡 跳過任務處理建議:');
+        console.log('   • 詳細診斷: npm run crawl:diagnose:skipped');
+        console.log(`   • 進度詳情: npm run crawl:progress:info -- ${progress.id}`);
+        console.log('   • 檢查股票有效性: npm run crawl:validate:stocks');
+        console.log('   • 清理無效股票: npm run crawl:clean:invalid');
+      }
+      console.log('='.repeat(60));
+      console.log('💡 所有任務都已成功完成，沒有需要重試的失敗配置');
+      console.log('');
+      
+      logger.info('沒有可重試的失敗配置');
       return {
         success: true,
         total: progress.total,
@@ -790,6 +1032,11 @@ export class BatchCrawlerManager {
         this.progressTracker.cleanup();
       }
       
+      // 清理瀏覽器池
+      if (this.browserPool) {
+        await this.browserPool.destroy();
+      }
+      
       await this.crawler.cleanup();
       process.exit(0);
     };
@@ -903,6 +1150,16 @@ export class BatchCrawlerManager {
   }
 
   /**
+   * 獲取瀏覽器池統計資訊
+   */
+  getBrowserPoolStatistics() {
+    if (!this.browserPool) {
+      return null;
+    }
+    return this.browserPool.getStatistics();
+  }
+
+  /**
    * 清理資源
    */
   async cleanup(): Promise<void> {
@@ -915,6 +1172,12 @@ export class BatchCrawlerManager {
     // 優雅關閉 site concurrency manager
     if (this.useSiteConcurrency) {
       await this.siteConcurrencyManager.shutdown(30000);
+    }
+    
+    // 清理瀏覽器池
+    if (this.browserPool) {
+      await this.browserPool.destroy();
+      this.browserPool = null;
     }
     
     await this.crawler.cleanup();

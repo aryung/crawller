@@ -1194,7 +1194,7 @@ export class PipelineOrchestrator {
   private convertToApiFormat(record: UnifiedFinancialData): any {
     // 清理 symbolCode
     let cleanSymbolCode = record.symbolCode;
-    if (record.exchangeArea === 'TPE') {
+    if (record.exchangeArea === MarketRegion.TPE) {
       cleanSymbolCode = cleanSymbolCode.replace(/\.TW[O]?$/, '');
     }
 

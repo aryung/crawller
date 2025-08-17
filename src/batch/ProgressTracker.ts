@@ -233,6 +233,39 @@ export class ProgressTracker {
   }
 
   /**
+   * 獲取跳過的配置列表
+   */
+  getSkippedConfigs(): string[] {
+    return Array.from(this.summary.tasks.values())
+      .filter(task => task.status === TaskStatus.SKIPPED)
+      .map(task => task.configName);
+  }
+
+  /**
+   * 獲取所有可重試的配置列表 (包含跳過的任務)
+   */
+  getRetryableConfigsIncludeSkipped(): string[] {
+    return Array.from(this.summary.tasks.values())
+      .filter(task => 
+        (task.status === TaskStatus.FAILED && (task.attempts || 0) < 3) ||
+        task.status === TaskStatus.SKIPPED
+      )
+      .map(task => task.configName);
+  }
+
+  /**
+   * 獲取所有失敗和跳過的配置列表 (用於強制重試)
+   */
+  getAllFailedAndSkippedConfigs(): string[] {
+    return Array.from(this.summary.tasks.values())
+      .filter(task => 
+        task.status === TaskStatus.FAILED || 
+        task.status === TaskStatus.SKIPPED
+      )
+      .map(task => task.configName);
+  }
+
+  /**
    * 重置特定配置的狀態為待執行
    */
   resetConfig(configName: string): void {
@@ -245,6 +278,54 @@ export class ProgressTracker {
       this.updateCounts(oldStatus, TaskStatus.PENDING);
       this.calculateMetrics();
     }
+  }
+
+  /**
+   * 批量重置配置狀態為待執行
+   */
+  resetConfigs(configNames: string[], options: {
+    resetAttempts?: boolean;
+  } = {}): number {
+    let resetCount = 0;
+    
+    configNames.forEach(configName => {
+      const task = this.summary.tasks.get(configName);
+      if (task) {
+        const oldStatus = task.status;
+        task.status = TaskStatus.PENDING;
+        task.error = undefined;
+        task.endTime = undefined;
+        
+        if (options.resetAttempts) {
+          task.attempts = 0;
+        }
+        
+        this.updateCounts(oldStatus, TaskStatus.PENDING);
+        resetCount++;
+      }
+    });
+    
+    this.calculateMetrics();
+    this.summary.lastUpdateTime = Date.now();
+    
+    logger.info(`Reset ${resetCount} tasks to PENDING status`);
+    return resetCount;
+  }
+
+  /**
+   * 重置所有跳過的任務為待執行狀態
+   */
+  resetSkippedTasks(resetAttempts: boolean = false): number {
+    const skippedConfigs = this.getSkippedConfigs();
+    return this.resetConfigs(skippedConfigs, { resetAttempts });
+  }
+
+  /**
+   * 重置所有失敗和跳過的任務為待執行狀態
+   */
+  resetAllFailedAndSkippedTasks(resetAttempts: boolean = false): number {
+    const failedAndSkippedConfigs = this.getAllFailedAndSkippedConfigs();
+    return this.resetConfigs(failedAndSkippedConfigs, { resetAttempts });
   }
 
   /**

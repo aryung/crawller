@@ -1,14 +1,16 @@
 # Batch Crawler 重試機制完整指南
 
-**版本**: v3.1.1  
-**更新日期**: 2025-08-16  
+**版本**: v3.1.2  
+**更新日期**: 2025-08-17  
 **作者**: Claude Code Assistant
 
 ## 📋 目錄
 
 - [系統概述](#系統概述)
+- [Skip vs Fail 任務狀態詳解](#skip-vs-fail-任務狀態詳解)
 - [三層記錄系統架構](#三層記錄系統架構)
 - [重試策略與錯誤分類](#重試策略與錯誤分類)
+- [跳過任務重試功能](#跳過任務重試功能)
 - [進度追蹤系統](#進度追蹤系統)
 - [重試命令參考](#重試命令參考)
 - [與 Pipeline 重試的區別](#與-pipeline-重試的區別)
@@ -129,6 +131,271 @@ enum ErrorAction {
   REDUCE_CONCURRENCY = 'reduce_concurrency' // 降低併發數
 }
 ```
+
+## 🔍 Skip vs Fail 任務狀態詳解
+
+### 狀態概念說明
+
+Batch Crawler 系統使用兩種不同的失敗狀態來區分錯誤的嚴重程度和可恢復性：
+
+#### SKIP 狀態 (跳過)
+- **定義**: 永久性錯誤，傳統上不會重試
+- **觸發條件**: 404 錯誤、配置錯誤、權限問題等
+- **ErrorType**: `PERMANENT`
+- **ErrorAction**: `SKIP`
+- **傳統行為**: 不加入重試隊列，直接標記為永久失敗
+
+#### FAIL 狀態 (失敗)
+- **定義**: 暫時性錯誤，可以重試恢復
+- **觸發條件**: 網路超時、連接重置、暫時性伺服器錯誤等
+- **ErrorType**: `TEMPORARY`, `RATE_LIMIT`, `TIMEOUT`, `NETWORK`
+- **ErrorAction**: `RETRY`, `RETRY_AFTER_DELAY`
+- **系統行為**: 自動加入重試隊列，最多重試 3 次
+
+### 狀態轉換流程
+
+```mermaid
+graph TD
+    A[開始執行] --> B{執行結果}
+    B -->|成功| C[COMPLETED]
+    B -->|失敗| D{錯誤分類}
+    
+    D -->|PERMANENT| E[SKIP 狀態]
+    D -->|TEMPORARY| F[FAIL 狀態]
+    D -->|RATE_LIMIT| F
+    D -->|TIMEOUT| F
+    D -->|NETWORK| F
+    D -->|SYSTEM| F
+    
+    F --> G{重試次數 < 3?}
+    G -->|是| H[加入重試隊列]
+    G -->|否| I[最終 FAIL]
+    
+    E --> J[永久跳過]
+    I --> K[等待手動處理]
+    H --> A
+```
+
+### 實際案例分析
+
+#### 案例 1: 404 錯誤 (SKIP)
+```bash
+[ERROR] 任務執行異常: 404: Page not found
+[INFO] 錯誤類型: PERMANENT, 行動: SKIP
+[INFO] 配置失敗: quarterly/tw/eps/yahoo-finance-tw-eps-2330_TW - 404: Page not found
+# 結果: 任務狀態 = SKIPPED，不會自動重試
+```
+
+#### 案例 2: 網路超時 (FAIL)
+```bash
+[ERROR] 任務執行異常: timeout: Navigation timeout exceeded
+[INFO] 錯誤類型: TIMEOUT, 行動: RETRY_AFTER_DELAY
+[INFO] 將在 10 秒後重試: quarterly/tw/eps/yahoo-finance-tw-eps-2330_TW (嘗試 2/3)
+# 結果: 任務狀態 = FAILED，會自動重試
+```
+
+#### 案例 3: 速率限制 (FAIL)
+```bash
+[ERROR] 任務執行異常: 429: Too Many Requests
+[INFO] 錯誤類型: RATE_LIMIT, 行動: RETRY_AFTER_DELAY
+[INFO] 將在 30 秒後重試: quarterly/tw/eps/yahoo-finance-tw-eps-2330_TW (嘗試 1/2)
+# 結果: 任務狀態 = FAILED，會延遲重試
+```
+
+### 為什麼需要區分 SKIP 和 FAIL？
+
+1. **避免無效重試**: SKIP 狀態避免對永久性錯誤進行無意義的重試
+2. **資源最佳化**: 將重試資源集中在可恢復的錯誤上
+3. **清晰的錯誤分類**: 幫助開發者快速識別問題類型
+4. **智慧恢復策略**: 不同錯誤類型採用不同的恢復策略
+
+## 🔄 跳過任務重試功能
+
+### 功能概述
+
+v3.1.2 版本新增了強制重試 SKIP 任務的功能，突破傳統設計限制：
+
+- **突破限制**: 允許重試原本被標記為 SKIP 的任務
+- **靈活控制**: 支援只重試 SKIP 任務或同時重試 FAIL + SKIP
+- **重置選項**: 可選擇是否重置重試計數器
+- **安全機制**: 提供預覽模式和確認機制
+
+### 核心方法擴展
+
+#### ProgressTracker 新增方法
+
+```typescript
+// 獲取跳過的任務列表
+getSkippedConfigs(): string[]
+
+// 獲取可重試的任務（包含跳過任務）
+getRetryableConfigsIncludeSkipped(): string[]
+
+// 獲取所有失敗和跳過的任務
+getAllFailedAndSkippedConfigs(): string[]
+
+// 重置指定任務的狀態
+resetConfigs(configNames: string[], options: {
+  resetAttempts?: boolean
+}): number
+
+// 重置跳過的任務
+resetSkippedTasks(resetAttempts: boolean = false): number
+
+// 重置所有失敗和跳過的任務
+resetAllFailedAndSkippedTasks(resetAttempts: boolean = false): number
+```
+
+#### BatchCrawlerManager 新增方法
+
+```typescript
+// 全面重試方法，支援跳過任務
+async retryAll(progressId: string, options: BatchOptions & {
+  includeSkipped?: boolean;     // 是否包含跳過的任務
+  resetAttempts?: boolean;      // 是否重置重試計數器
+  skippedOnly?: boolean;        // 只重試跳過的任務
+} = {}): Promise<BatchResult>
+```
+
+### 命令行選項擴展
+
+#### 新增 CLI 參數
+
+```bash
+# 重試所有失敗和跳過的任務
+npx tsx src/cli.ts crawl-batch --retry-all=batch_20250817_120000
+
+# 只重試跳過的任務
+npx tsx src/cli.ts crawl-batch --retry-skipped-only=batch_20250817_120000
+
+# 強制重試（即使重試次數 > 3）
+npx tsx src/cli.ts crawl-batch --retry-failed=batch_20250817_120000 --force-retry
+
+# 重置重試計數器
+npx tsx src/cli.ts crawl-batch --retry-all=batch_20250817_120000 --reset-attempts
+```
+
+### 使用範例
+
+#### 範例 1: 重試所有跳過的任務
+
+```bash
+# 1. 查看當前狀態
+npm run crawl:status
+# 輸出: 成功 1200/1500, 失敗 150, 跳過 150
+
+# 2. 預覽要重置的跳過任務
+tsx scripts/reset-progress-status.ts \
+  --progress-id=batch-quarterly-us-all-20250817T062052 \
+  --type=skipped \
+  --dry-run
+
+# 3. 重置跳過任務狀態
+tsx scripts/reset-progress-status.ts \
+  --progress-id=batch-quarterly-us-all-20250817T062052 \
+  --type=skipped \
+  --force
+
+# 4. 重新執行重置的任務
+npx tsx src/cli.ts crawl-batch --resume=batch-quarterly-us-all-20250817T062052
+```
+
+#### 範例 2: 一步到位重試跳過任務
+
+```bash
+# 直接重試跳過任務（自動重置 + 重新執行）
+npx tsx src/cli.ts crawl-batch \
+  --retry-skipped-only=batch-quarterly-us-all-20250817T062052 \
+  --reset-attempts
+```
+
+#### 範例 3: 重試所有失敗類型
+
+```bash
+# 重試失敗和跳過的所有任務
+npx tsx src/cli.ts crawl-batch \
+  --retry-all=batch-quarterly-us-all-20250817T062052 \
+  --force-retry \
+  --reset-attempts
+```
+
+### 進度重置腳本詳解
+
+#### 腳本功能
+
+`scripts/reset-progress-status.ts` 提供完整的進度重置功能：
+
+```bash
+# 查看所有進度檔案狀態
+tsx scripts/reset-progress-status.ts --list-all
+
+# 重置類型選項
+--type=failed                # 只重置失敗任務
+--type=skipped               # 只重置跳過任務  
+--type=failed-and-skipped    # 重置失敗和跳過任務 (預設)
+--type=all                   # 重置所有未完成任務
+
+# 其他選項
+--reset-attempts             # 重置重試計數器
+--dry-run                   # 預覽模式
+--force                     # 跳過確認提示
+```
+
+#### 重置報告範例
+
+```bash
+📊 進度重置報告
+============================================================
+📋 進度ID: batch-quarterly-us-all-20250817T062052
+🔄 重置類型: skipped
+📈 重置任務數: 150/1500
+🔢 重置重試計數: 是
+
+📊 狀態變化:
+   重置前: 完成 1200, 失敗 150, 跳過 150, 待處理 0, 執行中 0
+   重置後: 完成 1200, 失敗 150, 跳過 0, 待處理 150, 執行中 0
+
+💡 下一步建議:
+   🚀 重新執行: npx tsx src/cli.ts crawl-batch --resume=batch-quarterly-us-all-20250817T062052
+   📊 查看狀態: npx tsx src/cli.ts crawl-batch --status
+```
+
+### 使用場景與最佳實踐
+
+#### 適用場景
+
+1. **網站結構變化**: 原本 404 的頁面恢復正常
+2. **權限問題解決**: 暫時的存取限制已解除
+3. **配置修復**: 修復配置錯誤後需要重新嘗試
+4. **大量跳過任務**: 需要批量重新評估跳過的任務
+
+#### 最佳實踐
+
+```bash
+# 1. 先用預覽模式查看影響範圍
+tsx scripts/reset-progress-status.ts \
+  --progress-id=YOUR_BATCH_ID \
+  --type=skipped \
+  --dry-run
+
+# 2. 小批量測試重試
+npx tsx src/cli.ts crawl-batch \
+  --retry-skipped-only=YOUR_BATCH_ID \
+  --limit=10
+
+# 3. 確認沒問題後全量重試
+npx tsx src/cli.ts crawl-batch \
+  --retry-skipped-only=YOUR_BATCH_ID \
+  --reset-attempts
+```
+
+#### 注意事項
+
+⚠️ **重要提醒**:
+- 重置 SKIP 任務會將其狀態改為 PENDING，重新加入執行隊列
+- 使用 `--reset-attempts` 會清零重試計數器，任務會重新開始 3 次重試週期
+- 大量重置可能會增加網站負載，建議分批處理
+- 永久性錯誤（如真實的 404）重試後可能再次失敗
 
 ## 🔄 重試策略與錯誤分類
 
@@ -338,7 +605,7 @@ npm run crawl:retry:status
 # 跳過: 5 (3.3%)
 ```
 
-### 重試失敗任務
+### 傳統重試命令 (只重試 FAIL 任務)
 
 ```bash
 # 重試所有失敗的任務
@@ -351,6 +618,50 @@ npm run crawl:retry:jp         # 只重試日本市場失敗任務
 
 # 批次重試所有區域
 npm run crawl:retry:all        # 重試所有區域的失敗任務
+```
+
+### ⭐ v3.1.2 新增：跳過任務重試命令
+
+#### 快速重試命令（推薦）
+
+```bash
+# 只重試跳過的任務
+npm run crawl:retry:skipped-only
+
+# 重試所有失敗和跳過的任務
+npm run crawl:retry:all-tasks
+
+# 查看重置腳本幫助
+npm run crawl:reset:help
+```
+
+#### 進階重試命令
+
+```bash
+# 直接重試跳過任務（一步到位）
+npx tsx src/cli.ts crawl-batch --retry-skipped-only=PROGRESS_ID --reset-attempts
+
+# 重試所有失敗和跳過任務
+npx tsx src/cli.ts crawl-batch --retry-all=PROGRESS_ID --force-retry
+
+# 強制重試（即使重試次數 > 3）
+npx tsx src/cli.ts crawl-batch --retry-failed=PROGRESS_ID --force-retry --reset-attempts
+```
+
+#### 進度重置命令
+
+```bash
+# 預覽重置跳過任務
+tsx scripts/reset-progress-status.ts --progress-id=PROGRESS_ID --type=skipped --dry-run
+
+# 重置跳過任務狀態
+tsx scripts/reset-progress-status.ts --progress-id=PROGRESS_ID --type=skipped --reset-attempts --force
+
+# 重置所有失敗和跳過任務
+tsx scripts/reset-progress-status.ts --progress-id=PROGRESS_ID --type=failed-and-skipped --force
+
+# 列出所有進度檔案
+tsx scripts/reset-progress-status.ts --list-all
 ```
 
 ### 重試模式選擇
@@ -387,6 +698,34 @@ npx tsx src/cli.ts crawl-batch --retry-failed --concurrent=1 --delay=10000
 
 # 只重試特定類型錯誤 (規劃中)
 npx tsx src/cli.ts crawl-batch --retry-failed --error-types=timeout,network
+```
+
+### 常用組合命令
+
+#### 處理大量跳過任務的完整流程
+
+```bash
+# 1. 查看所有進度檔案狀態
+tsx scripts/reset-progress-status.ts --list-all
+
+# 2. 查看特定進度的詳細狀態
+npm run crawl:status
+
+# 3. 預覽重置跳過任務的影響
+tsx scripts/reset-progress-status.ts --progress-id=YOUR_PROGRESS_ID --type=skipped --dry-run
+
+# 4. 小批量測試重試
+npx tsx src/cli.ts crawl-batch --retry-skipped-only=YOUR_PROGRESS_ID --limit=10
+
+# 5. 確認無問題後，全量重試
+npx tsx src/cli.ts crawl-batch --retry-skipped-only=YOUR_PROGRESS_ID --reset-attempts
+```
+
+#### 一步到位重試所有失敗類型
+
+```bash
+# 適用於需要重新處理所有失敗項目的場景
+npx tsx src/cli.ts crawl-batch --retry-all=YOUR_PROGRESS_ID --force-retry --reset-attempts
 ```
 
 ## 🔄 與 Pipeline 重試的區別
@@ -695,7 +1034,14 @@ fi
 ---
 
 **版本歷史**:
-- v3.1.1 (2025-08-16): 完整重試機制文檔
+- v3.1.2 (2025-08-17): **跳過任務重試功能增強**
+  - 新增強制重試 SKIP 任務的能力，突破傳統設計限制
+  - 擴展 ProgressTracker 和 BatchCrawlerManager 支援跳過任務處理
+  - 新增 reset-progress-status.ts 腳本，提供完整進度重置功能
+  - 新增 CLI 參數：--retry-all, --retry-skipped-only, --force-retry, --reset-attempts
+  - 詳細的 Skip vs Fail 狀態說明和使用場景指南
+  - 完整的命令參考和最佳實踐文檔
+- v3.1.1 (2025-08-16): Site-based Concurrency 智慧並發控制
 - v3.1.0 (2025-08-14): 基礎重試功能實現
 - v3.0.0 (2025-08-14): 批量爬取系統建立
 
