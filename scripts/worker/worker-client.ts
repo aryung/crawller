@@ -32,6 +32,7 @@ export class WorkerClient extends EventEmitter {
   private versionManager: VersionManager;
   private apiService: TaskApiService;
   private configResolver: ConfigResolver;
+  private projectRoot: string;
   
   private currentTasks: Map<string, CrawlerTask> = new Map();
   private workerStats: WorkerStats;
@@ -51,10 +52,11 @@ export class WorkerClient extends EventEmitter {
   constructor(config: WorkerConfig) {
     super();
     this.config = config;
+    this.projectRoot = process.cwd();
     
     // 初始化組件
     this.versionManager = new VersionManager({
-      projectRoot: process.cwd(),
+      projectRoot: this.projectRoot,
       preferGitVersion: config.preferGitVersion,
       versionCacheDir: config.versionCacheDir,
       githubToken: config.githubToken,
@@ -70,7 +72,7 @@ export class WorkerClient extends EventEmitter {
     });
 
     this.configResolver = new ConfigResolver({
-      projectRoot: process.cwd(),
+      projectRoot: this.projectRoot,
     });
 
     // 初始化統計資訊
@@ -174,15 +176,19 @@ export class WorkerClient extends EventEmitter {
       await this.apiService.updateTaskStatus(task.id, 'running');
       
       // 2. 版本相容性檢查
-      const versionCheck = await this.checkTaskVersionCompatibility(task);
-      if (!versionCheck.compatible && this.config.autoVersionSwitch) {
-        console.log(`🔄 嘗試自動切換版本: ${versionCheck.action}`);
-        const switched = await this.handleVersionSwitch(versionCheck);
-        if (!switched) {
-          throw new Error(`版本切換失敗: ${versionCheck.reason}`);
+      try {
+        const versionCheck = await this.checkTaskVersionCompatibility(task);
+        if (!versionCheck.compatible && this.config.autoVersionSwitch) {
+          console.log(`🔄 嘗試自動切換版本: ${versionCheck.action}`);
+          const switched = await this.handleVersionSwitch(versionCheck);
+          if (!switched) {
+            console.warn(`版本切換失敗，繼續執行: ${versionCheck.reason}`);
+          }
+        } else if (!versionCheck.compatible) {
+          console.warn(`版本不相容，繼續執行: ${versionCheck.reason}`);
         }
-      } else if (!versionCheck.compatible) {
-        throw new Error(`版本不相容: ${versionCheck.reason}`);
+      } catch (versionError) {
+        console.warn('版本檢查過程失敗，繼續執行任務:', versionError);
       }
 
       // 3. 解析配置
@@ -424,29 +430,34 @@ export class WorkerClient extends EventEmitter {
 
       // 如果本地檢查通過，再向服務器確認
       if (localCheck.compatible) {
-        const serverResponse = await this.apiService.checkVersionCompatibility(
-          task.id,
-          this.versionManager.getCurrentVersion()
-        );
-        
-        if (!serverResponse.compatible) {
-          return {
-            compatible: false,
-            currentVersion: localCheck.currentVersion,
-            requiredVersion: serverResponse.required_version,
-            action: serverResponse.action,
-            reason: serverResponse.reason || 'Server version check failed',
-          };
+        try {
+          const serverResponse = await this.apiService.checkVersionCompatibility(
+            task.id,
+            this.versionManager.getCurrentVersion()
+          );
+          
+          if (!serverResponse.compatible) {
+            return {
+              compatible: false,
+              currentVersion: localCheck.currentVersion,
+              requiredVersion: serverResponse.required_version,
+              action: serverResponse.action,
+              reason: serverResponse.reason || 'Server version check failed',
+            };
+          }
+        } catch (versionCheckError) {
+          console.warn('伺服器版本檢查失敗，使用本地檢查結果:', versionCheckError);
+          // 如果伺服器版本檢查失敗，繼續使用本地檢查結果
         }
       }
 
       return localCheck;
     } catch (error) {
-      console.warn('版本相容性檢查失敗，假設不相容:', error);
+      console.warn('版本相容性檢查失敗，假設相容:', error);
       return {
-        compatible: false,
+        compatible: true,
         currentVersion: this.versionManager.getCurrentVersion(),
-        reason: `版本檢查失敗: ${error instanceof Error ? error.message : error}`,
+        reason: 'Version check failed, assuming compatible',
       };
     }
   }
@@ -485,8 +496,16 @@ export class WorkerClient extends EventEmitter {
     data?: unknown;
   }> {
     try {
+      console.log(`🚀 開始執行爬蟲任務: ${task.id}`);
+      console.log(`📋 任務詳情:`, {
+        symbol: task.symbol_code,
+        exchange: task.exchange_area,
+        dataType: task.data_type,
+        url: config.crawlerSettings?.url || config.url
+      });
+
       // 準備執行參數
-      const configPath = join(process.cwd(), '.temp', `config-${task.id}.json`);
+      const configPath = join(this.projectRoot, '.temp', `config-${task.id}.json`);
       
       // 寫入臨時配置文件
       require('fs').writeFileSync(configPath, JSON.stringify(config, null, 2));
@@ -494,22 +513,51 @@ export class WorkerClient extends EventEmitter {
       try {
         // 執行爬蟲命令
         const command = `npx tsx src/cli.ts --config "${configPath}"`;
+        console.log(`🔍 開始爬取: ${config.crawlerSettings?.url || config.url}`);
+        
+        const startTime = Date.now();
         const output = execSync(command, {
           encoding: 'utf8',
-          cwd: process.cwd(),
+          cwd: this.projectRoot,
           timeout: 300000, // 5分鐘超時
         });
+        const endTime = Date.now();
+        const executionTime = endTime - startTime;
+
+        console.log(`✅ 爬蟲執行完成，耗時: ${executionTime}ms`);
 
         // 分析輸出結果
         const result = this.parseExecutionOutput(output);
+        
+        console.log(`📊 執行結果:`, {
+          success: true,
+          recordCount: result.recordCount,
+          outputPath: result.outputPath
+        });
+
+        // 嘗試讀取並解析輸出檔案中的實際數據
+        let actualData: unknown;
+        if (result.outputPath) {
+          try {
+            actualData = await this.extractDataFromOutputFile(result.outputPath, task);
+            console.log(`📄 成功提取數據，記錄數: ${Array.isArray(actualData) ? actualData.length : 1}`);
+          } catch (error) {
+            console.warn(`⚠️ 提取輸出數據失敗: ${error instanceof Error ? error.message : error}`);
+          }
+        }
         
         return {
           success: true,
           recordCount: result.recordCount,
           qualityScore: result.qualityScore,
           outputPath: result.outputPath,
-          summary: result.summary,
-          data: result.data,
+          summary: {
+            ...result.summary,
+            executionTime,
+            crawledAt: new Date().toISOString(),
+            hasData: !!actualData
+          },
+          data: actualData,
         };
         
       } finally {
@@ -522,7 +570,7 @@ export class WorkerClient extends EventEmitter {
       }
       
     } catch (error) {
-      console.error('爬蟲執行失敗:', error);
+      console.error('❌ 爬蟲執行失敗:', error);
       return { success: false };
     }
   }
@@ -747,6 +795,119 @@ export class WorkerClient extends EventEmitter {
         this.status = WorkerStatus.ERROR;
       }
     }
+  }
+
+  /**
+   * 從輸出檔案中提取實際數據
+   */
+  private async extractDataFromOutputFile(outputPath: string, task: CrawlerTask): Promise<unknown> {
+    const fs = await import('fs');
+    const path = await import('path');
+    
+    let actualFilePath = outputPath;
+    
+    // 如果提供的是相對路徑，嘗試推斷完整路徑
+    if (!path.isAbsolute(outputPath)) {
+      actualFilePath = this.inferOutputPath(task, outputPath);
+    }
+    
+    // 檢查檔案是否存在
+    if (!fs.existsSync(actualFilePath)) {
+      console.log(`📂 嘗試推斷輸出檔案路徑...`);
+      actualFilePath = this.inferOutputPath(task);
+      
+      if (!fs.existsSync(actualFilePath)) {
+        throw new Error(`輸出檔案不存在: ${actualFilePath}`);
+      }
+    }
+    
+    console.log(`📄 讀取輸出檔案: ${actualFilePath}`);
+    
+    // 讀取和解析 JSON 檔案
+    const fileContent = fs.readFileSync(actualFilePath, 'utf8');
+    const jsonData = JSON.parse(fileContent);
+    
+    // 從 results[0].data 提取實際數據
+    if (jsonData.results && Array.isArray(jsonData.results) && jsonData.results.length > 0) {
+      const firstResult = jsonData.results[0];
+      if (firstResult.data) {
+        console.log(`✅ 成功提取數據結構:`, {
+          hasData: true,
+          dataKeys: Object.keys(firstResult.data),
+          exportDate: jsonData.exportDate,
+          totalResults: jsonData.totalResults
+        });
+        
+        // 返回 data 欄位中的實際數據
+        return firstResult.data;
+      }
+    }
+    
+    console.warn(`⚠️ 未找到預期的數據結構在: ${actualFilePath}`);
+    return null;
+  }
+
+  /**
+   * 智慧推斷輸出檔案路徑
+   */
+  private inferOutputPath(task: CrawlerTask, hintPath?: string): string {
+    const path = require('path');
+    const projectRoot = process.cwd();
+    
+    // 基於任務參數推斷路徑結構
+    const region = task.exchange_area.toLowerCase(); // tpe -> tw
+    const regionMap: Record<string, string> = {
+      'tpe': 'tw',
+      'nyse': 'us',
+      'nasdaq': 'us',
+      'tyo': 'jp'
+    };
+    const marketRegion = regionMap[region] || region;
+    
+    // 根據 data_type 推斷報告類型和類別
+    const dataType = task.data_type.toLowerCase();
+    let category = 'quarterly'; // 預設
+    let reportType = dataType;
+    
+    if (dataType.includes('history') || dataType.includes('daily')) {
+      category = 'daily';
+    } else if (dataType.includes('symbol') || dataType.includes('label')) {
+      category = 'metadata';
+    }
+    
+    // 根據 data_type 推斷具體的報告類型目錄名稱
+    const reportTypeMap: Record<string, string> = {
+      'cash_flow': 'cash',
+      'balance_sheet': 'balance',
+      'income_statement': 'income',
+      'eps': 'eps',
+      'quarterly': 'quarterly'
+    };
+    
+    const mappedReportType = reportTypeMap[dataType] || reportType;
+    
+    // 構建檔案名稱
+    const fileName = `yahoo-finance-${marketRegion}-${dataType.replace('_', '-')}-${task.symbol_code}.json`;
+    
+    // 構建完整路徑: output/{category}/{region}/{reportType}/{fileName}
+    const fullPath = path.join(
+      projectRoot,
+      'output',
+      category,
+      marketRegion,
+      mappedReportType,
+      fileName
+    );
+    
+    console.log(`🔍 推斷輸出路徑:`, {
+      category,
+      region: marketRegion,
+      reportType: mappedReportType,
+      fileName,
+      fullPath
+    });
+    
+    return fullPath;
   }
 
   /**

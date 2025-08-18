@@ -357,7 +357,7 @@
     "stats": "tsx scripts/crawl-statistics.ts",
     "stats:report": "tsx scripts/crawl-statistics.ts",
     "stats:tw": "tsx scripts/crawl-statistics.ts --market tw",
-    "stats:us": "tsx scripts/crawl-statistics.ts --market us", 
+    "stats:us": "tsx scripts/crawl-statistics.ts --market us",
     "stats:jp": "tsx scripts/crawl-statistics.ts --market jp",
     "stats:quarterly": "tsx scripts/crawl-statistics.ts --category quarterly",
     "stats:daily": "tsx scripts/crawl-statistics.ts --category daily",
