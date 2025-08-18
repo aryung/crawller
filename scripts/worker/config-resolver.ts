@@ -5,7 +5,7 @@
 
 import { readFileSync, existsSync } from 'fs';
 import { join, resolve } from 'path';
-import { ConfigTemplate, ResolvedConfig, CrawlerTask, WorkerError } from './types';
+import { ConfigTemplate, ResolvedConfig, CrawlerTask, WorkerError } from '../../src/common/shared-types/interfaces/crawler.interface';
 
 export class ConfigResolver {
   private configCache = new Map<string, ConfigTemplate>();

@@ -6,7 +6,7 @@
 import { execSync } from 'child_process';
 import { readFileSync, existsSync, writeFileSync } from 'fs';
 import { join, dirname } from 'path';
-import { VersionInfo, VersionCheckResult, WorkerError } from './types';
+import { VersionInfo, VersionCheckResult, WorkerError } from '../../src/common/shared-types/interfaces/crawler.interface';
 
 export class VersionManager {
   private packageJsonPath: string;

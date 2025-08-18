@@ -23,7 +23,7 @@ import {
   HeartbeatCallback,
   WorkerEvent,
   ResolvedConfig
-} from './types';
+} from '../../src/common/shared-types/interfaces/crawler.interface';
 import { execSync } from 'child_process';
 import { join } from 'path';
 
