@@ -69,17 +69,25 @@ export interface FailureReportDto {
 export interface ExecutionResultDto {
   task_id: string;
   status: HistoryStatus;
+  execution_time_ms?: number;
+  memory_usage_mb?: number;
+  network_requests?: number;
   crawled_from?: Date;
   crawled_to?: Date;
   records_fetched?: number;
   records_saved?: number;
   data_quality_score?: number;
-  execution_time_ms?: number;
-  memory_usage_mb?: number;
-  network_requests?: number;
   output_file_path?: string;
   response_summary?: Record<string, unknown>;
+  worker_version?: string;
+  config_version_used?: string;
+  crawled_data?: unknown;
   error?: FailureReportDto;
+  version_error?: {
+    code: 'VERSION_MISMATCH' | 'CONFIG_NOT_FOUND' | 'VERSION_BLACKLISTED';
+    message: string;
+    details?: Record<string, unknown>;
+  };
 }
 
 export interface TaskQueryDto {

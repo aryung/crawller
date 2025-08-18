@@ -16,7 +16,7 @@ import {
   WorkerError,
   MarketRegion,
   DataType,
-} from '../../src/common/shared-types';
+} from '../../src/common/shared-types/';
 
 export class TaskApiService {
   private client: AxiosInstance;
@@ -109,14 +109,14 @@ export class TaskApiService {
         limit: config.limit || 5,
       };
 
-      const response = await this.client.post<TaskResponseDto>(
+      const response = await this.client.post<CrawlerTask[]>(
         `/crawler/workers/${this.workerId}/request-tasks`,
         payload
       );
 
-      if (response.data.success && response.data.tasks) {
-        console.log(`📋 收到 ${response.data.tasks.length} 個任務`);
-        return response.data.tasks;
+      if (response.data && response.data.length > 0) {
+        console.log(`📋 收到 ${response.data.length} 個任務`);
+        return response.data;
       } else {
         console.log('📋 無可用任務');
         return [];
@@ -476,4 +476,3 @@ export function createTaskApiService(
 }
 
 export default TaskApiService;
-

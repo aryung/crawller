@@ -140,4 +140,4 @@ export const SITE_DISTRIBUTION = {
   },
 } as const;
 
-export type DataType = keyof typeof SITE_DISTRIBUTION;
+export type SiteDataType = keyof typeof SITE_DISTRIBUTION;
