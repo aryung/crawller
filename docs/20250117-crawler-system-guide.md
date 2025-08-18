@@ -486,7 +486,7 @@ export class YahooFinanceCrawler extends CrawlerWorkerClient {
     const config: CrawlerWorkerConfig = {
       workerId: 'yahoo-finance-worker-001',
       workerName: 'Yahoo Finance Crawler',
-      apiBaseUrl: 'http://localhost:3000/api/crawler',
+      apiBaseUrl: 'http://localhost:3000/crawler',
       supportedRegions: [ExchangeArea.TW, ExchangeArea.US],
       supportedDataTypes: [DataType.QUARTERLY, DataType.DAILY],
       maxConcurrentTasks: 3,
@@ -1003,7 +1003,7 @@ COPY dist/ ./dist/
 
 # 設定環境變數
 ENV NODE_ENV=production
-ENV CRAWLER_API_URL=http://finance-strategy:3000/api/crawler
+ENV CRAWLER_API_URL=http://finance-strategy:3000/crawler
 ENV CRAWLER_WORKER_ID=yahoo-finance-worker
 
 # 啟動 Worker

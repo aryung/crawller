@@ -48,7 +48,7 @@ crawler/
 # 1. 環境準備
 npm install
 cp .env.example .env
-# 編輯 .env 設置 BACKEND_API_TOKEN
+# 編輯 .env 設置 INTERNAL_AHA_API_TOKEN
 
 # 2. 爬取台灣季度數據
 npm run crawl:tw:quarterly
@@ -426,10 +426,10 @@ curl -I https://finance.yahoo.com
 **解決方案**:
 ```bash
 # 檢查 Token 有效性
-echo $BACKEND_API_TOKEN
+echo $INTERNAL_AHA_API_TOKEN
 
 # 測試 API 連接
-curl -H "Authorization: Bearer $BACKEND_API_TOKEN" http://localhost:3000/fundamental-data
+curl -H "Authorization: Bearer $INTERNAL_AHA_API_TOKEN" http://localhost:3000/fundamental-data
 
 # 使用 dry-run 模式診斷
 npm run import:fundamental:tw:quarterly --dry-run
@@ -520,7 +520,7 @@ npx tsx src/cli.ts --config config/active/test.json
 ```bash
 # 1. 環境準備
 cp .env.example .env
-# 編輯 .env 設置 BACKEND_API_TOKEN
+# 編輯 .env 設置 INTERNAL_AHA_API_TOKEN
 ./test-fixes.sh  # 驗證環境配置
 
 # 2. 🚀 推薦：使用優化 Pipeline（避免重複匯入）
@@ -752,8 +752,8 @@ npm run pipeline:full         # 重新執行完整流程
 
 ```bash
 # .env 檔案範例
-BACKEND_API_URL=http://localhost:3000
-BACKEND_API_TOKEN=eyJhbGciOiJIUzI1NiIs...  # JWT Token
+INTERNAL_AHA_API_URL=http://localhost:3000
+INTERNAL_AHA_API_TOKEN=eyJhbGciOiJIUzI1NiIs...  # JWT Token
 ```
 
 ### 系統狀態檢查

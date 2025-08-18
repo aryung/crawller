@@ -87,7 +87,7 @@ async function detectTotalResults(page: Page, url: string): Promise<DetectionRes
     
     // 方法2: 尋找分頁元素
     const paginationElements = document.querySelectorAll('[data-testid*="pagination"], .pagination, [class*="pagination"]');
-    for (const elem of paginationElements) {
+    for (const elem of Array.from(paginationElements)) {
       const text = elem.textContent || '';
       const match = text.match(/(\d+(?:,\d+)*)/);
       if (match) {

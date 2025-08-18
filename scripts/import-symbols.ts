@@ -11,7 +11,7 @@
  * 
  * 權限要求：
  * - 需要 ADMIN 或 SUPER_ADMIN 角色權限
- * - 使用 BACKEND_API_TOKEN 環境變數進行認證
+ * - 使用 INTERNAL_AHA_API_TOKEN 環境變數進行認證
  * - 未授權使用者將收到 403 Forbidden 錯誤
  * 
  * 使用方式：
@@ -21,8 +21,8 @@
  * npx tsx scripts/import-symbols.ts --api-url http://localhost:3000
  * 
  * 環境變數：
- * BACKEND_API_TOKEN - 後端 API 認證 token (需要管理員權限)
- * BACKEND_API_URL - 後端 API URL (預設: http://localhost:3000)
+ * INTERNAL_AHA_API_TOKEN - 後端 API 認證 token (需要管理員權限)
+ * INTERNAL_AHA_API_URL - 後端 API URL (預設: http://localhost:3000)
  */
 
 import 'dotenv/config';
@@ -233,12 +233,12 @@ class SymbolImporter {
   private printSymbolStats(symbols: Map<string, any>): void {
     const statsByMarket = new Map<string, number>();
     
-    for (const symbol of symbols.values()) {
+    for (const symbol of Array.from(symbols.values())) {
       const market = symbol.regionalData.market;
       statsByMarket.set(market, (statsByMarket.get(market) || 0) + 1);
     }
 
-    for (const [market, count] of statsByMarket) {
+    for (const [market, count] of Array.from(statsByMarket.entries())) {
       const flag = this.getMarketFlag(market);
       console.log(`  ${flag} ${market}: ${chalk.yellow(count)} 個股票`);
     }
@@ -254,7 +254,7 @@ class SymbolImporter {
     console.log(chalk.gray('─'.repeat(70)));
 
     let count = 0;
-    for (const [key, symbol] of symbols) {
+    for (const [key, symbol] of Array.from(symbols.entries())) {
       if (count >= 10) break;
       
       const flag = this.getMarketFlag(symbol.regionalData.market);
@@ -371,8 +371,8 @@ program
   .description('匯入股票代碼到後端資料庫')
   .option('--dry-run', '預覽模式，不執行實際匯入', false)
   .option('--market <market>', '指定市場 (TPE, US, JP)')
-  .option('--api-url <url>', '後端 API URL', process.env.BACKEND_API_URL || 'http://localhost:3000')
-  .option('--api-token <token>', 'API 認證 token', process.env.BACKEND_API_TOKEN)
+  .option('--api-url <url>', '後端 API URL', process.env.INTERNAL_AHA_API_URL || 'http://localhost:3000')
+  .option('--api-token <token>', 'API 認證 token', process.env.INTERNAL_AHA_API_TOKEN)
   .option('--batch-size <size>', '批次大小', '30')
   .parse();
 
@@ -381,7 +381,7 @@ const options = program.opts();
 // 主執行函數
 async function main() {
   // 優先使用環境變數中的 token
-  let apiToken = process.env.BACKEND_API_TOKEN || options.apiToken;
+  let apiToken = process.env.INTERNAL_AHA_API_TOKEN || options.apiToken;
   
   console.log(chalk.blue('🔐 API Token 狀態檢查:'));
   if (apiToken) {
@@ -461,7 +461,7 @@ async function main() {
 }
 
 // 直接執行時啟動
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (require.main === module) {
   main().catch(console.error);
 }
 

@@ -57,7 +57,7 @@ class OutputCleaner {
     }
 
     // 去重
-    const uniqueFiles = [...new Set(allFiles)];
+    const uniqueFiles = Array.from(new Set(allFiles));
     console.log(`📊 找到 ${uniqueFiles.length} 個輸出檔案`);
 
     if (uniqueFiles.length === 0) {

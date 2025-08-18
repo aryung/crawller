@@ -957,7 +957,7 @@ async function runBatchCrawler(options: CLIOptions): Promise<void> {
     // 恢復執行
     if (options.resume !== undefined) {
       // 檢查是否提供了有效的進度ID
-      if (options.resume === true || options.resume === 'true' || !options.resume || options.resume.trim() === '') {
+      if (!options.resume || options.resume.trim() === '') {
         console.error('❌ 錯誤: --resume 需要指定進度ID');
         console.log('');
         console.log('📋 使用方式:');
@@ -1000,7 +1000,7 @@ async function runBatchCrawler(options: CLIOptions): Promise<void> {
     // 重試失敗
     if (options.retryFailed !== undefined) {
       // 檢查是否提供了有效的進度ID
-      if (options.retryFailed === true || options.retryFailed === 'true' || !options.retryFailed || options.retryFailed.trim() === '') {
+      if (!options.retryFailed || options.retryFailed.trim() === '') {
         console.error('❌ 錯誤: --retry-failed 需要指定進度ID');
         console.log('');
         console.log('📋 使用方式:');
@@ -1043,7 +1043,7 @@ async function runBatchCrawler(options: CLIOptions): Promise<void> {
     // 重試所有失敗和跳過的配置
     if (options.retryAll !== undefined) {
       // 檢查是否提供了有效的進度ID
-      if (options.retryAll === true || options.retryAll === 'true' || !options.retryAll || options.retryAll.trim() === '') {
+      if (!options.retryAll || options.retryAll.trim() === '') {
         console.error('❌ 錯誤: --retry-all 需要指定進度ID');
         console.log('');
         console.log('📋 使用方式:');
@@ -1095,7 +1095,7 @@ async function runBatchCrawler(options: CLIOptions): Promise<void> {
     // 只重試跳過的配置
     if (options.retrySkippedOnly !== undefined) {
       // 檢查是否提供了有效的進度ID
-      if (options.retrySkippedOnly === true || options.retrySkippedOnly === 'true' || !options.retrySkippedOnly || options.retrySkippedOnly.trim() === '') {
+      if (!options.retrySkippedOnly || options.retrySkippedOnly.trim() === '') {
         console.error('❌ 錯誤: --retry-skipped-only 需要指定進度ID');
         console.log('');
         console.log('📋 使用方式:');

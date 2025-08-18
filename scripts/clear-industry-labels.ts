@@ -445,8 +445,8 @@ program
   .option('--pattern <pattern>', 'Filter by name pattern (supports * wildcard)')
   .option('--confirm', 'Confirm deletion (required for actual deletion)', false)
   .option('--force-hard-delete', 'Permanently delete labels from database (default: soft delete)', false)
-  .option('--api-url <url>', 'Backend API URL', process.env.BACKEND_API_URL || 'http://localhost:3000')
-  .option('--api-token <token>', 'API authentication token', process.env.BACKEND_API_TOKEN)
+  .option('--api-url <url>', 'Backend API URL', process.env.INTERNAL_AHA_API_URL || 'http://localhost:3000')
+  .option('--api-token <token>', 'API authentication token', process.env.INTERNAL_AHA_API_TOKEN)
   .parse();
 
 const options = program.opts();
@@ -454,7 +454,7 @@ const options = program.opts();
 // Main execution
 async function main() {
   // 優先使用環境變數中的 token
-  let apiToken = process.env.BACKEND_API_TOKEN || options.apiToken;
+  let apiToken = process.env.INTERNAL_AHA_API_TOKEN || options.apiToken;
   
   console.log(chalk.blue('🔐 API Token 狀態檢查:'));
   if (apiToken) {
@@ -526,7 +526,7 @@ async function main() {
       // 特定錯誤的建議
       if (error.response.status === 401) {
         console.error(chalk.yellow('\n💡 建議: 檢查 API Token 是否正確或已過期'));
-        console.error(chalk.yellow('   可嘗試: 更新 .env 中的 BACKEND_API_TOKEN'));
+        console.error(chalk.yellow('   可嘗試: 更新 .env 中的 INTERNAL_AHA_API_TOKEN'));
       } else if (error.response.status === 403) {
         console.error(chalk.yellow('\n💡 建議: 當前用戶可能沒有刪除標籤的權限'));
         console.error(chalk.yellow('   可嘗試: 使用管理員帳號 token'));
@@ -543,6 +543,6 @@ async function main() {
 }
 
 // Execute if run directly
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (require.main === module) {
   main();
 }

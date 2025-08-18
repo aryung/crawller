@@ -9,8 +9,8 @@ import { MarketRegion } from '../src/common/shared-types/interfaces/market-data.
 import { MarketRegionPathMapping } from '../src/common/constants/report';
 
 // API configuration
-const DEFAULT_API_URL = process.env.BACKEND_API_URL || 'http://localhost:3000';
-const DEFAULT_API_TOKEN = process.env.BACKEND_API_TOKEN || '';
+const DEFAULT_API_URL = process.env.INTERNAL_AHA_API_URL || 'http://localhost:3000';
+const DEFAULT_API_TOKEN = process.env.INTERNAL_AHA_API_TOKEN || '';
 
 // 使用標準化的 MarketRegion enum 和路徑映射
 // REGION_MAPPING 移除，使用 MarketRegionPathMapping
@@ -246,7 +246,7 @@ async function main() {
   
   if (!token) {
     console.warn('No API Token provided, ensure backend allows unauthenticated access or use --token parameter');
-    console.log('   Or set environment variable BACKEND_API_TOKEN');
+    console.log('   Or set environment variable INTERNAL_AHA_API_TOKEN');
   }
   
   let filesToImport: string[] = [];

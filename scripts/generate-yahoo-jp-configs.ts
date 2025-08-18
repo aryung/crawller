@@ -146,16 +146,17 @@ templateFiles.forEach(templateFile => {
   stockCodes.forEach(stock => {
     const config: ConfigTemplate = JSON.parse(JSON.stringify(template));
     
+    // 設置默認日期範圍（在 if 外定義以便後續使用）
+    const now = new Date();
+    const fourteenDaysAgo = new Date(now.getTime() - 14 * 24 * 60 * 60 * 1000);
+    const formatDate = (date: Date): string => {
+      return date.toISOString().split('T')[0].replace(/-/g, '');
+    };
+    const fromDate = formatDate(fourteenDaysAgo);
+    const toDate = formatDate(now);
+    
     // 如果是 history 類型，需要特殊處理日期參數
     if (templateType === 'history') {
-      // 設置默認日期範圍：fromDate 為今日前14天，toDate 為今天
-      const now = new Date();
-      const fourteenDaysAgo = new Date(now.getTime() - 14 * 24 * 60 * 60 * 1000);
-      const formatDate = (date: Date): string => {
-        return date.toISOString().split('T')[0].replace(/-/g, '');
-      };
-      const fromDate = formatDate(fourteenDaysAgo);
-      const toDate = formatDate(now);
       
       // 更新 URL 中的所有變數
       config.url = config.url

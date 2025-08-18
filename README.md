@@ -19,7 +19,7 @@
 |-----|---------|------|
 | 413 Payload Too Large | `npm run import:symbols:small` | 使用最小批次 (10) |
 | 404 API Not Found | 自動處理 | 系統會嘗試多個端點 |
-| Token 無效 | 更新 `.env` 的 `BACKEND_API_TOKEN` | 重新獲取 token |
+| Token 無效 | 更新 `.env` 的 `INTERNAL_AHA_API_TOKEN` | 重新獲取 token |
 | 大量數據處理 | `npm run import:symbols -- --batch-size=5` | 極小批次處理 |
 | 標籤同步失敗 | `npm run sync:labels -- --chunk-size=50` | 減小分塊大小 |
 
@@ -342,7 +342,7 @@ interface CrawlerConfig {
 ```bash
 # 1. 設置環境變數
 cp .env.example .env
-# 編輯 .env 添加 BACKEND_API_TOKEN
+# 編輯 .env 添加 INTERNAL_AHA_API_TOKEN
 
 # 2. 測試連接
 ./test-fixes.sh        # 測試修復後的功能
@@ -424,11 +424,11 @@ npm run import:fundamental:jp     # 只匯入日本數據
 
 ```bash
 # .env 檔案範例
-BACKEND_API_URL=http://localhost:3000
-BACKEND_API_TOKEN=eyJhbGciOiJIUzI1NiIs...  # JWT Token
+INTERNAL_AHA_API_URL=http://localhost:3000
+INTERNAL_AHA_API_TOKEN=eyJhbGciOiJIUzI1NiIs...  # JWT Token
 ```
 
-**重要**：確保 `.env` 中的 `BACKEND_API_TOKEN` 是有效的，這樣可以避免權限問題。
+**重要**：確保 `.env` 中的 `INTERNAL_AHA_API_TOKEN` 是有效的，這樣可以避免權限問題。
 
 ### 常見錯誤與解決方案
 
@@ -456,7 +456,7 @@ npm run sync:labels -- --chunk-size=50
 **錯誤原因**：API 端點不存在或權限不足
 
 **解決方案**：
-1. 確認 `.env` 中的 `BACKEND_API_TOKEN` 是有效的管理員 token
+1. 確認 `.env` 中的 `INTERNAL_AHA_API_TOKEN` 是有效的管理員 token
 2. 系統會自動嘗試多個可能的 API 端點
 3. 嘗試使用軟刪除而非硬刪除
 
@@ -471,7 +471,7 @@ npm run sync:labels -- --chunk-size=50
 **錯誤提示**：`Token 可能已過期或無效`
 
 **解決方案**：
-1. 更新 `.env` 中的 `BACKEND_API_TOKEN`
+1. 更新 `.env` 中的 `INTERNAL_AHA_API_TOKEN`
 2. 從後端重新獲取有效的 token
 3. 確認 token 具有管理員權限
 
@@ -481,7 +481,7 @@ npm run sync:labels -- --chunk-size=50
 ```bash
 # 1. 環境準備
 cp .env.example .env
-# 編輯 .env 設置 BACKEND_API_TOKEN
+# 編輯 .env 設置 INTERNAL_AHA_API_TOKEN
 ./test-fixes.sh  # 驗證環境配置
 
 # 2. 生成類別映射

@@ -382,7 +382,7 @@ export class ConfigValidator {
       fileMap.get(filename)!.push(relativePath);
     });
 
-    for (const [filename, paths] of fileMap) {
+    for (const [filename, paths] of Array.from(fileMap.entries())) {
       if (paths.length > 1) {
         this.addWarning(`發現重複檔案 ${filename}: ${paths.join(', ')}`);
       }

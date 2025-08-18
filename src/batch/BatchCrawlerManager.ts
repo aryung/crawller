@@ -458,7 +458,21 @@ export class BatchCrawlerManager {
     await this.progressTracker.save();
 
     // 開始執行重試
-    return this.executeBatch(configsToRetry, options);
+    await this.executeBatch(configsToRetry, options);
+    
+    // 返回最終結果
+    const finalProgress = this.progressTracker.getProgress();
+    return {
+      success: true,
+      total: finalProgress.total,
+      completed: finalProgress.completed,
+      failed: finalProgress.failed,
+      skipped: finalProgress.skipped,
+      duration: (finalProgress.lastUpdateTime - finalProgress.startTime) / 1000,
+      errors: [],
+      progressId: finalProgress.id,
+      outputFiles: []
+    };
   }
 
   /**
