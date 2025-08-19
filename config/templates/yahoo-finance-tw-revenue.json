@@ -37,7 +37,7 @@
     },
     "data": {
       "selector": "body",
-      "transform": "combineSimpleRevenueData"
+      "transform": "combineTWFinancialData"
     }
   },
   "headers": {

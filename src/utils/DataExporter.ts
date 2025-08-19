@@ -210,17 +210,42 @@ export class DataExporter {
 
     // 解析配置名稱格式: yahoo-finance-{market}-{type}-{symbol} 或 yahoo-finance-{market}-{detailed-type}-{symbol}
     // 支援格式如: yahoo-finance-tw-balance-sheet-2330_TW, yahoo-finance-tw-eps-2330_TW
-    const match = actualConfigName.match(/^yahoo-finance-([a-z]+)-(.+?)-.+/);
-    if (!match) {
-      console.log(`[DataExporter] ❌ 無法解析配置名稱，返回檔案名: "${filename}"`);
+    
+    // 改進的解析邏輯：分割字串並智能處理多詞類型名稱
+    const parts = actualConfigName.split('-');
+    if (parts.length < 4 || parts[0] !== 'yahoo' || parts[1] !== 'finance') {
+      console.log(`[DataExporter] ❌ 無法解析配置名稱格式，返回檔案名: "${filename}"`);
       return filename; // 無法解析時，直接返回檔案名
     }
 
-    const [, market, typeSegment] = match;
-    console.log(`[DataExporter] ✅ 解析結果 - 市場: "${market}", 類型: "${typeSegment}"`);
+    const market = parts[2];
     
-    // 處理複合類型名稱 (如 balance-sheet, cash-flow-statement)
-    const type = typeSegment;
+    // 找到股票代碼的位置（通常以數字開頭或包含下劃線）
+    const symbolIndex = parts.findIndex((part, index) => 
+      index > 2 && (
+        /^\d/.test(part) ||  // 以數字開頭
+        /_/.test(part) ||    // 包含下劃線 (如 2330_TW)
+        part.includes('.')   // 包含點號 (如某些股票代碼)
+      )
+    );
+    
+    // 判斷是否為模板檔案（沒有股票代碼）
+    let type: string;
+    if (symbolIndex === -1) {
+      // 模板檔案情況：所有 parts[3] 之後的部分都是類型名稱
+      type = parts.slice(3).join('-');
+      console.log(`[DataExporter] 📝 模板檔案模式 - 市場: "${market}", 類型: "${type}"`);
+    } else {
+      // 有股票代碼的情況：類型是從市場後到股票代碼前的部分
+      type = parts.slice(3, symbolIndex).join('-');
+      console.log(`[DataExporter] 📊 配置檔案模式 - 市場: "${market}", 類型: "${type}", 股票代碼: "${parts.slice(symbolIndex).join('-')}"`);
+    }
+    
+    // 驗證類型名稱不為空
+    if (!type) {
+      console.log(`[DataExporter] ❌ 類型名稱為空，返回檔案名: "${filename}"`);
+      return filename;
+    }
     
     // 判斷分類
     let category = '';

@@ -31,7 +31,7 @@
     },
     "data": {
       "selector": "body",
-      "transform": "combineSimpleEPSData"
+      "transform": "combineTWFinancialData"
     }
   },
   "headers": {
