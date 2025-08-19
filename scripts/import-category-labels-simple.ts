@@ -68,7 +68,7 @@ interface BulkSyncResponse {
     symbolsUpdated: number;
     relationsCreated: number;
     relationsRemoved: number;
-    chunksProcessed?: number;
+    chunksProcessed: number;
     totalProcessingTime?: number;
     chunkDetails?: Record<string, {
       chunks: number;
@@ -305,12 +305,15 @@ class SimplifiedCategoryLabelSyncer {
           totalStats.chunksProcessed++;
 
           // 記錄市場詳情
-          if (!totalStats.chunkDetails![market]) {
-            totalStats.chunkDetails![market] = { chunks: 0, mappings: 0, time: 0 };
+          if (!totalStats.chunkDetails) {
+            totalStats.chunkDetails = {};
           }
-          totalStats.chunkDetails![market].chunks++;
-          totalStats.chunkDetails![market].mappings += chunkMappingCount;
-          totalStats.chunkDetails![market].time += response.data.data.totalProcessingTime || 0;
+          if (!totalStats.chunkDetails[market]) {
+            totalStats.chunkDetails[market] = { chunks: 0, mappings: 0, time: 0 };
+          }
+          totalStats.chunkDetails[market].chunks++;
+          totalStats.chunkDetails[market].mappings += chunkMappingCount;
+          totalStats.chunkDetails[market].time += response.data.data.totalProcessingTime || 0;
 
           this.spinner.succeed(`完成分塊 ${i + 1}/${allChunks.length}: +${data.labelsCreated} 標籤${data.labelsReactivated > 0 ? `(+${data.labelsReactivated} 重新啟用)` : ''}, +${data.symbolsCreated} 股票, +${data.relationsCreated} 關係`);
         } else {
@@ -525,9 +528,9 @@ async function main() {
   const isDryRun = args.includes('--dry-run');
 
   // API 配置
-  const apiUrl = process.env.BACKEND_API_URL || 'http://localhost:3000';
+  const apiUrl = process.env.INTERNAL_AHA_API_URL || 'http://localhost:3000';
   // 優先使用環境變數中的 token
-  let apiToken = process.env.BACKEND_API_TOKEN;
+  let apiToken = process.env.INTERNAL_AHA_API_TOKEN;
 
   console.log(chalk.blue('🔐 API Token 狀態檢查:'));
   if (apiToken) {
@@ -606,7 +609,7 @@ async function main() {
 }
 
 // Execute if run directly
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (require.main === module) {
   main().catch(console.error);
 }
 

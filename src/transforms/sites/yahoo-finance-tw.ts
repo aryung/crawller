@@ -101,6 +101,9 @@ export interface YahooFinanceTWTransforms {
   parseTWClosePriceArray: (content: string | string[]) => number[];
   parseTWVolumeArray: (content: string | string[]) => number[];
   combineTWHistoricalData: (content: any, context?: any) => HistoricalStockPrice[];
+
+  // === 統一的財務數據組合函數 (與 US/JP 保持一致) ===
+  combineTWFinancialData: (content: any, context?: any) => UnifiedFinancialData[];
 }
 
 /**
@@ -1499,6 +1502,80 @@ function convertROCToStandardDate(rocDate: string): string | null {
   }
 }
 
+/**
+ * 統一的台灣財務數據組合函數 (與 US/JP 保持一致)
+ * 根據 URL 或 context 中的資訊自動判斷數據類型並調用對應的組合函數
+ */
+function combineTWFinancialData(
+  content: any,
+  context?: any
+): UnifiedFinancialData[] {
+  console.log('[TW Combine] 🔗 開始組合台灣財務數據...');
+
+  if (!context) {
+    console.error('[TW Combine] ❌ 缺少 context 參數');
+    return [];
+  }
+
+  // 從 URL 判斷數據類型
+  const url = context.url || '';
+  let dataType = context.dataType || '';
+
+  // 自動檢測數據類型
+  if (!dataType) {
+    if (url.includes('/eps')) {
+      dataType = 'eps';
+    } else if (url.includes('/income-statement')) {
+      dataType = 'income';
+    } else if (url.includes('/balance-sheet')) {
+      dataType = 'balance';
+    } else if (url.includes('/cash-flow')) {
+      dataType = 'cashflow';
+    } else if (url.includes('/dividend')) {
+      dataType = 'dividend';
+    } else if (url.includes('/revenue')) {
+      dataType = 'revenue';
+    }
+  }
+
+  console.log(`[TW Combine] 📊 檢測到數據類型: ${dataType}`);
+
+  // 根據數據類型調用對應的組合函數
+  switch (dataType) {
+    case 'eps':
+      return combineSimpleEPSData(content, context);
+    case 'income':
+      return combineIncomeStatementData(content, context);
+    case 'balance':
+      return combineBalanceSheetData(content, context);
+    case 'cashflow':
+      return combineCashFlowData(content, context);
+    case 'dividend':
+      return combineSimpleDividendData(content, context);
+    case 'revenue':
+      return combineSimpleRevenueData(content, context);
+    default:
+      console.warn(`[TW Combine] ⚠️ 未知的數據類型: ${dataType}`);
+      // 嘗試根據可用的數據推斷
+      if (context.variables?.epsValues || context.epsValues) {
+        return combineSimpleEPSData(content, context);
+      } else if (context.variables?.revenueValues || context.revenueValues) {
+        if (context.variables?.grossProfitValues || context.grossProfitValues) {
+          return combineIncomeStatementData(content, context);
+        } else {
+          return combineSimpleRevenueData(content, context);
+        }
+      } else if (context.variables?.totalAssetsValues || context.totalAssetsValues) {
+        return combineBalanceSheetData(content, context);
+      } else if (context.variables?.operatingCashFlowValues || context.operatingCashFlowValues) {
+        return combineCashFlowData(content, context);
+      } else if (context.variables?.cashDividends || context.cashDividendsValues) {
+        return combineSimpleDividendData(content, context);
+      }
+      return [];
+  }
+}
+
 
 /**
  * 导出对象 - 只包含实际使用的20个函数
@@ -1538,6 +1615,8 @@ export const yahooFinanceTWTransforms: YahooFinanceTWTransforms = {
   parseTWClosePriceArray,
   parseTWVolumeArray,
   combineTWHistoricalData,
+  // === 統一的財務數據組合函數 ===
+  combineTWFinancialData,
 };
 
 export default yahooFinanceTWTransforms;

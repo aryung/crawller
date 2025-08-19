@@ -54,7 +54,7 @@
     },
     "data": {
       "selector": "body",
-      "transform": "combineSimpleDividendData"
+      "transform": "combineTWFinancialData"
     }
   },
   "headers": {

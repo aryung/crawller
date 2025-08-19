@@ -73,6 +73,8 @@ export * from './label.interface';
 
 export * from './entity.interface';
 
+export * from './crawler.interface';
+
 export enum InvestmentRelationshipChangeType {
   ASSIGNMENT = 'ASSIGNMENT',
   REMOVAL = 'REMOVAL',

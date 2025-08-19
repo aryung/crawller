@@ -57,7 +57,7 @@
     },
     "data": {
       "selector": "body",
-      "transform": "combineBalanceSheetData"
+      "transform": "combineTWFinancialData"
     }
   },
   "headers": {

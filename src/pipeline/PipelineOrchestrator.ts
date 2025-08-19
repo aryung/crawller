@@ -91,8 +91,8 @@ export class PipelineOrchestrator {
       skipFundamentalImport: config.skipFundamentalImport || false,
       skipOhlcvImport: config.skipOhlcvImport || false,
       skipLabelSync: config.skipLabelSync || false,
-      apiUrl: config.apiUrl || process.env.BACKEND_API_URL || 'http://localhost:3000',
-      apiToken: config.apiToken || process.env.BACKEND_API_TOKEN || '',
+      apiUrl: config.apiUrl || process.env.INTERNAL_AHA_API_URL || 'http://localhost:3000',
+      apiToken: config.apiToken || process.env.INTERNAL_AHA_API_TOKEN || '',
       // Retry mechanism defaults
       enableRetry: config.enableRetry !== false, // Default to enabled
       maxRetries: config.maxRetries || 3,
@@ -879,8 +879,8 @@ export class PipelineOrchestrator {
     
     try {
       const axios = require('axios');
-      const apiUrl = process.env.BACKEND_API_URL || 'http://localhost:3000';
-      const token = process.env.BACKEND_API_TOKEN;
+      const apiUrl = process.env.INTERNAL_AHA_API_URL || 'http://localhost:3000';
+      const token = process.env.INTERNAL_AHA_API_TOKEN;
       
       const headers: any = {
         'Content-Type': 'application/json',
@@ -965,7 +965,7 @@ export class PipelineOrchestrator {
     }
     
     // 添加 API token 參數（優先使用 config，其次環境變數）
-    const token = this.config.apiToken || process.env.BACKEND_API_TOKEN;
+    const token = this.config.apiToken || process.env.INTERNAL_AHA_API_TOKEN;
     if (token) {
       command += ` --token "${token}"`;
     }
@@ -992,8 +992,8 @@ export class PipelineOrchestrator {
         env: {
           ...process.env,
           // 環境變數作為備份，命令行參數優先
-          BACKEND_API_URL: this.config.apiUrl || process.env.BACKEND_API_URL,
-          BACKEND_API_TOKEN: this.config.apiToken || process.env.BACKEND_API_TOKEN,
+          INTERNAL_AHA_API_URL: this.config.apiUrl || process.env.INTERNAL_AHA_API_URL,
+          INTERNAL_AHA_API_TOKEN: this.config.apiToken || process.env.INTERNAL_AHA_API_TOKEN,
         },
         maxBuffer: 1024 * 1024 * 20, // 20MB buffer for large outputs
         timeout: 300000, // 5 minutes timeout

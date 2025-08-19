@@ -492,7 +492,7 @@ class CategorySymbolMapper {
     }
 
     // 添加合併後的分類到最終結果
-    for (const [, consolidated] of consolidatedCategories) {
+    for (const consolidated of Array.from(consolidatedCategories.values())) {
       // 去除重複股票
       const uniqueSymbols = new Map<string, Symbol>();
       consolidated.symbols.forEach(symbol => {
@@ -604,7 +604,7 @@ class CategorySymbolMapper {
           }
           
           // 創建細分類映射
-          for (const [subcategoryName, stocks] of subcategoryStocks) {
+          for (const [subcategoryName, stocks] of Array.from(subcategoryStocks.entries())) {
             if (stocks.length > 0) {
               // 去重
               const uniqueSymbols = new Map<string, Symbol>();
@@ -810,7 +810,7 @@ class CategorySymbolMapper {
 }
 
 // Main execution
-if (import.meta.url === `file://${__filename}`) {
+if (require.main === module) {
   const mapper = new CategorySymbolMapper();
   mapper.run();
 }

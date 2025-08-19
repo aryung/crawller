@@ -142,14 +142,14 @@ scripts/
 
 ```bash
 # .env 檔案配置
-BACKEND_API_URL=http://localhost:3000
-BACKEND_API_TOKEN=eyJhbGciOiJIUzI1NiIs...  # JWT Token
+INTERNAL_AHA_API_URL=http://localhost:3000
+INTERNAL_AHA_API_TOKEN=eyJhbGciOiJIUzI1NiIs...  # JWT Token
 
 # 開發環境
 NODE_ENV=development
 
 # 生產環境 (可選)
-BACKEND_API_URL=https://api.aha.credit
+INTERNAL_AHA_API_URL=https://api.aha.credit
 NODE_ENV=production
 ```
 
@@ -157,14 +157,14 @@ NODE_ENV=production
 
 ```bash
 # 檢查 Token 有效性
-echo $BACKEND_API_TOKEN
+echo $INTERNAL_AHA_API_TOKEN
 
 # 測試 API 連接
-curl -H "Authorization: Bearer $BACKEND_API_TOKEN" \
-     $BACKEND_API_URL/fundamental-data
+curl -H "Authorization: Bearer $INTERNAL_AHA_API_TOKEN" \
+     $INTERNAL_AHA_API_URL/fundamental-data
 
 # 自動登入獲取新 Token (後端系統)
-curl -X POST "$BACKEND_API_URL/auth/auto-login" \
+curl -X POST "$INTERNAL_AHA_API_URL/auth/auto-login" \
      -H "Content-Type: application/json" \
      -d '{"email": "admin@example.com"}'
 ```
@@ -250,13 +250,13 @@ npm run import:symbols -- --batch-size=1
 **手動檢查**:
 ```bash
 # 檢查 Token 有效性
-echo $BACKEND_API_TOKEN
+echo $INTERNAL_AHA_API_TOKEN
 
 # 測試 API 連接
 npm run import:fundamental:quarterly --dry-run
 
 # 檢查後端 API 狀態
-curl -I $BACKEND_API_URL/health
+curl -I $INTERNAL_AHA_API_URL/health
 ```
 
 ### 3. Token 過期或無效
@@ -265,17 +265,17 @@ curl -I $BACKEND_API_URL/health
 
 **解決方案**:
 ```bash
-# 1. 更新 .env 中的 BACKEND_API_TOKEN
+# 1. 更新 .env 中的 INTERNAL_AHA_API_TOKEN
 vi .env
 
 # 2. 重新獲取 Token (從後端系統)
-curl -X POST "$BACKEND_API_URL/auth/auto-login" \
+curl -X POST "$INTERNAL_AHA_API_URL/auth/auto-login" \
      -H "Content-Type: application/json" \
      -d '{"email": "your-admin-email@example.com"}'
 
 # 3. 驗證新 Token
 curl -H "Authorization: Bearer $NEW_TOKEN" \
-     $BACKEND_API_URL/fundamental-data
+     $INTERNAL_AHA_API_URL/fundamental-data
 ```
 
 ### 4. 數據格式驗證錯誤
@@ -296,8 +296,8 @@ npx tsx scripts/import-fundamental-api.ts \
     --file output/quarterly/tw/balance/2330.json --verbose
 
 # 4. 檢查後端 API schema
-curl -H "Authorization: Bearer $BACKEND_API_TOKEN" \
-     $BACKEND_API_URL/api-docs
+curl -H "Authorization: Bearer $INTERNAL_AHA_API_TOKEN" \
+     $INTERNAL_AHA_API_URL/api-docs
 ```
 
 ### 5. 網路連接問題
@@ -379,7 +379,7 @@ grep "SUCCESS" logs/import-*.log | wc -l
 ```bash
 # 1. 環境準備
 cp .env.example .env
-# 編輯 .env 設置 BACKEND_API_TOKEN
+# 編輯 .env 設置 INTERNAL_AHA_API_TOKEN
 
 # 2. 驗證環境
 ./test-fixes.sh
@@ -476,7 +476,7 @@ npm run import:symbols:small
 ```bash
 # 生產環境配置
 export NODE_ENV=production
-export BACKEND_API_URL=https://api.aha.credit
+export INTERNAL_AHA_API_URL=https://api.aha.credit
 
 # 使用穩定的批次大小
 npm run import:symbols:small
