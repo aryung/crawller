@@ -6,6 +6,74 @@
 
 **重要原則**: Always use sequential-thinking tool before tackling complex problems or coding tasks.
 
+**重要原則**: 思考和執行過程都請用中文
+
+## MCP 工具與資源 ⭐
+
+爬蟲專案特別推薦以下 MCP servers，大幅提升開發效率：
+
+### 核心工具
+
+- **context7** 📚 - 最新技術文檔
+  - 功能：Playwright、TypeScript、Yahoo Finance API 文檔
+  - 使用場景：查詢新 API、了解最佳實踐、技術更新
+
+### Context7 強制查詢清單 ⭐
+
+**以下情況必須先查詢 context7 再編碼**：
+
+- [ ] 開發新的網頁選擇器策略
+- [ ] 實作 Playwright 自動化流程和等待策略
+- [ ] 處理 Yahoo Finance API 變更和新欄位
+- [ ] 優化並發控制機制（Site-based Concurrency）
+- [ ] 實作數據轉換函數和清洗邏輯
+- [ ] 設計批次處理和重試機制
+- [ ] 實作進度追蹤和斷點續傳
+- [ ] 處理動態內容和 JavaScript 渲染
+
+**查詢範例**：
+```bash
+# 開發選擇器前
+context7: "Playwright selector strategies 2025"
+context7: "CSS :has() pseudo-class advanced usage"
+context7: "XPath vs CSS selector performance"
+
+# Playwright 自動化
+context7: "Playwright wait strategies best practices"
+context7: "Playwright page.evaluate() advanced patterns"
+context7: "Playwright browser context isolation"
+
+# Yahoo Finance 處理
+context7: "Yahoo Finance API latest changes 2025"
+context7: "Yahoo Finance financial data structure"
+
+# 並發優化
+context7: "Node.js concurrency patterns 2025"
+context7: "Promise.allSettled vs Promise.all best practices"
+```
+
+### 爬蟲開發工作流程
+
+```bash
+# 1. 代碼理解階段
+serena           # 分析現有配置和轉換邏輯
+
+# 2. 選擇器開發階段
+playwright       # 測試和驗證網頁選擇器
+
+# 3. 配置調試階段
+serena           # 查找相關轉換函數和常數定義
+
+# 4. 文檔查詢階段
+context7         # 獲取最新 API 文檔和範例
+```
+
+### 特殊使用提示
+
+- **配置開發**：使用 serena 快速查找相似配置範例
+- **選擇器調試**：使用 playwright 直接測試選擇器效果
+- **轉換函數開發**：使用 serena 查找現有轉換函數實作
+
 ## 專案概述
 
 通用網路爬蟲系統，主要用於爬取 Yahoo Finance 各地區的財務數據。支援 JSON 配置驅動的爬蟲任務，提供豐富的數據轉換和處理功能。
@@ -48,7 +116,7 @@ crawler/
       "selector": "section[data-testid*='table'] > div:nth-child(2)",
       "transform": "parseFinancialValue"
     },
-    
+
     // ❌ 避免：依賴文字內容
     "badExample": {
       "selector": "tr:has(td:contains('Operating Cash Flow')) td:nth-child(2)",
@@ -66,9 +134,9 @@ crawler/
 {
   // ✅ 正確：只排除真正影響數據提取的元素
   "excludeSelectors": [
-    ".financial-table .advertisement",     // 表格內的廣告
-    "tr[data-ad-type]",                   // 廣告標記行
-    ".data-section .sponsored-content"     // 數據區域的贊助內容
+    ".financial-table .advertisement", // 表格內的廣告
+    "tr[data-ad-type]", // 廣告標記行
+    ".data-section .sponsored-content" // 數據區域的贊助內容
   ]
 }
 ```
@@ -376,17 +444,20 @@ document.querySelectorAll("tr:has(td:contains('每股盈餘')) td:last-child");
 ## 版本記錄
 
 - **v3.1.2** (2025-08-17): **跳過任務重試功能增強 + 智慧進度檔案管理系統**
+
   - 🚀 重大功能: 新增強制重試 SKIP 任務的能力，突破傳統設計限制
   - 新增智慧進度檔案提醒機制，超過 10 個檔案自動提醒清理
   - 完整的進度檔案清理命令系統 (11 個清理命令)
   - 完善的 Ctrl+C 優雅中斷和斷點續傳支援
 
 - **v3.1.1** (2025-08-16): **Site-based Concurrency 智慧並發控制系統**
+
   - 全新 Site-based Concurrency 機制
   - 20% 性能提升：50秒 vs 60秒
   - 智慧延遲動態調整，根據網站響應自動優化
 
 - **v3.1.0** (2025-08-14): **US Scrape Scripts TypeScript 轉換**
+
   - 新增 21 個 npm scrape 命令支援 US 11 個部門爬取
   - 統一輸出目錄結構
 
