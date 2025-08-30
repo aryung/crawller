@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+import 'dotenv/config';
 import { program } from 'commander';
 import { UniversalCrawler } from './index';
 import { logger } from './utils';
@@ -50,6 +51,14 @@ interface CLIOptions {
   performanceReport?: boolean;
   progressId?: string;
   limit?: number;
+  
+  // Output mode options (新增)
+  outputMode?: 'file' | 'api' | 'both' | 'none';  // 輸出模式
+  noSaveFile?: boolean;      // 不保存檔案（純串流模式）
+  streamToApi?: boolean;     // 啟用 API 串流
+  apiUrl?: string;          // API 伺服器地址
+  apiToken?: string;        // API 認證 Token
+  apiRetryAttempts?: number; // API 重試次數
   
   // Site-based concurrency options
   useSiteConcurrency?: boolean;  // 是否使用 site-based concurrency
@@ -155,7 +164,7 @@ async function main() {
 
   program
     .command('crawl-batch')
-    .description('批量爬取工具 - 支援斷點續傳、錯誤恢復、進度追蹤、Site-based Concurrency')
+    .description('批量爬取工具 - 支援斷點續傳、錯誤恢復、進度追蹤、Site-based Concurrency、即時API發送')
     .option('-c, --config <path>', '配置檔案目錄', 'config-categorized')
     .option('-o, --output <path>', '輸出目錄', 'output')
     .option('--category <type>', '指定類別 (daily|quarterly|metadata)')
@@ -179,6 +188,14 @@ async function main() {
     .option('--performance-report', '生成性能報告')
     .option('--progress-id <id>', '指定進度ID')
     .option('-v, --verbose', '詳細日誌')
+    
+    // Output mode options (新增)
+    .option('--output-mode <mode>', '輸出模式: file|api|both|none (預設: file)', 'file')
+    .option('--no-save-file', '不保存檔案（純串流模式）')
+    .option('--stream-to-api', '啟用 API 串流（爬完就送）')
+    .option('--api-url <url>', 'API 伺服器地址')
+    .option('--api-token <token>', 'API 認證 Token')
+    .option('--api-retry <num>', 'API 發送失敗重試次數', '3')
     
     // Site-based concurrency options
     .option('--site-concurrency', '啟用 Site-based Concurrency (預設啟用)', true)
@@ -893,7 +910,17 @@ async function runBatchCrawler(options: CLIOptions): Promise<void> {
       process.env.LOG_LEVEL = 'debug';
     }
 
-    // 創建批量管理器 - 支援分類配置目錄和 Site-based Concurrency
+    // 處理輸出模式
+    let outputMode: 'file' | 'api' | 'both' | 'none' = 'file';
+    if (options.outputMode) {
+      outputMode = options.outputMode;
+    } else if (options.noSaveFile && options.streamToApi) {
+      outputMode = 'api';  // 純串流模式
+    } else if (options.streamToApi) {
+      outputMode = 'both';  // 混合模式
+    }
+    
+    // 創建批量管理器 - 支援分類配置目錄、Site-based Concurrency 和即時 API 發送
     const defaultConfigPath = options.config || 'config-categorized';
     
     // 決定使用 site-based 還是 global concurrency
@@ -905,7 +932,10 @@ async function runBatchCrawler(options: CLIOptions): Promise<void> {
       maxConcurrency: parseInt(options.concurrent?.toString() || '3'),
       delayMs: parseInt(options.delayMs?.toString() || '5000'),
       useSiteConcurrency: useSiteConcurrency,
-      browserPoolSize: parseInt(options.browserPoolSize?.toString() || '3')
+      browserPoolSize: parseInt(options.browserPoolSize?.toString() || '3'),
+      outputMode: outputMode,
+      apiUrl: options.apiUrl,
+      apiToken: options.apiToken
     });
 
     // 處理特殊命令
@@ -1172,6 +1202,13 @@ async function runBatchCrawler(options: CLIOptions): Promise<void> {
       outputDir: options.output || 'output',
       configPath: defaultConfigPath,
       progressDir: '.progress',
+      // 輸出模式選項
+      outputMode: outputMode,
+      streamToApi: options.streamToApi,
+      saveToFile: !options.noSaveFile,
+      apiUrl: options.apiUrl,
+      apiToken: options.apiToken,
+      apiRetryAttempts: options.apiRetryAttempts ? parseInt(options.apiRetryAttempts.toString()) : 3,
       // Site-based concurrency 選項
       useSiteConcurrency: useSiteConcurrency,
       siteConcurrencyOverrides: siteConcurrencyOverrides
@@ -1179,6 +1216,13 @@ async function runBatchCrawler(options: CLIOptions): Promise<void> {
 
     console.log(`📁 配置目錄: ${batchOptions.configPath}`);
     console.log(`📂 輸出目錄: ${batchOptions.outputDir}`);
+    
+    // 顯示輸出模式
+    console.log(`📤 輸出模式: ${outputMode}`);
+    if (outputMode === 'api' || outputMode === 'both') {
+      console.log(`🌐 API 伺服器: ${options.apiUrl || process.env.INTERNAL_AHA_API_URL || 'http://localhost:3000'}`);
+      console.log(`🔑 API Token: ${options.apiToken ? '已提供' : (process.env.INTERNAL_AHA_API_TOKEN ? '使用環境變數' : '未設定')}`);
+    }
     
     // 顯示併發控制模式
     if (useSiteConcurrency) {
