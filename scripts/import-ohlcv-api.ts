@@ -47,12 +47,12 @@ function convertHistoryToApiFormat(historyData: any, market: string): any[] {
   ) as MarketRegion || MarketRegion.TPE;
 
   for (const result of historyData.results) {
-    if (!result.data || !result.data.data || !Array.isArray(result.data.data)) {
+    if (!result.data || !Array.isArray(result.data)) {
       console.warn('[Transform Warning] Missing valid data array');
       continue;
     }
 
-    for (const record of result.data.data) {
+    for (const record of result.data) {
       if (!record.symbolCode || !record.date || 
           record.open === undefined || record.high === undefined || 
           record.low === undefined || record.close === undefined || 

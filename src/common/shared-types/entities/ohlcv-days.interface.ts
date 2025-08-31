@@ -15,5 +15,7 @@ export interface OhlcvDaysEntity {
   updatedAt?: Date;
   date: Date;
   region: MarketRegion;
+  symbolId: string;
   symbol: SymbolEntity;
+  symbolEntity: SymbolEntity;
 }

@@ -3,6 +3,7 @@ import { BrowserPool } from '../crawler/BrowserPool';
 import { ProgressTracker, TaskStatus } from './ProgressTracker';
 import { ErrorRecovery, ErrorAction, ErrorType } from './ErrorRecovery';
 import { SiteConcurrencyManager } from './SiteConcurrencyManager';
+import { ApiStreamService } from '../services/ApiStreamService';
 import { logger } from '../utils';
 import * as fs from 'fs-extra';
 import * as path from 'path';
@@ -38,6 +39,14 @@ export interface BatchOptions {
   // 輸出選項
   outputDir?: string;
   generateReport?: boolean;
+  outputMode?: 'file' | 'api' | 'both' | 'none'; // 新增：輸出模式
+  saveToFile?: boolean; // 新增：是否保存檔案
+  streamToApi?: boolean; // 新增：是否串流到 API
+  
+  // API 選項
+  apiUrl?: string;
+  apiToken?: string;
+  apiRetryAttempts?: number;
   
   // 目錄選項
   configPath?: string;
@@ -72,6 +81,7 @@ export class BatchCrawlerManager {
   private progressTracker?: ProgressTracker;
   private errorRecovery: ErrorRecovery;
   private siteConcurrencyManager: SiteConcurrencyManager;
+  private apiStreamService?: ApiStreamService;
   private isRunning = false;
   private isPaused = false;
   private shouldStop = false;
@@ -84,6 +94,9 @@ export class BatchCrawlerManager {
   
   // Site-based concurrency 設定
   private useSiteConcurrency = true;
+  
+  // 輸出模式設定
+  private outputMode: 'file' | 'api' | 'both' | 'none' = 'file';
 
   constructor(options: {
     configPath?: string;
@@ -93,6 +106,9 @@ export class BatchCrawlerManager {
     errorLogPath?: string;
     useSiteConcurrency?: boolean; // 新增：是否使用 site-based concurrency
     browserPoolSize?: number; // 新增：瀏覽器池大小
+    outputMode?: 'file' | 'api' | 'both' | 'none'; // 新增：輸出模式
+    apiUrl?: string; // 新增：API URL
+    apiToken?: string; // 新增：API Token
   } = {}) {
     // 創建瀏覽器池
     const browserPoolSize = options.browserPoolSize || options.maxConcurrency || 3;
@@ -125,11 +141,29 @@ export class BatchCrawlerManager {
       maxRetryDelay: 300000,
       errorLogPath: options.errorLogPath || path.join(options.outputDir || 'output', 'errors.log')
     });
+    
+    // 設定輸出模式
+    this.outputMode = options.outputMode || 'file';
+    
+    // 初始化 API 串流服務（如果需要）
+    if (this.outputMode === 'api' || this.outputMode === 'both') {
+      const apiUrl = options.apiUrl || process.env.INTERNAL_AHA_API_URL || 'http://localhost:3000';
+      const apiToken = options.apiToken || process.env.INTERNAL_AHA_API_TOKEN || '';
+      
+      this.apiStreamService = new ApiStreamService({
+        apiUrl,
+        apiToken,
+        enabled: true,
+        retryAttempts: 3
+      });
+      
+      logger.info(`🌐 API 串流服務已啟用 (模式: ${this.outputMode})`);
+    }
 
     // 設置優雅關閉處理器
     this.setupShutdownHandlers();
     
-    logger.info(`🚀 BatchCrawlerManager 初始化完成 (Site-based concurrency: ${this.useSiteConcurrency ? '啟用' : '停用'}, 瀏覽器池大小: ${browserPoolSize})`);
+    logger.info(`🚀 BatchCrawlerManager 初始化完成 (Site-based: ${this.useSiteConcurrency ? '啟用' : '停用'}, 輸出模式: ${this.outputMode})`); 
   }
 
   /**
@@ -201,6 +235,27 @@ export class BatchCrawlerManager {
       // 設置進度回調
       this.setupProgressCallbacks();
 
+      // 設置輸出模式
+      if (options.outputMode) {
+        this.outputMode = options.outputMode;
+        logger.info(`📤 輸出模式: ${this.outputMode}`);
+      }
+      
+      // 更新 API 串流服務設定（如果需要）
+      if ((options.outputMode === 'api' || options.outputMode === 'both') && !this.apiStreamService) {
+        const apiUrl = options.apiUrl || process.env.INTERNAL_AHA_API_URL || 'http://localhost:3000';
+        const apiToken = options.apiToken || process.env.INTERNAL_AHA_API_TOKEN || '';
+        
+        this.apiStreamService = new ApiStreamService({
+          apiUrl,
+          apiToken,
+          enabled: true,
+          retryAttempts: options.apiRetryAttempts || 3
+        });
+        
+        logger.info(`🌐 API 串流服務已啟用 (URL: ${apiUrl})`);
+      }
+      
       // 設置併發數和延遲 (根據 useSiteConcurrency 決定行為)
       this.useSiteConcurrency = options.useSiteConcurrency !== false; // 預設為 true
       
@@ -792,44 +847,67 @@ export class BatchCrawlerManager {
         this.progressTracker?.updateProgress(task.configName, TaskStatus.COMPLETED);
         logger.debug(`完成: ${task.configName}`);
         
-        // 自動導出成功的結果
-        try {
-          logger.debug(`🔍 開始自動導出: ${task.configName}`);
-          // 從配置加載 export 配置 - 需要構造正確的配置路徑
-          // task.configName 格式: quarterly/jp/financials/yahoo-finance-jp-financials-9993_T
-          // configManager 期望的是相對於 configPath 的路徑
-          const configPath = task.configName; // 保持完整路徑
-          logger.debug(`📂 使用配置路徑: ${configPath}`);
-          
-          // 直接讀取配置文件，不依賴 configManager 的路徑拼接
-          // BatchCrawlerManager 的 configPath 已經是 "config-categorized"
-          // task.configName 是 "quarterly/jp/financials/yahoo-finance-jp-financials-9993_T"
-          const fullConfigPath = path.join(this.crawler.configManager['configPath'] || 'config-categorized', `${configPath}.json`);
-          logger.debug(`📂 完整配置文件路徑: ${fullConfigPath}`);
-          
-          const configData = await fs.readJson(fullConfigPath);
-          logger.debug(`📋 配置數據加載成功，檢查 export 設定...`);
-          
-          if (configData.export && configData.export.formats) {
-            logger.debug(`🎯 找到 export 配置:`, configData.export);
-            const format = configData.export.formats[0] || 'json';
-            // 提取配置檔案的基本名稱，用於 DataExporter 的路徑解析
-            const configBaseName = task.configName.split('/').pop() || task.configName;
+        // 根據輸出模式處理結果
+        let outputPath: string | undefined;
+        
+        // 1. 處理檔案輸出（file 或 both 模式）
+        if (this.outputMode === 'file' || this.outputMode === 'both') {
+          try {
+            logger.debug(`🔍 開始自動導出到檔案: ${task.configName}`);
+            const configPath = task.configName;
+            const fullConfigPath = path.join(this.crawler.configManager['configPath'] || 'config-categorized', `${configPath}.json`);
             
-            const exportOptions = {
-              format: format as 'json' | 'csv' | 'xlsx',
-              filename: configData.export.filename || `${configBaseName}_${new Date().toISOString().split('T')[0]}`,
-              configName: configBaseName // 用於路徑解析，DataExporter 會智能處理重複前綴
-            };
+            const configData = await fs.readJson(fullConfigPath);
             
-            logger.debug(`📤 開始導出，選項:`, exportOptions);
-            const exportPath = await this.crawler.export([result], exportOptions);
-            logger.info(`✅ 已導出結果到: ${exportPath}`);
-          } else {
-            logger.warn(`⚠️ 配置中沒有找到 export 設定: ${task.configName}`);
+            if (configData.export && configData.export.formats) {
+              const format = configData.export.formats[0] || 'json';
+              const configBaseName = task.configName.split('/').pop() || task.configName;
+              
+              const exportOptions = {
+                format: format as 'json' | 'csv' | 'xlsx',
+                filename: configData.export.filename || `${configBaseName}_${new Date().toISOString().split('T')[0]}`,
+                configName: configBaseName
+              };
+              
+              outputPath = await this.crawler.export([result], exportOptions);
+              logger.info(`✅ 已導出結果到檔案: ${outputPath}`);
+              task.outputPath = outputPath;
+            } else {
+              logger.warn(`⚠️ 配置中沒有找到 export 設定: ${task.configName}`);
+            }
+          } catch (exportError) {
+            logger.warn(`⚠️ 檔案導出失敗: ${task.configName}`, exportError);
           }
-        } catch (exportError) {
-          logger.warn(`⚠️ 導出失敗: ${task.configName}`, exportError);
+        }
+        
+        // 2. 處理 API 發送（api 或 both 模式）
+        if ((this.outputMode === 'api' || this.outputMode === 'both') && this.apiStreamService) {
+          try {
+            logger.debug(`🌐 開始發送到 API: ${task.configName}`);
+            
+            let success = false;
+            if (outputPath && (this.outputMode === 'both')) {
+              // both 模式：從已保存的檔案發送
+              success = await this.apiStreamService.sendFromFile(outputPath);
+            } else {
+              // api 模式：直接從記憶體發送
+              success = await this.apiStreamService.sendFromMemory(result);
+            }
+            
+            if (success) {
+              logger.info(`✅ 已發送結果到 API: ${task.configName}`);
+            } else {
+              logger.warn(`⚠️ API 發送失敗但不影響爬取: ${task.configName}`);
+            }
+          } catch (apiError) {
+            logger.error(`❌ API 發送異常: ${task.configName}`, apiError);
+            // API 發送失敗不影響爬取流程
+          }
+        }
+        
+        // 3. none 模式：不輸出任何內容
+        if (this.outputMode === 'none') {
+          logger.debug(`⏭️ 跳過輸出（none 模式）: ${task.configName}`);
         }
       } else {
         // 處理錯誤

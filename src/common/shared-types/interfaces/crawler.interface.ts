@@ -1,7 +1,7 @@
 // ============= 爬蟲系統共享類型定義 =============
 
 import { ExecutionResultDto } from '../dtos';
-import { MarketRegion } from './market-data.interface';
+import { MarketRegion } from '.';
 
 // === Task 相關 Enum ===
 
@@ -701,4 +701,3 @@ export type VersionSwitchCallback = (
   newVersion: string
 ) => Promise<void>;
 export type HeartbeatCallback = (stats: WorkerStats) => Promise<void>;
-

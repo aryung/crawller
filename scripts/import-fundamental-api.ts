@@ -429,10 +429,9 @@ async function importJsonFile(
 
       if (
         !crawlResult.data ||
-        !crawlResult.data.data ||
-        !Array.isArray(crawlResult.data.data)
+        !Array.isArray(crawlResult.data)
       ) {
-        const error = `結果 ${index + 1}: 缺少有效的 data.data 陣列`;
+        const error = `結果 ${index + 1}: 缺少有效的 data 陣列`;
         result.errors.push(error);
         console.warn(`⚠️ ${error}`);
         continue;
@@ -443,10 +442,10 @@ async function importJsonFile(
       const invalidRecords: CrawlerRawData[] = [];
 
       console.log(
-        `📊 [診斷] 結果 ${index + 1}: 包含 ${crawlResult.data.data.length} 條數據記錄`
+        `📊 [診斷] 結果 ${index + 1}: 包含 ${crawlResult.data.length} 條數據記錄`
       );
 
-      for (const [recordIndex, record] of crawlResult.data.data.entries()) {
+      for (const [recordIndex, record] of crawlResult.data.entries()) {
         console.log(
           `📊 [診斷] 處理記錄 ${recordIndex + 1}: ${record.symbolCode} (${record.exchangeArea})`
         );

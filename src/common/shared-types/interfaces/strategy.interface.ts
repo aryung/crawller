@@ -1,6 +1,7 @@
 import { ErrorCode } from './error.interface';
 import { ConditionGroup } from './condition.interface';
 import { AssetType } from './position.interface';
+import { StrategyEntity } from '../entities';
 import { StopLossType } from './enums.interface';
 
 // enum 定義
@@ -52,7 +53,7 @@ export enum StrategyStatus {
  */
 export interface IStrategy {
   execute(payload: {
-    strategy: any; // StrategyEntity; // 暫時使用 any 避免循環依賴
+    strategy: StrategyEntity;
     options: {
       userId: string;
     } & StrategyExecuteOptions;
@@ -268,4 +269,5 @@ export type AggregatedStrategyParameters =
   | AssetAllocationParameters
   | FiveLineParameters
   | GridTradingParameters
-  | IndicatorSignalParameters;
+  | IndicatorSignalParameters
+  | StrategyBaseParameters;

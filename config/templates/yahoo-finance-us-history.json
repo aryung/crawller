@@ -8,37 +8,37 @@
       "transform": "cleanStockSymbol"
     },
     "historicalDates": {
-      "selector": "section.main tbody > tr > td:nth-child(1)",
+      "selector": "section.main tbody > tr:has(td:nth-child(7)):not(:has(td[colspan])) > td:nth-child(1)",
       "multiple": true,
       "transform": "parseUSDateArray"
     },
     "openPrices": {
-      "selector": "section.main tbody > tr > td:nth-child(2)",
+      "selector": "section.main tbody > tr:has(td:nth-child(7)):not(:has(td[colspan])) > td:nth-child(2)",
       "multiple": true,
       "transform": "parseUSStockPriceArray"
     },
     "highPrices": {
-      "selector": "section.main tbody > tr > td:nth-child(3)",
+      "selector": "section.main tbody > tr:has(td:nth-child(7)):not(:has(td[colspan])) > td:nth-child(3)",
       "multiple": true,
       "transform": "parseUSStockPriceArray"
     },
     "lowPrices": {
-      "selector": "section.main tbody > tr > td:nth-child(4)",
+      "selector": "section.main tbody > tr:has(td:nth-child(7)):not(:has(td[colspan])) > td:nth-child(4)",
       "multiple": true,
       "transform": "parseUSStockPriceArray"
     },
     "closePrices": {
-      "selector": "section.main tbody > tr > td:nth-child(5)",
+      "selector": "section.main tbody > tr:has(td:nth-child(7)):not(:has(td[colspan])) > td:nth-child(5)",
       "multiple": true,
       "transform": "parseUSStockPriceArray"
     },
     "adjustedClosePrices": {
-      "selector": "section.main tbody > tr > td:nth-child(6)",
+      "selector": "section.main tbody > tr:has(td:nth-child(7)):not(:has(td[colspan])) > td:nth-child(6)",
       "multiple": true,
       "transform": "parseUSStockPriceArray"
     },
     "volumes": {
-      "selector": "section.main tbody > tr > td:nth-child(7)",
+      "selector": "section.main tbody > tr:has(td:nth-child(7)):not(:has(td[colspan])) > td:nth-child(7)",
       "multiple": true,
       "transform": "parseUSVolumeArray"
     },

@@ -1,5 +1,4 @@
-import { TaskStatus, ScheduleType, DataType, WorkerStatus, HistoryStatus, FailureCategory, FailureReason } from '..';
-import { MarketRegion } from '..';
+import { TaskStatus, ScheduleType, DataType, WorkerStatus, HistoryStatus, FailureCategory, FailureReason, MarketRegion } from '..';
 
 export interface WorkerRegistrationDto {
   id: string;

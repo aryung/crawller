@@ -151,21 +151,11 @@ export class PlaywrightCrawler {
       }
 
       // 如果 data.data 存在且是陣列，表示使用了組合轉換函數
-      // 將內部的 data 提升到頂層，避免雙重嵌套
+      // 將內部的 data 直接提升為最終的 data，避免雙重嵌套
       let finalData = data;
       if (data.data && Array.isArray(data.data)) {
-        // 保留其他欄位，但用 data.data 替換整個 data
-        const otherFields: Record<string, any> = {};
-        for (const key in data) {
-          if (key !== 'data') {
-            otherFields[key] = data[key];
-          }
-        }
-        // 將組合後的數據陣列和其他欄位合併
-        finalData = {
-          ...otherFields,
-          data: data.data
-        };
+        // 直接使用 data.data 陣列作為最終的 data
+        finalData = data.data;
       }
 
       return {

@@ -1,3 +1,3 @@
 export * from './dtos';
-export * from './interfaces';
 export * from './entities';
+export * from './interfaces';

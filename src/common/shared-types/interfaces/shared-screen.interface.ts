@@ -19,18 +19,20 @@ export interface SharedScreen {
   isPublic: boolean;
   viewCount: number;
   useCount: number;
-  tags?: string[];
+  labels?: string[];
 }
 
 /**
- * 創建分享篩選條件請求
+ * 創建分享篩選條件請求 - 使用與 SymbolScreenRequestDto 相同的格式
+ * title, description, isPublic 由後端自動生成
  */
 export interface CreateSharedScreenDto {
-  title: string;
-  description?: string;
-  conditionGroup: ConditionGroup;
-  isPublic: boolean;
-  tags?: string[];
+  conditions: ConditionGroup;
+  regions?: MarketRegion[];
+  assetTypes?: AssetType[];
+  screenDate?: string;
+  limit?: number;
+  labels?: string[];
 }
 
 /**
@@ -76,5 +78,5 @@ export interface SharedScreenResponse {
   shareUrl?: string;
   viewCount: number;
   useCount: number;
-  tags?: string[];
+  labels?: string[];
 }
