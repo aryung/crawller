@@ -3,6 +3,7 @@ export * from './condition.dto';
 export * from './crawler-task.dto';
 export * from './entity-label.dto';
 export * from './finance.dto';
+export * from './import-ohlcv.dto';
 export * from './indicator-config.dto';
 export * from './indicator.dto';
 export * from './label-industry.dto';
