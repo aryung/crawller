@@ -1,5 +1,5 @@
 import { UserEntity } from '../entities/user.interface';
-import { SymbolScreenRequestDto } from '../dtos/strategy.dto';
+import { SymbolScreenRequestDto } from '../dtos';
 
 export interface SharedScreenEntity {
   id: string;

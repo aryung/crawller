@@ -226,14 +226,47 @@ async function processFileStream(
 
     // 即時處理每個結果
     for (const [index, crawlResult] of jsonData.results.entries()) {
-      if (!crawlResult.data?.data || !Array.isArray(crawlResult.data.data)) {
-        console.warn(`  ⚠️ 結果 ${index + 1}: 缺少有效的 data.data 陣列`);
+      if (!crawlResult.data || !Array.isArray(crawlResult.data)) {
+        console.warn(`  ⚠️ 結果 ${index + 1}: 缺少有效的 data 陣列`);
         continue;
       }
 
-      // 轉換並驗證資料
+      // 判斷資料類型並處理
       const validRecords: FundamentalApiData[] = [];
-      for (const record of crawlResult.data.data) {
+      
+      // 檢查是否為 OHLCV 資料（透過檢查第一筆記錄）
+      const isOhlcvData = crawlResult.data.length > 0 && 
+        crawlResult.data[0].date && 
+        crawlResult.data[0].open !== undefined &&
+        crawlResult.data[0].close !== undefined;
+      
+      if (isOhlcvData) {
+        // OHLCV 資料特殊處理
+        console.log(`  📈 偵測到 OHLCV 資料，包含 ${crawlResult.data.length} 筆`);
+        
+        // OHLCV 資料直接發送，不需要轉換
+        if (options.isDryRun) {
+          console.log(`  🔍 DRY-RUN: 將發送 ${crawlResult.data.length} 筆 OHLCV 記錄`);
+          fileImported += crawlResult.data.length;
+        } else {
+          try {
+            // 發送到 market-data endpoint
+            const endpoint = '/market-data/ohlcv/import';
+            const response = await apiClient.post(endpoint, crawlResult.data);
+            console.log(`  ✅ 成功發送 ${crawlResult.data.length} 筆 OHLCV 記錄`);
+            fileImported += crawlResult.data.length;
+          } catch (error: any) {
+            const errorMsg = error.response?.data?.message || error.message;
+            console.error(`  ❌ OHLCV 發送失敗: ${errorMsg}`);
+            fileFailed += crawlResult.data.length;
+          }
+        }
+        fileRecords += crawlResult.data.length;
+        continue; // 跳過後續的財務資料處理
+      }
+      
+      // 財務資料處理
+      for (const record of crawlResult.data) {
         if (validateRecord(record)) {
           validRecords.push(convertToApiFormat(record));
         }

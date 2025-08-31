@@ -1,5 +1,5 @@
-import { UserEntity } from '../entities/user.interface';
 import { OAuthProvider, UserRegistrationStatus } from '..';
+import { UserEntity } from '../entities/user.interface';
 
 export interface LoginDto {
   email: string;

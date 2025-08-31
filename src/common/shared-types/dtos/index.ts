@@ -10,5 +10,6 @@ export * from './label.dto';
 export * from './portfolio.dto';
 export * from './position.dto';
 export * from './strategy.dto';
+export * from './symbol.dto';
 export * from './user-alert.dto';
 export * from './user-strategy.dto';

@@ -40,6 +40,9 @@ export * from './fundamental-data.interface';
 // 指標相關介面
 export * from './indicator.interface';
 
+// 產業分類相關介面
+export * from './industry-category.interface';
+
 // 日誌相關介面
 // export * from './log.interface';
 

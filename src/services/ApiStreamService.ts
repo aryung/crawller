@@ -243,10 +243,132 @@ export class ApiStreamService {
       return;
     }
 
+    // 判斷資料類型並分別處理
+    if (this.isOhlcvData(crawlResult.data)) {
+      await this.processOhlcvData(crawlResult.data, index);
+    } else {
+      await this.processFinancialData(crawlResult.data, index);
+    }
+  }
+
+  /**
+   * 處理 OHLCV 資料
+   */
+  private async processOhlcvData(data: any[], index: number): Promise<void> {
+    try {
+      logger.info(`📈 處理 OHLCV 資料，包含 ${data.length} 筆`);
+      
+      if (!this.apiClient) {
+        this.stats.totalFailed += data.length;
+        logger.error('❌ API 客戶端未初始化');
+        return;
+      }
+
+      // 轉換 OHLCV 資料格式（參考 import-ohlcv-api.ts）
+      const apiRecords: any[] = [];
+      
+      // 從第一筆資料推斷市場
+      let region = MarketRegion.TPE; // 預設 TPE
+      if (data.length > 0 && data[0].symbolCode) {
+        const symbolCode = data[0].symbolCode;
+        if (symbolCode.includes('.TW') || symbolCode.includes('.TWO')) {
+          region = MarketRegion.TPE;
+        } else if (symbolCode.includes('.T')) {
+          // 日本股票代碼格式：1301.T
+          region = MarketRegion.JP;
+        } else if (symbolCode.match(/^[A-Z]+$/)) {
+          region = MarketRegion.US;
+        } else if (symbolCode.match(/^\d{4}$/)) {
+          // 舊格式的日本股票（純4位數字）
+          region = MarketRegion.JP;
+        }
+      }
+      
+      for (const record of data) {
+        if (!record.symbolCode || !record.date || 
+            record.open === undefined || record.high === undefined || 
+            record.low === undefined || record.close === undefined || 
+            record.volume === undefined) {
+          logger.warn(`[OHLCV] 記錄缺少必要欄位: ${JSON.stringify(record)}`);
+          continue;
+        }
+
+        // 清理 symbolCode（移除 .TW/.TWO 後綴）
+        let cleanSymbolCode = record.symbolCode;
+        if (region === MarketRegion.TPE && cleanSymbolCode.match(/\.TW[O]?$/)) {
+          cleanSymbolCode = cleanSymbolCode.replace(/\.TW[O]?$/, '');
+        }
+
+        const apiRecord = {
+          symbolCode: cleanSymbolCode,
+          date: record.date,
+          region: region,
+          open: parseFloat(record.open),
+          high: parseFloat(record.high),
+          low: parseFloat(record.low),
+          close: parseFloat(record.close),
+          volume: parseInt(record.volume),
+          openInterest: record.openInterest ? parseInt(record.openInterest) : 0,
+        };
+
+        // 驗證數值有效性
+        if (isNaN(apiRecord.open) || isNaN(apiRecord.high) || 
+            isNaN(apiRecord.low) || isNaN(apiRecord.close) || 
+            isNaN(apiRecord.volume)) {
+          logger.warn(`[OHLCV] 數值格式錯誤: ${record.symbolCode}`);
+          continue;
+        }
+
+        apiRecords.push(apiRecord);
+      }
+
+      if (apiRecords.length === 0) {
+        this.stats.totalSkipped += data.length;
+        logger.warn(`⏭️ 沒有有效的 OHLCV 資料可發送`);
+        return;
+      }
+
+      // 記錄第一筆資料供除錯  
+      logger.info(`[OHLCV] 準備發送 ${apiRecords.length} 筆資料，第一筆範例: ${JSON.stringify(apiRecords[0])}`);
+
+      // 發送轉換後的資料到 OHLCV endpoint
+      const response = await this.apiClient.post('/market-data/ohlcv/import', apiRecords);
+      
+      if (response.data?.success !== false) {
+        const imported = response.data?.imported || apiRecords.length;
+        const failed = response.data?.failed || 0;
+        this.stats.totalSuccess += imported;
+        this.stats.totalSent += imported;
+        this.stats.totalFailed += failed;
+        logger.info(`✅ 成功發送 ${imported} 筆 OHLCV 資料到 API${failed > 0 ? `，失敗 ${failed} 筆` : ''}`);
+      } else {
+        this.stats.totalFailed += apiRecords.length;
+        const errorMsg = response.data?.message || '未知錯誤';
+        logger.error(`❌ OHLCV 發送失敗: ${errorMsg}`);
+        // 記錄完整錯誤響應供除錯
+        logger.error(`[OHLCV] API 錯誤響應: ${JSON.stringify(response.data)}`);
+      }
+    } catch (error: any) {
+      this.stats.totalFailed += data.length;
+      const errorMsg = error.response?.data?.message || error.message;
+      logger.error(`❌ OHLCV API 錯誤: ${errorMsg}`);
+      this.stats.errors.push({
+        index,
+        error: errorMsg,
+        data: data[0] // 記錄第一筆資料供除錯
+      });
+    }
+  }
+
+  /**
+   * 處理財務資料
+   */
+  private async processFinancialData(data: any[], index: number): Promise<void> {
     // 轉換並驗證資料
     const validRecords: FundamentalApiData[] = [];
-    for (const record of crawlResult.data) {
-      if (this.validateRecord(record)) {
+    
+    for (const record of data) {
+      if (this.validateFinancialRecord(record)) {
         const converted = this.convertToApiFormat(record);
         validRecords.push(converted);
       }
@@ -254,7 +376,7 @@ export class ApiStreamService {
 
     if (validRecords.length === 0) {
       this.stats.totalSkipped++;
-      logger.debug(`⏭️ 結果 ${index + 1}: 沒有有效資料`);
+      logger.debug(`⏭️ 結果 ${index + 1}: 沒有有效的財務資料`);
       return;
     }
 
@@ -602,9 +724,19 @@ export class ApiStreamService {
   }
 
   /**
-   * 驗證記錄格式
+   * 判斷是否為 OHLCV 資料
    */
-  private validateRecord(record: unknown): record is CrawlerRawData {
+  private isOhlcvData(data: any[]): boolean {
+    if (!data || data.length === 0) return false;
+    const first = data[0];
+    // 與 import-fundamental-api-stream.ts 保持一致
+    return !!(first.date && first.open !== undefined && first.close !== undefined);
+  }
+
+  /**
+   * 驗證財務記錄格式
+   */
+  private validateFinancialRecord(record: unknown): record is CrawlerRawData {
     if (!record || typeof record !== 'object') {
       return false;
     }

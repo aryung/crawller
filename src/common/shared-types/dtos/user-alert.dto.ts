@@ -7,6 +7,7 @@ export interface CreateUserAlertDto {
   conditions: ConditionGroup;
   notificationChannels: NotificationChannel[];
   notificationSettings?: NotificationSettings;
+  labels?: string[];
 }
 
 export interface UpdateUserAlertDto {
@@ -17,6 +18,7 @@ export interface UpdateUserAlertDto {
   isActive?: boolean;
   notificationChannels?: NotificationChannel[];
   notificationSettings?: NotificationSettings;
+  labels?: string[];
 }
 
 export interface UserAlertResponseDto {

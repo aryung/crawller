@@ -1,7 +1,4 @@
-import { PortfolioEntity } from '../entities/portfolio.interface';
-import { StrategyEntity } from '../entities/strategy.interface';
-import { PositionEntity } from '../entities/position.interface';
-import { UserOAuthProviderEntity } from '../entities/user-oauth-provider.interface';
+import { PortfolioEntity, StrategyEntity, PositionEntity, UserOAuthProviderEntity } from '.';
 import { UserRole } from '..';
 
 export interface UserEntity {
